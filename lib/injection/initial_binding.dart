@@ -1,0 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
+
+import '../core/network/dio_client.dart';
+import '../core/services/dialog_service.dart';
+import '../core/services/navigation_service.dart';
+import '../core/services/storage_service.dart';
+
+class InitialBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<FlutterSecureStorage>(() {
+      debugPrint('✅ FlutterSecureStorage created');
+      return FlutterSecureStorage();
+    }, fenix: true);
+    Get.lazyPut<TokenStorage>(() {
+      debugPrint('✅ TokenStorage created');
+      return TokenStorage(Get.find<FlutterSecureStorage>());
+    }, fenix: true);
+
+    // Jika pakai DIO
+    Get.lazyPut<DioClient>(() => DioClient(Get.find<TokenStorage>()), fenix: true);
+
+    // // Register NavigationService (permanent agar navigatorKey tetap hidup)
+    // Get.lazyPut<NavigationService>(
+    //   () => NavigationService(),
+    //   fenix: true, // ✅ Agar tidak terhapus saat rebuild
+    // );
+
+    // Register DialogService
+    Get.lazyPut<DialogService>(() => DialogService(), fenix: true);
+  }
+}

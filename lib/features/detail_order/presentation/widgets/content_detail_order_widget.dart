@@ -1,0 +1,291 @@
+import 'package:cv_rejo/features/detail_order/presentation/controllers/detail_order_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/text_styles.dart';
+import '../../../../gen/assets.gen.dart';
+
+class ContentDetailOrderWidget extends StatelessWidget {
+  final DetailOrderController controller;
+  const ContentDetailOrderWidget({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    // if (controller.orders.isEmpty) {
+    //   return SingleChildScrollView(
+    //     padding: EdgeInsets.zero,
+    //     child: SizedBox(
+    //       height: Get.height - kToolbarHeight,
+    //       child: const Center(child: Text('Tidak ada pesanan')),
+    //     ),
+    //   );
+    // }
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 20),
+      children: [
+        _buildBody(
+          title: 'ID Transaksi',
+          value: controller.orderDetail.value.invoice,
+        ),
+        _buildBody(
+          title: 'No Resi',
+          value: controller.orderDetail.value.courier.waybillNumber,
+          pengiriman: controller.orderDetail.value.courier.service,
+        ),
+        _buildBody(
+          title: 'No Pesanan',
+          value: controller.orderDetail.value.orderNo,
+        ),
+        _buildInfoCustomer(
+          username: controller.orderDetail.value.customer.name,
+          namePenerima: controller.orderDetail.value.customer.username,
+          tanggalPesanan: controller.orderDetail.value.date.transaction,
+          tanggalBatas: controller.orderDetail.value.date.delivery,
+        ),
+        _buildInfoPesanan(
+          orderList: controller.orderDetail.value.orderDetails ?? [],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody({
+    required String title,
+    required String value,
+    String pengiriman = '',
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      color: AppTheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyles.basicTextStyle(
+                    color: const Color(0xFF7C7C7C),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 135,
+                child: Text(
+                  value,
+                  textAlign: TextAlign.left,
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF171717),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (pengiriman.isNotEmpty) _buildShippingText(pengiriman),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShippingText(String text) {
+    final parts = text.split('-');
+
+    return Container(
+      width: 135,
+      margin: const EdgeInsets.only(top: 5),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '${parts[0]} ${parts.length > 1 ? "-" : ""} ',
+              style: TextStyles.basicTextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (parts.length > 1)
+              TextSpan(
+                text: parts[1],
+                style: TextStyles.basicTextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoContent({
+    required String title,
+    required String value,
+    required String image,
+    double mgBottom = 16,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: mgBottom),
+      child: Row(
+        children: [
+          SizedBox(width: 20, height: 20, child: Image.asset(image)),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyles.basicTextStyle(color: const Color(0xFF7C7C7C)),
+            ),
+          ),
+          SizedBox(
+            width: 135,
+            child: Text(
+              value,
+              textAlign: TextAlign.left,
+              style: TextStyles.basicTextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF171717),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCustomer({
+    required String username,
+    required String namePenerima,
+    String tanggalPesanan = '',
+    String tanggalBatas = '',
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      color: AppTheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoContent(
+            title: 'Username',
+            value: username,
+            image: Assets.icons.cardMember.path,
+          ),
+          _buildInfoContent(
+            title: 'Nama Penerima',
+            value: namePenerima,
+            image: Assets.icons.person2.path,
+          ),
+          _buildInfoContent(
+            title: 'Tanggal Pesanan Masuk',
+            value: tanggalPesanan,
+            image: Assets.icons.dateIn.path,
+          ),
+          _buildInfoContent(
+            title: 'Tanggal Batas Pengiriman',
+            value: tanggalBatas,
+            image: Assets.icons.dateOrder.path,
+            mgBottom: 0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoPesanan({required List orderList}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      color: AppTheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: Image.asset(Assets.icons.orderan.path),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Pesanan',
+                style: TextStyles.basicTextStyle(
+                  color: Color(0xFF171717),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ListView.separated(
+            itemCount: controller.orderDetail.value.orderDetails?.length ?? 0,
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) => const SizedBox(height: 13),
+            itemBuilder: (context, index) {
+              final orderDetail =
+                  controller.orderDetail.value.orderDetails?[index];
+              String setQty = '${orderDetail?.pic.qty} / ${orderDetail?.qty}';
+
+              if (controller.userModel.value.jabatan == 'packing') {
+                setQty = '${orderDetail?.checker1.qty}';
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${index + 1}.', style: TextStyles.basicTextStyle()),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${orderDetail?.item}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyles.basicTextStyle(),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(setQty, style: TextStyles.basicTextStyle()),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget showQtyProduct(String qtyUser, qtyMax) {
+  //   if (controller.userModel.value.jabatan != 'packing') {
+  //     return Text(qtyUser, style: TextStyles.basicTextStyle());
+  //   } else {
+  //     return Row(
+  //       children: [
+  //         Text(qtyUser, style: TextStyles.basicTextStyle()),
+  //         SizedBox(
+  //           width: 10,
+  //           child: Text('/', style: TextStyles.basicTextStyle()),
+  //         ),
+  //         Text(qtyMax, style: TextStyles.basicTextStyle()),
+  //       ],
+  //     );
+  //   }
+  // }
+}
