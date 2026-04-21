@@ -23,6 +23,8 @@ class ApiEndpoints {
   static const String takeItTransaction = "picking/claim";
   static const String addAssistant = "picking/claimcoba";
   static const String pendingSO = "picking/cancel";
+  static const String saveQty = "picking/scan/multiple";
+  static const String completePicking = "picking/complete";
   
   static String getDetailTransaction(String invoice) => "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";

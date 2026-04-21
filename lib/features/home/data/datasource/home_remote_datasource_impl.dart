@@ -60,10 +60,15 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ResponseModelGetHome.fromMap(response.data);
       } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
+        return ResponseModelGetHome.fromMap({
+          'status': false,
+          'message': '',
+          'data': [],
+        });
+        // throw ServerException(
+        //   message: response.data['message'],
+        //   statusCode: response.statusCode ?? 500,
+        // );
       }
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);

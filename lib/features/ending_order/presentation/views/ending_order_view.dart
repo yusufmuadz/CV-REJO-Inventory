@@ -48,9 +48,8 @@ class EndingOrderView extends GetView<EndingOrderController> {
             title: 'Simpan',
             color: const Color(0xFF2ED471),
             onPressed: () {
-              GetStorage().remove('noInvoice');
-              GetStorage().remove('assistant');
-              Get.offAllNamed(Routes.LIST_ORDER);
+              // GetStorage().remove('noInvoice');
+              // Get.offAllNamed(Routes.LIST_ORDER);
             },
           ),
         );

@@ -35,10 +35,7 @@ class DialogService {
       title: title,
       barrierDismissible: barrierDismissible,
       content: PopScope(
-        canPop: barrierDismissible,
-        onPopInvokedWithResult: (didPop, result) {
-          if (barrierDismissible) Get.back();
-        },
+        canPop: false,
         child: Text(description),
       ),
       actions: [

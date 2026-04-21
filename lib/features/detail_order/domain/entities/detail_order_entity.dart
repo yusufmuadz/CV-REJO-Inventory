@@ -39,4 +39,24 @@ class DetailOrderEntity {
           : null,
     );
   }
+
+  DetailOrderEntity copyWith({
+    String? invoice,
+    String? orderNo,
+    Courier? courier,
+    CustomerModel? customer,
+    DateModel? date,
+    AssistantModel? assistant,
+    List<ItemOrderModel>? orderDetails,
+  }) {
+    return DetailOrderEntity(
+      invoice: invoice ?? this.invoice,
+      orderNo: orderNo ?? this.orderNo,
+      courier: courier ?? this.courier,
+      customer: customer ?? this.customer,
+      date: date ?? this.date,
+      assistant: assistant ?? this.assistant,
+      orderDetails: orderDetails ?? this.orderDetails,
+    );
+  }
 }

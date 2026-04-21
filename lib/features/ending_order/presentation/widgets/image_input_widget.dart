@@ -121,7 +121,7 @@ class ImageInputWidget extends StatelessWidget {
                       ),
                     ],
                   );
-                } else if (controller.mediaFileList.length < 5) {
+                } else if (controller.mediaFileList.length < 2) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(

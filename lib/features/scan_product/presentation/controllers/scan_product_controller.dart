@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cv_rejo/features/scan_product/domain/entities/item_product_entity.dart';
+import 'package:cv_rejo/features/scan_product/domain/params/post_product_param.dart';
 import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/input_qty_dialog.dart';
 import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/permission_scan_dialog.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../detail_order/presentation/controllers/detail_order_controller.dart';
-import '../../../login/data/models/user_model.dart';
 import '../../domain/params/scan_product_param.dart';
 import '../../domain/usecases/scan_product_usecase.dart';
 
@@ -23,9 +23,13 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
 
   final isLoading = false.obs;
   final isLoadingSearch = false.obs;
+  final isLoadingProduct = false.obs;
   final dialogService = Get.find<DialogService>();
   final detailOrderController = Get.find<DetailOrderController>();
   final noInvoice = ''.obs;
+
+  final messageProduct = ''.obs;
+  final statusPostProduct = false.obs;
 
   final searchResults = <ItemProductEntity>[].obs;
   final searchController = TextEditingController();
@@ -68,66 +72,104 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    final result = await scanProductUseCase.call(
-      ParamsGetproduct(
-        barcode: barcode,
-        invoice: noInvoice.value,
-        role: detailOrderController.userModel.value.jabatan,
-      ),
-    );
+    try {
+      final result = await scanProductUseCase.call(
+        ParamsGetProduct(
+          barcode: barcode,
+          invoice: noInvoice.value,
+          role: detailOrderController.userModel.value.jabatan,
+        ),
+      );
 
-    switch (result) {
-      case Success(:final data):
-        debugPrint('Data Product: $data');
-        // product.value = data;
-        openInputQtyDialog(
-          itemName: data.itemName,
-          barcodeValue: barcode,
-          controller: this,
-        );
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Product: $data');
+          // product.value = data;
+          openInputQtyDialog(
+            itemName: data.itemName,
+            barcodeValue: barcode,
+            controller: this,
+          );
 
-      case ErrorResult(:final message):
-        if (Get.isDialogOpen == true) Get.back();
-        dialogService.showError(
-          'Failed',
-          message,
-          onPressed: () {
-            Get.back();
-            startScanner();
-          },
-        );
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError(
+            'Failed',
+            message,
+            onPressed: () {
+              Get.back();
+              startScanner();
+            },
+          );
+      }
+    } finally {
+      isLoading.value = false;
     }
-
-    isLoading.value = false;
   }
 
   Future<void> getItemProduct() async {
     if ((isLoading.value || isLoadingSearch.value) &&
-        searchController.text.isEmpty)
+        searchController.text.isEmpty) {
       return;
-    isLoadingSearch.value = true;
-
-    final result = await scanProductUseCase.callGetItem(searchController.text);
-
-    switch (result) {
-      case Success(:final data):
-        debugPrint('Data Item Product: $data');
-        searchResults.value = data;
-
-      case ErrorResult(:final message):
-        if (Get.isDialogOpen == true) Get.back();
-        dialogService.showError('Failed', message);
     }
 
-    isLoadingSearch.value = false;
+    isLoadingSearch.value = true;
+
+    try {
+      final result = await scanProductUseCase.callGetItem(
+        searchController.text,
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          searchResults.value = data;
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } finally {
+      isLoadingSearch.value = false;
+    }
+  }
+
+  Future<void> addProduct({
+    required String barcode,
+    required String quantity,
+  }) async {
+    if (isLoadingProduct.value) return;
+    isLoadingProduct.value = true;
+
+    try {
+      final result = await scanProductUseCase.callPostItem(
+        ParamsPostProduct(
+          barcode: barcode,
+          invoice: noInvoice.value,
+          qty: quantity,
+          images: mediaFileList,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          messageProduct.value = 'Berhasil Menambahkan Produk';
+          statusPostProduct.value = true;
+        // dialogService.showSuccessSnackbar('Berhasil Menambahkan Produk');
+
+        case ErrorResult(:final message):
+          messageProduct.value = message;
+          statusPostProduct.value = false;
+        // if (Get.isDialogOpen == true) Get.back();
+        // dialogService.showError('Failed', message);
+      }
+    } finally {
+      isLoadingProduct.value = false;
+    }
   }
 
   void selectImage(ImageSource source) async {
-    // Implementasi pemilihan gambar dari galeri atau kamera
-    // Setelah gambar dipilih, simpan ke selectedImage dan panggil update()
-
-    debugPrint('Halo');
-
     try {
       final pickedFile = await picker.pickImage(
         source: source, // Atau ImageSource.gallery untuk galeri
@@ -227,7 +269,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
     super.onInit();
     // Start listening to lifecycle changes.
     WidgetsBinding.instance.addObserver(this);
-    // _checkAndStartScanner();
+    _checkAndStartScanner();
 
     final args = Get.arguments;
     if (args != null) {

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:cv_rejo/features/detail_order/domain/entities/transportation_entity.dart';
+import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dart';
+import 'package:cv_rejo/features/detail_order/presentation/widgets/input_field_dialog.dart';
 import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -13,6 +16,7 @@ import '../../../list_order/data/models/date_model.dart';
 import '../../../login/data/models/user_model.dart';
 import '../../../login/domain/entities/user_entity.dart';
 import '../../data/models/customer_model.dart';
+import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/usecases/detail_order_usecase.dart';
@@ -34,8 +38,15 @@ class DetailOrderController extends GetxController {
   final assistantSelected = ''.obs;
   final selectTransportation = ''.obs;
 
+  final isChecked = false.obs;
+
+  final reasonController = TextEditingController();
+
   final listUser = <UserEntity>[].obs;
   final transportations = <TransportationEntity>[].obs;
+
+  final picker = ImagePicker();
+  final mediaFileList = <XFile>[].obs;
 
   final userModel = UserModel(
     userId: '',
@@ -85,6 +96,27 @@ class DetailOrderController extends GetxController {
     getAssisten();
   }
 
+  void selectedProduct(int index) async {
+    if (index != -1) {
+      final order = orderDetail.value.orderDetails![index];
+
+      final result = await openInputFieldDialog(
+        itemName: order.item,
+        qty: order.qty,
+        controller: this,
+      );
+
+      final updatedOrder = order.copyWith(isChecked: !order.isChecked);
+
+      final updateList = List<ItemOrderModel>.from(
+        orderDetail.value.orderDetails!,
+      );
+      updateList[index] = updatedOrder;
+
+      orderDetail.value = orderDetail.value.copyWith(orderDetails: updateList);
+    }
+  }
+
   Future<void> _getDetailOrder() async {
     if (isLoading.value) return;
     isLoading.value = true;
@@ -96,6 +128,11 @@ class DetailOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Detail Order: $data');
           orderDetail.value = data;
+
+          driverSelected.value = data.assistant?.namaDriver ?? '';
+          assistantSelected.value = data.assistant?.namaKenek ?? '';
+          selectTransportation.value = data.assistant?.namaKendaraan ?? '';
+
           isSelect.value = orderDetail.value.assistant != null;
 
         case ErrorResult(:final message):
@@ -197,12 +234,19 @@ class DetailOrderController extends GetxController {
     }
   }
 
-  Future<void> sendPendingSO() async {
+  Future<void> pendingSO() async {
     if (isLoading.value) return;
+
+    if (reasonController.text.isEmpty) {
+      dialogService.showErrorSnackbar('Isi Alasan Pending SO');
+      return;
+    }
     isLoading.value = true;
 
     try {
-      final result = await detailOrderUseCase.callPendingSO(noInvoice.value);
+      final result = await detailOrderUseCase.callPendingSO(
+        ParamsPendingSO(invoice: noInvoice.value),
+      );
 
       switch (result) {
         case Success(:final data):
@@ -211,7 +255,8 @@ class DetailOrderController extends GetxController {
               title: 'Success',
               description: data.message,
               barrierDismissible: false,
-              onPressed: () => Get.offNamed(Routes.LIST_ORDER));
+              onPressed: () => Get.offNamed(Routes.LIST_ORDER),
+            );
           } else {
             if (Get.isDialogOpen == true) Get.back();
             dialogService.showError('Failed', data.message);
@@ -228,6 +273,36 @@ class DetailOrderController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  //////// ====== PICK IMAGE ====== ////////
+
+  void selectImage(ImageSource source) async {
+    try {
+      final pickedFile = await picker.pickImage(
+        source: source, // Atau ImageSource.gallery untuk galeri
+        imageQuality: 70,
+      );
+
+      if (pickedFile != null) {
+        mediaFileList.add(pickedFile);
+        update(); // Memperbarui state untuk menampilkan gambar yang dipilih
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void removeImage(int index) {
+    if (index >= 0 && index < mediaFileList.length) {
+      mediaFileList.removeAt(index);
+      update(); // Memperbarui state setelah gambar dihapus
+    }
+  }
+
+  void clearAllImages() {
+    mediaFileList.clear();
+    update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }
 
   void _getStorage() {

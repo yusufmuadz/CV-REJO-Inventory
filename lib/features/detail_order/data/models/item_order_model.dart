@@ -6,6 +6,7 @@ class ItemOrderModel {
   final StatusItem checker1;
   final StatusOrder checker2;
   final StatusOrder driver;
+  bool isChecked;
 
   ItemOrderModel({
     required this.item,
@@ -15,6 +16,7 @@ class ItemOrderModel {
     required this.checker1,
     required this.checker2,
     required this.driver,
+    this.isChecked = false,
   });
 
   factory ItemOrderModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,28 @@ class ItemOrderModel {
       checker1: StatusItem.fromJson(json['checker1']),
       checker2: StatusOrder.fromJson(json['checker2']),
       driver: StatusOrder.fromJson(json['driver']),
+    );
+  }
+
+  ItemOrderModel copyWith({
+    String? item,
+    String? qty,
+    String? barcode,
+    StatusItem? pic,
+    StatusItem? checker1,
+    StatusOrder? checker2,
+    StatusOrder? driver,
+    bool? isChecked,
+  }) {
+    return ItemOrderModel(
+      item: item ?? this.item,
+      qty: qty ?? this.qty,
+      barcode: barcode ?? this.barcode,
+      pic: pic ?? this.pic,
+      checker1: checker1 ?? this.checker1,
+      checker2: checker2 ?? this.checker2,
+      driver: driver ?? this.driver,
+      isChecked: isChecked ?? this.isChecked,
     );
   }
 }

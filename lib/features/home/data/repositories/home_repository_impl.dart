@@ -13,7 +13,7 @@ class HomeRepositoryImpl extends HomeRepository {
 
   @override
   Future<ResultCustom<Failure, TransactionEntity>> getTransaction(
-    ParamsGetTransaction params
+    ParamsGetTransaction params,
   ) async {
     try {
       final response = await dataSource.fetchTransaction(params);
@@ -29,7 +29,10 @@ class HomeRepositoryImpl extends HomeRepository {
     try {
       final response = await dataSource.getHomeData();
 
-      return Success(response.data!.toEntity(), '');
+      if (response.status != false && response.message != '') {
+        return Success(response.data!.toEntity(), '');
+      }
+      return ErrorResult(message: response.message ?? 'Error');
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

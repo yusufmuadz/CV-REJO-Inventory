@@ -4,6 +4,7 @@ import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../domain/params/post_ending_order_param.dart';
 import '../models/response_model_ending_order.dart';
 import 'ending_order_remote_datasource.dart';
 
@@ -13,9 +14,27 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   EndingOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelEndingOrder> fetchTransaction(String noInvoice) async {
+  Future<ResponseModelEndingOrder> postEndingOrder(ParamsEndingOrder params) async {
     try {
-      final response = await dioClient.post('');
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'desc': params.desc,
+        'file1': await MultipartFile.fromFile(
+          params.images![0].path,
+          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+        ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (params.images!.length > 1)
+          'file2': await MultipartFile.fromFile(
+            params.images![1].path,
+            filename: 'file2.jpg',
+          ),
+      });
+
+      final response = await dioClient.post(
+        ApiEndpoints.completePicking,
+        data: formData,
+      );
 
       // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
 

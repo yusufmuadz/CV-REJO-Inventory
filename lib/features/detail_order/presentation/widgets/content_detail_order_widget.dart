@@ -1,6 +1,6 @@
 import 'package:cv_rejo/features/detail_order/presentation/controllers/detail_order_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/text_styles.dart';
@@ -12,15 +12,6 @@ class ContentDetailOrderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // if (controller.orders.isEmpty) {
-    //   return SingleChildScrollView(
-    //     padding: EdgeInsets.zero,
-    //     child: SizedBox(
-    //       height: Get.height - kToolbarHeight,
-    //       child: const Center(child: Text('Tidak ada pesanan')),
-    //     ),
-    //   );
-    // }
     return ListView(
       padding: const EdgeInsets.only(bottom: 20),
       children: [
@@ -43,9 +34,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           tanggalPesanan: controller.orderDetail.value.date.transaction,
           tanggalBatas: controller.orderDetail.value.date.delivery,
         ),
-        _buildInfoPesanan(
-          orderList: controller.orderDetail.value.orderDetails ?? [],
-        ),
+        _buildInfoPesanan(),
       ],
     );
   }
@@ -199,7 +188,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoPesanan({required List orderList}) {
+  Widget _buildInfoPesanan() {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 10),
@@ -228,44 +217,58 @@ class ContentDetailOrderWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          ListView.separated(
-            itemCount: controller.orderDetail.value.orderDetails?.length ?? 0,
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) => const SizedBox(height: 13),
-            itemBuilder: (context, index) {
-              final orderDetail =
-                  controller.orderDetail.value.orderDetails?[index];
-              String setQty = '${orderDetail?.pic.qty} / ${orderDetail?.qty}';
+          Obx(
+            () => ListView.separated(
+              itemCount: controller.orderDetail.value.orderDetails?.length ?? 0,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              separatorBuilder: (context, index) => const SizedBox(height: 13),
+              itemBuilder: (context, index) {
+                final orderDetail =
+                    controller.orderDetail.value.orderDetails?[index];
+                String setQty = '${orderDetail?.pic.qty} / ${orderDetail?.qty}';
 
-              if (controller.userModel.value.jabatan == 'packing') {
-                setQty = '${orderDetail?.checker1.qty}';
-              }
+                if (controller.userModel.value.jabatan == 'packing') {
+                  setQty = '${orderDetail?.checker1.qty}';
+                }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${index + 1}.', style: TextStyles.basicTextStyle()),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${orderDetail?.item}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyles.basicTextStyle(),
+                return Row(
+                  children: [
+                    Text('${index + 1}.', style: TextStyles.basicTextStyle()),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${orderDetail?.item}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyles.basicTextStyle(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(setQty, style: TextStyles.basicTextStyle()),
+                    Visibility(
+                      visible:
+                          controller.userModel.value.jabatan == 'sealing' ||
+                          controller.userModel.value.jabatan == 'delivery',
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 8),
+                        child: Checkbox(
+                          visualDensity: VisualDensity(
+                            horizontal: -4,
+                            vertical: -4,
+                          ),
+                          value: orderDetail?.isChecked ?? false,
+                          onChanged: (value) {
+                            controller.selectedProduct(index);
+                          },
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(setQty, style: TextStyles.basicTextStyle()),
-                    ],
-                  ),
-                ],
-              );
-            },
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),

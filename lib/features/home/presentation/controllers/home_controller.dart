@@ -168,7 +168,6 @@ class HomeController extends GetxController {
   void onTapLogout() {
     GetStorage().remove('noInvoice');
     GetStorage().remove('user');
-    GetStorage().remove('assistant');
     _tokenStorage.clear();
     Get.offAllNamed(Routes.LOGIN);
   }

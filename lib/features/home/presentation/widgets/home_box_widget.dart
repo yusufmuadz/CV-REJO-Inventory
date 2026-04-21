@@ -33,7 +33,27 @@ class HomeBoxWidget extends StatelessWidget {
             onTap: () => controller.routeTo(),
           ),
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _boxItem(
+            title: 'List Packing',
+            value: controller.totalOrder.toString(),
+            begin: Alignment(0.95, -0.31),
+            end: Alignment(-0.95, 0.31),
+            colors: [
+              const Color(0xFFFFCA42),
+              const Color(0xFFF0B215),
+              const Color(0xFFE0AE2E),
+            ],
+            icon: Icon(
+              Icons.fact_check_outlined,
+              color: Colors.white,
+              size: 24,
+            ),
+            onTap: () => controller.routeTo(),
+          ),
+        ),
+        const SizedBox(width: 10),
         Expanded(
           child: _boxItem(
             title: 'List History',

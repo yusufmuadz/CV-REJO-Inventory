@@ -24,6 +24,14 @@ class DetailOrderView extends GetView<DetailOrderController> {
             Get.back();
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.groups),
+            onPressed: () {
+              _detailAssistant();
+            },
+          ),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -158,7 +166,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
                 _buildTitle(title: 'Masukkan Alasan', size: 18),
                 const SizedBox(height: 15),
                 TextField(
-                  // controller: controller.reasonController,
+                  controller: controller.reasonController,
                   maxLines: 4,
                   decoration: InputDecoration(
                     isDense: true,
@@ -177,6 +185,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
                     color: const Color(0xFF2ED471),
                     onPressed: () {
                       Get.back();
+                      controller.pendingSO();
                     },
                   ),
                 ),
@@ -264,13 +273,15 @@ class DetailOrderView extends GetView<DetailOrderController> {
                   controller.selectTransportation.value = value.toString();
                 },
               ),
-              const SizedBox(height: 30),
-              Center(
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => controller.onRefreshAssistant(),
-                  icon: const Icon(Icons.refresh, color: Colors.blue),
+              Container(
+                margin: EdgeInsets.only(top: 30),
+                child: Center(
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => controller.onRefreshAssistant(),
+                    icon: const Icon(Icons.refresh, color: Colors.blue),
+                  ),
                 ),
               ),
               Center(
@@ -326,6 +337,58 @@ class DetailOrderView extends GetView<DetailOrderController> {
     );
   }
 
+  void _detailAssistant() {
+    Get.defaultDialog(
+      radius: 10,
+      title: 'Detail Asisten',
+      titlePadding: const EdgeInsets.only(top: 20),
+      titleStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+      ),
+      contentPadding: EdgeInsets.fromLTRB(15, 30, 15, 10),
+      content: SizedBox(
+        height: Get.height * 0.20,
+        child: ListView(
+          children: [
+            _buildDetailTextAssistant(
+              title: 'Nama Driver',
+              value: controller.driverSelected.value,
+            ),
+            const SizedBox(height: 23),
+            _buildDetailTextAssistant(
+              title: 'Nama Kenek',
+              value: controller.assistantSelected.value,
+            ),
+            const SizedBox(height: 23),
+            _buildDetailTextAssistant(
+              title: 'Kendaraan',
+              value: controller.selectTransportation.value,
+            ),
+          ],
+        ),
+      ),
+      confirm: SizedBox(
+        height: 45,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            Get.back();
+          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFFc7a16d),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: const Text('Kembali'),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTitle({required String title, double? size = 15}) {
     return Text(
       title,
@@ -337,7 +400,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
     required String title,
     required List<DropdownMenuItem<String>> items,
     required String selectedValue,
-    required Function(Object?) onChanged,
+    Function(Object?)? onChanged,
   }) {
     return Container(
       height: 45,
@@ -372,6 +435,44 @@ class DetailOrderView extends GetView<DetailOrderController> {
           color: Colors.black87,
         ),
       ),
+    );
+  }
+
+  Widget _buildDetailTextAssistant({
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: 90,
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+          child: Text(
+            ':',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
