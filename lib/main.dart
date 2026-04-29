@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'core/initializer/app_initializer.dart';
-import 'core/services/dialog_service.dart';
 import 'core/services/navigation_service.dart';
 import 'routes/app_pages.dart';
 
@@ -27,22 +26,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'CV Rejo Inventory',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: initialThemeMode,
-      initialBinding: InitialBinding(),
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-      // navigatorKey: navigationService.navigatorKey,
-      routingCallback: (routing) {
-        debugPrint('➡️ Route: ${routing?.current}');
-      },
-      // builder: (context, child) {
-      //   return AnimatedThemeWrapper(child: child ?? const SizedBox());
-      // },
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(0.8)),
+      child: GetMaterialApp(
+        title: 'CV Rejo Inventory',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: initialThemeMode,
+        initialBinding: InitialBinding(),
+        initialRoute: AppPages.INITIAL,
+        getPages: AppPages.routes,
+        // navigatorKey: navigationService.navigatorKey,
+        routingCallback: (routing) {
+          debugPrint('➡️ Route: ${routing?.current}');
+        },
+        // builder: (context, child) {
+        //   return AnimatedThemeWrapper(child: child ?? const SizedBox());
+        // },
+      ),
     );
   }
 }

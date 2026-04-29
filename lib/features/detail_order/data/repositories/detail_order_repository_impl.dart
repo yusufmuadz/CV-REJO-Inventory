@@ -3,6 +3,8 @@ import 'package:cv_rejo/features/detail_order/domain/entities/transportation_ent
 import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dart';
 import 'package:cv_rejo/features/login/domain/entities/user_entity.dart';
 import '../../../../core/error/failures.dart';
+import '../../../scan_product/domain/entities/post_item_product_entity.dart';
+import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/entities/basic_entity.dart';
 import '../../domain/entities/detail_order_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
@@ -51,6 +53,18 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
   }
 
   @override
+  Future<ResultCustom<Failure, List<TransportationEntity>>>
+  getLoaderTransportations() async {
+    try {
+      final response = await dataSource.getLoaderTransportations();
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
   Future<ResultCustom<Failure, BasicEntity>> addAssistant(
     ParamsAddAssistant params,
   ) async {
@@ -58,7 +72,10 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
       final response = await dataSource.addAssistant(params);
 
       return Success(
-        BasicEntity(status: response.status ?? false, message: response.message ?? '-'),
+        BasicEntity(
+          status: response.status ?? false,
+          message: response.message ?? '-',
+        ),
         '',
       );
     } catch (e) {
@@ -67,13 +84,38 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
   }
 
   @override
-  Future<ResultCustom<Failure, BasicEntity>> pendingSO(ParamsPendingSO params) async {
+  Future<ResultCustom<Failure, BasicEntity>> pendingSO(
+    ParamsPendingSO params,
+  ) async {
     try {
       final response = await dataSource.pendingSO(params);
 
       return Success(
-        BasicEntity(status: response.status ?? false, message: response.message ?? '-'),
+        BasicEntity(
+          status: response.status ?? false,
+          message: response.message ?? '-',
+        ),
         '',
+      );
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, PostItemProductEntity>> postItemProduct(
+    ParamsPostProduct params,
+  ) async {
+    try {
+      final response = await dataSource.postItemProduct(params);
+
+      if (response.error?.details == null) {
+        return Success(response.data!.toEntity()!, '');
+      }
+
+      return ErrorResult(
+        message: response.error?.details ?? '',
+        isMaxFailure: response.error?.isMaxFailure ?? false,
       );
     } catch (e) {
       return ErrorResult(message: e.toString());

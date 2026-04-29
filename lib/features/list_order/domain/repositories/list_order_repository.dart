@@ -3,7 +3,9 @@ import 'package:cv_rejo/features/list_order/domain/params/get_transaction_param.
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../entities/district_entity.dart';
 import '../entities/list_order_entity.dart';
+import '../params/take_it_param.dart';
 
 abstract class ListOrderRepository {
   Future<ResultCustom<Failure, List<OrderEntity>>> getListOrders(
@@ -11,6 +13,8 @@ abstract class ListOrderRepository {
   );
 
   Future<ResultCustom<Failure, TakeItOrderEntity>> takeItTransaction(
-    String invoice,
+    ParamsTakeIt params,
   );
+
+  Future<ResultCustom<Failure, List<DistrictEntity>>> getDistrict();
 }

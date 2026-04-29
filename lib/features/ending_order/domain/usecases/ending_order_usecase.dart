@@ -9,7 +9,15 @@ class EndingOrderUseCase {
 
   EndingOrderUseCase(this.repository);
 
-  Future<ResultCustom<Failure, EndingOrderEntity>> call(ParamsEndingOrder params) {
+  Future<ResultCustom<Failure, EndingOrderEntity>> call(
+    ParamsEndingOrder params,
+  ) {
     return repository.postEndingOrder(params);
+  }
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> callPendingOrder(
+    ParamsEndingOrder params,
+  ) {
+    return repository.pendingOrder(params);
   }
 }

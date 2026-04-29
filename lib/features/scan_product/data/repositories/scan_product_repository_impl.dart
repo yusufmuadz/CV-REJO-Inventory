@@ -54,11 +54,11 @@ class ScanProductRepositoryImpl implements ScanProductRepository {
     try {
       final response = await dataSource.postItemProduct(params);
 
-      if (response.error == null) {
+      if (response.error?.details == null) {
         return Success(response.data!.toEntity()!, '');
       }
       
-      return ErrorResult(message: response.error ?? '');
+      return ErrorResult(message: response.error?.details ?? '', isMaxFailure: response.error?.isMaxFailure ?? false);
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

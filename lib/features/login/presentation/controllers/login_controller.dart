@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/storage_service.dart';
@@ -50,7 +51,7 @@ class LoginController extends GetxController {
 
     switch (result) {
       case Success(:final data):
-        debugPrint('Data Login Controller: $data');
+        // debugPrint('Data Login Controller: $data');
         _handleSuccessResponse(result, data);
 
       case ErrorResult(:final message):
@@ -72,7 +73,8 @@ class LoginController extends GetxController {
       String json = jsonEncode(userMap);
 
       GetStorage().write('user', json);
-      dialogService.showSuccess('Login Success');
+      // dialogService.showSuccess('Login Success');
+      AppRole.loginFromApi(role: data.jabatan, name: data.nama);
       Future.delayed(Duration(milliseconds: 300));
       Get.offAllNamed(Routes.HOME);
     } else {

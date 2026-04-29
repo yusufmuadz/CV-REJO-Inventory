@@ -20,15 +20,20 @@ class ApiEndpoints {
   static const String fetchTransactionAll = "transaction/all";
   static const String fetchHistoryTransaction = "transaction/history/get";
   static const String getItemProduct = "items/get";
-  static const String takeItTransaction = "picking/claim";
+  static const String getDistrict = "city/getcity";
+  static String takeItTransaction(String role) => "$role/claim";
+  static String saveQty(String role) => "$role/scan/multiple";
+  static String completeOrder(String role) => "$role/complete";
+  static String pendingOrder(String role) => "$role/cancel";
+
+  // PICKING TRANSACTION
   static const String addAssistant = "picking/claimcoba";
   static const String pendingSO = "picking/cancel";
-  static const String saveQty = "picking/scan/multiple";
-  static const String completePicking = "picking/complete";
   
   static String getDetailTransaction(String invoice) => "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";
   static String getTransportations(String search) => "vehicle/getloader?q=$search";
+  static String getLoaderTransportations(String search) => "vehicle/gettruck?q=$search";
 
   static const String hubungiAdmin = "https://wa.me/628112936865";
   static const String privacyPolicy = "http://lite2.indopustakaplus.com/admin/privacy_policy.html";

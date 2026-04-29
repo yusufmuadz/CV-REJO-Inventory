@@ -5,8 +5,11 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../scan_product/data/models/response_model_post_item_product.dart';
+import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/params/pending_so_param.dart';
 import '../models/response_model_get_user.dart';
@@ -70,7 +73,13 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   @override
   Future<ResponseModelGetTransportation> getTransportations() async {
     try {
-      final response = await dioClient.get(ApiEndpoints.getTransportations(''));
+      String apiEndpoint = ApiEndpoints.getTransportations('');
+
+      if (AppRole.isChecker2) {
+        apiEndpoint = ApiEndpoints.getLoaderTransportations('');
+      }
+
+      final response = await dioClient.get(apiEndpoint);
 
       // debugPrint('Data Get Users Remote DataSource: ${response.data}');
 
@@ -88,6 +97,32 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
       throw ServerException(message: 'error Get Transportations: $e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetTransportation> getLoaderTransportations() async {
+    try {
+      final response = await dioClient.get(
+        ApiEndpoints.getLoaderTransportations(''),
+      );
+
+      // debugPrint('Data Get Loader Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetTransportation.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: 'error Get Loader Transportations: $e');
     }
   }
 
@@ -147,6 +182,57 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
       throw ServerException(message: 'error Pending SO: $e');
+    }
+  }
+
+  @override
+  Future<ResponseModelPostItemProduct> postItemProduct(
+    ParamsPostProduct params,
+  ) async {
+    try {
+      final formData = FormData.fromMap({
+        'barcode': params.barcode,
+        'invoice': params.invoice,
+        'qty': params.qty,
+        'foto1': await MultipartFile.fromFile(
+          params.images![0].path,
+          filename: 'foto1.jpg', // ⬅️ selalu tambahkan filename
+        ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (params.images!.length > 1)
+          'foto2': await MultipartFile.fromFile(
+            params.images![1].path,
+            filename: 'foto2.jpg',
+          ),
+      });
+
+      String role = params.role!;
+
+      if (params.role == 'loader') {
+        role = 'check2';
+      }
+
+      final response = await dioClient.post(
+        ApiEndpoints.saveQty(role),
+        data: formData,
+      );
+
+      // debugPrint('Data POST Item Product Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelPostItemProduct.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: 'error POST Item Product: $e');
     }
   }
 }

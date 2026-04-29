@@ -4,4 +4,5 @@ import '../models/response_model_ending_order.dart';
 
 abstract class EndingOrderRemoteDataSource {
   Future<ResponseModelEndingOrder> postEndingOrder(ParamsEndingOrder params);
+  Future<ResponseModelEndingOrder> pendingOrder(ParamsEndingOrder params);
 }

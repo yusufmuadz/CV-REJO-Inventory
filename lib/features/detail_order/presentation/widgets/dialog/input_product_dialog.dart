@@ -4,36 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../routes/app_pages.dart';
 import '../../../../../utils/loading_custom.dart';
-import '../../controllers/scan_product_controller.dart';
+import '../../controllers/detail_order_controller.dart';
 
-Future<void> openInputQtyDialog({
+Future<bool?> openInputFieldDialog({
   required String itemName,
+  required String qty,
   required String barcodeValue,
-  required ScanProductController controller,
+  required DetailOrderController controller,
 }) async {
   await Future.delayed(const Duration(milliseconds: 300));
 
-  await Get.dialog(
-    // barrierDismissible: false,
+  final result = await Get.dialog(
+    barrierDismissible: false,
     ContentInputDialog(
       itemName: itemName,
+      qty: qty,
       barcodeValue: barcodeValue,
       controller: controller,
     ),
   );
+
+  return result;
 }
 
 class ContentInputDialog extends StatelessWidget {
-  final ScanProductController controller;
+  final DetailOrderController controller;
   final String itemName;
   final String barcodeValue;
-  final qtyController = TextEditingController();
+  final String qty;
+  final descController = TextEditingController();
 
   ContentInputDialog({
     super.key,
     required this.itemName,
+    required this.qty,
     required this.barcodeValue,
     required this.controller,
   });
@@ -46,17 +51,17 @@ class ContentInputDialog extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        title: const Center(
-          child: Text(
-            'Masukkan Jumlah Barang',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
-          ),
+        title: const Text(
+          'Informasi Barang',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
         ),
-        actionsPadding: EdgeInsets.only(top: 20, bottom: 10, right: 20),
-        contentPadding: const EdgeInsets.fromLTRB(20.0, 26.0, 20.0, 0.0),
+        titlePadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        contentPadding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0.0),
+        actionsPadding: EdgeInsets.only(top: 10, bottom: 10, right: 20),
         content: Obx(() {
           if (controller.isLoadingProduct.value) {
-            return SizedBox(height: 50, width: 50, child: const LoadingView());
+            return const SizedBox(height: 50, width: 50, child: LoadingView());
           }
 
           if (controller.messageProduct.isNotEmpty) {
@@ -68,33 +73,15 @@ class ContentInputDialog extends StatelessWidget {
               ),
             );
           }
+
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text.rich(
-                TextSpan(
-                  text: 'Nama Barang: ',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: itemName,
-                      style: const TextStyle(fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: qtyController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Jumlah',
-                  hintText: '0',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
+              _buildText(title: 'Nama Barang', value: itemName),
+              const SizedBox(height: 5),
+              _buildText(title: 'Qty', value: qty),
+              const SizedBox(height: 30),
               const Text(
                 'Unggah Foto barang',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -116,54 +103,27 @@ class ContentInputDialog extends StatelessWidget {
         }),
         actions: [
           Obx(
-            () => Visibility(
-              visible: !controller.isLoadingProduct.value,
-              child: TextButton(
-                onPressed: () {
-                  if (controller.isMaxFailureChecker.value) {
-                    controller.onTapHubungiAdmin();
-                    // Get.offNamed(
-                    //   Routes.DETAIL_ORDER,
-                    //   arguments: {
-                    //     'invoice': controller.noInvoice.value,
-                    //     'routeFrom': 'home',
-                    //   },
-                    // );
-                    return;
-                  }
-                  if (!controller.statusPostProduct.value &&
-                      controller.messageProduct.isNotEmpty) {
-                    controller.messageProduct.value = '';
-                    return;
-                  }
-                  Get.back(); // Tutup dialog
-                  qtyController.clear();
-                  controller.mediaFileList.clear();
+            () => TextButton(
+              onPressed: () {
+                if (controller.messageProduct.isNotEmpty) {
                   controller.messageProduct.value = '';
-                  controller.startScanner(); // Mulai ulang pemindaian
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, // Warna teks & ikon
-                  backgroundColor:
-                      Colors.redAccent[100], // Warna latar belakang
-                  disabledForegroundColor: Colors.grey, // Warna saat disabled
-                  disabledBackgroundColor: Colors.blue[100],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
+                  return;
+                }
+                controller.isLoadingProduct.value = false;
+                Get.back(result: false); // Tutup dialog
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white, // Warna teks & ikon
+                backgroundColor:
+                    Colors.redAccent[100], // Warna latar belakang
+                disabledForegroundColor: Colors.grey, // Warna saat disabled
+                disabledBackgroundColor: Colors.blue[100],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
                 ),
-                child: Obx(
-                  () => Text(
-                    controller.isMaxFailureChecker.value
-                        ? 'Hubungi Admin'
-                        : controller.messageProduct.isEmpty
-                        ? 'Batal'
-                        : controller.messageProduct.isNotEmpty &&
-                              !controller.statusPostProduct.value
-                        ? 'Ulangi'
-                        : 'Kembali',
-                  ),
-                ),
+              ),
+              child: Text(
+                controller.messageProduct.value.isEmpty ? 'Batal' : 'Ulangi',
               ),
             ),
           ),
@@ -171,21 +131,12 @@ class ContentInputDialog extends StatelessWidget {
             () => Visibility(
               visible:
                   !controller.isLoadingProduct.value &&
-                  controller.messageProduct.isEmpty,
+                  controller.messageProduct.value.isEmpty,
               child: TextButton(
                 onPressed: () {
-                  if (qtyController.text.isEmpty &&
-                      controller.mediaFileList.isEmpty) {
-                    return;
-                  }
-
-                  controller.addProduct(
-                    barcode: barcodeValue,
-                    quantity: qtyController.text,
-                  );
-                  // qtyController.clear();
+                  controller.addProduct(barcode: barcodeValue, quantity: qty);
                   // controller.startScanner(); // Mulai ulang pemindaian
-                  // Get.back(); // Tutup dialog
+                  // Get.back(result: true); // Tutup dialog
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white, // Warna teks & ikon
@@ -196,13 +147,48 @@ class ContentInputDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(7),
                   ),
                 ),
-                child: Text('Tambah'),
+                child: const Text('Tambah'),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildText({required String title, required String value}) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 85,
+          child: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.normal),
+          ),
+        ),
+        Text(' :  ', style: const TextStyle(fontWeight: FontWeight.w600)),
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    );
+    // Text.rich(
+    //   TextSpan(
+    //     text: '$title: ',
+    //     style: const TextStyle(fontWeight: FontWeight.w600),
+    //     children: [
+    //       TextSpan(
+    //         text: value,
+    //         style: const TextStyle(fontWeight: FontWeight.normal),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   Widget _buildImageView() {

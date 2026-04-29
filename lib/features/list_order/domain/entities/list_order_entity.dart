@@ -32,7 +32,7 @@ class OrderEntity {
       invoice: json['invoice'],
       orderNo: json['order_no'],
       customer: json['customer'],
-      date: DateModel.fromJson(json['dates']),
+      date: json['dates'] != null ? DateModel.fromJson(json['dates']) : json['date'] != null ? DateModel.fromJson(json['date']) : DateModel(transaction: '', delivery: ''),
       courier: json['courier'] == null ? null : Courier.fromJson(json['courier']),
       pic: json['pic'] == null ? null : Status.fromJson(json['pic']),
       checker1: json['checker1'] == null ? null : Status.fromJson(json['checker1']),

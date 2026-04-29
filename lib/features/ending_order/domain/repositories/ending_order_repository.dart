@@ -7,4 +7,7 @@ abstract class EndingOrderRepository {
   Future<ResultCustom<Failure, EndingOrderEntity>> postEndingOrder(
     ParamsEndingOrder params,
   );
+  Future<ResultCustom<Failure, EndingOrderEntity>> pendingOrder(
+    ParamsEndingOrder params,
+  );
 }

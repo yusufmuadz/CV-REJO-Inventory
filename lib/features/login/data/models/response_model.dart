@@ -18,7 +18,7 @@ class ResponseModelLoginSuccess {
       ResponseModelLoginSuccess(
         statusCode: json["code"],
         message: json["message"],
-        errors: json["errors"] == null ? null : json["errors"]['details'],
+        errors: json["error"] == null ? null : json["error"]['details'],
         userModel: json["data"] == null
             ? null
             : UserModel.fromJson(json["data"]),

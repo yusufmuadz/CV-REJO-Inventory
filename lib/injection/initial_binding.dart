@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../core/middlewares/session_manager.dart';
 import '../core/network/dio_client.dart';
 import '../core/services/dialog_service.dart';
 import '../core/services/navigation_service.dart';
@@ -20,7 +21,10 @@ class InitialBinding extends Bindings {
     }, fenix: true);
 
     // Jika pakai DIO
-    Get.lazyPut<DioClient>(() => DioClient(Get.find<TokenStorage>()), fenix: true);
+    Get.lazyPut<DioClient>(
+      () => DioClient(Get.find<TokenStorage>()),
+      fenix: true,
+    );
 
     // // Register NavigationService (permanent agar navigatorKey tetap hidup)
     // Get.lazyPut<NavigationService>(
@@ -30,5 +34,6 @@ class InitialBinding extends Bindings {
 
     // Register DialogService
     Get.lazyPut<DialogService>(() => DialogService(), fenix: true);
+    Get.lazyPut<SessionManager>(() => SessionManager(), fenix: true);
   }
 }

@@ -8,8 +8,9 @@ class Success<Failure, T> extends ResultCustom<Failure, T> {
   const Success(this.data, this.failure);
 }
 
-class ErrorResult<Failure, T> extends ResultCustom<Failure,T> {
+class ErrorResult<Failure, T> extends ResultCustom<Failure, T> {
   final String message;
   final int? statusCode;
-  const ErrorResult({required this.message, this.statusCode});
+  final bool? isMaxFailure;
+  const ErrorResult({required this.message, this.statusCode, this.isMaxFailure});
 }

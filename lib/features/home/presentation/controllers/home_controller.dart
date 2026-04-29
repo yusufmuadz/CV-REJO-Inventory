@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:cv_rejo/features/list_order/domain/params/get_transaction_param.dart';
+import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +13,6 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/storage_service.dart';
-import '../../../login/data/models/user_model.dart';
 
 class HomeController extends GetxController {
   final GetHomeUseCase homeUseCase;
@@ -33,21 +30,11 @@ class HomeController extends GetxController {
   final totalOrderHistory = 0.obs;
   final versionApp = '1.0.0'.obs;
 
-  UserModel user = UserModel(
-    userId: '',
-    nama: '',
-    username: '',
-    jabatan: '',
-    notelp: '',
-    alamat: '',
-  );
-
   @override
   void onReady() {
     super.onReady();
     _tokenStorage = Get.find<TokenStorage>();
     if (!isLoading.value) {
-      _getUser();
       _getHomeData();
       // _getTransaction();
     }
@@ -62,26 +49,30 @@ class HomeController extends GetxController {
 
   void onRefreshTransaction() {
     if (isLoading.value) return;
-    _getUser();
     _getHomeData();
     // _getTransaction();
-  }
-
-  void _getUser() {
-    final userStorage = GetStorage().read('user');
-
-    if (userStorage != null) {
-      final parsing = jsonDecode(userStorage);
-      user = UserModel.fromJson(parsing);
-      // debugPrint('User Parsing: ${user.jabatan}');
-    }
   }
 
   void routeTo() {
     final invoice = GetStorage().read('noInvoice') ?? '';
 
+    /// ==== AWAL SEMENTARA ==== ///
+
+    if (AppRole.isDriver) {
+      Get.toNamed(
+        Routes.DETAIL_ORDER,
+        arguments: {'invoice': '01SL20260400016', 'routeFrom': 'home'},
+      );
+      return;
+    }
+
+    /// ==== AKHIR SEMENTARA ==== ///
+
     if (invoice.isNotEmpty) {
-      Get.toNamed(Routes.DETAIL_ORDER, arguments: {'invoice': invoice, 'routeFrom': 'home'});
+      Get.toNamed(
+        Routes.DETAIL_ORDER,
+        arguments: {'invoice': invoice, 'routeFrom': 'home'},
+      );
     } else {
       GetStorage().remove('noInvoice');
       Get.toNamed(Routes.LIST_ORDER);
@@ -94,47 +85,24 @@ class HomeController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    final result = await homeUseCase.callHomeData();
+    try {
+      final result = await homeUseCase.callHomeData();
 
-    switch (result) {
-      case Success(:final data):
-        totalOrder.value = data.totalRowTransaction;
-        totalOrderHistory.value = data.totalRowTransactionHistory;
+      switch (result) {
+        case Success(:final data):
+          totalOrder.value = data.totalRowTransaction;
+          totalOrderHistory.value = data.totalRowTransactionHistory;
 
-      case ErrorResult(:final message):
-        if (Get.isDialogOpen == true) Get.back();
-        dialogService.showError('Failed', message);
-    }
-
-    if (result == null) {
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
+    } finally {
+      isLoading.value = false;
     }
-
-    isLoading.value = false;
-  }
-
-  Future<void> _getTransaction() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-
-    final result = await homeUseCase.call(ParamsGetTransaction());
-
-    switch (result) {
-      case Success(:final data):
-        totalOrder.value = data.totalRow;
-
-      case ErrorResult(:final message):
-        if (Get.isDialogOpen == true) Get.back();
-        dialogService.showError('Failed', message);
-    }
-
-    if (result == null) {
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data');
-    }
-
-    isLoading.value = false;
   }
 
   ///// PROFILE
@@ -168,6 +136,7 @@ class HomeController extends GetxController {
   void onTapLogout() {
     GetStorage().remove('noInvoice');
     GetStorage().remove('user');
+    AppRole.logout();
     _tokenStorage.clear();
     Get.offAllNamed(Routes.LOGIN);
   }

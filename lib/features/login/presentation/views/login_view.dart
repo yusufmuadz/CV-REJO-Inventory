@@ -1,3 +1,4 @@
+import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:cv_rejo/shared/text_field/textfield_shared.dart';
 import 'package:cv_rejo/utils/form_validator.dart';
 import 'package:flutter/material.dart';
@@ -115,14 +116,10 @@ class LoginView extends GetView<LoginController> {
   }
 
   Widget _buttonLogin() {
-    return ElevatedButton(
+    return CustomButton.basicButton(
+      title: 'Masuk',
+      color: const Color(0xFF2ED471),
       onPressed: () => controller.login(),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFFFF51BD),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: const Text('Masuk'),
     );
   }
 }

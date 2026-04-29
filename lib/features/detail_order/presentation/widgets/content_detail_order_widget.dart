@@ -2,6 +2,7 @@ import 'package:cv_rejo/features/detail_order/presentation/controllers/detail_or
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../gen/assets.gen.dart';
@@ -17,17 +18,17 @@ class ContentDetailOrderWidget extends StatelessWidget {
       children: [
         _buildBody(
           title: 'ID Transaksi',
-          value: controller.orderDetail.value.invoice,
+          value: controller.orderDetail.value.invoice.replaceAll('SL', 'SO'),
         ),
-        _buildBody(
-          title: 'No Resi',
-          value: controller.orderDetail.value.courier.waybillNumber,
-          pengiriman: controller.orderDetail.value.courier.service,
-        ),
-        _buildBody(
-          title: 'No Pesanan',
-          value: controller.orderDetail.value.orderNo,
-        ),
+        // _buildBody(
+        //   title: 'No Resi',
+        //   value: controller.orderDetail.value.courier.waybillNumber,
+        //   pengiriman: controller.orderDetail.value.courier.service,
+        // ),
+        // _buildBody(
+        //   title: 'No Pesanan',
+        //   value: controller.orderDetail.value.invoice.replaceAll('SL', 'SO'),
+        // ),
         _buildInfoCustomer(
           username: controller.orderDetail.value.customer.name,
           namePenerima: controller.orderDetail.value.customer.username,
@@ -131,6 +132,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
               style: TextStyles.basicTextStyle(color: const Color(0xFF7C7C7C)),
             ),
           ),
+          const SizedBox(width: 10),
           SizedBox(
             width: 135,
             child: Text(
@@ -162,11 +164,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoContent(
-            title: 'Username',
-            value: username,
-            image: Assets.icons.cardMember.path,
-          ),
+          // _buildInfoContent(
+          //   title: 'Username',
+          //   value: username,
+          //   image: Assets.icons.cardMember.path,
+          // ),
           _buildInfoContent(
             title: 'Nama Penerima',
             value: namePenerima,
@@ -174,15 +176,16 @@ class ContentDetailOrderWidget extends StatelessWidget {
           ),
           _buildInfoContent(
             title: 'Tanggal Pesanan Masuk',
-            value: tanggalPesanan,
-            image: Assets.icons.dateIn.path,
-          ),
-          _buildInfoContent(
-            title: 'Tanggal Batas Pengiriman',
             value: tanggalBatas,
-            image: Assets.icons.dateOrder.path,
+            image: Assets.icons.dateIn.path,
             mgBottom: 0,
           ),
+          // _buildInfoContent(
+          //   title: 'Tanggal Batas Pengiriman',
+          //   value: tanggalBatas,
+          //   image: Assets.icons.dateOrder.path,
+          //   mgBottom: 0,
+          // ),
         ],
       ),
     );
@@ -229,7 +232,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                     controller.orderDetail.value.orderDetails?[index];
                 String setQty = '${orderDetail?.pic.qty} / ${orderDetail?.qty}';
 
-                if (controller.userModel.value.jabatan == 'packing') {
+                if (AppRole.isChecker1) {
                   setQty = '${orderDetail?.checker1.qty}';
                 }
 
@@ -248,9 +251,8 @@ class ContentDetailOrderWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(setQty, style: TextStyles.basicTextStyle()),
                     Visibility(
-                      visible:
-                          controller.userModel.value.jabatan == 'sealing' ||
-                          controller.userModel.value.jabatan == 'delivery',
+                      visible: AppRole
+                          .isChecker2, // visible: AppRole.isChecker2 || AppRole.isDriver,
                       child: Container(
                         margin: const EdgeInsets.only(left: 8),
                         child: Checkbox(

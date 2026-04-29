@@ -2,10 +2,13 @@ import 'package:cv_rejo/features/list_order/domain/params/get_transaction_param.
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/district_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 
 abstract class ListHistoryOrderRepository {
   Future<ResultCustom<Failure, List<OrderEntity>>> getListOrders(
     ParamsGetTransaction params,
   );
+
+  Future<ResultCustom<Failure, List<DistrictEntity>>> getDistrict();
 }

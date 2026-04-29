@@ -1,5 +1,6 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/district_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/repositories/list_history_order_repository.dart';
@@ -16,6 +17,17 @@ class ListHistoryOrderRepositoryImpl implements ListHistoryOrderRepository {
   ) async {
     try {
       final response = await dataSource.fetchTransaction(params);
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<DistrictEntity>>> getDistrict() async {
+    try {
+      final response = await dataSource.getDistrict();
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

@@ -6,6 +6,8 @@ import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dar
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../login/domain/entities/user_entity.dart';
+import '../../../scan_product/domain/entities/post_item_product_entity.dart';
+import '../../../scan_product/domain/params/post_product_param.dart';
 import '../entities/detail_order_entity.dart';
 import '../repositories/detail_order_repository.dart';
 
@@ -27,13 +29,26 @@ class DetailOrderUseCase {
     return repository.getTransportations();
   }
 
+  Future<ResultCustom<Failure, List<TransportationEntity>>>
+  callLoaderTransportations() {
+    return repository.getLoaderTransportations();
+  }
+
   Future<ResultCustom<Failure, BasicEntity>> callPostAssistant(
     ParamsAddAssistant params,
   ) {
     return repository.addAssistant(params);
   }
 
-  Future<ResultCustom<Failure, BasicEntity>> callPendingSO(ParamsPendingSO params) {
+  Future<ResultCustom<Failure, BasicEntity>> callPendingSO(
+    ParamsPendingSO params,
+  ) {
     return repository.pendingSO(params);
+  }
+
+  Future<ResultCustom<Failure, PostItemProductEntity>> callPostItem(
+    ParamsPostProduct params,
+  ) {
+    return repository.postItemProduct(params);
   }
 }

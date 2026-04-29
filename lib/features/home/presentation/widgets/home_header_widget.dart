@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../gen/assets.gen.dart';
 import '../controllers/home_controller.dart';
 
@@ -22,12 +23,12 @@ class HomeHeaderWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hi! ${controller.user.nama.capitalize}",
+          "Hi! ${AppRole.name!.capitalize}",
           style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: Colors.black),
         ),
         const SizedBox(height: 3),
         Text(
-          "Mari ${controller.user.jabatan.capitalizeFirst} Orderanmu",
+          "Mari ${AppRole.current!.name.capitalizeFirst} Orderanmu",
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
         ),
       ],

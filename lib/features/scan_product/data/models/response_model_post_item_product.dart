@@ -1,10 +1,11 @@
+import 'package:cv_rejo/features/scan_product/domain/entities/error_post_entity.dart';
+
 import '../../domain/entities/post_item_product_entity.dart';
-import '../../domain/entities/scan_product_entity.dart';
 
 class ResponseModelPostItemProduct {
   final bool? status;
   final String? message;
-  final String? error;
+  final ErrorPostItemProductEntity? error;
   final Data? data;
 
   ResponseModelPostItemProduct({
@@ -18,7 +19,7 @@ class ResponseModelPostItemProduct {
       ResponseModelPostItemProduct(
         status: json["status"],
         message: json["message"],
-        error: json["error"] == null ? null : json["error"]['details'],
+        error: json["error"] == null ? null : ErrorPostItemProductEntity.fromJson(json["error"]),
         data: Data.fromMap(json),
       );
 }

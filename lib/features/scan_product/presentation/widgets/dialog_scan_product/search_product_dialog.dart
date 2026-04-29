@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../utils/loading_custom.dart';
+import 'input_qty_dialog.dart';
 
 void showSearchProduct() {
   Get.bottomSheet(
@@ -140,6 +141,11 @@ class SearchProduct extends StatelessWidget {
               subtitle: Text(item.barcode),
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               onTap: () {
+                openInputQtyDialog(
+                  itemName: item.nama,
+                  barcodeValue: item.barcode,
+                  controller: controller,
+                );
                 // controller.showConfirmationDialog(item);
               },
             ),

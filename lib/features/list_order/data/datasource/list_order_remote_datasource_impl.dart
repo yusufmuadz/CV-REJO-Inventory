@@ -5,6 +5,8 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/params/get_transaction_param.dart';
+import '../../domain/params/take_it_param.dart';
+import '../models/response_model_get_district.dart';
 import '../models/response_model_get_transaction_all.dart';
 import '../models/response_model_take_it_transaction.dart';
 import 'list_order_remote_datasource.dart';
@@ -53,10 +55,18 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelTakeItTransaction> takeItTransaction(String invoice) async {
+  Future<ResponseModelTakeItTransaction> takeItTransaction(
+    ParamsTakeIt params,
+  ) async {
     try {
-      final response = await dioClient.put(ApiEndpoints.takeItTransaction,
-        data: {"invoice": invoice},
+      String role = params.role;
+
+      if (params.role == 'loader' && params.statusChecker2 != 'complete') {
+        role = 'check2';
+      }
+      final response = await dioClient.put(
+        ApiEndpoints.takeItTransaction(role),
+        data: {"invoice": params.invoice},
       );
 
       // debugPrint('Data Take It Transaction Remote DataSource: ${response.data}');
@@ -75,6 +85,30 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
       throw ServerException(message: 'error Take It Transaction: $e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetDistrict> getDistrict() async {
+    try {
+      final response = await dioClient.get(ApiEndpoints.getDistrict);
+
+      // debugPrint('Data Get District Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetDistrict.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: 'error Get District: $e');
     }
   }
 }

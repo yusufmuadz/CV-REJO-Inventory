@@ -1,3 +1,4 @@
+import 'package:cv_rejo/utils/loading_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,29 +22,33 @@ class SortWidget extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Text(
-              'Filter',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      child: Obx(() {
+        if (controller.isLoadingSort.value) {
+          return const Center(child: LoadingView());
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text(
+                'Filter',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 13.0),
-          Divider(color: Colors.grey.shade300, thickness: 1, height: 2),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.only(top: 10.0),
-              children: [
-                _buildTitle(title: 'Urutkan berdasarkan'),
-                Obx(
-                  () => Wrap(
+            const SizedBox(height: 13.0),
+            Divider(color: Colors.grey.shade300, thickness: 1, height: 2),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.only(top: 10.0),
+                children: [
+                  _buildTitle(title: 'Urutkan berdasarkan'),
+                  Wrap(
                     spacing: 10.0,
                     runSpacing: 10.0,
                     children: [
@@ -63,12 +68,9 @@ class SortWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 15.0),
-                _buildTitle(title: 'Status Pengerjaan'),
-                // const SizedBox(height: 10.0),
-                Obx(
-                  () => Wrap(
+                  const SizedBox(height: 15.0),
+                  _buildTitle(title: 'Status Pengerjaan'),
+                  Wrap(
                     spacing: 10.0,
                     runSpacing: 0.0,
                     children: controller.status
@@ -91,94 +93,98 @@ class SortWidget extends StatelessWidget {
 
                               controller.isStatusSelected.value = status['name']
                                   .toString();
-
-                              // if (status['name'] == 'Semua') {
-                              //   for (var element in controller.status) {
-                              //     element['isSelected'] = p1;
-                              //   }
-                              // } else {
-                              //   final allSelected = controller.status
-                              //       .where((e) => e['name'] != 'Semua')
-                              //       .every((s) => s['isSelected'] == true);
-
-                              //   controller.status[0]['isSelected'] = false;
-                              //   if (allSelected) {
-                              //     controller.status[0]['isSelected'] = true;
-                              //   }
-                              // }
                               controller.status.refresh();
                             },
                           ),
                         )
                         .toList(),
                   ),
+                  const SizedBox(height: 15.0),
+                  _buildTitle(title: 'Kabupaten/Kota'),
+                  Wrap(
+                    spacing: 10.0,
+                    runSpacing: 0.0,
+                    children: controller.listDistrict
+                        .map(
+                          (district) => _buildSortingOption(
+                            label: district.kabupaten as String,
+                            isSelected:
+                                controller.isDistrictSelected.value ==
+                                district.kabupaten,
+                            onSelected: (bool p1) {
+                              controller.isDistrictSelected.value = district
+                                  .kabupaten
+                                  .toString();
+                              controller.listDistrict.refresh();
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 3.0),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.redAccent.shade200,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(double.infinity, 45),
+                    ),
+                    onPressed: () {
+                      // Apply filter and sorting
+                      controller.onResetSort();
+                      Get.back();
+                    },
+                    child: const Text(
+                      'Reset',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-                // const SizedBox(height: 15.0),
-                // _buildTitle(title: 'Armada'),
-                // const SizedBox(height: 10.0),
-                // Obx(
-                //   () => Wrap(
-                //     spacing: 10.0,
-                //     runSpacing: 0.0,
-                //     children: controller.armada
-                //         .map(
-                //           (armada) => _buildSortingOption(
-                //             label: armada['name'] as String,
-                //             isSelected: armada['isSelected'] as bool,
-                //             onSelected: (bool p1) {
-                //               armada['isSelected'] = p1;
-
-                //               // if (armada['name'] == 'Semua') {
-                //               //   for (var element in controller.armada) {
-                //               //     element['isSelected'] = p1;
-                //               //   }
-                //               // } else {
-                //               //   final allSelected = controller.armada
-                //               //       .where((e) => e['name'] != 'Semua')
-                //               //       .every((s) => s['isSelected'] == true);
-
-                //               //   controller.armada[0]['isSelected'] = false;
-                //               //   if (allSelected) {
-                //               //     controller.armada[0]['isSelected'] = true;
-                //               //   }
-                //               // }
-                //               controller.armada.refresh();
-                //             },
-                //           ),
-                //         )
-                //         .toList(),
-                //   ),
-                // ),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFd6993a),
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(double.infinity, 45),
+                    ),
+                    onPressed: () {
+                      // Apply filter and sorting
+                      controller.onRefreshTransaction();
+                      Get.back();
+                    },
+                    child: const Text(
+                      'Terapkan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 3.0),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFFd6993a),
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              minimumSize: const Size(double.infinity, 45),
-            ),
-            onPressed: () {
-              // Apply filter and sorting
-              controller.onRefreshTransaction();
-              Get.back();
-            },
-            child: const Text(
-              'Terapkan',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 

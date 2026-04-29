@@ -1,25 +1,21 @@
-import 'dart:convert';
-
-import 'package:cv_rejo/features/detail_order/domain/entities/transportation_entity.dart';
-import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dart';
-import 'package:cv_rejo/features/detail_order/presentation/widgets/input_field_dialog.dart';
-import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
-import '../../../login/data/models/user_model.dart';
 import '../../../login/domain/entities/user_entity.dart';
+import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
+import '../../domain/entities/transportation_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/usecases/detail_order_usecase.dart';
+import '../widgets/dialog/input_product_dialog.dart';
 
 class DetailOrderController extends GetxController {
   final DetailOrderUseCase detailOrderUseCase;
@@ -28,11 +24,18 @@ class DetailOrderController extends GetxController {
 
   final isLoading = false.obs;
   final isLoadingAssistant = false.obs;
+  final isLoadingProduct = false.obs;
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
+  final takeItOrder = false.obs;
+
+  final statusChecker2 = ''.obs;
 
   final isSelect = false.obs;
+
+  final messageProduct = ''.obs;
+  final statusPostProduct = false.obs;
 
   final driverSelected = ''.obs;
   final assistantSelected = ''.obs;
@@ -48,15 +51,6 @@ class DetailOrderController extends GetxController {
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
 
-  final userModel = UserModel(
-    userId: '',
-    nama: '',
-    username: '',
-    jabatan: '',
-    notelp: '',
-    alamat: '',
-  ).obs;
-
   final orderDetail = DetailOrderEntity(
     invoice: '',
     orderNo: '',
@@ -68,18 +62,19 @@ class DetailOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _getStorage();
     final args = Get.arguments;
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
+      takeItOrder.value = args['take_it_order'] ?? false;
+      statusChecker2.value = args['status_checker2'] ?? '';
     }
   }
 
   @override
   void onReady() {
     super.onReady();
-    // _getDetailOrder();
+    _getDetailOrder();
   }
 
   @override
@@ -100,13 +95,24 @@ class DetailOrderController extends GetxController {
     if (index != -1) {
       final order = orderDetail.value.orderDetails![index];
 
-      final result = await openInputFieldDialog(
-        itemName: order.item,
-        qty: order.qty,
-        controller: this,
-      );
+      if (order.isChecked) return;
 
-      final updatedOrder = order.copyWith(isChecked: !order.isChecked);
+      mediaFileList.clear();
+
+      bool result = false;
+
+      if (!order.isChecked) {
+        result =
+            await openInputFieldDialog(
+              itemName: order.item,
+              qty: order.qty,
+              controller: this,
+              barcodeValue: order.barcode,
+            ) ??
+            false;
+      }
+
+      final updatedOrder = order.copyWith(isChecked: result);
 
       final updateList = List<ItemOrderModel>.from(
         orderDetail.value.orderDetails!,
@@ -133,7 +139,12 @@ class DetailOrderController extends GetxController {
           assistantSelected.value = data.assistant?.namaKenek ?? '';
           selectTransportation.value = data.assistant?.namaKendaraan ?? '';
 
-          isSelect.value = orderDetail.value.assistant != null;
+          final check =
+              data.assistant!.namaDriver != '-' &&
+              data.assistant!.namaDriver != '-' &&
+              data.assistant!.namaDriver != '-';
+
+          isSelect.value = check;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -164,8 +175,8 @@ class DetailOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Detail Order Users: $data');
           listUser.value = data as List<UserEntity>;
-          driverSelected.value = data.first.username;
-          assistantSelected.value = data.first.username;
+          driverSelected.value = data.first.nama;
+          assistantSelected.value = data.first.nama;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -176,7 +187,14 @@ class DetailOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Detail Order Users: $data');
           transportations.value = data as List<TransportationEntity>;
-          selectTransportation.value = data.first.namaKendaraan!;
+
+          if (data.first.namaKendaraan != null &&
+              data.first.namaKendaraan != '-') {
+            selectTransportation.value = data.first.namaKendaraan!;
+          } else if (data.first.jenisKendaraan != null &&
+              data.first.jenisKendaraan != '-') {
+            selectTransportation.value = data.first.jenisKendaraan!;
+          }
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -191,15 +209,23 @@ class DetailOrderController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
+    // debugPrint('Kendaraan: ${selectTransportation.value}');
+    // debugPrint('Driver: ${driverSelected.value}');
+    // debugPrint('Asisten: ${assistantSelected.value}');
+
+    // debugPrint('Kendaraan: ${loader}');
+    // debugPrint('Driver: ${driver}');
+    // debugPrint('Asisten: ${kenek}');
+
     try {
       final loader = transportations.firstWhereOrNull(
         (element) => element.namaKendaraan == selectTransportation.value,
       );
       final driver = listUser.firstWhereOrNull(
-        (element) => element.username == driverSelected.value,
+        (element) => element.nama == driverSelected.value,
       );
       final kenek = listUser.firstWhereOrNull(
-        (element) => element.username == assistantSelected.value,
+        (element) => element.nama == assistantSelected.value,
       );
 
       final result = await detailOrderUseCase.callPostAssistant(
@@ -234,46 +260,86 @@ class DetailOrderController extends GetxController {
     }
   }
 
-  Future<void> pendingSO() async {
-    if (isLoading.value) return;
+  Future<void> addProduct({
+    required String barcode,
+    required String quantity,
+  }) async {
+    if (isLoadingProduct.value) return;
 
-    if (reasonController.text.isEmpty) {
-      dialogService.showErrorSnackbar('Isi Alasan Pending SO');
+    if (mediaFileList.isEmpty) {
       return;
     }
-    isLoading.value = true;
+
+    isLoadingProduct.value = true;
 
     try {
-      final result = await detailOrderUseCase.callPendingSO(
-        ParamsPendingSO(invoice: noInvoice.value),
+      final result = await detailOrderUseCase.callPostItem(
+        ParamsPostProduct(
+          role: AppRole.current!.name.toLowerCase(),
+          barcode: barcode,
+          invoice: noInvoice.value,
+          qty: quantity,
+          images: mediaFileList,
+        ),
       );
 
       switch (result) {
         case Success(:final data):
-          if (data.status) {
-            dialogService.showDialogBox(
-              title: 'Success',
-              description: data.message,
-              barrierDismissible: false,
-              onPressed: () => Get.offNamed(Routes.LIST_ORDER),
-            );
-          } else {
-            if (Get.isDialogOpen == true) Get.back();
-            dialogService.showError('Failed', data.message);
-          }
+          debugPrint('Data Item Product: $data');
+          // messageProduct.value = 'Berhasil Menambahkan Produk';
+          // statusPostProduct.value = true;
+          Get.back(result: true); // Tutup dialog
+          dialogService.showSuccessSnackbar('Berhasil Menambahkan Produk');
 
         case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
+          messageProduct.value = message;
+          statusPostProduct.value = false;
       }
-    } catch (e) {
-      debugPrint('Error Add Assistant: $e');
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', '$e');
     } finally {
-      isLoading.value = false;
+      isLoadingProduct.value = false;
     }
   }
+
+  // Future<void> pendingSO() async {
+  //   if (isLoading.value) return;
+
+  //   if (reasonController.text.isEmpty) {
+  //     dialogService.showErrorSnackbar('Isi Alasan Pending SO');
+  //     return;
+  //   }
+  //   isLoading.value = true;
+
+  //   try {
+  //     final result = await detailOrderUseCase.callPendingSO(
+  //       ParamsPendingSO(invoice: noInvoice.value),
+  //     );
+
+  //     switch (result) {
+  //       case Success(:final data):
+  //         if (data.status) {
+  //           dialogService.showDialogBox(
+  //             title: 'Success',
+  //             description: data.message,
+  //             barrierDismissible: false,
+  //             onPressed: () => Get.offNamed(Routes.LIST_ORDER),
+  //           );
+  //         } else {
+  //           if (Get.isDialogOpen == true) Get.back();
+  //           dialogService.showError('Failed', data.message);
+  //         }
+
+  //       case ErrorResult(:final message):
+  //         if (Get.isDialogOpen == true) Get.back();
+  //         dialogService.showError('Failed', message);
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error Add Assistant: $e');
+  //     if (Get.isDialogOpen == true) Get.back();
+  //     dialogService.showError('Failed', '$e');
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   //////// ====== PICK IMAGE ====== ////////
 
@@ -303,14 +369,5 @@ class DetailOrderController extends GetxController {
   void clearAllImages() {
     mediaFileList.clear();
     update(); // Memperbarui state setelah semua gambar dan teks dihapus
-  }
-
-  void _getStorage() {
-    final userStorage = GetStorage().read('user');
-
-    if (userStorage != null) {
-      final parsing = jsonDecode(userStorage);
-      userModel.value = UserModel.fromJson(parsing);
-    }
   }
 }

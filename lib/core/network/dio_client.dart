@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import 'base_response.dart';
 import 'dio_interceptor.dart';
@@ -13,8 +14,8 @@ class DioClient {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
@@ -33,7 +34,13 @@ class DioClient {
 
     dio.interceptors.add(DioInterceptor(dio: dio, tokenStorage: tokenStorage));
 
-    dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+    dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (obj) => debugPrint('🔍 DIO LOG: $obj'),
+      ),
+    );
   }
 
   // ================= PARSING RESPONSE =================

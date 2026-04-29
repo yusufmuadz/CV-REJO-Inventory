@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
@@ -34,25 +35,24 @@ class HomeBoxWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        Expanded(
-          child: _boxItem(
-            title: 'List Packing',
-            value: controller.totalOrder.toString(),
-            begin: Alignment(0.95, -0.31),
-            end: Alignment(-0.95, 0.31),
-            colors: [
-              const Color(0xFFFFCA42),
-              const Color(0xFFF0B215),
-              const Color(0xFFE0AE2E),
-            ],
-            icon: Icon(
-              Icons.fact_check_outlined,
-              color: Colors.white,
-              size: 24,
-            ),
-            onTap: () => controller.routeTo(),
-          ),
-        ),
+        // Visibility(
+        //   visible: AppRole.isChecker2,
+        //   child: Expanded(
+        //     child: _boxItem(
+        //       title: 'List Loader',
+        //       value: controller.totalOrder.toString(),
+        //       begin: Alignment(0.95, -0.31),
+        //       end: Alignment(-0.95, 0.31),
+        //       colors: [const Color(0x797483F1), const Color(0xE76072F8)],
+        //       icon: Icon(
+        //         Icons.fact_check_outlined,
+        //         color: Colors.white,
+        //         size: 24,
+        //       ),
+        //       onTap: () => controller.routeTo(),
+        //     ),
+        //   ),
+        // ),
         const SizedBox(width: 10),
         Expanded(
           child: _boxItem(
@@ -84,11 +84,21 @@ class HomeBoxWidget extends StatelessWidget {
     required Widget icon,
     required Function() onTap,
   }) {
+    double padding = 16.0;
+    double fontSizeValue = 38.0;
+    double fontSizeTitle = 14.0;
+
+    // if (AppRole.isChecker2) {
+    //   padding = 8.0;
+    //   fontSizeValue = 33.0;
+    //   fontSizeTitle = 13.0;
+    // }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 91,
-        padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+        padding: EdgeInsets.fromLTRB(padding, 10, padding, 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(begin: begin, end: end, colors: colors),
@@ -104,9 +114,9 @@ class HomeBoxWidget extends StatelessWidget {
                 children: [
                   Text(
                     value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 38,
+                      fontSize: fontSizeValue,
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w500,
                       height: 1,
@@ -118,7 +128,7 @@ class HomeBoxWidget extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: fontSizeTitle,
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                       letterSpacing: 0.50,

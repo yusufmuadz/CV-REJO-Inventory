@@ -28,7 +28,7 @@ class AppTheme {
   static const double defaultFormRadius = 10;
 
   static TextTheme _textTheme(Color primaryText, Color secondaryText) {
-    return TextTheme(
+    final base = TextTheme(
       headlineLarge: TextStyle(
         fontSize: 26,
         fontWeight: FontWeight.w700,
@@ -65,6 +65,14 @@ class AppTheme {
         color: secondaryText,
       ),
     );
+
+    return base;
+    // .apply(
+    //   fontSizeDelta: 1.0,
+    //   fontSizeFactor: 0.0,
+    //   displayColor: primaryText,
+    //   bodyColor: secondaryText,
+    // );
   }
 
   // =========================

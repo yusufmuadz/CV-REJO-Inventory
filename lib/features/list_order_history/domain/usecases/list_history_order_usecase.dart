@@ -1,5 +1,6 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/district_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../repositories/list_history_order_repository.dart';
@@ -11,5 +12,9 @@ class ListHistoryOrderUseCase {
 
   Future<ResultCustom<Failure, List<OrderEntity>>> call(ParamsGetTransaction params) {
     return repository.getListOrders(params);
+  }
+
+  Future<ResultCustom<Failure, List<DistrictEntity>>> callGetDistrict() {
+    return repository.getDistrict();
   }
 }

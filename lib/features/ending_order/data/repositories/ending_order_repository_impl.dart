@@ -17,7 +17,26 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
     try {
       final response = await dataSource.postEndingOrder(params);
 
-      return Success(response.data!.toEntity(), '');
+      if (response.error == null) {
+        return Success(EndingOrderEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, EndingOrderEntity>> pendingOrder(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      final response = await dataSource.postEndingOrder(params);
+
+      if (response.error == null) {
+        return Success(EndingOrderEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

@@ -9,7 +9,10 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../detail_order/presentation/controllers/detail_order_controller.dart';
@@ -27,6 +30,8 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
   final dialogService = Get.find<DialogService>();
   final detailOrderController = Get.find<DetailOrderController>();
   final noInvoice = ''.obs;
+
+  final isMaxFailureChecker = false.obs;
 
   final messageProduct = ''.obs;
   final statusPostProduct = false.obs;
@@ -77,7 +82,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
         ParamsGetProduct(
           barcode: barcode,
           invoice: noInvoice.value,
-          role: detailOrderController.userModel.value.jabatan,
+          role: AppRole.current!.name.toLowerCase(),
         ),
       );
 
@@ -134,16 +139,24 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
     }
   }
 
+  Future<void> errorProductScanner() async {
+    dialogService.showErrorSnackbar(
+      title: 'Gagal!',
+      'Gagal menambahkan produk, silahkan coba lagi',
+    );
+  }
+
   Future<void> addProduct({
     required String barcode,
     required String quantity,
   }) async {
-    if (isLoadingProduct.value) return;
+    if (isLoadingProduct.value || mediaFileList.isEmpty) return;
     isLoadingProduct.value = true;
 
     try {
       final result = await scanProductUseCase.callPostItem(
         ParamsPostProduct(
+          role: AppRole.current!.name.toLowerCase(),
           barcode: barcode,
           invoice: noInvoice.value,
           qty: quantity,
@@ -156,17 +169,24 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
           debugPrint('Data Item Product: $data');
           messageProduct.value = 'Berhasil Menambahkan Produk';
           statusPostProduct.value = true;
-        // dialogService.showSuccessSnackbar('Berhasil Menambahkan Produk');
 
-        case ErrorResult(:final message):
+        case ErrorResult(:final message, :final isMaxFailure):
           messageProduct.value = message;
           statusPostProduct.value = false;
-        // if (Get.isDialogOpen == true) Get.back();
-        // dialogService.showError('Failed', message);
+          isMaxFailureChecker.value = isMaxFailure ?? false;
       }
     } finally {
       isLoadingProduct.value = false;
     }
+  }
+
+  void onTapHubungiAdmin() async {
+    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
+        ? launchUrl(
+            Uri.parse(ApiEndpoints.hubungiAdmin),
+            mode: LaunchMode.externalApplication,
+          )
+        : debugPrint("Can't open WhatsApp");
   }
 
   void selectImage(ImageSource source) async {
@@ -231,7 +251,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
       'Scanner Permission: ${controllerScanner.value.hasCameraPermission}',
     );
     debugPrint('Bool Scanner: ${isScanner.value}');
-    if (!isScanner.value) {
+    if (!isScanner.value || !controllerScanner.value.isRunning) {
       _subscription = controllerScanner.barcodes.listen(_handleBarcode);
       unawaited(controllerScanner.start());
       isScanner.value = true;
@@ -239,11 +259,12 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
   }
 
   void stopScanner() {
-    if (isScanner.value) {
+    if (isScanner.value || controllerScanner.value.isRunning) {
       unawaited(_subscription?.cancel());
       _subscription = null;
       unawaited(controllerScanner.stop());
       isScanner.value = false;
+      debugPrint('Bool Scanner Stop: ${isScanner.value}');
     }
   }
 

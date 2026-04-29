@@ -1,30 +1,20 @@
+import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:flutter/material.dart';
 
+import '../../features/list_order/domain/entities/list_order_entity.dart';
 import '../../gen/assets.gen.dart';
 
 class CustomCardList extends StatelessWidget {
   final Function() onTap;
-  final String idTransaksi;
-  final String noResi;
-  final String noPesanan;
-  final String kurir;
-  final String customer;
-  final String tanggalTransaksi;
-  final String tanggalDelivery;
   final bool showSelection;
   final String isSelected;
   final Function()? onCheckboxChanged;
+  final OrderEntity transaction;
 
   const CustomCardList({
     super.key,
     required this.onTap,
-    required this.idTransaksi,
-    required this.noResi,
-    required this.noPesanan,
-    required this.kurir,
-    required this.customer,
-    required this.tanggalTransaksi,
-    required this.tanggalDelivery,
+    required this.transaction,
     this.onCheckboxChanged,
     this.showSelection = false,
     this.isSelected = '',
@@ -44,14 +34,14 @@ class CustomCardList extends StatelessWidget {
               child: Container(
                 height: 20,
                 width: 20,
-                padding: isSelected == noPesanan
+                padding: isSelected == transaction.invoice
                     ? const EdgeInsets.all(2)
                     : null,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(width: 2, color: Colors.blue),
                 ),
-                child: isSelected == noPesanan
+                child: isSelected == transaction.invoice
                     ? Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -74,11 +64,11 @@ class CustomCardList extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected == noPesanan
+                color: isSelected == transaction.invoice
                     ? Colors.grey.shade100
                     : Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: isSelected == noPesanan
+                boxShadow: isSelected == transaction.invoice
                     ? []
                     : const [
                         BoxShadow(
@@ -93,33 +83,62 @@ class CustomCardList extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      _buildInfoText(title: 'ID Transaksi', value: idTransaksi),
-                      const SizedBox(height: 9),
-                      _buildInfoText(title: 'No. Resi', value: noResi),
-                      const SizedBox(height: 9),
-                      buildShippingText(kurir),
-                      const SizedBox(height: 9),
-                      _buildInfoText(title: 'No. Pesanan', value: noPesanan),
-                      const Divider(
+                      _buildInfoText(
+                        title: 'ID Transaksi',
+                        value: transaction.orderNo.replaceAll('SL', 'SO'),
+                      ),
+                      // const SizedBox(height: 9),
+                      // _buildInfoText(
+                      //   title: 'No. Resi',
+                      //   value: transaction.courier?.waybillNumber ?? '-',
+                      // ),
+                      // const SizedBox(height: 9),
+                      // buildShippingText(transaction.courier?.service ?? '-'),
+                      // const SizedBox(height: 9),
+                      // _buildInfoText(
+                      //   title: 'No. Pesanan',
+                      //   value: transaction.invoice.replaceAll('SL', 'SO'),
+                      // ),
+                      Divider(
                         thickness: 1,
                         height: 20,
-                        color: Colors.grey,
+                        color: Colors.grey[300],
                       ),
                       _buildInfoIconText(
                         image: Assets.icons.person2.path,
-                        value: customer,
+                        value: transaction.customer,
                       ),
                       const SizedBox(height: 10),
                       _buildInfoIconText(
                         image: Assets.icons.dateIn.path,
-                        value: tanggalTransaksi,
+                        value: transaction.date.transaction,
                       ),
                       const SizedBox(height: 10),
                       _buildInfoIconText(
                         image: Assets.icons.dateOrder.path,
-                        value: tanggalDelivery,
+                        value: transaction.date.delivery,
                       ),
                     ],
+                  ),
+                  Visibility(
+                    visible: AppRole.isChecker2,
+                    child: Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7),
+                          color: _buildColor(
+                            transaction.checker2?.status ?? '',
+                          ),
+                        ),
+                        child: Text(
+                          _buildText(transaction.checker2?.status ?? ''),
+                          style: _textStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -145,6 +164,28 @@ class CustomCardList extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _buildText(String status) {
+    String text = 'Checker';
+
+    if (status == 'complete') {
+      text = 'Loader';
+    }
+
+    return text;
+  }
+
+  Color _buildColor(String status) {
+    Color color = Color(0xFF5eb75f);
+
+    if (status == 'ongoing') {
+      color = const Color(0xFF5eb75f);
+    } else if (status == 'complete') {
+      color = const Color(0xFF666666);
+    }
+
+    return color;
   }
 
   Widget buildShippingText(String text) {

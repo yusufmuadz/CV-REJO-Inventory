@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +37,7 @@ class DialogService {
       barrierDismissible: barrierDismissible,
       content: PopScope(
         canPop: false,
-        child: Text(description),
+        child: Text(description, textAlign: TextAlign.center),
       ),
       actions: [
         TextButton(
@@ -79,6 +80,8 @@ class DialogService {
   void showLoading({String message = 'Loading...'}) {
     Get.defaultDialog(
       barrierDismissible: false,
+      title: '',
+      titlePadding: EdgeInsets.zero,
       content: Center(
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -127,9 +130,12 @@ class DialogService {
   }
 
   /// ===== SNACKBAR ERROR =====
-  SnackbarController showErrorSnackbar(String message) {
+  SnackbarController showErrorSnackbar(
+    String message, {
+    String title = 'Error',
+  }) {
     return showSnackbar(
-      title: 'Error',
+      title: title,
       message: message,
       backgroundColor: Colors.red,
     );
@@ -159,6 +165,73 @@ class DialogService {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> inputDialog({
+    required String title,
+    double height = 0.45,
+    bool singleButton = false,
+    EdgeInsetsGeometry? padding,
+    String titleButton1 = 'Batal',
+    String titleButton2 = 'Simpan',
+    Color color1 = const Color(0xFFc7a16d),
+    Color color2 = const Color(0xFF2ED471),
+    VoidCallback? onPressed1,
+    VoidCallback? onPressed2,
+    required Widget content,
+  }) {
+    return Get.defaultDialog(
+      radius: 10,
+      title: title,
+      titlePadding: const EdgeInsets.only(top: 20),
+      titleStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+      ),
+      contentPadding: padding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
+      content: SizedBox(height: Get.height * height, child: content),
+      confirm: SizedBox(
+        height: 45,
+        width: double.infinity,
+        child: _builtButton(
+          title1: titleButton1,
+          title2: titleButton2,
+          singleButton: singleButton,
+          color1: color1,
+          color2: color2,
+          onPressed1: onPressed1,
+          onPressed2: onPressed2,
+        ),
+      ),
+    );
+  }
+
+  Widget _builtButton({
+    required bool singleButton,
+    required String title1,
+    required String? title2,
+    required Color color1,
+    required Color? color2,
+    VoidCallback? onPressed1,
+    VoidCallback? onPressed2,
+  }) {
+    if (singleButton) {
+      return CustomButton.basicButton(
+        title: title1,
+        color: color1,
+        onPressed: () => onPressed1 ?? Get.back(),
+      );
+    }
+
+    return CustomButton.doubleButton(
+      title1: title1,
+      title2: title2!,
+      color1: color1,
+      color2: color2!,
+      onPressed1: onPressed1 ?? () => Get.back(),
+      onPressed2: onPressed2 ?? () => Get.back(),
     );
   }
 }

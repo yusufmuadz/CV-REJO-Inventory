@@ -1,8 +1,12 @@
+import 'package:cv_rejo/features/list_order_history/presentation/controllers/list_history_order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../utils/loading_custom.dart';
+import '../custom/custom_button.dart';
+
 class SortWidget extends StatelessWidget {
-  final dynamic controller;
+  final ListHistoryOrderController controller;
 
   const SortWidget({super.key, required this.controller});
 
@@ -19,29 +23,33 @@ class SortWidget extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Text(
-              'Filter',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      child: Obx(() {
+        if (controller.isLoadingSort.value) {
+          return const Center(child: LoadingView());
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text(
+                'Filter',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 13.0),
-          Divider(color: Colors.grey.shade300, thickness: 1, height: 2),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.only(top: 10.0),
-              children: [
-                _buildTitle(title: 'Urutkan berdasarkan'),
-                Obx(
-                  () => Wrap(
+            const SizedBox(height: 13.0),
+            Divider(color: Colors.grey.shade300, thickness: 1, height: 2),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.only(top: 10.0),
+                children: [
+                  _buildTitle(title: 'Urutkan berdasarkan'),
+                  Wrap(
                     spacing: 10.0,
                     runSpacing: 10.0,
                     children: [
@@ -61,72 +69,84 @@ class SortWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 15.0),
-                _buildTitle(title: 'Status Pengerjaan'),
-                Obx(
-                  () => Wrap(
+                  const SizedBox(height: 15.0),
+                  _buildTitle(title: 'Status Pengerjaan'),
+                  Wrap(
                     spacing: 10.0,
                     runSpacing: 0.0,
                     children: controller.status
                         .map<Widget>(
                           (status) => _buildSortingOption(
                             label: status['name'] as String,
-                            isSelected: status['isSelected'] as bool,
+                            isSelected:
+                                controller.isStatusSelected.value ==
+                                status['name'],
                             onSelected: (bool p1) {
+                              if (controller.isStatusSelected.value ==
+                                      status['name'] &&
+                                  status['isSelected'] == true) {
+                                status['isSelected'] = false;
+                                controller.isStatusSelected.value = '';
+                                return;
+                              }
+
                               status['isSelected'] = p1;
 
-                              if (status['name'] == 'Semua') {
-                                for (var element in controller.status) {
-                                  element['isSelected'] = p1;
-                                }
-                              } else {
-                                final allSelected = controller.status
-                                    .where((e) => e['name'] != 'Semua')
-                                    .every((s) => s['isSelected'] == true);
-
-                                controller.status[0]['isSelected'] = false;
-                                if (allSelected) {
-                                  controller.status[0]['isSelected'] = true;
-                                }
-                              }
+                              controller.isStatusSelected.value = status['name']
+                                  .toString();
                               controller.status.refresh();
                             },
                           ),
                         )
                         .toList(),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 15.0),
+                  _buildTitle(title: 'Kabupaten/Kota'),
+                  Wrap(
+                    spacing: 10.0,
+                    runSpacing: 0.0,
+                    children: controller.listDistrict
+                        .map(
+                          (district) => _buildSortingOption(
+                            label: district.kabupaten as String,
+                            isSelected:
+                                controller.isDistrictSelected.value ==
+                                district.kabupaten,
+                            onSelected: (bool p1) {
+                              controller.isDistrictSelected.value = district
+                                  .kabupaten
+                                  .toString();
+                              controller.listDistrict.refresh();
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 3.0),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFFd6993a),
+            const SizedBox(height: 3.0),
+            CustomButton.doubleButton(
+              title1: 'Reset',
+              title2: 'Terapkan',
+              color1: Colors.redAccent.shade200,
+              color2: const Color(0xFFd6993a),
               shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
               minimumSize: const Size(double.infinity, 45),
+              onPressed1: () {
+                // Apply filter and sorting
+                controller.onResetSort();
+                Get.back();
+              },
+              onPressed2: () {
+                // Apply filter and sorting
+                // controller.getTransaksi();
+                Get.back();
+              },
             ),
-            onPressed: () {
-              // Apply filter and sorting
-              // controller.getTransaksi();
-              Get.back();
-            },
-            child: const Text(
-              'Terapkan',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 

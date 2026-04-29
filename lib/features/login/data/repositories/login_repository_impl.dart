@@ -1,6 +1,6 @@
 import 'package:cv_rejo/core/error/failures.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/result/result_custom.dart';
 import '../../domain/entities/user_entity.dart';
@@ -15,11 +15,19 @@ class LoginRepositoryImpl implements LoginRepository {
   LoginRepositoryImpl(this.remoteDatasource);
 
   @override
-  Future<ResultCustom<Failure, UserEntity>> login(String email, String password) async {
+  Future<ResultCustom<Failure, UserEntity>> login(
+    String email,
+    String password,
+  ) async {
     try {
       final response = await remoteDatasource.login(email, password);
       // debugPrint('Data Login Repository: ${response.errors}');
-      
+
+      if (response.errors != null) {
+        debugPrint('Data Login Repository: ${response.errors}');
+        return ErrorResult(message: response.errors ?? '');
+      }
+
       return Success(response.toEntity(), response.errors);
     } on DioException catch (e) {
       return ErrorResult(

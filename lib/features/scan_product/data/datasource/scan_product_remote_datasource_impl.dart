@@ -91,7 +91,7 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
           ),
       });
 
-      final response = await dioClient.post(ApiEndpoints.saveQty, data: formData);
+      final response = await dioClient.post(ApiEndpoints.saveQty(params.role!), data: formData);
 
       // debugPrint('Data POST Item Product Remote DataSource: ${response.data}');
 

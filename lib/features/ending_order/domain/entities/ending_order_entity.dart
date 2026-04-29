@@ -1,17 +1,14 @@
 
 class EndingOrderEntity {
-  final String invoice;
-  final String orderNo;
+  final List<dynamic>? list;
 
   const EndingOrderEntity({
-    required this.invoice,
-    required this.orderNo,
+    this.list,
   });
 
   factory EndingOrderEntity.fromJson(Map<String, dynamic> json) {
     return EndingOrderEntity(
-      invoice: json['invoice'] ?? '-',
-      orderNo: json['order_no'] ?? '-',
+      list: [],
     );
   }
 }

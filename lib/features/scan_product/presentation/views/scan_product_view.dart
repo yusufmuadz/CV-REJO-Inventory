@@ -1,17 +1,14 @@
-import 'dart:async';
-
-import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/open_order_dialog.dart';
-import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/search_product_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/scan_product_controller.dart';
-import '../widgets/dialog_scan_product/input_qty_dialog.dart';
+import '../widgets/dialog_scan_product/open_order_dialog.dart';
+import '../widgets/dialog_scan_product/search_product_dialog.dart';
 import '../widgets/scanner_error_widget.dart';
 import '../widgets/scanner_overlay_widget.dart';
 
@@ -75,27 +72,27 @@ class ScanProductView extends GetView<ScanProductController> {
                   ),
                 ),
               ),
-              Container(
-                width: 40, // Adjusted width
-                height: 40, // Adjusted height
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(left: 5),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: InkWell(
-                  child: Image.asset(
-                    Assets.icons.orderan.path,
-                    height: 23,
-                    width: 23,
+              Visibility(
+                visible: !AppRole.isChecker2,
+                child: Container(
+                  width: 40, // Adjusted width
+                  height: 40, // Adjusted height
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(left: 5),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
                   ),
-                  onTap: () async {
-                    openPesanan(controller: controller);
-                    // openInputQtyDialog(itemName: 'COBA DIALOG', barcodeValue: '');
-                    // await controller.getTransactionDetail();
-                    // controller.openPesanan();
-                  },
+                  child: InkWell(
+                    child: Image.asset(
+                      Assets.icons.orderan.path,
+                      height: 23,
+                      width: 23,
+                    ),
+                    onTap: () async {
+                      openPesanan(controller: controller);
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -130,18 +127,20 @@ class ScanProductView extends GetView<ScanProductController> {
               CustomPaint(painter: ScannerOverlay(scanWindow: scanWindow)),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              if (controller.controllerScanner.value.isRunning) {
-                controller.stopScanner();
-              }
-              showSearchProduct();
-            },
-          ),
+          floatingActionButton: AppRole.isChecker2
+              ? null
+              : FloatingActionButton(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  child: const Icon(Icons.search, color: Colors.black),
+                  onPressed: () {
+                    if (controller.controllerScanner.value.isRunning) {
+                      controller.stopScanner();
+                    }
+                    showSearchProduct();
+                  },
+                ),
         );
       },
     );

@@ -5,7 +5,16 @@ class ParamsGetTransaction {
   final String? q;
   final String? sort;
   final String? filter;
+  final String? district;
   final List<String>? courier;
 
-  ParamsGetTransaction({this.limit, this.page, this.q, this.sort, this.filter, this.courier});
+  ParamsGetTransaction({
+    this.limit,
+    this.page,
+    this.q,
+    this.sort,
+    this.filter,
+    this.district,
+    this.courier,
+  });
 }

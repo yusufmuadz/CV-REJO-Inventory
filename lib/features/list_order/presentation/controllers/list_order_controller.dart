@@ -1,15 +1,15 @@
-import 'dart:convert';
-
-import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
-import '../../../login/data/models/user_model.dart';
+import '../../domain/entities/district_entity.dart';
+import '../../domain/entities/list_order_entity.dart';
 import '../../domain/params/get_transaction_param.dart';
+import '../../domain/params/take_it_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
 
 class ListOrderController extends GetxController {
@@ -18,6 +18,8 @@ class ListOrderController extends GetxController {
   ListOrderController({required this.listOrderUseCase});
 
   final isLoading = false.obs;
+  final isLoadingSort = false.obs;
+  final isRouteFrom = ''.obs;
   final dialogService = Get.find<DialogService>();
 
   final orders = <OrderEntity>[].obs;
@@ -29,16 +31,10 @@ class ListOrderController extends GetxController {
   final isSelection = false.obs;
   final isSelected = ''.obs;
   final isStatusSelected = ''.obs;
+  final isDistrictSelected = ''.obs;
   final listSelected = <dynamic>[].obs;
 
-  final userModel = UserModel(
-    userId: '',
-    nama: '',
-    username: '',
-    jabatan: '',
-    notelp: '',
-    alamat: '',
-  ).obs;
+  final listDistrict = <DistrictEntity>[].obs;
 
   final sortByNew = true.obs;
 
@@ -58,8 +54,12 @@ class ListOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    if (args != null) {
+      debugPrint('Route From: ${args['routeFrom']}');
+      isRouteFrom.value = args['routeFrom'] ?? '';
+    }
     scrollController.addListener(_onScroll);
-    _getUser();
   }
 
   @override
@@ -79,6 +79,16 @@ class ListOrderController extends GetxController {
     currentPage = 1;
     hasmore.value = true;
     orders.clear();
+    _getOrder();
+  }
+
+  void onResetSort() {
+    currentPage = 1;
+    hasmore.value = true;
+    orders.clear();
+    sortByNew.value = true;
+    isStatusSelected.value = '';
+    isDistrictSelected.value = '';
     _getOrder();
   }
 
@@ -103,24 +113,12 @@ class ListOrderController extends GetxController {
     }
   }
 
-  void _getUser() {
-    final userStorage = GetStorage().read('user');
-
-    if (userStorage != null) {
-      final parsing = jsonDecode(userStorage);
-      userModel.value = UserModel.fromJson(parsing);
-      // debugPrint('User Parsing: ${user.jabatan}');
-    }
-  }
-
   void cancelSelection() {
     isSelected.value = '';
+    isSelection.value = !isSelection.value;
   }
 
   void takeItOrder() async {
-    // final invoice =
-    //     orders.firstWhereOrNull((order) => order.isSelected)?.invoice ?? '';
-    // debugPrint('Invoice: $invoice');
     if (isLoading.value) return;
 
     if (isSelected.value.isEmpty) {
@@ -130,20 +128,30 @@ class ListOrderController extends GetxController {
 
     isLoading.value = true;
 
+    final index = orders.indexWhere(
+      (order) => order.invoice == isSelected.value,
+    );
+
     final result = await listOrderUseCase.callTakeItTransaction(
-      isSelected.value,
+      ParamsTakeIt(
+        role: AppRole.current!.name.toLowerCase(),
+        statusChecker2: orders[index].checker2?.status ?? '',
+        invoice: isSelected.value,
+      ),
     );
 
     try {
       switch (result) {
         case Success(:final data):
-          if (data.status) {
+          if (data.status && data.message.isEmpty) {
             GetStorage().write('noInvoice', isSelected.value);
             Get.offNamed(
               Routes.DETAIL_ORDER,
               arguments: {
                 'invoice': isSelected.value,
                 'routeFrom': 'listOrder',
+                'take_it_order': true,
+                'status_checker2': orders[index].checker2?.status ?? '',
               },
             );
           } else {
@@ -172,7 +180,9 @@ class ListOrderController extends GetxController {
         limit: '10',
         page: '$currentPage',
         q: searchController.text,
+        sort: sortByNew.value ? 'newest' : 'oldest',
         filter: isStatusSelected.value.toLowerCase(),
+        district: isDistrictSelected.value.toLowerCase(),
       ),
     );
 
@@ -202,6 +212,29 @@ class ListOrderController extends GetxController {
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> getDistrict() async {
+    if (isLoadingSort.value) return;
+    isLoadingSort.value = true;
+
+    final result = await listOrderUseCase.callGetDistrict();
+
+    try {
+      switch (result) {
+        case Success(:final data):
+          listDistrict.value = data;
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', 'Error Get Data');
+    } finally {
+      isLoadingSort.value = false;
     }
   }
 }
