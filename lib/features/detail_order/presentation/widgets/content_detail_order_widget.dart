@@ -31,7 +31,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         // ),
         _buildInfoCustomer(
           username: controller.orderDetail.value.customer.name,
-          namePenerima: controller.orderDetail.value.customer.username,
+          namePenerima: controller.orderDetail.value.customer.name,
           tanggalPesanan: controller.orderDetail.value.date.transaction,
           tanggalBatas: controller.orderDetail.value.date.delivery,
         ),

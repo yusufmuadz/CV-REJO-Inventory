@@ -1,4 +1,3 @@
-
 import '../../../list_order/domain/entities/list_order_entity.dart';
 
 class ResponseModelHistoryOrderAll {
@@ -25,11 +24,12 @@ class Data {
       Data(transactions: transactions ?? this.transactions);
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-    transactions: json["data"]['content'] == null || json["data"]['content'].isEmpty
+    transactions:
+        json["data"]['content'] == null || json["data"]['content'].isEmpty
         ? []
         : (json["data"]['content'] as List)
-            .map((e) => OrderEntity.fromJson(e))
-            .toList(),
+              .map((e) => OrderEntity.fromJson(e))
+              .toList(),
   );
 
   List<OrderEntity> toEntity() {

@@ -1,9 +1,5 @@
 import 'dart:async';
 
-import 'package:cv_rejo/features/scan_product/domain/entities/item_product_entity.dart';
-import 'package:cv_rejo/features/scan_product/domain/params/post_product_param.dart';
-import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/input_qty_dialog.dart';
-import 'package:cv_rejo/features/scan_product/presentation/widgets/dialog_scan_product/permission_scan_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,8 +12,12 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../detail_order/presentation/controllers/detail_order_controller.dart';
+import '../../domain/entities/item_product_entity.dart';
+import '../../domain/params/post_product_param.dart';
 import '../../domain/params/scan_product_param.dart';
 import '../../domain/usecases/scan_product_usecase.dart';
+import '../widgets/dialog_scan_product/input_qty_dialog.dart';
+import '../widgets/dialog_scan_product/permission_scan_dialog.dart';
 
 class ScanProductController extends GetxController with WidgetsBindingObserver {
   final ScanProductUseCase scanProductUseCase;
@@ -69,11 +69,11 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
     if (code.isNotEmpty) {
       stopScanner();
 
-      _getProduct(code);
+      getProduct(code);
     }
   }
 
-  Future<void> _getProduct(String barcode) async {
+  Future<void> getProduct(String barcode) async {
     if (isLoading.value) return;
     isLoading.value = true;
 

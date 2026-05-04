@@ -53,7 +53,9 @@ class ListOrderView extends GetView<ListOrderController> {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {
+        if (controller.isLoading.value ||
+            (controller.loadState.value == LoadState.initial &&
+                controller.orders.isEmpty)) {
           return const LoadingView();
         }
         return RefreshIndicator(
@@ -121,6 +123,13 @@ class ListOrderView extends GetView<ListOrderController> {
     );
   }
 
+  Widget _buildEmptyOrder() {
+    return SliverFillRemaining(
+      hasScrollBody: false, // Mencegah stretching konten
+      child: const Center(child: Text('Tidak ada pesanan')),
+    );
+  }
+
   Widget _buildButtonSelect() {
     return CustomButton.doubleButton(
       title1: 'Batal',
@@ -136,38 +145,128 @@ class ListOrderView extends GetView<ListOrderController> {
   }
 
   Widget _buildContent() {
-    if (controller.orders.isEmpty) {
-      return CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false, // Mencegah stretching konten
-            child: const Center(child: Text('Tidak ada pesanan')),
-          ),
-        ],
-      );
-    }
-    return ListView.separated(
+    return CustomScrollView(
       controller: controller.scrollController,
-      itemCount: controller.orders.length,
-      shrinkWrap: true,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-      separatorBuilder: (context, index) => const SizedBox(height: 15),
-      itemBuilder: (context, index) {
-        OrderEntity transaction = controller.orders[index];
-        return Obx(
-          () => CustomCardList(
-            onTap: () {
-              if (controller.isSelection.value) {
-                controller.onSelected(transaction.invoice);
-              }
-            },
-            showSelection: controller.isSelection.value,
-            isSelected: controller.isSelected.value,
-            onCheckboxChanged: () => controller.onSelected(transaction.invoice),
-            transaction: transaction,
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        if (controller.orders.isEmpty)
+          _buildEmptyOrder()
+        else
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              childCount:
+                  controller.orders.length +
+                  (controller.loadState.value == LoadState.loadingMore ||
+                          controller.loadState.value == LoadState.error ||
+                          controller.loadState.value == LoadState.noMore
+                      ? 1
+                      : 0),
+              (context, index) {
+                if (index == controller.orders.length) {
+                  return _buildBottomIndicator(
+                    controller.loadState.value,
+                    controller.retryFetch,
+                  );
+                }
+
+                return _buildOrder(index: index);
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
+  // Widget _buildContent() {
+  //   if (controller.orders.isEmpty) {
+  //     return CustomScrollView(
+  //       slivers: [
+  //         SliverFillRemaining(
+  //           hasScrollBody: false, // Mencegah stretching konten
+  //           child: const Center(child: Text('Tidak ada pesanan')),
+  //         ),
+  //       ],
+  //     );
+  //   }
+  //   return ListView.separated(
+  //     controller: controller.scrollController,
+  //     itemCount: controller.orders.length,
+  //     shrinkWrap: true,
+  //     padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+  //     separatorBuilder: (context, index) => const SizedBox(height: 15),
+  //     itemBuilder: (context, index) {
+  //       OrderEntity transaction = controller.orders[index];
+  //       return Obx(
+  //         () => CustomCardList(
+  //           onTap: () {
+  //             if (controller.isSelection.value) {
+  //               controller.onSelected(transaction.invoice);
+  //             }
+  //           },
+  //           showSelection: controller.isSelection.value,
+  //           isSelected: controller.isSelected.value,
+  //           onCheckboxChanged: () => controller.onSelected(transaction.invoice),
+  //           transaction: transaction,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  Widget _buildOrder({required int index}) {
+    OrderEntity transaction = controller.orders[index];
+
+    return Obx(
+      () => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
+        child: CustomCardList(
+          onTap: () {
+            if (controller.isSelection.value) {
+              controller.onSelected(transaction.invoice);
+            }
+          },
+          showSelection: controller.isSelection.value,
+          isSelected: controller.isSelected.value,
+          onCheckboxChanged: () => controller.onSelected(transaction.invoice),
+          transaction: transaction,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {
+    switch (state) {
+      case LoadState.loadingMore:
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: LoadingView(),
+        );
+
+      case LoadState.noMore:
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: Text(
+              '✨ Tidak ada data lagi',
+              style: TextStyle(color: Colors.grey),
+            ),
           ),
         );
-      },
-    );
+
+      case LoadState.error:
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Coba Lagi'),
+            ),
+          ),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

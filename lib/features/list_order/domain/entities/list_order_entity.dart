@@ -31,7 +31,7 @@ class OrderEntity {
     return OrderEntity(
       invoice: json['invoice'],
       orderNo: json['order_no'],
-      customer: json['customer'],
+      customer: json['customer'] ?? '',
       date: json['dates'] != null ? DateModel.fromJson(json['dates']) : json['date'] != null ? DateModel.fromJson(json['date']) : DateModel(transaction: '', delivery: ''),
       courier: json['courier'] == null ? null : Courier.fromJson(json['courier']),
       pic: json['pic'] == null ? null : Status.fromJson(json['pic']),

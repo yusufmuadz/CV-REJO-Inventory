@@ -48,7 +48,8 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {
+        if (controller.loadState.value == LoadState.initial &&
+            controller.orders.isEmpty) {
           return const LoadingView();
         }
         return RefreshIndicator(
@@ -93,70 +94,6 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
           ),
         );
       }),
-      // Column(
-      //   children: [
-      //     Container(
-      //       height: 50,
-      //       padding: EdgeInsets.all(5),
-      //       margin: EdgeInsets.fromLTRB(16, 16, 16, 5),
-      //       decoration: BoxDecoration(
-      //         border: Border.all(width: 1, color: Color(0x2FD5914D)),
-      //         borderRadius: BorderRadius.circular(100),
-      //         color: Color.fromARGB(33, 46, 212, 112),
-      //       ),
-      //       child: TabBar(
-      //         controller: controller.tabController,
-      //         dividerHeight: 0.0,
-      //         splashBorderRadius: BorderRadius.circular(100),
-      //         labelColor: Colors.black,
-      //         unselectedLabelColor: Colors.black,
-      //         indicatorSize: TabBarIndicatorSize.tab,
-      //         labelStyle: TextStyles.medium,
-      //         unselectedLabelStyle: TextStyles.medium,
-      //         indicator: BoxDecoration(
-      //           borderRadius: BorderRadius.circular(100),
-      //           color: Color(0x2FCF8E4D),
-      //         ),
-      //         tabs: [
-      //           const Tab(text: 'Pesanan'),
-      //           const Tab(text: 'Loader'),
-      //         ],
-      //       ),
-      //     ),
-      //     Expanded(
-      //       child: TabBarView(
-      //         controller: controller.tabController,
-      //         children: [
-      //           Obx(() {
-      //             if (controller.isLoading.value) {
-      //               return const LoadingView();
-      //             }
-
-      //             return RefreshIndicator(
-      //               onRefresh: () async {
-      //                 controller.onRefreshTransaction();
-      //               },
-      //               child: _buildContent(),
-      //             );
-      //           }),
-      //           Container(),
-      //           Obx(() {
-      //             if (controller.isLoadingLoader.value) {
-      //               return const LoadingView();
-      //             }
-
-      //             return RefreshIndicator(
-      //               onRefresh: () async {
-      //                 controller.onRefreshTransaction();
-      //               },
-      //               child: _buildContentLoader(),
-      //             );
-      //           }),
-      //         ],
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -177,49 +114,32 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         else
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              childCount: controller.orders.length,
+              childCount:
+                  controller.orders.length +
+                  (controller.loadState.value == LoadState.loadingMore ||
+                          controller.loadState.value == LoadState.error ||
+                          controller.loadState.value == LoadState.noMore
+                      ? 1
+                      : 0),
               (context, index) {
-                OrderEntity transaction = controller.orders[index];
-                return
-                // Padding(
-                //   padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-                //   child:
-                _buildOrder(transaction: transaction);
-                // );
+                if (index == controller.orders.length) {
+                  return _buildBottomIndicator(
+                    controller.loadState.value,
+                    controller.retryFetch,
+                  );
+                }
+
+                return _buildOrder(index: index);
               },
             ),
           ),
-        // _buildListOrder(),
       ],
     );
   }
 
-  Widget _buildContentLoader() {
-    return CustomScrollView(
-      controller: controller.scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        if (controller.orders.isEmpty)
-          _buildEmptyOrder()
-        else
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount: controller.loaderOrders.length,
-              (context, index) {
-                OrderEntity transaction = controller.loaderOrders[index];
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-                  child: _buildOrder(transaction: transaction),
-                );
-              },
-            ),
-          ),
-        // _buildListOrder(),
-      ],
-    );
-  }
+  Widget _buildOrder({required int index}) {
+    OrderEntity transaction = controller.orders[index];
 
-  Widget _buildOrder({required OrderEntity transaction}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
       child: CustomCardList(
@@ -237,5 +157,41 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         transaction: transaction,
       ),
     );
+  }
+
+  Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {
+    switch (state) {
+      case LoadState.loadingMore:
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: LoadingView(),
+        );
+
+      case LoadState.noMore:
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: Text(
+              '✨ Tidak ada data lagi',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        );
+
+      case LoadState.error:
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Coba Lagi'),
+            ),
+          ),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

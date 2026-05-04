@@ -141,12 +141,12 @@ class SearchProduct extends StatelessWidget {
               subtitle: Text(item.barcode),
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               onTap: () {
-                openInputQtyDialog(
-                  itemName: item.nama,
-                  barcodeValue: item.barcode,
-                  controller: controller,
-                );
-                // controller.showConfirmationDialog(item);
+                // openInputQtyDialog(
+                //   itemName: item.nama,
+                //   barcodeValue: item.barcode,
+                //   controller: controller,
+                // );
+                controller.getProduct(item.barcode);
               },
             ),
           );

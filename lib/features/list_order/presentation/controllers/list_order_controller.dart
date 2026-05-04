@@ -6,6 +6,7 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../../utils/loading_custom.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
 import '../../domain/params/get_transaction_param.dart';
@@ -23,7 +24,7 @@ class ListOrderController extends GetxController {
   final dialogService = Get.find<DialogService>();
 
   final orders = <OrderEntity>[].obs;
-  int currentPage = 1;
+  final currentPage = 1.obs;
   final hasmore = true.obs;
   final scrollController = ScrollController();
   final searchController = TextEditingController();
@@ -37,6 +38,8 @@ class ListOrderController extends GetxController {
   final listDistrict = <DistrictEntity>[].obs;
 
   final sortByNew = true.obs;
+
+  final loadState = LoadState.initial.obs;
 
   final status = [
     {'id': '0', 'name': 'Available', 'isSelected': false},
@@ -73,17 +76,20 @@ class ListOrderController extends GetxController {
     super.onClose();
     scrollController.dispose();
     isLoading.value = false;
+    loadState.value = LoadState.idle;
   }
 
   void onRefreshTransaction() {
-    currentPage = 1;
-    hasmore.value = true;
+    currentPage.value = 1;
+    // hasmore.value = true;
     orders.clear();
-    _getOrder();
+    _getOrder(isRefresh: true);
   }
 
+  void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
+
   void onResetSort() {
-    currentPage = 1;
+    currentPage.value = 1;
     hasmore.value = true;
     orders.clear();
     sortByNew.value = true;
@@ -93,13 +99,16 @@ class ListOrderController extends GetxController {
   }
 
   void _onScroll() {
-    if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200) {
+    final canLoad = loadState.value == LoadState.idle;
+
+    if (canLoad &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200) {
       // Panggil fungsi untuk memuat lebih banyak data
-      if (hasmore.value && !isLoading.value) {
-        currentPage++;
-        _getOrder();
-      }
+      // if (hasmore.value && !isLoading.value) {
+      currentPage.value++;
+      _getOrder();
+      // }
     }
   }
 
@@ -171,47 +180,47 @@ class ListOrderController extends GetxController {
     }
   }
 
-  Future<void> _getOrder() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-
-    final result = await listOrderUseCase.call(
-      ParamsGetTransaction(
-        limit: '10',
-        page: '$currentPage',
-        q: searchController.text,
-        sort: sortByNew.value ? 'newest' : 'oldest',
-        filter: isStatusSelected.value.toLowerCase(),
-        district: isDistrictSelected.value.toLowerCase(),
-      ),
-    );
-
+  Future<void> _getOrder({bool isRefresh = false}) async {
     try {
+      loadState.value = (isRefresh || currentPage.value == 1)
+          ? LoadState.initial
+          : LoadState.loadingMore;
+
+      final result = await listOrderUseCase.call(
+        ParamsGetTransaction(
+          limit: '10',
+          page: '$currentPage',
+          q: searchController.text,
+          sort: sortByNew.value ? 'newest' : 'oldest',
+          filter: isStatusSelected.value.toLowerCase(),
+          district: isDistrictSelected.value.toLowerCase(),
+        ),
+      );
+
       switch (result) {
         case Success(:final data):
           debugPrint('Data Order: ${data.length}');
           if (data.isEmpty) {
-            hasmore.value = false;
-            isLoading.value = false;
-            if (orders.isNotEmpty) {
-              dialogService.showInfoSnackbar(
-                'Info',
-                'Tidak ada data pesanan lagi',
-              );
+            if (isRefresh && currentPage.value == 1) {
+              loadState.value = LoadState.idle;
+            } else {
+              loadState.value = LoadState.noMore;
             }
             return;
           }
           orders.addAll(data);
+          loadState.value = LoadState.idle;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
           dialogService.showError('Failed', message);
       }
     } catch (e) {
+      loadState.value = LoadState.error;
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      isLoading.value = false;
+      // isLoading.value = false;
     }
   }
 
