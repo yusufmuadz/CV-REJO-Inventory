@@ -55,7 +55,7 @@ class DetailOrderController extends GetxController {
     invoice: '',
     orderNo: '',
     courier: Courier(service: '', waybillNumber: ''),
-    customer: CustomerModel(username: '', name: ''),
+    customer: CustomerModel(username: '', name: '', district: ''),
     date: DateModel(transaction: '', delivery: ''),
   ).obs;
 
@@ -279,6 +279,7 @@ class DetailOrderController extends GetxController {
           barcode: barcode,
           invoice: noInvoice.value,
           qty: quantity,
+          statusChecker2: statusChecker2.value,
           images: mediaFileList,
         ),
       );
@@ -299,47 +300,6 @@ class DetailOrderController extends GetxController {
       isLoadingProduct.value = false;
     }
   }
-
-  // Future<void> pendingSO() async {
-  //   if (isLoading.value) return;
-
-  //   if (reasonController.text.isEmpty) {
-  //     dialogService.showErrorSnackbar('Isi Alasan Pending SO');
-  //     return;
-  //   }
-  //   isLoading.value = true;
-
-  //   try {
-  //     final result = await detailOrderUseCase.callPendingSO(
-  //       ParamsPendingSO(invoice: noInvoice.value),
-  //     );
-
-  //     switch (result) {
-  //       case Success(:final data):
-  //         if (data.status) {
-  //           dialogService.showDialogBox(
-  //             title: 'Success',
-  //             description: data.message,
-  //             barrierDismissible: false,
-  //             onPressed: () => Get.offNamed(Routes.LIST_ORDER),
-  //           );
-  //         } else {
-  //           if (Get.isDialogOpen == true) Get.back();
-  //           dialogService.showError('Failed', data.message);
-  //         }
-
-  //       case ErrorResult(:final message):
-  //         if (Get.isDialogOpen == true) Get.back();
-  //         dialogService.showError('Failed', message);
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error Add Assistant: $e');
-  //     if (Get.isDialogOpen == true) Get.back();
-  //     dialogService.showError('Failed', '$e');
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
 
   //////// ====== PICK IMAGE ====== ////////
 

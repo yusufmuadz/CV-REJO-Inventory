@@ -14,27 +14,54 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   EndingOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelEndingOrder> postEndingOrder(ParamsEndingOrder params) async {
+  Future<ResponseModelEndingOrder> postEndingOrder(
+    ParamsEndingOrder params,
+  ) async {
     try {
+      String nameFile = 'file';
+
+      if (params.role == 'deliver') {
+        nameFile = 'foto';
+      }
+      
       final formData = FormData.fromMap({
         'invoice': params.invoice,
         'desc': params.desc,
-        'file1': await MultipartFile.fromFile(
+        if (params.role == 'deliver') 'gudang': 'BARANG JADI',
+        '${nameFile}1': await MultipartFile.fromFile(
           params.images![0].path,
-          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+          filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
         ),
         // Collection if: hanya masuk ke map kalau kondisi true
         if (params.images!.length > 1)
-          'file2': await MultipartFile.fromFile(
+          '${nameFile}2': await MultipartFile.fromFile(
             params.images![1].path,
-            filename: 'file2.jpg',
+            filename: '${nameFile}2.jpg',
           ),
       });
 
+      // if (params.images != null) {
+      //   for (int i = 0; i < params.images!.length; i++) {
+      //     String filePath = params.images![i].path;
+
+      //     formData.files.add(
+      //       MapEntry(
+      //         "file[]", // <-- Kunci HARUS SAMA untuk semua file agar jadi array
+      //         await MultipartFile.fromFile(
+      //           filePath,
+      //           filename: 'file${i + 1}.jpg',
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // }
+
       String role = params.role!;
 
-      if (params.role == 'loader') {
+      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
+      } else if (params.role == 'deliver') {
+        role = 'delivery';
       }
 
       final response = await dioClient.post(
@@ -62,27 +89,31 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelEndingOrder> pendingOrder(ParamsEndingOrder params) async {
+  Future<ResponseModelEndingOrder> pendingOrder(
+    ParamsEndingOrder params,
+  ) async {
     try {
       final formData = FormData.fromMap({
         'invoice': params.invoice,
         'desc': params.desc,
-        'file1': await MultipartFile.fromFile(
+        'foto1': await MultipartFile.fromFile(
           params.images![0].path,
-          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+          filename: 'foto1.jpg', // ⬅️ selalu tambahkan filename
         ),
         // Collection if: hanya masuk ke map kalau kondisi true
         if (params.images!.length > 1)
-          'file2': await MultipartFile.fromFile(
+          'foto2': await MultipartFile.fromFile(
             params.images![1].path,
-            filename: 'file2.jpg',
+            filename: 'foto2.jpg',
           ),
       });
 
       String role = params.role!;
 
-      if (params.role == 'loader') {
+      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
+      } else if (params.role == 'deliver') {
+        role = 'delivery';
       }
 
       final response = await dioClient.post(

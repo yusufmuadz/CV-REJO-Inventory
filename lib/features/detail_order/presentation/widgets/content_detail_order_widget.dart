@@ -34,6 +34,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           namePenerima: controller.orderDetail.value.customer.name,
           tanggalPesanan: controller.orderDetail.value.date.transaction,
           tanggalBatas: controller.orderDetail.value.date.delivery,
+          district: controller.orderDetail.value.customer.district,
         ),
         _buildInfoPesanan(),
       ],
@@ -155,6 +156,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
     required String namePenerima,
     String tanggalPesanan = '',
     String tanggalBatas = '',
+    String district = '',
   }) {
     return Container(
       width: double.infinity,
@@ -178,6 +180,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
             title: 'Tanggal Pesanan Masuk',
             value: tanggalBatas,
             image: Assets.icons.dateIn.path,
+          ),
+          _buildInfoContent(
+            title: 'KOTA/KABUPATEN',
+            value: district,
+            image: Assets.icons.district.path,
             mgBottom: 0,
           ),
           // _buildInfoContent(
@@ -251,8 +258,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(setQty, style: TextStyles.basicTextStyle()),
                     Visibility(
-                      visible: AppRole
-                          .isChecker2, // visible: AppRole.isChecker2 || AppRole.isDriver,
+                      visible:
+                          AppRole.isChecker2 &&
+                          (controller.routeFrom.value == 'listOrder' ||
+                              controller.routeFrom.value ==
+                                  'home'), // visible: AppRole.isChecker2 || AppRole.isDriver,
                       child: Container(
                         margin: const EdgeInsets.only(left: 8),
                         child: Checkbox(

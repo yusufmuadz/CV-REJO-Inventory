@@ -85,6 +85,7 @@ class CustomCardList extends StatelessWidget {
                     children: [
                       _buildInfoText(
                         title: 'ID Transaksi',
+                        isStatus: true,
                         value: transaction.orderNo.replaceAll('SL', 'SO'),
                       ),
                       // const SizedBox(height: 9),
@@ -113,32 +114,17 @@ class CustomCardList extends StatelessWidget {
                         image: Assets.icons.dateIn.path,
                         value: transaction.date.transaction,
                       ),
+                      const SizedBox(height: 10),
+                      _buildInfoIconText(
+                        image: Assets.icons.district.path,
+                        value: transaction.district,
+                      ),
                       // const SizedBox(height: 10),
                       // _buildInfoIconText(
                       //   image: Assets.icons.dateOrder.path,
                       //   value: transaction.date.delivery,
                       // ),
                     ],
-                  ),
-                  Visibility(
-                    visible: AppRole.isChecker2,
-                    child: Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: _buildColor(
-                            transaction.checker2?.status ?? '',
-                          ),
-                        ),
-                        child: Text(
-                          _buildText(transaction.checker2?.status ?? ''),
-                          style: _textStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -169,7 +155,7 @@ class CustomCardList extends StatelessWidget {
   String _buildText(String status) {
     String text = 'Checker';
 
-    if (status == 'complete') {
+    if (status == 'completed') {
       text = 'Loader';
     }
 
@@ -181,7 +167,7 @@ class CustomCardList extends StatelessWidget {
 
     if (status == 'ongoing') {
       color = const Color(0xFF5eb75f);
-    } else if (status == 'complete') {
+    } else if (status == 'completed') {
       color = const Color(0xFF666666);
     }
 
@@ -224,15 +210,35 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoText({required String title, required String value}) {
+  Widget _buildInfoText({
+    required String title,
+    required String value,
+    bool isStatus = false,
+  }) {
+    final statusLoader = transaction.loader?.status ?? '';
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(width: 100, child: Text(title, style: _textStyle())),
         Expanded(
           child: Text(
             ':  $value',
             style: _textStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ),
+        Visibility(
+          visible: AppRole.isChecker2 && isStatus && statusLoader != 'completed',
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              color: _buildColor(transaction.checker2?.status ?? ''),
+            ),
+            child: Text(
+              _buildText(transaction.checker2?.status ?? ''),
+              style: _textStyle(color: Colors.white),
+            ),
           ),
         ),
       ],

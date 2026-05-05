@@ -69,37 +69,38 @@ class SortWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 15.0),
-                  _buildTitle(title: 'Status Pengerjaan'),
-                  Wrap(
-                    spacing: 10.0,
-                    runSpacing: 0.0,
-                    children: controller.status
-                        .map<Widget>(
-                          (status) => _buildSortingOption(
-                            label: status['name'] as String,
-                            isSelected:
-                                controller.isStatusSelected.value ==
-                                status['name'],
-                            onSelected: (bool p1) {
-                              if (controller.isStatusSelected.value ==
-                                      status['name'] &&
-                                  status['isSelected'] == true) {
-                                status['isSelected'] = false;
-                                controller.isStatusSelected.value = '';
-                                return;
-                              }
+                  // Jika List Order Bukan HISTORY
+                  // const SizedBox(height: 15.0),
+                  // _buildTitle(title: 'Status Pengerjaan'),
+                  // Wrap(
+                  //   spacing: 10.0,
+                  //   runSpacing: 0.0,
+                  //   children: controller.status
+                  //       .map<Widget>(
+                  //         (status) => _buildSortingOption(
+                  //           label: status['name'] as String,
+                  //           isSelected:
+                  //               controller.isStatusSelected.value ==
+                  //               status['name'],
+                  //           onSelected: (bool p1) {
+                  //             if (controller.isStatusSelected.value ==
+                  //                     status['name'] &&
+                  //                 status['isSelected'] == true) {
+                  //               status['isSelected'] = false;
+                  //               controller.isStatusSelected.value = '';
+                  //               return;
+                  //             }
 
-                              status['isSelected'] = p1;
+                  //             status['isSelected'] = p1;
 
-                              controller.isStatusSelected.value = status['name']
-                                  .toString();
-                              controller.status.refresh();
-                            },
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  //             controller.isStatusSelected.value = status['name']
+                  //                 .toString();
+                  //             controller.status.refresh();
+                  //           },
+                  //         ),
+                  //       )
+                  //       .toList(),
+                  // ),
                   const SizedBox(height: 15.0),
                   _buildTitle(title: 'Kabupaten/Kota'),
                   Wrap(
@@ -140,7 +141,7 @@ class SortWidget extends StatelessWidget {
               },
               onPressed2: () {
                 // Apply filter and sorting
-                // controller.getTransaksi();
+                controller.onRefreshTransaction();
                 Get.back();
               },
             ),

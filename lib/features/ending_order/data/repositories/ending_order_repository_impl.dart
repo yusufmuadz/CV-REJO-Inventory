@@ -31,7 +31,7 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
     ParamsEndingOrder params,
   ) async {
     try {
-      final response = await dataSource.postEndingOrder(params);
+      final response = await dataSource.pendingOrder(params);
 
       if (response.error == null) {
         return Success(EndingOrderEntity(list: []), '');

@@ -43,7 +43,6 @@ class EndingOrderController extends GetxController {
     fieldController.dispose();
     mediaFileList.clear();
     noInvoice.value = '';
-    statusChecker2.value = '';
   }
 
   Future<void> saveOrder() async {
@@ -58,43 +57,44 @@ class EndingOrderController extends GetxController {
     }
     isLoading.value = true;
 
-    /// ==== AWAL SEMENTARA ==== ///
+    // /// ==== AWAL SEMENTARA ==== ///
 
-    if (AppRole.isDriver) {
-      Get.offAllNamed(Routes.HOME);
-      return;
-    }
+    // if (AppRole.isDriver) {
+    //   Get.offAllNamed(Routes.HOME);
+    //   return;
+    // }
 
-    if (AppRole.isChecker2) {
-      if (AppRole.isChecker2 &&
-          (statusChecker2.value == 'available' ||
-              statusChecker2.value == 'ongoing')) {
-        Get.offAllNamed(
-          Routes.DETAIL_ORDER,
-          arguments: {
-            'invoice': noInvoice.value,
-            'routeFrom': 'listOrder',
-            'take_it_order': true,
-            'status_checker2': 'complete',
-          },
-        );
-      } else {
-        GetStorage().remove('noInvoice');
-        Get.offAllNamed(
-          Routes.LIST_ORDER,
-          arguments: {'routeFrom': 'endingOrder'},
-        );
-      }
-      isLoading.value = false;
-      return;
-    }
+    // if (AppRole.isChecker2) {
+    //   if (AppRole.isChecker2 &&
+    //       (statusChecker2.value == 'available' ||
+    //           statusChecker2.value == 'ongoing')) {
+    //     Get.offAllNamed(
+    //       Routes.DETAIL_ORDER,
+    //       arguments: {
+    //         'invoice': noInvoice.value,
+    //         'routeFrom': 'listOrder',
+    //         'take_it_order': true,
+    //         'status_checker2': 'complete',
+    //       },
+    //     );
+    //   } else {
+    //     GetStorage().remove('noInvoice');
+    //     Get.offAllNamed(
+    //       Routes.LIST_ORDER,
+    //       arguments: {'routeFrom': 'endingOrder'},
+    //     );
+    //   }
+    //   isLoading.value = false;
+    //   return;
+    // }
 
-    /// ==== AKHIR SEMENTARA ==== ///
+    // /// ==== AKHIR SEMENTARA ==== ///
 
     try {
       final result = await endingOrderUseCase.call(
         ParamsEndingOrder(
           role: AppRole.current!.name.toLowerCase(),
+          statusChecker2: statusChecker2.value,
           invoice: noInvoice.value,
           desc: fieldController.text,
           images: mediaFileList,
@@ -104,6 +104,7 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
+          debugPrint('Status: ${statusChecker2.value}');
           dialogService.showDialogBox(
             title: 'Success',
             description: 'Berhasil Menyimpan Pesanan',
@@ -129,7 +130,6 @@ class EndingOrderController extends GetxController {
               }
             },
           );
-        // dialogService.showSuccessSnackbar('Berhasil Menyimpan Produk');
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -156,6 +156,7 @@ class EndingOrderController extends GetxController {
       final result = await endingOrderUseCase.callPendingOrder(
         ParamsEndingOrder(
           role: AppRole.current!.name.toLowerCase(),
+          statusChecker2: statusChecker2.value,
           invoice: noInvoice.value,
           desc: fieldController.text,
           images: mediaFileList,

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -26,6 +27,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.page != null) 'page': '${params.page}',
         if (params.q != null) 'q': '${params.q}',
         if (params.sort != null) 'sort': '${params.sort}',
+        if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
       };
@@ -61,9 +63,10 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     try {
       String role = params.role;
 
-      if (params.role == 'loader' && params.statusChecker2 != 'complete') {
+      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
       }
+      
       final response = await dioClient.put(
         ApiEndpoints.takeItTransaction(role),
         data: {"invoice": params.invoice},

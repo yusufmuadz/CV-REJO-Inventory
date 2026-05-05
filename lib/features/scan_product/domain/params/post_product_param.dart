@@ -5,6 +5,7 @@ class ParamsPostProduct {
   final String? barcode;
   final String? invoice;
   final String? qty;
+  final String? statusChecker2;
   final List<XFile>? images;
 
   ParamsPostProduct({
@@ -12,6 +13,7 @@ class ParamsPostProduct {
     this.barcode,
     this.invoice,
     this.qty,
+    this.statusChecker2,
     this.images,
   });
 }

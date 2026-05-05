@@ -35,7 +35,7 @@ class Data {
             invoice: '',
             orderNo: '',
             courier: Courier(service: '', waybillNumber: ''),
-            customer: CustomerModel(username: '', name: ''),
+            customer: CustomerModel(username: '', name: '', district: ''),
             date: DateModel(transaction: '', delivery: ''),
           )
         : DetailOrderEntity(
@@ -61,7 +61,7 @@ class Data {
         invoice: '',
         orderNo: '',
         courier: Courier(service: '', waybillNumber: ''),
-        customer: CustomerModel(username: '', name: ''),
+        customer: CustomerModel(username: '', name: '', district: ''),
         date: DateModel(transaction: '', delivery: ''),
       );
     }

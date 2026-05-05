@@ -15,66 +15,69 @@ class DetailOrderView extends GetView<DetailOrderController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan'),
-        elevation: 1,
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (controller.takeItOrder.value) {
-              Get.offAllNamed(Routes.HOME);
-              return;
-            }
-            Get.back();
-          },
-        ),
-        actions: [
-          Visibility(
-            visible: AppRole.isPIC || AppRole.isChecker2,
-            child: Container(
-              height: 35,
-              width: 35,
-              margin: EdgeInsets.only(right: 15),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  width: 1.5,
-                  color: const Color.fromARGB(100, 62, 56, 56),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan'),
+          elevation: 1,
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              if (controller.takeItOrder.value) {
+                Get.offAllNamed(Routes.HOME);
+                return;
+              }
+              Get.back();
+            },
+          ),
+          actions: [
+            Visibility(
+              visible: AppRole.isPIC || AppRole.isChecker2,
+              child: Container(
+                height: 35,
+                width: 35,
+                margin: EdgeInsets.only(right: 15),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    width: 1.5,
+                    color: const Color.fromARGB(100, 62, 56, 56),
+                  ),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.groups),
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                  onPressed: () {
+                    AssistantDialog.detailAssistant(controller);
+                  },
                 ),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.groups),
-                padding: EdgeInsets.zero,
-                visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                onPressed: () {
-                  AssistantDialog.detailAssistant(controller);
-                },
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const LoadingView();
+          }
+          return RefreshIndicator(
+            onRefresh: () async {
+              controller.onRefreshDetailOrder();
+            },
+            child: ContentDetailOrderWidget(controller: controller),
+          );
+        }),
+        bottomNavigationBar: Obx(() {
+          if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
+              controller.routeFrom.value == 'listHistoryOrder' ||
+              controller.isLoading.value) {
+            return const SizedBox.shrink();
+          }
+          return CustomButton.bottomBarStyle(child: _buildButton());
+        }),
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const LoadingView();
-        }
-        return RefreshIndicator(
-          onRefresh: () async {
-            controller.onRefreshDetailOrder();
-          },
-          child: ContentDetailOrderWidget(controller: controller),
-        );
-      }),
-      bottomNavigationBar: Obx(() {
-        if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
-            controller.routeFrom.value == 'listHistoryOrder' ||
-            controller.isLoading.value) {
-          return const SizedBox.shrink();
-        }
-        return CustomButton.bottomBarStyle(child: _buildButton());
-      }),
     );
   }
 

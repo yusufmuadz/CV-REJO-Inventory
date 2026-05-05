@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -59,36 +60,36 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
           },
           child: Column(
             children: [
-              // Container(
-              //   height: 42,
-              //   margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(10),
-              //   ),
-              //   child: CupertinoSearchTextField(
-              //     placeholder: 'Cari...',
-              //     placeholderStyle: const TextStyle(
-              //       color: Color(0xFF7C7C7C),
-              //       fontSize: 13,
-              //       fontFamily: 'Inter',
-              //       fontWeight: FontWeight.w400,
-              //       height: 0,
-              //       letterSpacing: 0.39,
-              //     ),
-              //     prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-              //     controller: controller.searchController,
-              //     onSubmitted: (value) {
-              //       controller.onRefreshTransaction();
-              //     },
-              //     onSuffixTap: () {
-              //       controller.searchController.clear();
-              //       controller.onRefreshTransaction();
-              //     },
-              //   ),
-              // ),
-              // const SizedBox(height: 10),
-              // Divider(thickness: 1, height: 8, color: Colors.grey[100]),
+              Container(
+                height: 42,
+                margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: CupertinoSearchTextField(
+                  placeholder: 'Cari ID pesanan...',
+                  placeholderStyle: const TextStyle(
+                    color: Color(0xFF7C7C7C),
+                    fontSize: 13,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: 0.39,
+                  ),
+                  prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
+                  controller: controller.searchController,
+                  onSubmitted: (value) {
+                    controller.onRefreshTransaction();
+                  },
+                  onSuffixTap: () {
+                    controller.searchController.clear();
+                    controller.onRefreshTransaction();
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              Divider(thickness: 1, height: 8, color: Colors.grey[100]),
               Expanded(child: _buildContent()),
             ],
           ),

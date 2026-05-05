@@ -56,17 +56,17 @@ class HomeController extends GetxController {
   void routeTo() {
     final invoice = GetStorage().read('noInvoice') ?? '';
 
-    /// ==== AWAL SEMENTARA ==== ///
+    // /// ==== AWAL SEMENTARA ==== ///
 
-    if (AppRole.isDriver) {
-      Get.toNamed(
-        Routes.DETAIL_ORDER,
-        arguments: {'invoice': '01SL20260400016', 'routeFrom': 'home'},
-      );
-      return;
-    }
+    // if (AppRole.isDriver) {
+    //   Get.toNamed(
+    //     Routes.DETAIL_ORDER,
+    //     arguments: {'invoice': '01SL20260400016', 'routeFrom': 'home'},
+    //   );
+    //   return;
+    // }
 
-    /// ==== AKHIR SEMENTARA ==== ///
+    // /// ==== AKHIR SEMENTARA ==== ///
 
     if (invoice.isNotEmpty) {
       Get.toNamed(

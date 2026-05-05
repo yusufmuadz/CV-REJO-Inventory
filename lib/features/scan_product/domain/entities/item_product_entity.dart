@@ -11,15 +11,9 @@ class ItemProductEntity {
 
   factory ItemProductEntity.fromJson(Map<String, dynamic> json) {
     return ItemProductEntity(
-      nama: json['nama'],
-      barcode: json['barcode'],
-      iditem: json['iditem'],
+      nama: json['nama'] ?? '-',
+      barcode: json['barcode'] ?? '-',
+      iditem: json['iditem'] ?? '-',
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'nama': nama,
-        'barcode': barcode,
-        'iditem': iditem,
-      };
 }

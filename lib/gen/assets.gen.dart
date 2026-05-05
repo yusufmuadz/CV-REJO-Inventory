@@ -28,6 +28,10 @@ class $AssetsIconsGen {
   AssetGenImage get dateOrder =>
       const AssetGenImage('assets/icons/date_order.png');
 
+  /// File path: assets/icons/district.png
+  AssetGenImage get district =>
+      const AssetGenImage('assets/icons/district.png');
+
   /// File path: assets/icons/ediprofile.png
   AssetGenImage get ediprofile =>
       const AssetGenImage('assets/icons/ediprofile.png');
@@ -61,6 +65,7 @@ class $AssetsIconsGen {
     cardMember,
     dateIn,
     dateOrder,
+    district,
     ediprofile,
     gridiconsProduct,
     home,
@@ -70,6 +75,21 @@ class $AssetsIconsGen {
     person,
     person2,
   ];
+}
+
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/bg_picking_man.png
+  AssetGenImage get bgPickingMan =>
+      const AssetGenImage('assets/images/bg_picking_man.png');
+
+  /// File path: assets/images/picking_man.png
+  AssetGenImage get pickingMan =>
+      const AssetGenImage('assets/images/picking_man.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [bgPickingMan, pickingMan];
 }
 
 class $AssetsLogoGen {
@@ -86,6 +106,7 @@ class Assets {
   const Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogoGen logo = $AssetsLogoGen();
 }
 

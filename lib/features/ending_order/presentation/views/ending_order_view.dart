@@ -12,37 +12,40 @@ class EndingOrderView extends GetView<EndingOrderController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Akhir Transaksi'),
-        elevation: 1,
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.back();
-          },
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Akhir Transaksi'),
+          elevation: 1,
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Get.back();
+            },
+          ),
         ),
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const LoadingView();
+          }
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              FieldInputWidget(controller: controller),
+              const SizedBox(height: 16),
+              ImageInputWidget(controller: controller),
+            ],
+          );
+        }),
+        bottomNavigationBar: Obx(() {
+          if (controller.isLoading.value) {
+            return const SizedBox.shrink();
+          }
+          return CustomButton.bottomBarStyle(child: _buildButtonSelect());
+        }),
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const LoadingView();
-        }
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            FieldInputWidget(controller: controller),
-            const SizedBox(height: 16),
-            ImageInputWidget(controller: controller),
-          ],
-        );
-      }),
-      bottomNavigationBar: Obx(() {
-        if (controller.isLoading.value) {
-          return const SizedBox.shrink();
-        }
-        return CustomButton.bottomBarStyle(child: _buildButtonSelect());
-      }),
     );
   }
 

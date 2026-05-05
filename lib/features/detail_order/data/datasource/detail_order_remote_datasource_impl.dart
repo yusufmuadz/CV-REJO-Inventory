@@ -208,7 +208,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
 
       String role = params.role!;
 
-      if (params.role == 'loader') {
+      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
       }
 

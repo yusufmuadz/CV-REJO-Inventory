@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../utils/loading_custom.dart';
@@ -17,95 +19,113 @@ class ListOrderView extends GetView<ListOrderController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('List Pesanan'),
-        elevation: 1,
-        centerTitle: false,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent, // Untuk Android
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light, // Untuk iOS
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (controller.isRouteFrom.value == 'endingOrder') {
-              Get.offNamed(Routes.HOME);
-            }
-            Get.back();
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('List Pesanan'),
+          elevation: 1,
+          centerTitle: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent, // Untuk Android
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light, // Untuk iOS
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if (controller.listDistrict.isEmpty) {
-                controller.getDistrict();
+              if (controller.isRouteFrom.value == 'endingOrder') {
+                Get.offNamed(Routes.HOME);
               }
-
-              Get.bottomSheet(
-                SortWidget(controller: controller),
-                isScrollControlled: true,
-              );
+              Get.back();
             },
           ),
-        ],
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value ||
-            (controller.loadState.value == LoadState.initial &&
-                controller.orders.isEmpty)) {
-          return const LoadingView();
-        }
-        return RefreshIndicator(
-          edgeOffset: 65.0,
-          onRefresh: () async {
-            controller.onRefreshTransaction();
-          },
-          child: Column(
-            children: [
-              Container(
-                height: 42,
-                margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: CupertinoSearchTextField(
-                  placeholder: 'Cari...',
-                  placeholderStyle: const TextStyle(
-                    color: Color(0xFF7C7C7C),
-                    fontSize: 13,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: 0.39,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: () {
+                if (controller.listDistrict.isEmpty) {
+                  controller.getDistrict();
+                }
+
+                Get.bottomSheet(
+                  SortWidget(controller: controller),
+                  isScrollControlled: true,
+                );
+              },
+            ),
+          ],
+        ),
+        body: Obx(() {
+          if (controller.isLoading.value ||
+              (controller.loadState.value == LoadState.initial &&
+                  controller.orders.isEmpty)) {
+            return const LoadingView();
+          }
+          return RefreshIndicator(
+            edgeOffset: 65.0,
+            onRefresh: () async {
+              controller.onRefreshTransaction();
+            },
+            child: Column(
+              children: [
+                Visibility(
+                  visible: !AppRole.isPIC,
+                  child: Container(
+                    height: 42,
+                    margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: CupertinoSearchTextField(
+                      placeholder: 'Cari ID pesanan...',
+                      placeholderStyle: const TextStyle(
+                        color: Color(0xFF7C7C7C),
+                        fontSize: 13,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        height: 0,
+                        letterSpacing: 0.39,
+                      ),
+                      prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
+                      controller: controller.searchController,
+                      onSubmitted: (value) {
+                        controller.onRefreshTransaction();
+                      },
+                      onSuffixTap: () {
+                        controller.searchController.clear();
+                        controller.onRefreshTransaction();
+                      },
+                    ),
                   ),
-                  prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-                  controller: controller.searchController,
-                  onSubmitted: (value) {
-                    controller.onRefreshTransaction();
-                  },
-                  onSuffixTap: () {
-                    controller.searchController.clear();
-                    controller.onRefreshTransaction();
-                  },
                 ),
-              ),
-              const SizedBox(height: 10),
-              Divider(thickness: 1, height: 8, color: Colors.grey[100]),
-              Expanded(child: _buildContent()),
-            ],
-          ),
-        );
-      }),
-      bottomNavigationBar: Obx(() {
-        if (controller.orders.isEmpty || controller.isLoading.value) {
-          return const SizedBox.shrink();
-        }
-        return CustomButton.bottomBarStyle(child: _buildButton());
-      }),
+                Visibility(
+                  visible: !AppRole.isPIC,
+                  child: const SizedBox(height: 10),
+                ),
+                Visibility(
+                  visible: !AppRole.isPIC,
+                  child: Divider(
+                    thickness: 1,
+                    height: 8,
+                    color: Colors.grey[100],
+                  ),
+                ),
+                Expanded(child: _buildContent()),
+              ],
+            ),
+          );
+        }),
+        bottomNavigationBar: AppRole.isDriver
+            ? null
+            : Obx(() {
+                if (controller.orders.isEmpty || controller.isLoading.value) {
+                  return const SizedBox.shrink();
+                }
+                return CustomButton.bottomBarStyle(child: _buildButton());
+              }),
+      ),
     );
   }
 
@@ -177,42 +197,6 @@ class ListOrderView extends GetView<ListOrderController> {
     );
   }
 
-  // Widget _buildContent() {
-  //   if (controller.orders.isEmpty) {
-  //     return CustomScrollView(
-  //       slivers: [
-  //         SliverFillRemaining(
-  //           hasScrollBody: false, // Mencegah stretching konten
-  //           child: const Center(child: Text('Tidak ada pesanan')),
-  //         ),
-  //       ],
-  //     );
-  //   }
-  //   return ListView.separated(
-  //     controller: controller.scrollController,
-  //     itemCount: controller.orders.length,
-  //     shrinkWrap: true,
-  //     padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-  //     separatorBuilder: (context, index) => const SizedBox(height: 15),
-  //     itemBuilder: (context, index) {
-  //       OrderEntity transaction = controller.orders[index];
-  //       return Obx(
-  //         () => CustomCardList(
-  //           onTap: () {
-  //             if (controller.isSelection.value) {
-  //               controller.onSelected(transaction.invoice);
-  //             }
-  //           },
-  //           showSelection: controller.isSelection.value,
-  //           isSelected: controller.isSelected.value,
-  //           onCheckboxChanged: () => controller.onSelected(transaction.invoice),
-  //           transaction: transaction,
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget _buildOrder({required int index}) {
     OrderEntity transaction = controller.orders[index];
 
@@ -221,6 +205,20 @@ class ListOrderView extends GetView<ListOrderController> {
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
         child: CustomCardList(
           onTap: () {
+            if (AppRole.isDriver) {
+              GetStorage().write('noInvoice', transaction.invoice);
+              Get.offNamed(
+                Routes.DETAIL_ORDER,
+                arguments: {
+                  'invoice': transaction.invoice,
+                  'routeFrom': 'listOrder',
+                  'take_it_order': true,
+                  'status_checker2': transaction.checker2?.status ?? '',
+                },
+              );
+              return;
+            }
+
             if (controller.isSelection.value) {
               controller.onSelected(transaction.invoice);
             }

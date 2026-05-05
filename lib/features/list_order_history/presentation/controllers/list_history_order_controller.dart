@@ -35,6 +35,8 @@ class ListHistoryOrderController extends GetxController
   final scrollController = ScrollController();
   final scrollControllerLoader = ScrollController();
 
+  final searchController = TextEditingController();
+
   final loadState = LoadState.initial.obs;
 
   final sortByNew = true.obs;
@@ -124,7 +126,13 @@ class ListHistoryOrderController extends GetxController
           : LoadState.loadingMore;
 
       final result = await listHistoryOrderUseCase.call(
-        ParamsGetTransaction(limit: '10', page: '$currentPage'),
+        ParamsGetTransaction(
+          limit: '10',
+          page: '$currentPage',
+          q: searchController.text,
+          sort: sortByNew.value ? 'newest' : 'oldest',
+          district: isDistrictSelected.value.toLowerCase(),
+        ),
       );
 
       switch (result) {
