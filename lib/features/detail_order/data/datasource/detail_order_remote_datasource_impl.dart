@@ -130,12 +130,15 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   Future<ResponseModelBasic> addAssistant(ParamsAddAssistant params) async {
     try {
       final response = await dioClient.put(
-        ApiEndpoints.addAssistant,
+        ApiEndpoints.addAssistant(
+          AppRole.current?.name.toLowerCase() ?? 'picking',
+        ),
         data: {
           "invoice": params.invoice,
-          "id_loader": params.idLoader,
           "id_driver": params.idDriver,
           "id_kenek": params.idKenek,
+          if (!AppRole.isChecker2) "id_loader": params.idKendaraan,
+          if (AppRole.isChecker2) "id_mobil": params.idKendaraan,
         },
       );
 

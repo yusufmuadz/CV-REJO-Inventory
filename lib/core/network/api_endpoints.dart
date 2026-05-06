@@ -25,9 +25,9 @@ class ApiEndpoints {
   static String saveQty(String role) => "$role/scan/multiple";
   static String completeOrder(String role) => "$role/complete";
   static String pendingOrder(String role) => "$role/cancel";
+  static String addAssistant(String role) => "$role/claimcoba";
 
   // PICKING TRANSACTION
-  static const String addAssistant = "picking/claimcoba";
   static const String pendingSO = "picking/cancel";
   
   static String getDetailTransaction(String invoice) => "transaction/get?invoice=$invoice";

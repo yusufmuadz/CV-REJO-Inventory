@@ -150,6 +150,8 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
             arguments: {
               'invoice': transaction.invoice,
               'routeFrom': 'listHistoryOrder',
+              'status_checker2': transaction.checker2?.status ?? '',
+              'status_loader': transaction.loader?.status ?? '',
             },
           );
         },

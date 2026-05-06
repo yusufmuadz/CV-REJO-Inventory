@@ -1,12 +1,12 @@
 class ParamsAddAssistant {
   final String? invoice;
-  final String? idLoader;
+  final String? idKendaraan;
   final String? idDriver;
   final String? idKenek;
 
   ParamsAddAssistant({
     this.invoice,
-    this.idLoader,
+    this.idKendaraan,
     this.idDriver,
     this.idKenek,
   });

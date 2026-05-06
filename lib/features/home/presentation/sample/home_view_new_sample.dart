@@ -1,6 +1,7 @@
 import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
+import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,11 +14,11 @@ class HomeViewNewSample extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundMint,
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundMint,
+        body: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +29,6 @@ class HomeViewNewSample extends GetView<HomeController> {
 
               // // Stats Cards
               _buildStatsSection(),
-              const SizedBox(height: 24),
 
               // // Orders Section
               // _buildOrdersSection(),
@@ -38,6 +38,9 @@ class HomeViewNewSample extends GetView<HomeController> {
               // _buildInfoBanner(),
             ],
           ),
+        ),
+        bottomNavigationBar: Obx(
+          () => CustomButton.bottomBarIcon(controller: controller),
         ),
       ),
     );
@@ -96,52 +99,60 @@ class HomeViewNewSample extends GetView<HomeController> {
         );
       }
 
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10),
-            topLeft: Radius.circular(10),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.12),
-              blurRadius: 20,
-              offset: const Offset(0, -10), // changes position of shadow
+      return Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(10),
+              topLeft: Radius.circular(10),
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Row(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.12),
+                blurRadius: 20,
+                offset: const Offset(0, -10), // changes position of shadow
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
               children: [
-                Expanded(
-                  child: StatCard(
-                    icon: Icons.shopping_bag_outlined,
-                    title: 'Total\nPesanan',
-                    subtitle: 'Sedang Berjalan',
-                    value: controller.totalOrder.value,
-                    iconColor: AppColors.primaryGreen,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: StatCard(
+                        icon: Icons.shopping_bag_outlined,
+                        title: 'Total\nPesanan',
+                        subtitle: 'Sedang Berjalan',
+                        value: controller.totalOrder.value,
+                        iconColor: AppColors.primaryGreen,
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: StatCard(
+                        icon: Icons.receipt_long_outlined,
+                        title: 'History\nPesanan',
+                        subtitle: 'Telah dikerjakan',
+                        value: 100,
+                        iconColor: AppColors.primaryGreen,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: StatCard(
-                    icon: Icons.receipt_long_outlined,
-                    title: 'History\nPesanan',
-                    subtitle: 'Telah dikerjakan',
-                    value: 100,
-                    iconColor: AppColors.primaryGreen,
-                  ),
-                ),
+                const SizedBox(height: 24),
+
+                // Orders Section
+                _buildOrdersSection(),
+                const SizedBox(height: 20),
+
+                // Info Banner
+                _buildInfoBanner(),
               ],
             ),
-            const SizedBox(height: 24),
-
-            // Orders Section
-            _buildOrdersSection(),
-          ],
+          ),
         ),
       );
     });
@@ -149,7 +160,7 @@ class HomeViewNewSample extends GetView<HomeController> {
 
   Widget _buildOrdersSection() {
     return Container(
-      height: 200,
+      height: 250,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -165,47 +176,15 @@ class HomeViewNewSample extends GetView<HomeController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Pesanan Dikerjakan',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              // TextButton(
-              //   onPressed: () {
-              //     // Navigate to all orders
-              //   },
-              //   style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              //   child: const Text(
-              //     'Lihat semua',
-              //     style: TextStyle(
-              //       color: AppColors.primaryGreen,
-              //       fontSize: 12,
-              //       fontWeight: FontWeight.w500,
-              //     ),
-              //   ),
-              // ),
-            ],
+          const Text(
+            'Pesanan Dikerjakan',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 12),
-          // Obx(() {
-          //   if (controller.isLoading.value) {
-          //     return const SizedBox(
-          //       height: 150,
-          //       child: Center(
-          //         child: CircularProgressIndicator(
-          //           color: AppColors.primaryGreen,
-          //         ),
-          //       ),
-          //     );
-          //   }
-
-          //   return
           Expanded(
             child: ListView.builder(
               itemCount: 5,
@@ -223,10 +202,6 @@ class HomeViewNewSample extends GetView<HomeController> {
               ),
             ),
           ),
-          //     // .map((order)
-          //     // .toList(),
-          //   );
-          // }),
         ],
       ),
     );

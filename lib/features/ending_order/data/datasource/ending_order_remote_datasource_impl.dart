@@ -40,22 +40,6 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
           ),
       });
 
-      // if (params.images != null) {
-      //   for (int i = 0; i < params.images!.length; i++) {
-      //     String filePath = params.images![i].path;
-
-      //     formData.files.add(
-      //       MapEntry(
-      //         "file[]", // <-- Kunci HARUS SAMA untuk semua file agar jadi array
-      //         await MultipartFile.fromFile(
-      //           filePath,
-      //           filename: 'file${i + 1}.jpg',
-      //         ),
-      //       ),
-      //     );
-      //   }
-      // }
-
       String role = params.role!;
 
       if (params.role == 'loader' && params.statusChecker2 != 'completed') {

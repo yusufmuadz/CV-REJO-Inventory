@@ -46,16 +46,16 @@ class AssistantDialog {
     controller.dialogService.inputDialog(
       title: 'Masukkan Asisten',
       onPressed2: () {
-        if (!AppRole.isChecker2) {
-          controller.addAssistant();
-          Get.back();
-        } else {
-          controller.isSelect.value = !controller.isSelect.value;
-          if (Get.isDialogOpen == true) Get.back();
-          controller.dialogService.showSuccessSnackbar(
-            'Berhasil Menambahkan Asisten',
-          );
-        }
+        // if (!AppRole.isChecker2) {
+        controller.addAssistant();
+        Get.back();
+        // } else {
+        //   controller.isSelect.value = !controller.isSelect.value;
+        //   if (Get.isDialogOpen == true) Get.back();
+        //   controller.dialogService.showSuccessSnackbar(
+        //     'Berhasil Menambahkan Asisten',
+        //   );
+        // }
       },
       content: Obx(() {
         if (controller.isLoadingAssistant.value) {
@@ -90,6 +90,16 @@ class AssistantDialog {
             title: 'Kendaraan',
             value: controller.selectTransportation.value,
           ),
+          Visibility(
+            visible: AppRole.isChecker2,
+            child: Container(
+              margin: const EdgeInsets.only(top: 23),
+              child: _buildDetailTextAssistant(
+                title: 'Nopol Kendaraan',
+                value: controller.nopolTransportation.value,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -104,7 +114,7 @@ Widget _buildDetailTextAssistant({
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       SizedBox(
-        width: 90,
+        width: 110,
         child: Text(
           title,
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),

@@ -1,14 +1,10 @@
-import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../profile/presentation/views/profile_view.dart';
-import '../sample/home_view_new_sample.dart';
-import '../sample/sample_bottom_bar.dart';
-import 'home_view.dart';
+import '../controllers/home_controller.dart';
 
-class HomePage extends GetView<HomeController> {
-  const HomePage({super.key});
+class HomePageSample extends GetView<HomeController> {
+  const HomePageSample({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +21,10 @@ class HomePage extends GetView<HomeController> {
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        HomeView(controller: controller),
+        // HomeView(controller: controller),
         // CustomBottomBarScreen(),
         // HomeViewNewSample(),
-        ProfileView(controller: controller),
+        // ProfileView(controller: controller),
       ],
     );
   }

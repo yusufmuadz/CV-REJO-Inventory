@@ -31,6 +31,7 @@ class DetailOrderController extends GetxController {
   final takeItOrder = false.obs;
 
   final statusChecker2 = ''.obs;
+  final statusLoader = ''.obs;
 
   final isSelect = false.obs;
 
@@ -40,6 +41,8 @@ class DetailOrderController extends GetxController {
   final driverSelected = ''.obs;
   final assistantSelected = ''.obs;
   final selectTransportation = ''.obs;
+  final statusTransportationSelected = 'Internal'.obs;
+  final nopolTransportation = ''.obs;
 
   final isChecked = false.obs;
 
@@ -47,6 +50,7 @@ class DetailOrderController extends GetxController {
 
   final listUser = <UserEntity>[].obs;
   final transportations = <TransportationEntity>[].obs;
+  final statusTransportations = ['Internal', 'External'].obs;
 
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
@@ -68,6 +72,8 @@ class DetailOrderController extends GetxController {
       routeFrom.value = args['routeFrom'] ?? '';
       takeItOrder.value = args['take_it_order'] ?? false;
       statusChecker2.value = args['status_checker2'] ?? '';
+      statusLoader.value = args['status_loader'] ?? '';
+      // debugPrint('Status Loader : ${statusLoader.value}');
     }
   }
 
@@ -139,10 +145,21 @@ class DetailOrderController extends GetxController {
           assistantSelected.value = data.assistant?.namaKenek ?? '';
           selectTransportation.value = data.assistant?.namaKendaraan ?? '';
 
-          final check =
+          bool check =
               data.assistant!.namaDriver != '-' &&
               data.assistant!.namaDriver != '-' &&
-              data.assistant!.namaDriver != '-';
+              data.assistant!.namaKendaraan != '-';
+
+          if (AppRole.isChecker2 && data.driver != null) {
+            check =
+                data.driver!.namaDriver != '-' &&
+                data.driver!.namaDriver != '-' &&
+                data.driver!.namaKendaraan != '-';
+            driverSelected.value = data.driver?.namaDriver ?? '';
+            assistantSelected.value = data.driver?.namaKenek ?? '';
+            selectTransportation.value = data.driver?.namaKendaraan ?? '';
+            nopolTransportation.value = data.driver?.idKendaraan ?? '';
+          }
 
           isSelect.value = check;
 
@@ -165,7 +182,8 @@ class DetailOrderController extends GetxController {
     try {
       final result = await Future.wait([
         detailOrderUseCase.callUsers(),
-        detailOrderUseCase.callTransportations(),
+        if (!AppRole.isChecker2) detailOrderUseCase.callTransportations(),
+        if (AppRole.isChecker2) detailOrderUseCase.callLoaderTransportations(),
       ]);
 
       final usersResult = result[0];
@@ -185,7 +203,7 @@ class DetailOrderController extends GetxController {
 
       switch (transportationsResult) {
         case Success(:final data):
-          debugPrint('Data Detail Order Users: $data');
+          debugPrint('Data Detail Order Transportations: $data');
           transportations.value = data as List<TransportationEntity>;
 
           if (data.first.namaKendaraan != null &&
@@ -195,6 +213,8 @@ class DetailOrderController extends GetxController {
               data.first.jenisKendaraan != '-') {
             selectTransportation.value = data.first.jenisKendaraan!;
           }
+
+          nopolTransportation.value = data.first.idDeliveryMobil ?? '-';
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -209,9 +229,10 @@ class DetailOrderController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    // debugPrint('Kendaraan: ${selectTransportation.value}');
-    // debugPrint('Driver: ${driverSelected.value}');
-    // debugPrint('Asisten: ${assistantSelected.value}');
+    debugPrint('Driver: ${driverSelected.value}');
+    debugPrint('Asisten: ${assistantSelected.value}');
+    debugPrint('Kendaraan: ${selectTransportation.value}');
+    debugPrint('Nopol: ${nopolTransportation.value}');
 
     // debugPrint('Kendaraan: ${loader}');
     // debugPrint('Driver: ${driver}');
@@ -231,7 +252,9 @@ class DetailOrderController extends GetxController {
       final result = await detailOrderUseCase.callPostAssistant(
         ParamsAddAssistant(
           invoice: noInvoice.value,
-          idLoader: loader!.id,
+          idKendaraan: AppRole.isChecker2
+              ? nopolTransportation.value
+              : loader!.id,
           idDriver: driver!.userId,
           idKenek: kenek!.userId,
         ),

@@ -1,5 +1,6 @@
 import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
+import 'package:cv_rejo/features/home/presentation/sample/home_view_new_sample.dart';
 import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,15 @@ class HomeController extends GetxController {
   final totalOrderHistory = 0.obs;
   final versionApp = '1.0.0'.obs;
 
+  final tabIndex = 0.obs;
+
+  final List<Widget> pages = [
+    HomeViewNewSample(),
+    Container(),
+    Container(),
+    Container(),
+  ];
+
   @override
   void onReady() {
     super.onReady();
@@ -55,23 +65,16 @@ class HomeController extends GetxController {
 
   void routeTo() {
     final invoice = GetStorage().read('noInvoice') ?? '';
-
-    // /// ==== AWAL SEMENTARA ==== ///
-
-    // if (AppRole.isDriver) {
-    //   Get.toNamed(
-    //     Routes.DETAIL_ORDER,
-    //     arguments: {'invoice': '01SL20260400016', 'routeFrom': 'home'},
-    //   );
-    //   return;
-    // }
-
-    // /// ==== AKHIR SEMENTARA ==== ///
+    final statusChecker2 = GetStorage().read('status_checker2') ?? '';
 
     if (invoice.isNotEmpty) {
       Get.toNamed(
         Routes.DETAIL_ORDER,
-        arguments: {'invoice': invoice, 'routeFrom': 'home'},
+        arguments: {
+          'invoice': invoice,
+          'routeFrom': 'home',
+          'status_checker2': statusChecker2,
+        },
       );
     } else {
       GetStorage().remove('noInvoice');

@@ -3,6 +3,7 @@ import 'package:cv_rejo/features/list_order/data/models/courier_model.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 
 import '../../data/models/assistant_model.dart';
+import '../../data/models/driver_model.dart';
 import '../../data/models/item_order_model.dart';
 
 class DetailOrderEntity {
@@ -12,6 +13,7 @@ class DetailOrderEntity {
   final CustomerModel customer;
   final DateModel date;
   final AssistantModel? assistant;
+  final DriverModel? driver;
   final List<ItemOrderModel>? orderDetails;
 
   const DetailOrderEntity({
@@ -21,6 +23,7 @@ class DetailOrderEntity {
     required this.customer,
     required this.date,
     this.assistant,
+    this.driver,
     this.orderDetails,
   });
 
@@ -32,6 +35,7 @@ class DetailOrderEntity {
       customer: CustomerModel.fromJson(json['customer']),
       date: DateModel.fromJson(json['date']),
       assistant: json['assistant'] != null ? AssistantModel.fromJson(json['assistant']) : null,
+      driver: json['driver'] != null ? DriverModel.fromJson(json['driver']) : null,
       orderDetails: json['order_details'] != null
           ? List<ItemOrderModel>.from(
               json['order_details'].map((x) => ItemOrderModel.fromJson(x)),
@@ -47,6 +51,7 @@ class DetailOrderEntity {
     CustomerModel? customer,
     DateModel? date,
     AssistantModel? assistant,
+    DriverModel? driver,
     List<ItemOrderModel>? orderDetails,
   }) {
     return DetailOrderEntity(
@@ -56,6 +61,7 @@ class DetailOrderEntity {
       customer: customer ?? this.customer,
       date: date ?? this.date,
       assistant: assistant ?? this.assistant,
+      driver: driver ?? this.driver,
       orderDetails: orderDetails ?? this.orderDetails,
     );
   }

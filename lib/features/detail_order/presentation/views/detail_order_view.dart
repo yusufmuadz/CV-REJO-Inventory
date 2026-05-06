@@ -19,7 +19,9 @@ class DetailOrderView extends GetView<DetailOrderController> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan'),
+          title: Text(
+            'Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan',
+          ),
           elevation: 1,
           centerTitle: false,
           leading: IconButton(
@@ -34,7 +36,10 @@ class DetailOrderView extends GetView<DetailOrderController> {
           ),
           actions: [
             Visibility(
-              visible: AppRole.isPIC || AppRole.isChecker2,
+              visible:
+                  AppRole.isPIC ||
+                  (AppRole.isChecker2 &&
+                      controller.statusChecker2.value == 'completed'),
               child: Container(
                 height: 35,
                 width: 35,
@@ -81,24 +86,55 @@ class DetailOrderView extends GetView<DetailOrderController> {
     );
   }
 
-  Widget _buildButton() {
-    if ((AppRole.isPIC || AppRole.isChecker2) && !controller.isSelect.value) {
-      return CustomButton.basicButton(
-        title: 'Mulai',
-        color: const Color(0xFF2ED471),
-        onPressed: () {
-          if (controller.listUser.isEmpty) {
-            controller.getAssisten();
-          }
-          AssistantDialog.inputAsisten(controller);
-        },
-      );
-    }
-    // if ((!AppRole.isPIC && AppRole.isChecker2) ||
-    //     AppRole.isDriver ||
-    //     controller.isSelect.value) {
-    // if (!AppRole.isPIC || controller.isSelect.value) {
+  Widget _buildButtonStart() {
+    return CustomButton.basicButton(
+      title: 'Mulai',
+      color: const Color(0xFF2ED471),
+      onPressed: () {
+        if (controller.listUser.isEmpty) {
+          controller.getAssisten();
+        }
+        AssistantDialog.inputAsisten(controller);
+      },
+    );
+  }
+
+  Widget _buildDoubleButton() {
     return AssistantDialog.buildButtonSelect(controller);
+  }
+
+  Widget _buildButton() {
+    if (AppRole.isPIC || AppRole.isChecker2) {
+      if (AppRole.isChecker2 &&
+          controller.statusChecker2.value == 'completed' &&
+          !controller.isSelect.value) {
+        return _buildButtonStart();
+      } else {
+        if (!controller.isSelect.value) {
+          return _buildDoubleButton();
+        }
+      }
+    }
+    // if ((AppRole.isPIC ||
+    //         (AppRole.isChecker2 &&
+    //             controller.statusChecker2.value == 'success')) &&
+    //     !controller.isSelect.value) {
+    //   return CustomButton.basicButton(
+    //     title: 'Mulai',
+    //     color: const Color(0xFF2ED471),
+    //     onPressed: () {
+    //       if (controller.listUser.isEmpty) {
+    //         controller.getAssisten();
+    //       }
+    //       AssistantDialog.inputAsisten(controller);
+    //     },
+    //   );
     // }
+    // // if ((!AppRole.isPIC && AppRole.isChecker2) ||
+    // //     AppRole.isDriver ||
+    // //     controller.isSelect.value) {
+    // // if (!AppRole.isPIC || controller.isSelect.value) {
+    return _buildDoubleButton();
+    // // }
   }
 }

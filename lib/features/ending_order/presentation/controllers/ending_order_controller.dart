@@ -113,16 +113,19 @@ class EndingOrderController extends GetxController {
               if (AppRole.isChecker2 &&
                   (statusChecker2.value == 'available' ||
                       statusChecker2.value == 'ongoing')) {
+                GetStorage().write('status_checker2', 'completed');
                 Get.offAllNamed(
                   Routes.DETAIL_ORDER,
                   arguments: {
                     'routeFrom': 'listOrder',
                     'take_it_order': true,
-                    'status_checker2': 'complete',
+                    'status_checker2': 'completed',
+                    'invoice': noInvoice.value,
                   },
                 );
               } else {
                 GetStorage().remove('noInvoice');
+                GetStorage().remove('status_checker2');
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
                   arguments: {'routeFrom': 'endingOrder'},

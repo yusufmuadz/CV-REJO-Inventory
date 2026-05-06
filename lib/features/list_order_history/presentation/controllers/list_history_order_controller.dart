@@ -41,11 +41,6 @@ class ListHistoryOrderController extends GetxController
 
   final sortByNew = true.obs;
 
-  final status = [
-    {'id': '0', 'name': 'Available', 'isSelected': false},
-    {'id': '1', 'name': 'Ongoing', 'isSelected': false},
-  ].obs;
-
   @override
   void onInit() {
     super.onInit();

@@ -16,6 +16,17 @@ class ContentDetailOrderWidget extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.only(bottom: 20),
       children: [
+        Visibility(
+          visible: AppRole.isChecker2,
+          child: _buildBody(
+            title: 'Status Pesanan',
+            value: controller.statusLoader.value == 'completed'
+                ? 'Complete'
+                : controller.statusChecker2.value == 'completed'
+                ? 'Loader'
+                : 'Checker',
+          ),
+        ),
         _buildBody(
           title: 'ID Transaksi',
           value: controller.orderDetail.value.invoice.replaceAll('SL', 'SO'),
@@ -258,23 +269,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(setQty, style: TextStyles.basicTextStyle()),
                     Visibility(
-                      visible:
-                          AppRole.isChecker2 &&
-                          (controller.routeFrom.value == 'listOrder' ||
-                              controller.routeFrom.value ==
-                                  'home'), // visible: AppRole.isChecker2 || AppRole.isDriver,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 8),
-                        child: Checkbox(
-                          visualDensity: VisualDensity(
-                            horizontal: -4,
-                            vertical: -4,
-                          ),
-                          value: orderDetail?.isChecked ?? false,
-                          onChanged: (value) {
-                            controller.selectedProduct(index);
-                          },
-                        ),
+                      visible: AppRole
+                          .isChecker2, // visible: AppRole.isChecker2 || AppRole.isDriver,
+                      child: _buildCheckBox(
+                        check: orderDetail?.isChecked ?? false,
+                        index: index,
                       ),
                     ),
                   ],
@@ -287,20 +286,22 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  // Widget showQtyProduct(String qtyUser, qtyMax) {
-  //   if (controller.userModel.value.jabatan != 'packing') {
-  //     return Text(qtyUser, style: TextStyles.basicTextStyle());
-  //   } else {
-  //     return Row(
-  //       children: [
-  //         Text(qtyUser, style: TextStyles.basicTextStyle()),
-  //         SizedBox(
-  //           width: 10,
-  //           child: Text('/', style: TextStyles.basicTextStyle()),
-  //         ),
-  //         Text(qtyMax, style: TextStyles.basicTextStyle()),
-  //       ],
-  //     );
-  //   }
-  // }
+  Widget _buildCheckBox({required bool check, required int index}) {
+    if ((controller.statusChecker2.value == 'completed' &&
+            !controller.isSelect.value) ||
+        controller.routeFrom.value == 'listHistoryOrder') {
+      return SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(left: 8),
+      child: Checkbox(
+        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+        value: check,
+        onChanged: (value) {
+          controller.selectedProduct(index);
+        },
+      ),
+    );
+  }
 }

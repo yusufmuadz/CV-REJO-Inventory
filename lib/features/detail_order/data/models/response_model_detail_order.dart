@@ -4,6 +4,7 @@ import 'package:cv_rejo/features/detail_order/domain/entities/detail_order_entit
 import 'package:cv_rejo/features/list_order/data/models/courier_model.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 
+import 'driver_model.dart';
 import 'item_order_model.dart';
 
 class ResponseModelDetailOrder {
@@ -45,6 +46,7 @@ class Data {
             customer: CustomerModel.fromJson(json["data"]["customer"]),
             date: DateModel.fromJson(json["data"]["date"]),
             assistant: AssistantModel.fromJson(json["data"]["assistant"]),
+            driver: DriverModel.fromJson(json["data"]['driver']),
             orderDetails: json["data"]["order_details"] != null
                 ? List<ItemOrderModel>.from(
                     json["data"]["order_details"].map(
