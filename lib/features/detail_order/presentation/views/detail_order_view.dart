@@ -109,32 +109,12 @@ class DetailOrderView extends GetView<DetailOrderController> {
           controller.statusChecker2.value == 'completed' &&
           !controller.isSelect.value) {
         return _buildButtonStart();
-      } else {
-        if (!controller.isSelect.value) {
-          return _buildDoubleButton();
-        }
+      } else if (AppRole.isPIC && !controller.isSelect.value) {
+        // if (!controller.isSelect.value) {
+        return _buildButtonStart();
+        // }
       }
     }
-    // if ((AppRole.isPIC ||
-    //         (AppRole.isChecker2 &&
-    //             controller.statusChecker2.value == 'success')) &&
-    //     !controller.isSelect.value) {
-    //   return CustomButton.basicButton(
-    //     title: 'Mulai',
-    //     color: const Color(0xFF2ED471),
-    //     onPressed: () {
-    //       if (controller.listUser.isEmpty) {
-    //         controller.getAssisten();
-    //       }
-    //       AssistantDialog.inputAsisten(controller);
-    //     },
-    //   );
-    // }
-    // // if ((!AppRole.isPIC && AppRole.isChecker2) ||
-    // //     AppRole.isDriver ||
-    // //     controller.isSelect.value) {
-    // // if (!AppRole.isPIC || controller.isSelect.value) {
     return _buildDoubleButton();
-    // // }
   }
 }

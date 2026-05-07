@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../routes/app_pages.dart';
 import '../../../../../utils/loading_custom.dart';
 import '../../controllers/scan_product_controller.dart';
 

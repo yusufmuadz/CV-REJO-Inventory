@@ -105,22 +105,11 @@ class CustomButton {
         currentIndex: controller.tabIndex.value,
         selectedItemColor: Color(0xFF06823f),
         unselectedItemColor: Color(0xFFC3C3C3),
-        // selectedLabelStyle: TextStyle(
-        //   fontFamily: 'Inter',
-        //   fontSize: 14,
-        //   fontWeight: FontWeight.w500,
-        //   color: Color(0xFF06823f),
-        // ),
-        // unselectedLabelStyle: TextStyle(
-        //   fontFamily: 'Inter',
-        //   fontSize: 14,
-        //   fontWeight: FontWeight.w500,
-        //   color: Color(0xFFC3C3C3),
-        // ),
         type: BottomNavigationBarType.fixed,
         elevation: 1,
         onTap: (index) {
           controller.tabIndex.value = index;
+          controller.pageControllerSample.jumpToPage(index);
         },
         items: [
           BottomNavigationBarItem(

@@ -46,7 +46,7 @@ class ContentInputDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -59,48 +59,56 @@ class ContentInputDialog extends StatelessWidget {
         titlePadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         contentPadding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 0.0),
         actionsPadding: EdgeInsets.only(top: 10, bottom: 10, right: 20),
-        content: Obx(() {
-          if (controller.isLoadingProduct.value) {
-            return const SizedBox(height: 50, width: 50, child: LoadingView());
-          }
+        content: SizedBox(
+          height: Get.height * 0.3,
+          width: double.maxFinite,
+          child: Obx(() {
+            if (controller.isLoadingProduct.value) {
+              return const SizedBox(
+                height: 50,
+                width: 50,
+                child: LoadingView(),
+              );
+            }
 
-          if (controller.messageProduct.isNotEmpty) {
-            return SizedBox(
-              height: 50,
-              child: Text(
-                controller.messageProduct.value,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildText(title: 'Nama Barang', value: itemName),
-              const SizedBox(height: 5),
-              _buildText(title: 'Qty', value: qty),
-              const SizedBox(height: 30),
-              const Text(
-                'Unggah Foto barang',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                '*Upload minimal 1 foto untuk bukti',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 10,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.italic,
+            if (controller.messageProduct.isNotEmpty) {
+              return SizedBox(
+                height: 50,
+                child: Text(
+                  controller.messageProduct.value,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 12),
-              _buildImageView(),
-            ],
-          );
-        }),
+              );
+            }
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildText(title: 'Nama Barang', value: itemName),
+                const SizedBox(height: 5),
+                _buildText(title: 'Qty', value: qty),
+                const SizedBox(height: 30),
+                const Text(
+                  'Unggah Foto barang',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  '*Upload minimal 1 foto untuk bukti',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 10,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildImageView(),
+              ],
+            );
+          }),
+        ),
         actions: [
           Obx(
             () => TextButton(
@@ -114,8 +122,7 @@ class ContentInputDialog extends StatelessWidget {
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white, // Warna teks & ikon
-                backgroundColor:
-                    Colors.redAccent[100], // Warna latar belakang
+                backgroundColor: Colors.redAccent[100], // Warna latar belakang
                 disabledForegroundColor: Colors.grey, // Warna saat disabled
                 disabledBackgroundColor: Colors.blue[100],
                 shape: RoundedRectangleBorder(
@@ -194,6 +201,7 @@ class ContentInputDialog extends StatelessWidget {
   Widget _buildImageView() {
     return Obx(
       () => GridView.builder(
+        primary: false,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

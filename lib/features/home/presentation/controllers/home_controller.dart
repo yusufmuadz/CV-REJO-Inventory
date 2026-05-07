@@ -25,6 +25,7 @@ class HomeController extends GetxController {
   late TokenStorage _tokenStorage;
   final dialogService = Get.find<DialogService>();
   final pageController = PageController(initialPage: 0);
+  final pageControllerSample = PageController(initialPage: 0);
   final indexPage = 0.obs;
 
   final totalOrder = 0.obs;
@@ -54,6 +55,7 @@ class HomeController extends GetxController {
   void onClose() {
     super.onClose();
     pageController.dispose();
+    pageControllerSample.dispose();
     isLoading.value = false;
   }
 
@@ -150,6 +152,15 @@ class HomeController extends GetxController {
     indexPage.value = index;
     _changeStatusBar(index);
     pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void changePageSample(int index) {
+    // _changeStatusBar(index);
+    pageControllerSample.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,

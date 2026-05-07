@@ -74,33 +74,36 @@ class AssistantDialog {
       height: 0.20,
       singleButton: true,
       padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
-      content: ListView(
-        children: [
-          _buildDetailTextAssistant(
-            title: 'Nama Driver',
-            value: controller.driverSelected.value,
-          ),
-          const SizedBox(height: 23),
-          _buildDetailTextAssistant(
-            title: 'Nama Kenek',
-            value: controller.assistantSelected.value,
-          ),
-          const SizedBox(height: 23),
-          _buildDetailTextAssistant(
-            title: 'Kendaraan',
-            value: controller.selectTransportation.value,
-          ),
-          Visibility(
-            visible: AppRole.isChecker2,
-            child: Container(
-              margin: const EdgeInsets.only(top: 23),
-              child: _buildDetailTextAssistant(
-                title: 'Nopol Kendaraan',
-                value: controller.nopolTransportation.value,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildDetailTextAssistant(
+              title: 'Nama Driver',
+              value: controller.driverSelected.value,
+            ),
+            const SizedBox(height: 23),
+            _buildDetailTextAssistant(
+              title: 'Nama Kenek',
+              value: controller.assistantSelected.value,
+            ),
+            const SizedBox(height: 23),
+            _buildDetailTextAssistant(
+              title: 'Kendaraan',
+              value: controller.selectTransportation.value,
+            ),
+            Visibility(
+              visible: AppRole.isChecker2,
+              child: Container(
+                margin: const EdgeInsets.only(top: 23),
+                child: _buildDetailTextAssistant(
+                  title: 'Nopol Kendaraan',
+                  value: controller.nopolTransportation.value,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

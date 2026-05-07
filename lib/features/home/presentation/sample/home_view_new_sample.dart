@@ -1,6 +1,7 @@
 import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
+import 'package:cv_rejo/features/profile/presentation/views/profile_view.dart';
 import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,30 +19,39 @@ class HomeViewNewSample extends GetView<HomeController> {
       top: false,
       child: Scaffold(
         backgroundColor: AppColors.backgroundMint,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              _buildHeader(),
-              // const SizedBox(height: 24),
-
-              // // Stats Cards
-              _buildStatsSection(),
-
-              // // Orders Section
-              // _buildOrdersSection(),
-              // const SizedBox(height: 20),
-
-              // // Info Banner
-              // _buildInfoBanner(),
-            ],
-          ),
-        ),
+        body: Stack(children: [_buildPage()]),
         bottomNavigationBar: Obx(
           () => CustomButton.bottomBarIcon(controller: controller),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPage() {
+    return PageView(
+      controller: controller.pageControllerSample,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buildHome(),
+        Container(),
+        Container(),
+        ProfileView(controller: controller),
+      ],
+    );
+  }
+
+  Widget _buildHome() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          _buildHeader(),
+
+          // Stats Cards
+          _buildStatsSection(),
+        ],
       ),
     );
   }

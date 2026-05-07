@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';
+import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/order/sort_widget.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
@@ -67,18 +68,10 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: CupertinoSearchTextField(
+                child: CustomSearchField(
                   placeholder: 'Cari ID pesanan...',
-                  placeholderStyle: const TextStyle(
-                    color: Color(0xFF7C7C7C),
-                    fontSize: 13,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: 0.39,
-                  ),
+                  searchController: controller.searchController,
                   prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-                  controller: controller.searchController,
                   onSubmitted: (value) {
                     controller.onRefreshTransaction();
                   },

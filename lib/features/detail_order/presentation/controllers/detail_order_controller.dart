@@ -73,7 +73,8 @@ class DetailOrderController extends GetxController {
       takeItOrder.value = args['take_it_order'] ?? false;
       statusChecker2.value = args['status_checker2'] ?? '';
       statusLoader.value = args['status_loader'] ?? '';
-      // debugPrint('Status Loader : ${statusLoader.value}');
+      debugPrint('Status Checker 2 : ${statusChecker2.value}');
+      debugPrint('Status Loader : ${statusLoader.value}');
     }
   }
 
@@ -150,7 +151,7 @@ class DetailOrderController extends GetxController {
               data.assistant!.namaDriver != '-' &&
               data.assistant!.namaKendaraan != '-';
 
-          if (AppRole.isChecker2 && data.driver != null) {
+          if (AppRole.isChecker2) {
             check =
                 data.driver!.namaDriver != '-' &&
                 data.driver!.namaDriver != '-' &&
@@ -160,6 +161,11 @@ class DetailOrderController extends GetxController {
             selectTransportation.value = data.driver?.namaKendaraan ?? '';
             nopolTransportation.value = data.driver?.idKendaraan ?? '';
           }
+
+          // debugPrint('Check Assistant: $check');
+          // debugPrint('Check Driver: ${data.assistant?.namaDriver}');
+          // debugPrint('Check Nama Kenek: ${data.assistant?.namaKenek}');
+          // debugPrint('Check Nama Kendaraan: ${data.assistant?.namaKendaraan}');
 
           isSelect.value = check;
 

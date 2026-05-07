@@ -37,6 +37,8 @@ class MyApp extends StatelessWidget {
         initialBinding: InitialBinding(),
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
+        builder: (context, child) =>
+            SafeArea(top: false, bottom: true, child: child!),
         // navigatorKey: navigationService.navigatorKey,
         routingCallback: (routing) {
           debugPrint('➡️ Route: ${routing?.current}');

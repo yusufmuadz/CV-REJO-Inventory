@@ -154,7 +154,7 @@ class ListOrderController extends GetxController {
         case Success(:final data):
           if (data.status && data.message.isEmpty) {
             GetStorage().write('noInvoice', isSelected.value);
-            if (AppRole.isChecker2) GetStorage().write('status_checker2', 'completed');
+            if (AppRole.isChecker2) GetStorage().write('status_checker2', orders[index].checker2?.status ?? '');
             Get.offNamed(
               Routes.DETAIL_ORDER,
               arguments: {

@@ -1,6 +1,7 @@
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
 import 'package:cv_rejo/features/list_order/presentation/widgets/sort_widget.dart';
 import 'package:cv_rejo/shared/custom/custom_button.dart';
+import 'package:cv_rejo/shared/custom/custom_search_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,18 +79,10 @@ class ListOrderView extends GetView<ListOrderController> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: CupertinoSearchTextField(
+                    child: CustomSearchField(
                       placeholder: 'Cari ID pesanan...',
-                      placeholderStyle: const TextStyle(
-                        color: Color(0xFF7C7C7C),
-                        fontSize: 13,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        height: 0,
-                        letterSpacing: 0.39,
-                      ),
+                      searchController: controller.searchController,
                       prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-                      controller: controller.searchController,
                       onSubmitted: (value) {
                         controller.onRefreshTransaction();
                       },

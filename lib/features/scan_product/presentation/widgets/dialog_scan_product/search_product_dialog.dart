@@ -1,10 +1,10 @@
 import 'package:cv_rejo/features/scan_product/presentation/controllers/scan_product_controller.dart';
+import 'package:cv_rejo/shared/custom/custom_search_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../utils/loading_custom.dart';
-import 'input_qty_dialog.dart';
 
 void showSearchProduct() {
   Get.bottomSheet(
@@ -26,78 +26,68 @@ class SearchProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.8,
-      builder: (context, scrollController) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(width: 30),
-                  const Text(
-                    'Cari Produk',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      if (!controller.controllerScanner.value.isStarting) {
-                        controller.startScanner();
-                      }
-                      Get.back();
-                    },
-                    child: SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: const Icon(Icons.close),
+    return PopScope(
+      canPop: false,
+      child: DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.8,
+        builder: (context, scrollController) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 16.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 30),
+                    const Text(
+                      'Cari Produk',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Divider(thickness: 1, height: 20, color: Colors.grey.shade200),
-              Container(
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                    InkWell(
+                      onTap: () {
+                        if (!controller.controllerScanner.value.isStarting) {
+                          controller.startScanner();
+                        }
+                        Get.back();
+                      },
+                      child: SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: const Icon(Icons.close),
+                      ),
+                    ),
+                  ],
                 ),
-                child: CupertinoSearchTextField(
-                  placeholder: 'Pencarian Nama / Barcode',
-                  placeholderStyle: const TextStyle(
-                    color: Color(0xFF7C7C7C),
-                    fontSize: 13,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: 0.39,
+                Divider(thickness: 1, height: 20, color: Colors.grey.shade200),
+                SizedBox(
+                  height: 42,
+                  child: CustomSearchField(
+                    placeholder: 'Pencarian Nama / Barcode',
+                    searchController: controller.searchController,
+                    onSubmitted: (value) {
+                      controller.getItemProduct();
+                    },
+                    onSuffixTap: () {
+                      controller.searchController.clear();
+                      controller.searchResults.clear();
+                    },
                   ),
-                  controller: controller.searchController,
-                  suffixMode: OverlayVisibilityMode.editing,
-                  onSubmitted: (value) {
-                    controller.getItemProduct();
-                  },
-                  onSuffixTap: () {
-                    controller.searchController.clear();
-                    controller.searchResults.clear();
-                  },
-                  // onTap: () {
-                  //   controller.isSearching.value = true;
-                  // },
                 ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: buildViewSearch(scrollController: scrollController),
-              ),
-            ],
-          ),
-        );
-      },
+                const SizedBox(height: 20),
+                Expanded(
+                  child: buildViewSearch(scrollController: scrollController),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

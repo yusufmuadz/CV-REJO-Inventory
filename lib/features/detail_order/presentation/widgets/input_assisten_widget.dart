@@ -12,14 +12,16 @@ class InputAssistenWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => ListView(
-        children: [
-          // Visibility(
-          //   visible: AppRole.isChecker2,
-          //   child: _buildSelectStatusTransportation(),
-          // ),
-          _buildContent(),
-        ],
+      () => SingleChildScrollView(
+        child: Column(
+          children: [
+            // Visibility(
+            //   visible: AppRole.isChecker2,
+            //   child: _buildSelectStatusTransportation(),
+            // ),
+            _buildContent(),
+          ],
+        ),
       ),
     );
   }
