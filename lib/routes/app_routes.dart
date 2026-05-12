@@ -11,6 +11,7 @@ abstract class Routes {
   static const SCAN_PRODUCT = _Paths.SCAN_PRODUCT;
   static const ENDING_ORDER = _Paths.ENDING_ORDER;
   static const LIST_HISTORY_ORDER = _Paths.LIST_HISTORY_ORDER;
+  static const RIT_INFORMATION = _Paths.RIT_INFORMATION;
 }
 
 abstract class _Paths {
@@ -23,4 +24,5 @@ abstract class _Paths {
   static const SCAN_PRODUCT = '/scan-product';
   static const ENDING_ORDER = '/ending-order';
   static const LIST_HISTORY_ORDER = '/list-history-order';
+  static const RIT_INFORMATION = '/rit-information';
 }

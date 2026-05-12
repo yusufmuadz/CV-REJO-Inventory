@@ -106,7 +106,7 @@ class HomeBoxWidget extends StatelessWidget {
           children: [
             Positioned(top: 0, right: 0, child: icon),
             Positioned(
-              top: 15,
+              top: 10,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,

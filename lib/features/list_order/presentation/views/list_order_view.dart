@@ -199,14 +199,14 @@ class ListOrderView extends GetView<ListOrderController> {
         child: CustomCardList(
           onTap: () {
             if (AppRole.isDriver) {
-              GetStorage().write('noInvoice', transaction.invoice);
-              Get.offNamed(
+              // GetStorage().write('noInvoice', transaction.invoice);
+              Get.toNamed(
                 Routes.DETAIL_ORDER,
                 arguments: {
                   'invoice': transaction.invoice,
-                  'routeFrom': 'listOrder',
-                  'take_it_order': true,
-                  'status_checker2': transaction.checker2?.status ?? '',
+                  // 'routeFrom': 'listOrder',
+                  // 'take_it_order': true,
+                  // 'status_checker2': transaction.checker2?.status ?? '',
                 },
               );
               return;

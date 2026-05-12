@@ -89,9 +89,15 @@ class StatCard extends StatelessWidget {
 
 class OrderItem extends StatelessWidget {
   final int index;
+  final bool? showStatus;
   final OrderEntity order;
 
-  const OrderItem({super.key, required this.index, required this.order});
+  const OrderItem({
+    super.key,
+    required this.index,
+    required this.order,
+    this.showStatus,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +121,7 @@ class OrderItem extends StatelessWidget {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -131,21 +138,21 @@ class OrderItem extends StatelessWidget {
                 const SizedBox(height: 5),
                 RichText(
                   text: TextSpan(
-                    text: 'Lokasi: ',
+                    text: order.date.transaction, // Lokasi :
                     style: const TextStyle(
                       fontSize: 10,
                       color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: FontWeight.w400,
                     ),
                     children: [
-                      TextSpan(
-                        text: 'Semarang',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      // TextSpan(
+                      //   text: 'Semarang',
+                      //   style: const TextStyle(
+                      //     fontSize: 10,
+                      //     color: AppColors.textSecondary,
+                      //     fontWeight: FontWeight.w400,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -164,32 +171,35 @@ class OrderItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: order.pic?.status == 'Sedang Proses'
-                      ? AppColors.statusGreenBg
-                      : AppColors.statusOrangeBg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  order.pic?.status ?? '-',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+              Visibility(
+                visible: showStatus ?? false,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
                     color: order.pic?.status == 'Sedang Proses'
-                        ? AppColors.statusGreen
-                        : AppColors.statusOrange,
+                        ? AppColors.statusGreenBg
+                        : AppColors.statusOrangeBg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    order.pic?.status ?? '-',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: order.pic?.status == 'Sedang Proses'
+                          ? AppColors.statusGreen
+                          : AppColors.statusOrange,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(width: 10),
-          Icon(Icons.chevron_right, color: AppColors.textLight, size: 20),
+          const Icon(Icons.chevron_right, color: AppColors.textLight, size: 20),
         ],
       ),
     );

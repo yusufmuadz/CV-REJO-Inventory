@@ -69,6 +69,11 @@ class HomeController extends GetxController {
     final invoice = GetStorage().read('noInvoice') ?? '';
     final statusChecker2 = GetStorage().read('status_checker2') ?? '';
 
+    if (AppRole.isDriver) {
+      Get.toNamed(Routes.RIT_INFORMATION);
+      return;
+    }
+
     if (invoice.isNotEmpty) {
       Get.toNamed(
         Routes.DETAIL_ORDER,

@@ -202,6 +202,7 @@ class HomeViewNewSample extends GetView<HomeController> {
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) => OrderItem(
                 index: index,
+                showStatus: true,
                 order: OrderEntity(
                   invoice: 'PO/2000/000${index + 1}',
                   orderNo: '${index + 1}',

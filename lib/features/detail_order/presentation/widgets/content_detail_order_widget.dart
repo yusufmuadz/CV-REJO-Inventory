@@ -29,7 +29,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         ),
         _buildBody(
           title: 'ID Transaksi',
-          value: controller.orderDetail.value.invoice.replaceAll('SL', 'SO'),
+          value: controller.orderDetail.value.orderNo,
         ),
         // _buildBody(
         //   title: 'No Resi',
