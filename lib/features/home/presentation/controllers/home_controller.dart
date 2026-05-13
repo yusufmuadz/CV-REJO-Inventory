@@ -67,6 +67,7 @@ class HomeController extends GetxController {
 
   void routeTo() {
     final invoice = GetStorage().read('noInvoice') ?? '';
+    final rit = GetStorage().read('city') ?? '';
     final statusChecker2 = GetStorage().read('status_checker2') ?? '';
 
     if (AppRole.isDriver) {
@@ -85,7 +86,10 @@ class HomeController extends GetxController {
       );
     } else {
       GetStorage().remove('noInvoice');
-      Get.toNamed(Routes.LIST_ORDER);
+      Get.toNamed(
+        Routes.LIST_ORDER,
+        arguments: {'routeFrom': 'home', 'city': rit},
+      );
     }
   }
 
@@ -146,6 +150,7 @@ class HomeController extends GetxController {
   void onTapLogout() {
     GetStorage().remove('noInvoice');
     GetStorage().remove('user');
+    GetStorage().remove('city');
     AppRole.logout();
     _tokenStorage.clear();
     Get.offAllNamed(Routes.LOGIN);

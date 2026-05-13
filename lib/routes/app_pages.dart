@@ -7,7 +7,7 @@ import '../features/ending_order/presentation/views/ending_order_view.dart';
 import '../features/home/presentation/bindings/home_binding.dart';
 import '../features/home/presentation/views/home_page.dart';
 import '../features/list_order/presentation/bindings/list_order_binding.dart';
-import '../features/list_order/presentation/views/list_order_view.dart';
+import '../features/list_order/presentation/views/list_order_page.dart';
 import '../features/list_order_history/presentation/bindings/list_history_order_binding.dart';
 import '../features/list_order_history/presentation/views/list_history_order_view.dart';
 import '../features/login/presentation/bindings/login_binding.dart';
@@ -44,7 +44,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.LIST_ORDER,
-      page: () => const ListOrderView(),
+      page: () => const ListOrderPage(),
       binding: ListOrderBinding(),
     ),
     GetPage(

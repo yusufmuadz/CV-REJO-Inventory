@@ -18,6 +18,7 @@ class EndingOrderController extends GetxController {
   final isLoading = false.obs;
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
+  final rit = ''.obs;
 
   final statusChecker2 = ''.obs;
 
@@ -30,6 +31,7 @@ class EndingOrderController extends GetxController {
   void onInit() {
     super.onInit();
     final args = Get.arguments;
+    rit.value = GetStorage().read('city') ?? '';
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
@@ -57,39 +59,6 @@ class EndingOrderController extends GetxController {
     }
     isLoading.value = true;
 
-    // /// ==== AWAL SEMENTARA ==== ///
-
-    // if (AppRole.isDriver) {
-    //   Get.offAllNamed(Routes.HOME);
-    //   return;
-    // }
-
-    // if (AppRole.isChecker2) {
-    //   if (AppRole.isChecker2 &&
-    //       (statusChecker2.value == 'available' ||
-    //           statusChecker2.value == 'ongoing')) {
-    //     Get.offAllNamed(
-    //       Routes.DETAIL_ORDER,
-    //       arguments: {
-    //         'invoice': noInvoice.value,
-    //         'routeFrom': 'listOrder',
-    //         'take_it_order': true,
-    //         'status_checker2': 'complete',
-    //       },
-    //     );
-    //   } else {
-    //     GetStorage().remove('noInvoice');
-    //     Get.offAllNamed(
-    //       Routes.LIST_ORDER,
-    //       arguments: {'routeFrom': 'endingOrder'},
-    //     );
-    //   }
-    //   isLoading.value = false;
-    //   return;
-    // }
-
-    // /// ==== AKHIR SEMENTARA ==== ///
-
     try {
       final result = await endingOrderUseCase.call(
         ParamsEndingOrder(
@@ -104,7 +73,7 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
-          debugPrint('Status: ${statusChecker2.value}');
+          // debugPrint('Status: ${statusChecker2.value}');
           dialogService.showDialogBox(
             title: 'Success',
             description: 'Berhasil Menyimpan Pesanan',
@@ -124,11 +93,15 @@ class EndingOrderController extends GetxController {
                   },
                 );
               } else {
+                debugPrint('Data TOTAL PO: ${data.totalPO}');
+                if (data.totalPO != null && data.totalPO == '0') {
+                  GetStorage().remove('city');
+                }
                 GetStorage().remove('noInvoice');
                 GetStorage().remove('status_checker2');
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
-                  arguments: {'routeFrom': 'endingOrder'},
+                  arguments: {'routeFrom': 'endingOrder', 'city': rit.value},
                 );
               }
             },

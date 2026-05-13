@@ -58,7 +58,7 @@ Future<void> openPesanan({required ScanProductController controller}) async {
             if (AppRole.isChecker1) {
               quantityText = '${orderDetail?.checker1.qty}';
             } else {
-              quantityText = '${orderDetail?.pic.qty} / ${orderDetail?.qty}';
+              quantityText = '${orderDetail?.pic.qty} /${orderDetail?.qty}';
             }
 
             return Container(
@@ -94,13 +94,14 @@ Future<void> openPesanan({required ScanProductController controller}) async {
                           ),
                         ),
                       ),
+                      const SizedBox(width: 10),
                       Text(
                         quantityText,
                         style: const TextStyle(
                           color: Color(0xFF171717),
                           fontSize: 13,
                           fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],

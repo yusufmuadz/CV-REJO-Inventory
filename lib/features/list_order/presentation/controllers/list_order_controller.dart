@@ -9,6 +9,7 @@ import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
+import '../../domain/entities/rit_list_entity.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
@@ -25,33 +26,29 @@ class ListOrderController extends GetxController {
 
   final orders = <OrderEntity>[].obs;
   final currentPage = 1.obs;
+  final pageIndex = 0.obs;
   final hasmore = true.obs;
   final scrollController = ScrollController();
   final searchController = TextEditingController();
+  final pageController = PageController(initialPage: 0);
 
   final isSelection = false.obs;
   final isSelected = ''.obs;
-  final isStatusSelected = ''.obs;
-  final isDistrictSelected = ''.obs;
+  final isStatusSelected = 'Available'.obs;
+  final isDistrictSelected = ''
+      .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
   final listSelected = <dynamic>[].obs;
 
   final listDistrict = <DistrictEntity>[].obs;
+  final listRit = <RitListEntity>[].obs;
 
   final sortByNew = true.obs;
 
   final loadState = LoadState.initial.obs;
 
   final status = [
-    {'id': '0', 'name': 'Available', 'isSelected': false},
+    {'id': '0', 'name': 'Available', 'isSelected': true},
     {'id': '1', 'name': 'Ongoing', 'isSelected': false},
-  ].obs;
-
-  final armada = [
-    {'id': '0', 'name': 'SICEPAT', 'isSelected': false},
-    {'id': '1', 'name': 'JNE', 'isSelected': false},
-    {'id': '2', 'name': 'POS INDONESIA', 'isSelected': false},
-    {'id': '3', 'name': 'TIKI', 'isSelected': false},
-    {'id': '4', 'name': 'Wahana', 'isSelected': false},
   ].obs;
 
   @override
@@ -61,6 +58,11 @@ class ListOrderController extends GetxController {
     if (args != null) {
       debugPrint('Route From: ${args['routeFrom']}');
       isRouteFrom.value = args['routeFrom'] ?? '';
+      isDistrictSelected.value = args['city'] ?? '';
+      if (isDistrictSelected.value.isNotEmpty) {
+        pageIndex.value = 1;
+        // pageController.jumpToPage(1);
+      }
     }
     scrollController.addListener(_onScroll);
   }
@@ -68,7 +70,11 @@ class ListOrderController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    _getOrder();
+    if (pageIndex.value == 0) {
+      getRit();
+    } else {
+      _getOrder();
+    }
   }
 
   @override
@@ -81,9 +87,14 @@ class ListOrderController extends GetxController {
 
   void onRefreshTransaction() {
     currentPage.value = 1;
-    // hasmore.value = true;
-    orders.clear();
-    _getOrder(isRefresh: true);
+
+    if (pageIndex.value == 0) {
+      listRit.clear();
+      getRit();
+    } else {
+      orders.clear();
+      _getOrder(isRefresh: true);
+    }
   }
 
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
@@ -122,6 +133,15 @@ class ListOrderController extends GetxController {
     }
   }
 
+  void onSelectedRit(String id) {
+    if (!isSelection.value) return;
+
+    final index = listRit.indexWhere((order) => order.city == id);
+    if (index != -1) {
+      isSelected.value = id;
+    }
+  }
+
   void cancelSelection() {
     isSelected.value = '';
     isSelection.value = !isSelection.value;
@@ -132,6 +152,17 @@ class ListOrderController extends GetxController {
 
     if (isSelected.value.isEmpty) {
       dialogService.showError('Error', 'Pilih pesanan terlebih dahulu');
+      return;
+    }
+
+    if (pageIndex.value == 0) {
+      pageIndex.value = 1;
+      isSelection.value = false;
+      isDistrictSelected.value = isSelected.value;
+      GetStorage().write('city', isSelected.value);
+      isSelected.value = '';
+      listRit.clear();
+      _getOrder();
       return;
     }
 
@@ -154,7 +185,11 @@ class ListOrderController extends GetxController {
         case Success(:final data):
           if (data.status && data.message.isEmpty) {
             GetStorage().write('noInvoice', isSelected.value);
-            if (AppRole.isChecker2) GetStorage().write('status_checker2', orders[index].checker2?.status ?? '');
+            if (AppRole.isChecker2)
+              GetStorage().write(
+                'status_checker2',
+                orders[index].checker2?.status ?? '',
+              );
             Get.offNamed(
               Routes.DETAIL_ORDER,
               arguments: {
@@ -225,16 +260,39 @@ class ListOrderController extends GetxController {
     }
   }
 
-  Future<void> getDistrict() async {
-    if (isLoadingSort.value) return;
-    isLoadingSort.value = true;
+  // Future<void> getDistrict() async {
+  //   if (isLoadingSort.value) return;
+  //   isLoadingSort.value = true;
 
-    final result = await listOrderUseCase.callGetDistrict();
+  //   final result = await listOrderUseCase.callGetDistrict();
+
+  //   try {
+  //     switch (result) {
+  //       case Success(:final data):
+  //         listDistrict.value = data;
+
+  //       case ErrorResult(:final message):
+  //         if (Get.isDialogOpen == true) Get.back();
+  //         dialogService.showError('Failed', message);
+  //     }
+  //   } catch (e) {
+  //     if (Get.isDialogOpen == true) Get.back();
+  //     dialogService.showError('Failed', 'Error Get Data');
+  //   } finally {
+  //     isLoadingSort.value = false;
+  //   }
+  // }
+
+  Future<void> getRit() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+
+    final result = await listOrderUseCase.callGetRit('');
 
     try {
       switch (result) {
         case Success(:final data):
-          listDistrict.value = data;
+          listRit.value = data;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -244,7 +302,7 @@ class ListOrderController extends GetxController {
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      isLoadingSort.value = false;
+      isLoading.value = false;
     }
   }
 }

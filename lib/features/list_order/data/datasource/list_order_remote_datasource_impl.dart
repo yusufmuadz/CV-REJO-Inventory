@@ -8,6 +8,7 @@ import '../../../../core/network/dio_client.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
 import '../models/response_model_get_district.dart';
+import '../models/response_model_get_rit.dart';
 import '../models/response_model_get_transaction_all.dart';
 import '../models/response_model_take_it_transaction.dart';
 import 'list_order_remote_datasource.dart';
@@ -112,6 +113,30 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
       throw ServerException(message: 'error Get District: $e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetRit> getRit(String search) async {
+    try {
+      final response = await dioClient.get(ApiEndpoints.getRit(search));
+
+      // debugPrint('Data Get Rit Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetRit.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: 'error Get Rit: $e');
     }
   }
 }

@@ -5,6 +5,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
 import '../entities/district_entity.dart';
 import '../entities/list_order_entity.dart';
+import '../entities/rit_list_entity.dart';
 import '../params/take_it_param.dart';
 
 abstract class ListOrderRepository {
@@ -17,4 +18,6 @@ abstract class ListOrderRepository {
   );
 
   Future<ResultCustom<Failure, List<DistrictEntity>>> getDistrict();
+
+  Future<ResultCustom<Failure, List<RitListEntity>>> getRit(String search);
 }

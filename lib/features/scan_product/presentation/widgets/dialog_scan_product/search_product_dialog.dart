@@ -93,7 +93,7 @@ class SearchProduct extends StatelessWidget {
 
   Widget buildViewSearch({required ScrollController scrollController}) {
     return Obx(() {
-      if (controller.isLoading.value) {
+      if (controller.isLoadingSearch.value || controller.isLoading.value) {
         return const Center(child: LoadingView());
       }
 
@@ -128,7 +128,30 @@ class SearchProduct extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              subtitle: Text(item.barcode),
+              subtitle: Container(
+                margin: EdgeInsets.only(top: 8),
+                child: RichText(
+                  text: TextSpan(
+                    text: 'BARCODE :  ',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: item.barcode,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Text('BARCODE: ${item.barcode}'),
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               onTap: () {
                 // openInputQtyDialog(

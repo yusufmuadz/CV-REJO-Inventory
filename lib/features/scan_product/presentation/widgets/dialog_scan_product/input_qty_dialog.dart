@@ -48,6 +48,7 @@ class ContentInputDialog extends StatelessWidget {
         title: const Center(
           child: Text(
             'Masukkan Jumlah Barang',
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
           ),
         ),
@@ -67,50 +68,52 @@ class ContentInputDialog extends StatelessWidget {
               ),
             );
           }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: 'Nama Barang: ',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: itemName,
-                      style: const TextStyle(fontWeight: FontWeight.normal),
-                    ),
-                  ],
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: 'Nama Barang: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(
+                        text: itemName,
+                        style: const TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: qtyController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Jumlah',
-                  hintText: '0',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: qtyController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Jumlah',
+                    hintText: '0',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Unggah Foto barang',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                '*Upload minimal 1 foto untuk bukti',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 10,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.italic,
+                const SizedBox(height: 20),
+                const Text(
+                  'Unggah Foto barang',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 12),
-              _buildImageView(),
-            ],
+                const Text(
+                  '*Upload minimal 1 foto untuk bukti',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 10,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildImageView(),
+              ],
+            ),
           );
         }),
         actions: [
@@ -121,13 +124,6 @@ class ContentInputDialog extends StatelessWidget {
                 onPressed: () {
                   if (controller.isMaxFailureChecker.value) {
                     controller.onTapHubungiAdmin();
-                    // Get.offNamed(
-                    //   Routes.DETAIL_ORDER,
-                    //   arguments: {
-                    //     'invoice': controller.noInvoice.value,
-                    //     'routeFrom': 'home',
-                    //   },
-                    // );
                     return;
                   }
                   if (!controller.statusPostProduct.value &&

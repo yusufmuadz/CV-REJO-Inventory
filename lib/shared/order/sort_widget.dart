@@ -102,14 +102,14 @@ class SortWidget extends StatelessWidget {
                   //       .toList(),
                   // ),
                   const SizedBox(height: 15.0),
-                  _buildTitle(title: 'Kabupaten/Kota'),
+                  _buildTitle(title: 'RIT'),
                   Wrap(
                     spacing: 10.0,
                     runSpacing: 0.0,
                     children: controller.listDistrict
                         .map(
                           (district) => _buildSortingOption(
-                            label: district.kabupaten as String,
+                            label: 'RIT-${district.kabupaten}',
                             isSelected:
                                 controller.isDistrictSelected.value ==
                                 district.kabupaten,

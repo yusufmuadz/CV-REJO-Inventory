@@ -119,11 +119,6 @@ class CustomCardList extends StatelessWidget {
                         image: Assets.icons.district.path,
                         value: transaction.district,
                       ),
-                      // const SizedBox(height: 10),
-                      // _buildInfoIconText(
-                      //   image: Assets.icons.dateOrder.path,
-                      //   value: transaction.date.delivery,
-                      // ),
                     ],
                   ),
                   Positioned(

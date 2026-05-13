@@ -1,14 +1,17 @@
 import 'package:cv_rejo/core/result/result_custom.dart';
 import 'package:cv_rejo/features/ending_order/domain/params/post_ending_order_param.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../../core/error/failures.dart';
+import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
 import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/repositories/ending_order_repository.dart';
 import '../datasource/ending_order_remote_datasource.dart';
 
 class EndingOrderRepositoryImpl implements EndingOrderRepository {
   EndingOrderRemoteDataSource dataSource;
+  ListOrderRemoteDataSource listOrderDataSource;
 
-  EndingOrderRepositoryImpl(this.dataSource);
+  EndingOrderRepositoryImpl(this.dataSource, this.listOrderDataSource);
 
   @override
   Future<ResultCustom<Failure, EndingOrderEntity>> postEndingOrder(
@@ -18,7 +21,16 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       final response = await dataSource.postEndingOrder(params);
 
       if (response.error == null) {
-        return Success(EndingOrderEntity(list: []), '');
+        final rit = GetStorage().read('city');
+        final responseRit = await listOrderDataSource.getRit(rit);
+
+        return Success(
+          EndingOrderEntity(
+            totalPO: responseRit.data!.transaction!.first.totalPO,
+            list: [],
+          ),
+          '',
+        );
       }
       return ErrorResult(message: response.error!);
     } catch (e) {

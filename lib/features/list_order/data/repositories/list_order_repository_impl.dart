@@ -3,6 +3,7 @@ import 'package:cv_rejo/features/list_order/data/datasource/list_order_remote_da
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/district_entity.dart';
+import '../../domain/entities/rit_list_entity.dart';
 import '../../domain/entities/take_it_order_entity.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
@@ -49,6 +50,17 @@ class ListOrderRepositoryImpl implements ListOrderRepository {
   Future<ResultCustom<Failure, List<DistrictEntity>>> getDistrict() async {
     try {
       final response = await dataSource.getDistrict();
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<RitListEntity>>> getRit(String search) async {
+    try {
+      final response = await dataSource.getRit(search);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

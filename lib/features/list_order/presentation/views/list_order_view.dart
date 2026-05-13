@@ -1,138 +1,57 @@
-import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
-import 'package:cv_rejo/features/list_order/presentation/widgets/sort_widget.dart';
-import 'package:cv_rejo/shared/custom/custom_button.dart';
-import 'package:cv_rejo/shared/custom/custom_search_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';
+import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../domain/entities/list_order_entity.dart';
 import '../controllers/list_order_controller.dart';
+import 'list_rit_view.dart';
 
-class ListOrderView extends GetView<ListOrderController> {
-  const ListOrderView({super.key});
+class ListOrderView extends StatelessWidget {
+  final ListOrderController controller;
+  const ListOrderView({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('List Pesanan'),
-          elevation: 1,
-          centerTitle: false,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent, // Untuk Android
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light, // Untuk iOS
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              if (controller.isRouteFrom.value == 'endingOrder') {
-                Get.offNamed(Routes.HOME);
-              }
-              Get.back();
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.filter_list),
-              onPressed: () {
-                if (controller.listDistrict.isEmpty) {
-                  controller.getDistrict();
-                }
-
-                Get.bottomSheet(
-                  SortWidget(controller: controller),
-                  isScrollControlled: true,
-                );
+    return Column(
+      children: [
+        Visibility(
+          visible: !AppRole.isPIC && controller.pageIndex.value == 1,
+          child: Container(
+            height: 42,
+            margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: CustomSearchField(
+              placeholder: 'Cari ID pesanan...',
+              searchController: controller.searchController,
+              prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
+              onSubmitted: (value) {
+                controller.onRefreshTransaction();
+              },
+              onSuffixTap: () {
+                controller.searchController.clear();
+                controller.onRefreshTransaction();
               },
             ),
-          ],
+          ),
         ),
-        body: Obx(() {
-          if (controller.isLoading.value ||
-              (controller.loadState.value == LoadState.initial &&
-                  controller.orders.isEmpty)) {
-            return const LoadingView();
-          }
-          return RefreshIndicator(
-            edgeOffset: 65.0,
-            onRefresh: () async {
-              controller.onRefreshTransaction();
-            },
-            child: Column(
-              children: [
-                Visibility(
-                  visible: !AppRole.isPIC,
-                  child: Container(
-                    height: 42,
-                    margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: CustomSearchField(
-                      placeholder: 'Cari ID pesanan...',
-                      searchController: controller.searchController,
-                      prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-                      onSubmitted: (value) {
-                        controller.onRefreshTransaction();
-                      },
-                      onSuffixTap: () {
-                        controller.searchController.clear();
-                        controller.onRefreshTransaction();
-                      },
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: !AppRole.isPIC,
-                  child: const SizedBox(height: 10),
-                ),
-                Visibility(
-                  visible: !AppRole.isPIC,
-                  child: Divider(
-                    thickness: 1,
-                    height: 8,
-                    color: Colors.grey[100],
-                  ),
-                ),
-                Expanded(child: _buildContent()),
-              ],
-            ),
-          );
-        }),
-        bottomNavigationBar: AppRole.isDriver
-            ? null
-            : Obx(() {
-                if (controller.orders.isEmpty || controller.isLoading.value) {
-                  return const SizedBox.shrink();
-                }
-                return CustomButton.bottomBarStyle(child: _buildButton());
-              }),
-      ),
-    );
-  }
-
-  Widget _buildButton() {
-    if (controller.isSelection.value) {
-      return _buildButtonSelect();
-    }
-    return CustomButton.basicButton(
-      title: 'Pilih Pesanan',
-      color: const Color(0xFFd5914d),
-      onPressed: () {
-        debugPrint('Pilih Pesanan');
-        controller.isSelection.value = !controller.isSelection.value;
-      },
+        Visibility(
+          visible: !AppRole.isPIC && controller.pageIndex.value == 1,
+          child: const SizedBox(height: 10),
+        ),
+        Visibility(
+          visible: !AppRole.isPIC && controller.pageIndex.value == 1,
+          child: Divider(thickness: 1, height: 8, color: Colors.grey[100]),
+        ),
+        Expanded(child: _buildContent()),
+      ],
     );
   }
 
@@ -143,50 +62,41 @@ class ListOrderView extends GetView<ListOrderController> {
     );
   }
 
-  Widget _buildButtonSelect() {
-    return CustomButton.doubleButton(
-      title1: 'Batal',
-      title2: 'Ambil Pesanan',
-      color1: Colors.redAccent,
-      color2: const Color(0xFFc7a16d),
-      onPressed1: () {
-        debugPrint('Batal');
-        controller.cancelSelection();
-      },
-      onPressed2: () => controller.takeItOrder(),
-    );
-  }
-
   Widget _buildContent() {
-    return CustomScrollView(
-      controller: controller.scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        if (controller.orders.isEmpty)
-          _buildEmptyOrder()
-        else
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount:
-                  controller.orders.length +
-                  (controller.loadState.value == LoadState.loadingMore ||
-                          controller.loadState.value == LoadState.error ||
-                          controller.loadState.value == LoadState.noMore
-                      ? 1
-                      : 0),
-              (context, index) {
-                if (index == controller.orders.length) {
-                  return _buildBottomIndicator(
-                    controller.loadState.value,
-                    controller.retryFetch,
-                  );
-                }
+    return Obx(
+      () => CustomScrollView(
+        controller: controller.scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          if ((controller.orders.isEmpty && controller.pageIndex.value == 1) ||
+              (controller.listRit.isEmpty && controller.pageIndex.value == 0))
+            _buildEmptyOrder()
+          else if (controller.pageIndex.value == 0)
+            ListRitView(controller: controller)
+          else
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                childCount:
+                    controller.orders.length +
+                    (controller.loadState.value == LoadState.loadingMore ||
+                            controller.loadState.value == LoadState.error ||
+                            controller.loadState.value == LoadState.noMore
+                        ? 1
+                        : 0),
+                (context, index) {
+                  if (index == controller.orders.length) {
+                    return _buildBottomIndicator(
+                      controller.loadState.value,
+                      controller.retryFetch,
+                    );
+                  }
 
-                return _buildOrder(index: index);
-              },
+                  return _buildOrder(index: index);
+                },
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -199,15 +109,9 @@ class ListOrderView extends GetView<ListOrderController> {
         child: CustomCardList(
           onTap: () {
             if (AppRole.isDriver) {
-              // GetStorage().write('noInvoice', transaction.invoice);
               Get.toNamed(
                 Routes.DETAIL_ORDER,
-                arguments: {
-                  'invoice': transaction.invoice,
-                  // 'routeFrom': 'listOrder',
-                  // 'take_it_order': true,
-                  // 'status_checker2': transaction.checker2?.status ?? '',
-                },
+                arguments: {'invoice': transaction.invoice},
               );
               return;
             }

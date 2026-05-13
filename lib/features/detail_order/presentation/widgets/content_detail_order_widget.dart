@@ -266,8 +266,13 @@ class ContentDetailOrderWidget extends StatelessWidget {
                         style: TextStyles.basicTextStyle(),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(setQty, style: TextStyles.basicTextStyle()),
+                    const SizedBox(width: 12),
+                    Text(
+                      setQty,
+                      style: TextStyles.basicTextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     Visibility(
                       visible: AppRole
                           .isChecker2, // visible: AppRole.isChecker2 || AppRole.isDriver,

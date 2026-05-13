@@ -99,28 +99,28 @@ class SortWidget extends StatelessWidget {
                         )
                         .toList(),
                   ),
-                  const SizedBox(height: 15.0),
-                  _buildTitle(title: 'Kabupaten/Kota'),
-                  Wrap(
-                    spacing: 10.0,
-                    runSpacing: 0.0,
-                    children: controller.listDistrict
-                        .map(
-                          (district) => _buildSortingOption(
-                            label: district.kabupaten as String,
-                            isSelected:
-                                controller.isDistrictSelected.value ==
-                                district.kabupaten,
-                            onSelected: (bool p1) {
-                              controller.isDistrictSelected.value = district
-                                  .kabupaten
-                                  .toString();
-                              controller.listDistrict.refresh();
-                            },
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  // const SizedBox(height: 15.0),
+                  // _buildTitle(title: 'RIT'),
+                  // Wrap(
+                  //   spacing: 10.0,
+                  //   runSpacing: 0.0,
+                  //   children: controller.listDistrict
+                  //       .map(
+                  //         (district) => _buildSortingOption(
+                  //           label: district.kabupaten as String,
+                  //           isSelected:
+                  //               controller.isDistrictSelected.value ==
+                  //               district.kabupaten,
+                  //           onSelected: (bool p1) {
+                  //             controller.isDistrictSelected.value = district
+                  //                 .kabupaten
+                  //                 .toString();
+                  //             controller.listDistrict.refresh();
+                  //           },
+                  //         ),
+                  //       )
+                  //       .toList(),
+                  // ),
                 ],
               ),
             ),

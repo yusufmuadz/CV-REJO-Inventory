@@ -26,6 +26,7 @@ class ApiEndpoints {
   static String completeOrder(String role) => "$role/complete";
   static String pendingOrder(String role) => "$role/cancel";
   static String addAssistant(String role) => "$role/claimcoba";
+  static String getRit(String search) => "rit/getrit?search=$search";
 
   // PICKING TRANSACTION
   static const String pendingSO = "picking/cancel";
