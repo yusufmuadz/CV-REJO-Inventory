@@ -1,5 +1,7 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/list_order_entity.dart';
+import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/entities/rit_entity.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../domain/repositories/rit_repository.dart';
@@ -37,6 +39,19 @@ class RitRepositoryImpl implements RitRepository {
         return Success(RitEntity(list: []), '');
       }
       return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<OrderEntity>>> getOrders(
+    ParamsGetTransaction params,
+  ) async {
+    try {
+      final response = await dataSource.getOrders(params);
+
+      return Success(response.data!.toEntity(), '');
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

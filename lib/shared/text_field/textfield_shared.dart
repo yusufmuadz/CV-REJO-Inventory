@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SharedTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final Icon prefixIcon;
+  final Icon? prefixIcon;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final bool? obscureText;
@@ -13,7 +13,7 @@ class SharedTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.labelText,
-    required this.prefixIcon,
+    this.prefixIcon,
     this.textInputAction = TextInputAction.next,
     this.keyboardType,
     this.obscureText = false,

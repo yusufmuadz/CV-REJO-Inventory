@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../utils/loading_custom.dart';
 import '../../../home/presentation/sample/app_colors.dart';
@@ -90,7 +91,7 @@ class ListRitView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'RIT-${ritOrder.city}',
+                              'RIT - ${ritOrder.city}',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -113,7 +114,9 @@ class ListRitView extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        ritOrder.tanggalRit,
+                        DateFormat(
+                          'dd MMMM yyyy',
+                        ).format(DateTime.parse(ritOrder.tanggalRit)),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,

@@ -8,6 +8,7 @@ class OrderEntity {
   final String customer;
   final String district;
   final DateModel date;
+  String? suratJalan;
   Courier? courier;
   Status? pic;
   Status? checker1;
@@ -22,6 +23,7 @@ class OrderEntity {
     required this.customer,
     required this.date,
     required this.district,
+    this.suratJalan,
     this.courier,
     this.pic,
     this.checker1,
@@ -35,13 +37,24 @@ class OrderEntity {
     return OrderEntity(
       invoice: json['invoice'],
       orderNo: json['order_no'],
+      suratJalan: json['surat_jalan'] ?? '-',
       customer: json['customer'] ?? '-',
       district: json['district'] ?? '-',
-      date: json['dates'] != null ? DateModel.fromJson(json['dates']) : json['date'] != null ? DateModel.fromJson(json['date']) : DateModel(transaction: '', delivery: ''),
-      courier: json['courier'] == null ? null : Courier.fromJson(json['courier']),
+      date: json['dates'] != null
+          ? DateModel.fromJson(json['dates'])
+          : json['date'] != null
+          ? DateModel.fromJson(json['date'])
+          : DateModel(transaction: '', delivery: ''),
+      courier: json['courier'] == null
+          ? null
+          : Courier.fromJson(json['courier']),
       pic: json['pic'] == null ? null : Status.fromJson(json['pic']),
-      checker1: json['checker1'] == null ? null : Status.fromJson(json['checker1']),
-      checker2: json['checker2'] == null ? null : Status.fromJson(json['checker2']),
+      checker1: json['checker1'] == null
+          ? null
+          : Status.fromJson(json['checker1']),
+      checker2: json['checker2'] == null
+          ? null
+          : Status.fromJson(json['checker2']),
       loader: json['loader'] == null ? null : Status.fromJson(json['loader']),
       driver: json['driver'] == null ? null : Status.fromJson(json['driver']),
       isSelected: json['isSelected'] ?? false,

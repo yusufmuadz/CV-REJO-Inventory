@@ -68,12 +68,14 @@ class HomeController extends GetxController {
   void routeTo() {
     final invoice = GetStorage().read('noInvoice') ?? '';
     final rit = GetStorage().read('city') ?? '';
+    final colorRit = GetStorage().read('colorRit') ?? '';
+    final tanggalRit = GetStorage().read('tanggalRit') ?? '';
     final statusChecker2 = GetStorage().read('status_checker2') ?? '';
 
-    if (AppRole.isDriver) {
-      Get.toNamed(Routes.RIT_INFORMATION);
-      return;
-    }
+    // if (AppRole.isDriver) {
+    //   Get.toNamed(Routes.RIT_INFORMATION);
+    //   return;
+    // }
 
     if (invoice.isNotEmpty) {
       Get.toNamed(
@@ -86,9 +88,27 @@ class HomeController extends GetxController {
       );
     } else {
       GetStorage().remove('noInvoice');
+      if (AppRole.isDriver && rit.isNotEmpty) {
+        debugPrint('Tanggal RIT HOME : ${tanggalRit}');
+        Get.toNamed(
+          Routes.RIT_INFORMATION,
+          arguments: {
+            'invoice': invoice,
+            'city': rit,
+            'colorRit': colorRit,
+            'tanggalRit': tanggalRit,
+          },
+        );
+        return;
+      }
       Get.toNamed(
         Routes.LIST_ORDER,
-        arguments: {'routeFrom': 'home', 'city': rit},
+        arguments: {
+          'routeFrom': 'home',
+          'city': rit,
+          'colorRit': colorRit,
+          'tanggalRit': tanggalRit,
+        },
       );
     }
   }
@@ -151,6 +171,8 @@ class HomeController extends GetxController {
     GetStorage().remove('noInvoice');
     GetStorage().remove('user');
     GetStorage().remove('city');
+    GetStorage().remove('colorRit');
+    GetStorage().remove('tanggalRit');
     AppRole.logout();
     _tokenStorage.clear();
     Get.offAllNamed(Routes.LOGIN);

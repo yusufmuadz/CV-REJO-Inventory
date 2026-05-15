@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../list_order/data/models/courier_model.dart';
@@ -34,6 +36,7 @@ class DetailOrderController extends GetxController {
   final statusLoader = ''.obs;
 
   final isSelect = false.obs;
+  final isTakeIt = false.obs;
 
   final messageProduct = ''.obs;
   final statusPostProduct = false.obs;
@@ -58,8 +61,15 @@ class DetailOrderController extends GetxController {
   final orderDetail = DetailOrderEntity(
     invoice: '',
     orderNo: '',
+    suratJalan: '',
     courier: Courier(service: '', waybillNumber: ''),
-    customer: CustomerModel(username: '', name: '', district: ''),
+    customer: CustomerModel(
+      username: '',
+      name: '',
+      district: '',
+      latitude: '',
+      longitude: '',
+    ),
     date: DateModel(transaction: '', delivery: ''),
   ).obs;
 
@@ -146,28 +156,30 @@ class DetailOrderController extends GetxController {
           assistantSelected.value = data.assistant?.namaKenek ?? '';
           selectTransportation.value = data.assistant?.namaKendaraan ?? '';
 
-          bool check =
-              data.assistant!.namaDriver != '-' &&
-              data.assistant!.namaDriver != '-' &&
-              data.assistant!.namaKendaraan != '-';
+          if (!AppRole.isDriver) {
+            bool check =
+                data.assistant!.namaDriver != '-' &&
+                data.assistant!.namaDriver != '-' &&
+                data.assistant!.namaKendaraan != '-';
 
-          if (AppRole.isChecker2) {
-            check =
-                data.driver!.namaDriver != '-' &&
-                data.driver!.namaDriver != '-' &&
-                data.driver!.namaKendaraan != '-';
-            driverSelected.value = data.driver?.namaDriver ?? '';
-            assistantSelected.value = data.driver?.namaKenek ?? '';
-            selectTransportation.value = data.driver?.namaKendaraan ?? '';
-            nopolTransportation.value = data.driver?.idKendaraan ?? '';
+            if (AppRole.isChecker2) {
+              check =
+                  data.driver!.namaDriver != '-' &&
+                  data.driver!.namaDriver != '-' &&
+                  data.driver!.namaKendaraan != '-';
+              driverSelected.value = data.driver?.namaDriver ?? '';
+              assistantSelected.value = data.driver?.namaKenek ?? '';
+              selectTransportation.value = data.driver?.namaKendaraan ?? '';
+              nopolTransportation.value = data.driver?.idKendaraan ?? '';
+            }
+
+            // debugPrint('Check Assistant: $check');
+            // debugPrint('Check Driver: ${data.assistant?.namaDriver}');
+            // debugPrint('Check Nama Kenek: ${data.assistant?.namaKenek}');
+            // debugPrint('Check Nama Kendaraan: ${data.assistant?.namaKendaraan}');
+
+            isSelect.value = check;
           }
-
-          // debugPrint('Check Assistant: $check');
-          // debugPrint('Check Driver: ${data.assistant?.namaDriver}');
-          // debugPrint('Check Nama Kenek: ${data.assistant?.namaKenek}');
-          // debugPrint('Check Nama Kendaraan: ${data.assistant?.namaKendaraan}');
-
-          isSelect.value = check;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -328,6 +340,23 @@ class DetailOrderController extends GetxController {
     } finally {
       isLoadingProduct.value = false;
     }
+  }
+
+  //////// ====== LAUNCH MAPS ====== ////////
+
+  void onTapMaps() async {
+    final latitude = orderDetail.value.customer.latitude;
+    final longitude = orderDetail.value.customer.longitude;
+
+    if (latitude.isNotEmpty && longitude.isNotEmpty) {
+      dialogService.showErrorSnackbar(title: 'Gagal!', 'Koordinat Kosong');
+      return;
+    }
+    final url = ApiEndpoints.maps(latitude.toString(), longitude.toString());
+
+    await canLaunchUrlString(url)
+        ? launchUrlString(url)
+        : debugPrint("Can't open Terms and Conditions");
   }
 
   //////// ====== PICK IMAGE ====== ////////

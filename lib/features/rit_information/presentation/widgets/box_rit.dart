@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../controllers/rit_controller.dart';
 
@@ -31,49 +33,53 @@ class BoxRit extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'RIT-0813892-001',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+          Obx(
+            () => Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'RIT-${controller.isDistrictSelected.value}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Rabu, 31 Januari 2023',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF4d5461),
+                  const SizedBox(height: 5),
+                  Text(
+                    DateFormat(
+                      'dd MMMM yyyy',
+                    ).format(DateTime.parse(controller.tanggalRit.value)),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF4d5461),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              color: const Color(0xFFd6f2dd),
-            ),
-            child: Text(
-              'Selesai',
-              style: _textStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.45,
-                color: Color(0xFF69b47c),
+                ],
               ),
             ),
           ),
+          // const SizedBox(width: 10),
+          // Container(
+          //   padding: const EdgeInsets.all(5),
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(7),
+          //     color: const Color(0xFFd6f2dd),
+          //   ),
+          //   child: Text(
+          //     'Selesai',
+          //     style: _textStyle(
+          //       fontSize: 12,
+          //       fontWeight: FontWeight.w600,
+          //       letterSpacing: 0.45,
+          //       color: Color(0xFF69b47c),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

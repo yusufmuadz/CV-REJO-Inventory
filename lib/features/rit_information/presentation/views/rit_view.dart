@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
+import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../home/presentation/sample/home_card_sample.dart';
 import '../../../list_order/data/models/date_model.dart';
@@ -26,23 +28,54 @@ class RitView extends GetView<RitController> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
+              if (controller.routeFrom.value == 'listOrder') {
+                Get.offNamed(Routes.HOME);
+              }
               Get.back();
             },
           ),
         ),
         body: Obx(() {
-          if (controller.isLoading.value) {
+          if (controller.loadState.value == LoadState.initial) {
             return const LoadingView();
           }
           return _buildPage();
         }),
         bottomNavigationBar: Obx(() {
-          if (controller.isLoading.value) {
+          if (controller.loadState.value == LoadState.initial ||
+              controller.orders.isEmpty ||
+              controller.isSave.value) {
             return const SizedBox.shrink();
           }
-          return CustomButton.bottomBarStyle(child: _buildButtonSelect());
+          return CustomButton.bottomBarStyle(child: _buildButton());
         }),
       ),
+    );
+  }
+
+  Widget _buildButton() {
+    if (!controller.isAccept.value) {
+      return _buildButtonSelect();
+    }
+    return CustomButton.basicButton(
+      title: controller.pageIndex.value == 0 ? 'Berangkat' : 'Simpan',
+      color: const Color(0xFFd5914d),
+      onPressed: () {
+        debugPrint('Pilih Pesanan');
+        if (controller.pageIndex.value == 0) {
+          controller.pageIndex.value = 1;
+          controller.pageController.jumpToPage(1);
+        } else {
+          controller.mediaFileList.clear();
+          controller.mediaFileListKM.clear();
+          controller.mediaFileListTangki.clear();
+          controller.mediaFileListSJ.clear();
+          controller.kmController.clear();
+          controller.pageIndex.value = 0;
+          controller.isSave.value = true;
+          controller.pageController.jumpToPage(0);
+        }
+      },
     );
   }
 
@@ -57,32 +90,71 @@ class RitView extends GetView<RitController> {
     );
   }
 
+  Widget _buildEmptyOrder() {
+    return const Center(child: Text('Tidak ada pesanan'));
+  }
+
+  Widget _buildContent() {
+    if (controller.orders.isEmpty) {
+      return _buildEmptyOrder();
+    }
+
+    return ListView.separated(
+      itemCount: controller.orders.length,
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      itemBuilder: (context, index) => _buildOrder(index: index),
+    );
+  }
+
+  Widget _buildOrder({required int index}) {
+    OrderEntity transaction = controller.orders[index];
+
+    return CustomCardList(
+      onTap: () {
+        Get.toNamed(
+          Routes.DETAIL_ORDER,
+          arguments: {'invoice': transaction.invoice},
+        );
+      },
+      showSelection: false,
+      isSelected: '',
+      onCheckboxChanged: () {},
+      transaction: transaction,
+      color: controller.colorRit.value.replaceAll('#', ''),
+    );
+  }
+
   Widget _buildDetailRit() {
-    return ListView(
+    return Padding(
       padding: const EdgeInsets.all(16),
-      children: [
-        BoxRit(controller: controller),
-        Divider(thickness: 1, height: 30, color: Colors.grey.shade100),
-        InfoRit(controller: controller),
-        const SizedBox(height: 16),
-        ListView.builder(
-          itemCount: 5,
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => OrderItem(
-            index: index,
-            order: OrderEntity(
-              invoice: 'PO/2000/000${index + 1}',
-              orderNo: '${index + 1}',
-              customer: 'Halo',
-              district: 'Jakarta',
-              date: DateModel(transaction: '25 Januari 2023', delivery: ''),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
+      child: Column(
+        children: [
+          BoxRit(controller: controller),
+          Divider(thickness: 1, height: 30, color: Colors.grey.shade100),
+          // InfoRit(controller: controller),
+          // const SizedBox(height: 16),
+          Expanded(child: _buildContent()),
+          // ListView.builder(
+          //   itemCount: 5,
+          //   shrinkWrap: true,
+          //   padding: EdgeInsets.zero,
+          //   physics: const NeverScrollableScrollPhysics(),
+          //   itemBuilder: (context, index) => OrderItem(
+          //     index: index,
+          //     order: OrderEntity(
+          //       invoice: 'PO/2000/000${index + 1}',
+          //       orderNo: '${index + 1}',
+          //       customer: 'Halo',
+          //       district: 'Jakarta',
+          //       date: DateModel(transaction: '25 Januari 2023', delivery: ''),
+          //     ),
+          //   ),
+          // ),
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 

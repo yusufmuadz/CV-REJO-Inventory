@@ -23,13 +23,15 @@ class ContentDetailOrderWidget extends StatelessWidget {
             value: controller.statusLoader.value == 'completed'
                 ? 'Complete'
                 : controller.statusChecker2.value == 'completed'
-                ? 'Loader'
+                ? 'Leader'
                 : 'Checker',
           ),
         ),
         _buildBody(
           title: 'ID Transaksi',
-          value: controller.orderDetail.value.orderNo,
+          value: AppRole.isDriver
+              ? controller.orderDetail.value.suratJalan
+              : controller.orderDetail.value.orderNo,
         ),
         // _buildBody(
         //   title: 'No Resi',
@@ -274,8 +276,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
                       ),
                     ),
                     Visibility(
-                      visible: AppRole
-                          .isChecker2, // visible: AppRole.isChecker2 || AppRole.isDriver,
+                      visible:
+                          AppRole.isChecker2 ||
+                          AppRole
+                              .isDriver, // visible: AppRole.isChecker2 || AppRole.isDriver,
                       child: _buildCheckBox(
                         check: orderDetail?.isChecked ?? false,
                         index: index,
@@ -304,6 +308,13 @@ class ContentDetailOrderWidget extends StatelessWidget {
         visualDensity: VisualDensity(horizontal: -4, vertical: -4),
         value: check,
         onChanged: (value) {
+          if (AppRole.isDriver) {
+            controller.dialogService.showErrorSnackbar(
+              title: 'Warning!',
+              'Coming Soon',
+            );
+            return;
+          }
           controller.selectedProduct(index);
         },
       ),

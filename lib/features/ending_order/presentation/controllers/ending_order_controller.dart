@@ -19,6 +19,7 @@ class EndingOrderController extends GetxController {
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
   final rit = ''.obs;
+  final colorRit = ''.obs;
 
   final statusChecker2 = ''.obs;
 
@@ -32,6 +33,7 @@ class EndingOrderController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     rit.value = GetStorage().read('city') ?? '';
+    colorRit.value = GetStorage().read('colorRit') ?? '';
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
@@ -101,7 +103,11 @@ class EndingOrderController extends GetxController {
                 GetStorage().remove('status_checker2');
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
-                  arguments: {'routeFrom': 'endingOrder', 'city': rit.value},
+                  arguments: {
+                    'routeFrom': 'endingOrder',
+                    'city': rit.value,
+                    'colorRit': colorRit.value,
+                  },
                 );
               }
             },

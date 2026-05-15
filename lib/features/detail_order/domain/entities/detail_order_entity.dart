@@ -9,6 +9,7 @@ import '../../data/models/item_order_model.dart';
 class DetailOrderEntity {
   final String invoice;
   final String orderNo;
+  final String suratJalan;
   final Courier courier;
   final CustomerModel customer;
   final DateModel date;
@@ -19,6 +20,7 @@ class DetailOrderEntity {
   const DetailOrderEntity({
     required this.invoice,
     required this.orderNo,
+    required this.suratJalan,
     required this.courier,
     required this.customer,
     required this.date,
@@ -31,11 +33,16 @@ class DetailOrderEntity {
     return DetailOrderEntity(
       invoice: json['invoice'] ?? '-',
       orderNo: json['order_no'] ?? '-',
+      suratJalan: json['surat_jalan'].replaceAll('SJ/', '') ?? '-',
       courier: Courier.fromJson(json['courier']),
       customer: CustomerModel.fromJson(json['customer']),
       date: DateModel.fromJson(json['date']),
-      assistant: json['assistant'] != null ? AssistantModel.fromJson(json['assistant']) : null,
-      driver: json['driver'] != null ? DriverModel.fromJson(json['driver']) : null,
+      assistant: json['assistant'] != null
+          ? AssistantModel.fromJson(json['assistant'])
+          : null,
+      driver: json['driver'] != null
+          ? DriverModel.fromJson(json['driver'])
+          : null,
       orderDetails: json['order_details'] != null
           ? List<ItemOrderModel>.from(
               json['order_details'].map((x) => ItemOrderModel.fromJson(x)),
@@ -47,6 +54,7 @@ class DetailOrderEntity {
   DetailOrderEntity copyWith({
     String? invoice,
     String? orderNo,
+    String? suratJalan,
     Courier? courier,
     CustomerModel? customer,
     DateModel? date,
@@ -57,6 +65,7 @@ class DetailOrderEntity {
     return DetailOrderEntity(
       invoice: invoice ?? this.invoice,
       orderNo: orderNo ?? this.orderNo,
+      suratJalan: suratJalan ?? this.suratJalan,
       courier: courier ?? this.courier,
       customer: customer ?? this.customer,
       date: date ?? this.date,

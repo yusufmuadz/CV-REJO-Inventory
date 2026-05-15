@@ -117,47 +117,44 @@ class ContentInputDialog extends StatelessWidget {
           );
         }),
         actions: [
-          Obx(
-            () => Visibility(
-              visible: !controller.isLoadingProduct.value,
-              child: TextButton(
-                onPressed: () {
-                  if (controller.isMaxFailureChecker.value) {
-                    controller.onTapHubungiAdmin();
-                    return;
-                  }
-                  if (!controller.statusPostProduct.value &&
-                      controller.messageProduct.isNotEmpty) {
-                    controller.messageProduct.value = '';
-                    return;
-                  }
-                  Get.back(); // Tutup dialog
-                  qtyController.clear();
-                  controller.mediaFileList.clear();
+          Visibility(
+            visible: true,
+            child: TextButton(
+              onPressed: () {
+                if (controller.isMaxFailureChecker.value) {
+                  controller.onTapHubungiAdmin();
+                  return;
+                }
+                if (!controller.statusPostProduct.value &&
+                    controller.messageProduct.isNotEmpty) {
                   controller.messageProduct.value = '';
-                  controller.startScanner(); // Mulai ulang pemindaian
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, // Warna teks & ikon
-                  backgroundColor:
-                      Colors.redAccent[100], // Warna latar belakang
-                  disabledForegroundColor: Colors.grey, // Warna saat disabled
-                  disabledBackgroundColor: Colors.blue[100],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
+                  return;
+                }
+                Get.back(); // Tutup dialog
+                qtyController.clear();
+                controller.mediaFileList.clear();
+                controller.messageProduct.value = '';
+                controller.startScanner(); // Mulai ulang pemindaian
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white, // Warna teks & ikon
+                backgroundColor: Colors.redAccent[100], // Warna latar belakang
+                disabledForegroundColor: Colors.grey, // Warna saat disabled
+                disabledBackgroundColor: Colors.blue[100],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
                 ),
-                child: Obx(
-                  () => Text(
-                    controller.isMaxFailureChecker.value
-                        ? 'Hubungi Admin'
-                        : controller.messageProduct.isEmpty
-                        ? 'Batal'
-                        : controller.messageProduct.isNotEmpty &&
-                              !controller.statusPostProduct.value
-                        ? 'Ulangi'
-                        : 'Kembali',
-                  ),
+              ),
+              child: Obx(
+                () => Text(
+                  controller.isMaxFailureChecker.value
+                      ? 'Hubungi Admin'
+                      : controller.messageProduct.isEmpty
+                      ? 'Batal'
+                      : controller.messageProduct.isNotEmpty &&
+                            !controller.statusPostProduct.value
+                      ? 'Ulangi'
+                      : 'Kembali',
                 ),
               ),
             ),

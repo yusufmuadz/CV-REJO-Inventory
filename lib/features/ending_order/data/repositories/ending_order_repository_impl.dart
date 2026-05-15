@@ -26,7 +26,7 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
 
         return Success(
           EndingOrderEntity(
-            totalPO: responseRit.data!.transaction!.first.totalPO,
+            totalPO: responseRit.data!.transaction!.first.poPendingDelivery,
             list: [],
           ),
           '',

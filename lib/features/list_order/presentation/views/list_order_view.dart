@@ -124,6 +124,7 @@ class ListOrderView extends StatelessWidget {
           isSelected: controller.isSelected.value,
           onCheckboxChanged: () => controller.onSelected(transaction.invoice),
           transaction: transaction,
+          color: controller.colorRit.value.replaceAll('#', ''),
         ),
       ),
     );

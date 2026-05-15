@@ -11,13 +11,19 @@ import '../input_assisten_widget.dart';
 class AssistantDialog {
   static Widget buildButtonSelect(DetailOrderController controller) {
     return CustomButton.doubleButton(
-      title1: 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}',
+      title1: AppRole.isDriver
+          ? 'Maps'
+          : 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}',
       title2: 'Lanjut',
       color1: const Color(0xFFFF51BD),
       color2: const Color(0xFF255BF0),
-      visible1: !AppRole.isDriver,
-      visibleSpace: !AppRole.isDriver,
+      visible1: AppRole.isDriver,
+      visibleSpace: AppRole.isDriver,
       onPressed1: () {
+        if (AppRole.isDriver) {
+          controller.onTapMaps();
+          return;
+        }
         if (AppRole.isChecker2) {
           controller.dialogService.showErrorSnackbar(
             title: 'Warning!',
@@ -44,7 +50,7 @@ class AssistantDialog {
 
   static void inputAsisten(DetailOrderController controller) {
     controller.dialogService.inputDialog(
-      title: 'Masukkan Asisten',
+      title: 'Masukkan ${AppRole.isChecker2 ? 'Muat Barang' : 'Asisten'}',
       onPressed2: () {
         // if (!AppRole.isChecker2) {
         controller.addAssistant();
@@ -71,7 +77,7 @@ class AssistantDialog {
     controller.dialogService.inputDialog(
       title: 'Detail Asisten',
       titleButton1: 'Kembali',
-      height: 0.20,
+      height: 0.30,
       singleButton: true,
       padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
       content: SingleChildScrollView(

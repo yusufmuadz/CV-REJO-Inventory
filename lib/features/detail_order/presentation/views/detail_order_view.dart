@@ -91,9 +91,13 @@ class DetailOrderView extends GetView<DetailOrderController> {
 
   Widget _buildButtonStart() {
     return CustomButton.basicButton(
-      title: 'Mulai',
+      title: AppRole.isDriver ? 'Ambil' : 'Mulai',
       color: const Color(0xFF2ED471),
       onPressed: () {
+        if (AppRole.isDriver) {
+          controller.isSelect.value = !controller.isSelect.value;
+          return;
+        }
         if (controller.listUser.isEmpty) {
           controller.getAssisten();
         }
@@ -107,12 +111,12 @@ class DetailOrderView extends GetView<DetailOrderController> {
   }
 
   Widget _buildButton() {
-    if (AppRole.isPIC || AppRole.isChecker2) {
+    if (AppRole.isPIC || AppRole.isChecker2 || AppRole.isDriver) {
       if (AppRole.isChecker2 &&
           controller.statusChecker2.value == 'completed' &&
           !controller.isSelect.value) {
         return _buildButtonStart();
-      } else if (AppRole.isPIC && !controller.isSelect.value) {
+      } else if ((AppRole.isPIC && !controller.isSelect.value) || (AppRole.isDriver && !controller.isSelect.value)) {
         // if (!controller.isSelect.value) {
         return _buildButtonStart();
         // }

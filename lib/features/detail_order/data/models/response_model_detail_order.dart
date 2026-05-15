@@ -35,26 +35,18 @@ class Data {
         ? DetailOrderEntity(
             invoice: '',
             orderNo: '',
+            suratJalan: '',
             courier: Courier(service: '', waybillNumber: ''),
-            customer: CustomerModel(username: '', name: '', district: ''),
+            customer: CustomerModel(
+              username: '',
+              name: '',
+              district: '',
+              latitude: '',
+              longitude: '',
+            ),
             date: DateModel(transaction: '', delivery: ''),
           )
-        : DetailOrderEntity(
-            invoice: json["data"]["invoice"] ?? '',
-            orderNo: json["data"]["order_no"] ?? '',
-            courier: Courier.fromJson(json["data"]["courier"]),
-            customer: CustomerModel.fromJson(json["data"]["customer"]),
-            date: DateModel.fromJson(json["data"]["date"]),
-            assistant: AssistantModel.fromJson(json["data"]["assistant"]),
-            driver: DriverModel.fromJson(json["data"]['driver']),
-            orderDetails: json["data"]["order_details"] != null
-                ? List<ItemOrderModel>.from(
-                    json["data"]["order_details"].map(
-                      (x) => ItemOrderModel.fromJson(x),
-                    ),
-                  )
-                : null,
-          ),
+        : DetailOrderEntity.fromJson(json['data']),
   );
 
   DetailOrderEntity toEntity() {
@@ -62,8 +54,15 @@ class Data {
       return DetailOrderEntity(
         invoice: '',
         orderNo: '',
+        suratJalan: '',
         courier: Courier(service: '', waybillNumber: ''),
-        customer: CustomerModel(username: '', name: '', district: ''),
+        customer: CustomerModel(
+          username: '',
+          name: '',
+          district: '',
+          latitude: '',
+          longitude: '',
+        ),
         date: DateModel(transaction: '', delivery: ''),
       );
     }

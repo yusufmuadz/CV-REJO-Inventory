@@ -10,6 +10,7 @@ class CustomCardList extends StatelessWidget {
   final String isSelected;
   final Function()? onCheckboxChanged;
   final OrderEntity transaction;
+  final String? color;
 
   const CustomCardList({
     super.key,
@@ -18,6 +19,7 @@ class CustomCardList extends StatelessWidget {
     this.onCheckboxChanged,
     this.showSelection = false,
     this.isSelected = '',
+    this.color,
   });
 
   @override
@@ -50,11 +52,6 @@ class CustomCardList extends StatelessWidget {
                       )
                     : null,
               ),
-              // Radio<String>(
-              //   value: isSelected,
-              //   onChanged: onCheckboxChanged,
-              //   visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-              // ),
             ),
           ),
         ),
@@ -66,9 +63,11 @@ class CustomCardList extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected == transaction.invoice
                     ? Colors.grey.shade100
+                    : color != null
+                    ? Color(int.parse('0xFF$color')).withOpacity(0.3)
                     : Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: isSelected == transaction.invoice
+                boxShadow: color != null
                     ? []
                     : const [
                         BoxShadow(
@@ -86,7 +85,9 @@ class CustomCardList extends StatelessWidget {
                       _buildInfoText(
                         title: 'ID Transaksi',
                         isStatus: true,
-                        value: transaction.orderNo.replaceAll('SL', 'SO'),
+                        value: AppRole.isDriver ?
+                        transaction.suratJalan!.replaceAll('SJ/', '') :
+                        transaction.orderNo.replaceAll('SL', 'SO'),
                       ),
                       // const SizedBox(height: 9),
                       // _buildInfoText(
@@ -151,7 +152,7 @@ class CustomCardList extends StatelessWidget {
     String text = 'Checker';
 
     if (status == 'completed') {
-      text = 'Loader';
+      text = 'Leader';
     }
 
     return text;
@@ -223,7 +224,8 @@ class CustomCardList extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible: AppRole.isChecker2 && isStatus && statusLoader != 'completed',
+          visible:
+              AppRole.isChecker2 && isStatus && statusLoader != 'completed',
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(

@@ -40,4 +40,5 @@ class ApiEndpoints {
   static const String privacyPolicy = "http://lite2.indopustakaplus.com/admin/privacy_policy.html";
   static const String termsAndCondition = "https://lite2.indopustakaplus.com/admin/terms_and_condition.html";
 
+  static String maps(String latitude, String longitude) => "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
 }

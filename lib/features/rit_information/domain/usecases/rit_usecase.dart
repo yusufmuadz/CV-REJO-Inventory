@@ -1,5 +1,7 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/list_order_entity.dart';
+import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../entities/rit_entity.dart';
 import '../params/post_rit_param.dart';
 import '../repositories/rit_repository.dart';
@@ -19,5 +21,11 @@ class RitUseCase {
     ParamsRit params,
   ) {
     return repository.pendingOrder(params);
+  }
+
+  Future<ResultCustom<Failure, List<OrderEntity>>> callGetOrders(
+    ParamsGetTransaction params,
+  ) {
+    return repository.getOrders(params);
   }
 }

@@ -42,6 +42,9 @@ class ListOrderController extends GetxController {
   final listDistrict = <DistrictEntity>[].obs;
   final listRit = <RitListEntity>[].obs;
 
+  final colorRit = ''.obs;
+  final tanggalRit = ''.obs;
+
   final sortByNew = true.obs;
 
   final loadState = LoadState.initial.obs;
@@ -59,6 +62,8 @@ class ListOrderController extends GetxController {
       debugPrint('Route From: ${args['routeFrom']}');
       isRouteFrom.value = args['routeFrom'] ?? '';
       isDistrictSelected.value = args['city'] ?? '';
+      colorRit.value = args['colorRit'] ?? '';
+      tanggalRit.value = args['tanggalRit'] ?? '';
       if (isDistrictSelected.value.isNotEmpty) {
         pageIndex.value = 1;
         // pageController.jumpToPage(1);
@@ -134,11 +139,19 @@ class ListOrderController extends GetxController {
   }
 
   void onSelectedRit(String id) {
-    if (!isSelection.value) return;
+    if (!isSelection.value && !AppRole.isDriver) return;
 
     final index = listRit.indexWhere((order) => order.city == id);
+
     if (index != -1) {
       isSelected.value = id;
+      colorRit.value = listRit[index].color;
+      tanggalRit.value = listRit[index].tanggalRit;
+    }
+
+    if (AppRole.isDriver) {
+      takeItOrder();
+      return;
     }
   }
 
@@ -150,7 +163,7 @@ class ListOrderController extends GetxController {
   void takeItOrder() async {
     if (isLoading.value) return;
 
-    if (isSelected.value.isEmpty) {
+    if (isSelected.value.isEmpty && !AppRole.isDriver) {
       dialogService.showError('Error', 'Pilih pesanan terlebih dahulu');
       return;
     }
@@ -160,9 +173,24 @@ class ListOrderController extends GetxController {
       isSelection.value = false;
       isDistrictSelected.value = isSelected.value;
       GetStorage().write('city', isSelected.value);
+      GetStorage().write('colorRit', colorRit.value);
+      GetStorage().write('tanggalRit', tanggalRit.value);
+      if (AppRole.isDriver) {
+        Get.offNamed(
+          Routes.RIT_INFORMATION,
+          arguments: {
+            'invoice': '',
+            'city': isSelected.value,
+            'colorRit': colorRit.value,
+            'tanggalRit': tanggalRit.value,
+            'routeFrom': 'listOrder',
+          },
+        );
+      } else {
+        _getOrder();
+      }
       isSelected.value = '';
       listRit.clear();
-      _getOrder();
       return;
     }
 
@@ -185,11 +213,12 @@ class ListOrderController extends GetxController {
         case Success(:final data):
           if (data.status && data.message.isEmpty) {
             GetStorage().write('noInvoice', isSelected.value);
-            if (AppRole.isChecker2)
+            if (AppRole.isChecker2) {
               GetStorage().write(
                 'status_checker2',
                 orders[index].checker2?.status ?? '',
               );
+            }
             Get.offNamed(
               Routes.DETAIL_ORDER,
               arguments: {
