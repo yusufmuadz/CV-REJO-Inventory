@@ -85,9 +85,9 @@ class CustomCardList extends StatelessWidget {
                       _buildInfoText(
                         title: 'ID Transaksi',
                         isStatus: true,
-                        value: AppRole.isDriver ?
-                        transaction.suratJalan!.replaceAll('SJ/', '') :
-                        transaction.orderNo.replaceAll('SL', 'SO'),
+                        value: AppRole.isDriver
+                            ? transaction.suratJalan!.replaceAll('SJ/', '')
+                            : transaction.orderNo.replaceAll('SL', 'SO'),
                       ),
                       // const SizedBox(height: 9),
                       // _buildInfoText(
@@ -148,23 +148,39 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  String _buildText(String status) {
+  String _buildText({String statusChecker2 = '', String statusDriver = ''}) {
     String text = 'Checker';
 
-    if (status == 'completed') {
+    if (statusChecker2 == 'completed') {
       text = 'Leader';
+    }
+
+    if (AppRole.isDriver) {
+      if (statusDriver != 'ongoing') {
+        text = 'On Progress';
+      } else {
+        text = 'Ready';
+      }
     }
 
     return text;
   }
 
-  Color _buildColor(String status) {
+  Color _buildColor({String statusChecker2 = '', String statusDriver = ''}) {
     Color color = Color(0xFF5eb75f);
 
-    if (status == 'ongoing') {
+    if (statusChecker2 == 'ongoing') {
       color = const Color(0xFF5eb75f);
-    } else if (status == 'completed') {
+    } else if (statusChecker2 == 'completed') {
       color = const Color(0xFF666666);
+    }
+
+    if (AppRole.isDriver) {
+      if (statusDriver != 'ongoing') {
+        color = const Color(0xFF666666);
+      } else {
+        color = const Color(0xFF5eb75f);
+      }
     }
 
     return color;
@@ -225,15 +241,22 @@ class CustomCardList extends StatelessWidget {
         ),
         Visibility(
           visible:
-              AppRole.isChecker2 && isStatus && statusLoader != 'completed',
+              (AppRole.isChecker2 && isStatus && statusLoader != 'completed') ||
+              AppRole.isDriver,
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              color: _buildColor(transaction.checker2?.status ?? ''),
+              color: _buildColor(
+                statusChecker2: transaction.checker2?.status ?? '',
+                statusDriver: transaction.driver?.status ?? '',
+              ),
             ),
             child: Text(
-              _buildText(transaction.checker2?.status ?? ''),
+              _buildText(
+                statusChecker2: transaction.checker2?.status ?? '',
+                statusDriver: transaction.driver?.status ?? '',
+              ),
               style: _textStyle(color: Colors.white),
             ),
           ),

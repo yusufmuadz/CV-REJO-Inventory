@@ -34,6 +34,7 @@ class DetailOrderController extends GetxController {
 
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
+  final statusDriver = ''.obs;
 
   final isSelect = false.obs;
   final isTakeIt = false.obs;
@@ -83,8 +84,9 @@ class DetailOrderController extends GetxController {
       takeItOrder.value = args['take_it_order'] ?? false;
       statusChecker2.value = args['status_checker2'] ?? '';
       statusLoader.value = args['status_loader'] ?? '';
-      debugPrint('Status Checker 2 : ${statusChecker2.value}');
-      debugPrint('Status Loader : ${statusLoader.value}');
+      statusDriver.value = args['status_driver'] ?? '';
+      // debugPrint('Status Checker 2 : ${statusChecker2.value}');
+      // debugPrint('Status Loader : ${statusLoader.value}');
     }
   }
 

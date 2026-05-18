@@ -5,12 +5,9 @@ import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../home/presentation/sample/home_card_sample.dart';
-import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/box_rit.dart';
-import '../widgets/info_rit.dart';
 import 'input_image_view.dart';
 
 class RitView extends GetView<RitController> {
@@ -115,7 +112,10 @@ class RitView extends GetView<RitController> {
       onTap: () {
         Get.toNamed(
           Routes.DETAIL_ORDER,
-          arguments: {'invoice': transaction.invoice},
+          arguments: {
+            'invoice': transaction.invoice,
+            'status_driver': transaction.driver?.status ?? '',
+          },
         );
       },
       showSelection: false,
@@ -133,25 +133,7 @@ class RitView extends GetView<RitController> {
         children: [
           BoxRit(controller: controller),
           Divider(thickness: 1, height: 30, color: Colors.grey.shade100),
-          // InfoRit(controller: controller),
-          // const SizedBox(height: 16),
           Expanded(child: _buildContent()),
-          // ListView.builder(
-          //   itemCount: 5,
-          //   shrinkWrap: true,
-          //   padding: EdgeInsets.zero,
-          //   physics: const NeverScrollableScrollPhysics(),
-          //   itemBuilder: (context, index) => OrderItem(
-          //     index: index,
-          //     order: OrderEntity(
-          //       invoice: 'PO/2000/000${index + 1}',
-          //       orderNo: '${index + 1}',
-          //       customer: 'Halo',
-          //       district: 'Jakarta',
-          //       date: DateModel(transaction: '25 Januari 2023', delivery: ''),
-          //     ),
-          //   ),
-          // ),
           const SizedBox(height: 20),
         ],
       ),

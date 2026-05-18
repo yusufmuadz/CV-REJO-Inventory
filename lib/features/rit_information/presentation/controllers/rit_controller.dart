@@ -208,6 +208,7 @@ class RitController extends GetxController {
         ParamsGetTransaction(
           limit: '10',
           page: '$currentPage',
+          filter: 'all',
           // sort: sortByNew.value ? 'newest' : 'oldest',
           district: isDistrictSelected.value.toLowerCase(),
         ),

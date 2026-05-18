@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SharedTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String labelText;
+  final String? labelText;
+  final String? hintText;
   final Icon? prefixIcon;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
@@ -12,7 +14,8 @@ class SharedTextField extends StatelessWidget {
   const SharedTextField({
     super.key,
     required this.controller,
-    required this.labelText,
+    this.labelText,
+    this.hintText,
     this.prefixIcon,
     this.textInputAction = TextInputAction.next,
     this.keyboardType,
@@ -33,7 +36,13 @@ class SharedTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-        hintStyle: TextStyle(color: Colors.grey.shade600),
+        hintText: hintText,
+        hintStyle: GoogleFonts.hankenGrotesk(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.48,
+          color: Colors.grey.shade400,
+        ),
         fillColor: Colors.white70,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

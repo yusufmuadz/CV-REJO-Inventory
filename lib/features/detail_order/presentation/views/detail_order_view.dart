@@ -116,10 +116,11 @@ class DetailOrderView extends GetView<DetailOrderController> {
           controller.statusChecker2.value == 'completed' &&
           !controller.isSelect.value) {
         return _buildButtonStart();
-      } else if ((AppRole.isPIC && !controller.isSelect.value) || (AppRole.isDriver && !controller.isSelect.value)) {
-        // if (!controller.isSelect.value) {
+      } else if ((AppRole.isPIC && !controller.isSelect.value) ||
+          (AppRole.isDriver &&
+              controller.statusDriver.value == 'available' &&
+              !controller.isSelect.value)) {
         return _buildButtonStart();
-        // }
       }
     }
     return _buildDoubleButton();
