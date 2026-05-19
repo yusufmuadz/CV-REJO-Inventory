@@ -1,6 +1,7 @@
 import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:cv_rejo/features/home/presentation/sample/home_view_new_sample.dart';
+import 'package:cv_rejo/features/list_order/presentation/controllers/list_order_controller.dart';
 import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,8 @@ class HomeController extends GetxController {
 
   final tabIndex = 0.obs;
 
+  late final ListOrderController listOrderController;
+
   final List<Widget> pages = [
     HomeViewNewSample(),
     Container(),
@@ -44,6 +47,7 @@ class HomeController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    // listOrderController = Get.put(ListOrderController(listOrderUseCase: null));
     _tokenStorage = Get.find<TokenStorage>();
     if (!isLoading.value) {
       _getHomeData();

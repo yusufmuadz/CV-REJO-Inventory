@@ -51,4 +51,10 @@ class DetailOrderUseCase {
   ) {
     return repository.postItemProduct(params);
   }
+
+  Future<ResultCustom<Failure, BasicEntity>> callTakeItTransactionDriver(
+    ParamsAddAssistant params,
+  ) {
+    return repository.takeItTransactionDriver(params);
+  }
 }

@@ -19,6 +19,7 @@ class RitController extends GetxController {
   RitController({required this.ritUseCase});
 
   final isLoading = false.obs;
+  final isLoadingReason = false.obs;
   final loadState = LoadState.initial.obs;
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
@@ -35,12 +36,14 @@ class RitController extends GetxController {
   final isSave = false.obs;
 
   final kmController = TextEditingController();
+  final reasonController = TextEditingController();
 
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
   final mediaFileListKM = <XFile>[].obs;
   final mediaFileListTangki = <XFile>[].obs;
   final mediaFileListSJ = <XFile>[].obs;
+  final mediaFileReason = <XFile>[].obs;
 
   final pageIndex = 0.obs;
   final pageController = PageController(initialPage: 0);
@@ -71,6 +74,15 @@ class RitController extends GetxController {
     kmController.dispose();
     mediaFileList.clear();
     noInvoice.value = '';
+    routeFrom.value = '';
+    colorRit.value = '';
+    tanggalRit.value = '';
+    mediaFileListKM.clear();
+    mediaFileListTangki.clear();
+    mediaFileListSJ.clear();
+    pageIndex.value = 0;
+    pageController.dispose();
+    isLoadingReason.value = false;
   }
 
   void onRefreshTransaction() {
@@ -82,74 +94,72 @@ class RitController extends GetxController {
 
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
 
+  Future<void> acceptRit() async {
+    isAccept.value = !isAccept.value;
+    // pageIndex.value = 1;
+    // pageController.animateToPage(
+    //   1,
+    //   duration: const Duration(milliseconds: 300),
+    //   curve: Curves.easeInOut,
+    // );
+  }
+
   Future<void> saveOrder() async {
     if (isLoading.value) return;
 
-    isAccept.value = !isAccept.value;
+    if (mediaFileList.isEmpty ||
+        mediaFileListKM.isEmpty ||
+        mediaFileListTangki.isEmpty ||
+        mediaFileListSJ.isEmpty ||
+        kmController.text.isEmpty) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Silakan lengkapi data terlebih dahulu!',
+      );
+      return;
+    }
+    isLoading.value = true;
 
-    //   if (mediaFileList.isEmpty) {
-    //     dialogService.showErrorSnackbar(title: 'Gagal!', 'Coming Soon');
-    //     pageIndex.value = 1;
-    //     pageController.animateToPage(
-    //       1,
-    //       duration: const Duration(milliseconds: 300),
-    //       curve: Curves.easeInOut,
-    //     );
-    //     return;
-    //   }
-    //   isLoading.value = true;
+    try {
+      final result = await ritUseCase.call(
+        ParamsRit(
+          rit: isDistrictSelected.value,
+          km: kmController.text,
+          kmImage: mediaFileListKM[0],
+          tankTruckImage: mediaFileListTangki[0],
+        ),
+      );
 
-    //   try {
-    //     final result = await ritUseCase.call(
-    //       ParamsRit(
-    //         role: AppRole.current!.name.toLowerCase(),
-    //         statusChecker2: statusChecker2.value,
-    //         invoice: noInvoice.value,
-    //         desc: fieldController.text,
-    //         images: mediaFileList,
-    //       ),
-    //     );
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Save Order: $data');
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Menyimpan Data',
+            barrierDismissible: false,
+            onPressed: () {
+              mediaFileList.clear();
+              mediaFileListKM.clear();
+              mediaFileListTangki.clear();
+              mediaFileListSJ.clear();
+              kmController.clear();
+              isSave.value = true;
+              pageIndex.value = 0;
+              pageController.animateToPage(
+                0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+          );
 
-    //     switch (result) {
-    //       case Success(:final data):
-    //         debugPrint('Data Item Product: $data');
-    //         debugPrint('Status: ${statusChecker2.value}');
-    //         dialogService.showDialogBox(
-    //           title: 'Success',
-    //           description: 'Berhasil Menyimpan Pesanan',
-    //           barrierDismissible: false,
-    //           onPressed: () {
-    //             if (AppRole.isChecker2 &&
-    //                 (statusChecker2.value == 'available' ||
-    //                     statusChecker2.value == 'ongoing')) {
-    //               GetStorage().write('status_checker2', 'completed');
-    //               Get.offAllNamed(
-    //                 Routes.DETAIL_ORDER,
-    //                 arguments: {
-    //                   'routeFrom': 'listOrder',
-    //                   'take_it_order': true,
-    //                   'status_checker2': 'completed',
-    //                   'invoice': noInvoice.value,
-    //                 },
-    //               );
-    //             } else {
-    //               GetStorage().remove('noInvoice');
-    //               GetStorage().remove('status_checker2');
-    //               Get.offAllNamed(
-    //                 Routes.LIST_ORDER,
-    //                 arguments: {'routeFrom': 'endingOrder'},
-    //               );
-    //             }
-    //           },
-    //         );
-
-    //       case ErrorResult(:final message):
-    //         if (Get.isDialogOpen == true) Get.back();
-    //         dialogService.showError('Failed', message);
-    //     }
-    //   } finally {
-    //     isLoading.value = false;
-    //   }
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> pendingProduct() async {

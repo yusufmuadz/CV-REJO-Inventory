@@ -1,6 +1,7 @@
 import 'package:cv_rejo/features/detail_order/presentation/controllers/detail_order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -33,15 +34,6 @@ class ContentDetailOrderWidget extends StatelessWidget {
               ? controller.orderDetail.value.suratJalan
               : controller.orderDetail.value.orderNo,
         ),
-        // _buildBody(
-        //   title: 'No Resi',
-        //   value: controller.orderDetail.value.courier.waybillNumber,
-        //   pengiriman: controller.orderDetail.value.courier.service,
-        // ),
-        // _buildBody(
-        //   title: 'No Pesanan',
-        //   value: controller.orderDetail.value.invoice.replaceAll('SL', 'SO'),
-        // ),
         _buildInfoCustomer(
           username: controller.orderDetail.value.customer.name,
           namePenerima: controller.orderDetail.value.customer.name,
@@ -54,40 +46,57 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildBoxStyle({required Widget child, double? vertical}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: vertical ?? 10),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: Color(0xFFD7C3B4)),
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildIconStyle({required IconData icon}) {
+    return Container(
+      height: 35,
+      width: 35,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFFDF2F8),
+      ),
+      child: Icon(icon, size: 20, color: const Color(0xFFEC4899)),
+    );
+  }
+
   Widget _buildBody({
     required String title,
     required String value,
     String pengiriman = '',
   }) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      color: AppTheme.surface,
+    return _buildBoxStyle(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyles.basicTextStyle(
-                    color: const Color(0xFF7C7C7C),
-                  ),
+              Text(
+                title,
+                style: TextStyles.basicTextStyle(
+                  color: const Color(0xFF7C7C7C),
                 ),
               ),
-              SizedBox(
-                width: 135,
-                child: Text(
-                  value,
-                  textAlign: TextAlign.left,
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF171717),
-                  ),
+              Text(
+                value,
+                textAlign: TextAlign.left,
+                style: TextStyles.basicTextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF171717),
                 ),
               ),
             ],
@@ -131,32 +140,39 @@ class ContentDetailOrderWidget extends StatelessWidget {
   Widget _buildInfoContent({
     required String title,
     required String value,
-    required String image,
+    required IconData icon,
     double mgBottom = 16,
   }) {
     return Container(
       margin: EdgeInsets.only(bottom: mgBottom),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 20, height: 20, child: Image.asset(image)),
+          _buildIconStyle(icon: icon),
           const SizedBox(width: 15),
           Expanded(
-            child: Text(
-              title,
-              style: TextStyles.basicTextStyle(color: const Color(0xFF7C7C7C)),
-            ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            width: 135,
-            child: Text(
-              value,
-              textAlign: TextAlign.left,
-              style: TextStyles.basicTextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF171717),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyles.basicTextStyle(
+                    fontFamily:
+                        GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
+                    fontSize: 12,
+                    color: const Color(0xFF857467),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF151C27),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -171,70 +187,66 @@ class ContentDetailOrderWidget extends StatelessWidget {
     String tanggalBatas = '',
     String district = '',
   }) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      color: AppTheme.surface,
+    return _buildBoxStyle(
+      vertical: 15,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // _buildInfoContent(
-          //   title: 'Username',
-          //   value: username,
-          //   image: Assets.icons.cardMember.path,
-          // ),
           _buildInfoContent(
             title: 'Nama Penerima',
             value: namePenerima,
-            image: Assets.icons.person2.path,
+            icon: Icons.person_outline,
+          ),
+          Visibility(
+            visible: AppRole.isDriver,
+            child: _buildInfoContent(
+              title: 'Nomor Telepon',
+              value: '081234567890',
+              icon: Icons.phone_outlined,
+            ),
           ),
           _buildInfoContent(
             title: 'Tanggal Pesanan Masuk',
             value: tanggalBatas,
-            image: Assets.icons.dateIn.path,
+            icon: Icons.calendar_month_outlined,
           ),
           _buildInfoContent(
             title: 'KOTA/KABUPATEN',
             value: district,
-            image: Assets.icons.district.path,
-            mgBottom: 0,
+            icon: Icons.location_on_outlined,
+            mgBottom: AppRole.isDriver ? 16 : 0,
           ),
-          // _buildInfoContent(
-          //   title: 'Tanggal Batas Pengiriman',
-          //   value: tanggalBatas,
-          //   image: Assets.icons.dateOrder.path,
-          //   mgBottom: 0,
-          // ),
+          Visibility(
+            visible: AppRole.isDriver,
+            child: _buildInfoContent(
+              title: 'Alamat Pengiriman',
+              value: 'Jl. Jend. Sudirman No. 1, Jakarta Selatan',
+              icon: Icons.apartment,
+              mgBottom: 0,
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildInfoPesanan() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      color: AppTheme.surface,
+    return _buildBoxStyle(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset(Assets.icons.orderan.path),
-              ),
+              _buildIconStyle(icon: Icons.inventory_2_outlined),
               const SizedBox(width: 8),
               Text(
                 'Pesanan',
                 style: TextStyles.basicTextStyle(
-                  color: Color(0xFF171717),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
+                  fontWeight: FontWeight.w500,
                   height: 0,
+                  color: Color(0xFF151C27),
                 ),
               ),
             ],
@@ -258,21 +270,39 @@ class ContentDetailOrderWidget extends StatelessWidget {
 
                 return Row(
                   children: [
-                    Text('${index + 1}.', style: TextStyles.basicTextStyle()),
+                    Text(
+                      '${index + 1}.',
+                      style: TextStyles.basicTextStyle(
+                        fontSize: 16,
+                        fontFamily:
+                            GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
+                        color: Color(0xFF524439),
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '${orderDetail?.item}',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyles.basicTextStyle(),
+                        style: TextStyles.basicTextStyle(
+                          fontSize: 15,
+                          fontFamily:
+                              GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
+
+                          color: Color(0xFF151C27),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 15),
                     Text(
                       setQty,
                       style: TextStyles.basicTextStyle(
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontFamily:
+                            GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
+
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     Visibility(
@@ -298,6 +328,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
   Widget _buildCheckBox({required bool check, required int index}) {
     if ((controller.statusChecker2.value == 'completed' &&
             !controller.isSelect.value) ||
+        (AppRole.isDriver && !controller.isSelect.value) ||
         controller.routeFrom.value == 'listHistoryOrder') {
       return SizedBox.shrink();
     }
@@ -305,16 +336,17 @@ class ContentDetailOrderWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 8),
       child: Checkbox(
-        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
         value: check,
+        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onChanged: (value) {
-          if (AppRole.isDriver) {
-            controller.dialogService.showErrorSnackbar(
-              title: 'Warning!',
-              'Coming Soon',
-            );
-            return;
-          }
+          // if (AppRole.isDriver) {
+          //   controller.dialogService.showErrorSnackbar(
+          //     title: 'Warning!',
+          //     'Coming Soon',
+          //   );
+          //   return;
+          // }
           controller.selectedProduct(index);
         },
       ),

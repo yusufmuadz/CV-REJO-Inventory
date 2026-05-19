@@ -121,4 +121,23 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
       return ErrorResult(message: e.toString());
     }
   }
+
+  @override
+  Future<ResultCustom<Failure, BasicEntity>> takeItTransactionDriver(
+    ParamsAddAssistant params,
+  ) async {
+    try {
+      final response = await dataSource.takeItTransactionDriver(params);
+
+      return Success(
+        BasicEntity(
+          status: response.status ?? false,
+          message: response.message ?? '-',
+        ),
+        '',
+      );
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
 }

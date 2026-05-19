@@ -16,44 +16,26 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   RitRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelRit> postEndingOrder(ParamsRit params) async {
+  Future<ResponseModelRit> postSaveDataDriver(ParamsRit params) async {
     try {
-      String nameFile = 'file';
-
-      if (params.role == 'deliver') {
-        nameFile = 'foto';
-      }
-
       final formData = FormData.fromMap({
-        'invoice': params.invoice,
-        'desc': params.desc,
-        if (params.role == 'deliver') 'gudang': 'BARANG JADI',
-        '${nameFile}1': await MultipartFile.fromFile(
-          params.images![0].path,
-          filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
-        ),
-        // Collection if: hanya masuk ke map kalau kondisi true
-        if (params.images!.length > 1)
-          '${nameFile}2': await MultipartFile.fromFile(
-            params.images![1].path,
-            filename: '${nameFile}2.jpg',
-          ),
+        'rit': params.rit,
+        'km': params.km,
+        'foto_km': '',
+        'foto_truck_depan': '',
+        'foto_truck_kiri': '',
+        'foto_truck_kanan': '',
+        'foto_truck_belakang': '',
+        'foto_truck_overall': '',
+        'foto_truck_tangki': '',
       });
 
-      String role = params.role!;
-
-      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
-        role = 'check2';
-      } else if (params.role == 'deliver') {
-        role = 'delivery';
-      }
-
       final response = await dioClient.post(
-        ApiEndpoints.completeOrder(role),
+        ApiEndpoints.saveDataDriver,
         data: formData,
       );
 
-      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+      // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
 
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
@@ -68,39 +50,39 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: 'error RIT Transaction: $e');
     }
   }
 
   @override
   Future<ResponseModelRit> pendingOrder(ParamsRit params) async {
     try {
-      final formData = FormData.fromMap({
-        'invoice': params.invoice,
-        'desc': params.desc,
-        'foto1': await MultipartFile.fromFile(
-          params.images![0].path,
-          filename: 'foto1.jpg', // ⬅️ selalu tambahkan filename
-        ),
-        // Collection if: hanya masuk ke map kalau kondisi true
-        if (params.images!.length > 1)
-          'foto2': await MultipartFile.fromFile(
-            params.images![1].path,
-            filename: 'foto2.jpg',
-          ),
-      });
+      // final formData = FormData.fromMap({
+      //   'invoice': params.invoice,
+      //   'desc': params.desc,
+      //   'foto1': await MultipartFile.fromFile(
+      //     params.images![0].path,
+      //     filename: 'foto1.jpg', // ⬅️ selalu tambahkan filename
+      //   ),
+      //   // Collection if: hanya masuk ke map kalau kondisi true
+      //   if (params.images!.length > 1)
+      //     'foto2': await MultipartFile.fromFile(
+      //       params.images![1].path,
+      //       filename: 'foto2.jpg',
+      //     ),
+      // });
 
-      String role = params.role!;
+      // String role = params.role!;
 
-      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
-        role = 'check2';
-      } else if (params.role == 'deliver') {
-        role = 'delivery';
-      }
+      // if (params.role == 'loader' && params.statusChecker2 != 'completed') {
+      //   role = 'check2';
+      // } else if (params.role == 'deliver') {
+      //   role = 'delivery';
+      // }
 
       final response = await dioClient.post(
-        ApiEndpoints.pendingOrder(role),
-        data: formData,
+        ApiEndpoints.saveDataDriver,
+        // data: formData,
       );
 
       // debugPrint('Data Pending Order Remote DataSource: ${response.data}');

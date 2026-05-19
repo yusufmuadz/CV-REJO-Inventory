@@ -1,12 +1,16 @@
 import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
+import 'package:cv_rejo/features/list_order/presentation/views/list_order_page.dart';
 import 'package:cv_rejo/features/profile/presentation/views/profile_view.dart';
 import 'package:cv_rejo/shared/custom/custom_button.dart';
+import 'package:cv_rejo/utils/loading_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../../routes/app_pages.dart';
 import 'app_colors.dart';
 import 'home_card_sample.dart';
 
@@ -18,7 +22,9 @@ class HomeViewNewSample extends GetView<HomeController> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMint,
+        backgroundColor: AppRole.isDriver
+            ? Color(0xFFf5f0fa)
+            : AppColors.backgroundMint,
         body: Stack(children: [_buildPage()]),
         bottomNavigationBar: Obx(
           () => CustomButton.bottomBarIcon(controller: controller),
@@ -33,6 +39,7 @@ class HomeViewNewSample extends GetView<HomeController> {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         _buildHome(),
+        // ListOrderPage(),
         Container(),
         Container(),
         ProfileView(controller: controller),
@@ -50,7 +57,7 @@ class HomeViewNewSample extends GetView<HomeController> {
           _buildHeader(),
 
           // Stats Cards
-          _buildStatsSection(),
+          Expanded(child: _buildStatsSection()),
         ],
       ),
     );
@@ -60,9 +67,12 @@ class HomeViewNewSample extends GetView<HomeController> {
     return Stack(
       children: [
         Image.asset(
-          Assets.images.bgPickingMan.path,
+          AppRole.isDriver
+              ? Assets.images.bgDriver.path
+              : Assets.images.bgPickingMan.path,
           width: double.infinity,
           fit: BoxFit.fitWidth,
+          // color: Colors.black,
         ),
         Positioned(
           top: 0.0,
@@ -74,8 +84,8 @@ class HomeViewNewSample extends GetView<HomeController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Hi, Andi 👋',
+                  Text(
+                    'Hi, ${AppRole.name!.capitalize} 👋',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -84,8 +94,8 @@ class HomeViewNewSample extends GetView<HomeController> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Semangat picking hari ini!',
+                  Text(
+                    'Semangat ${AppRole.current!.name.capitalizeFirst} hari ini!',
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -104,27 +114,26 @@ class HomeViewNewSample extends GetView<HomeController> {
   Widget _buildStatsSection() {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primaryGreen),
-        );
+        return const LoadingView();
       }
 
-      return Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(10),
-              topLeft: Radius.circular(10),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.12),
-                blurRadius: 20,
-                offset: const Offset(0, -10), // changes position of shadow
-              ),
-            ],
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10),
+            topLeft: Radius.circular(10),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.12),
+              blurRadius: 20,
+              offset: const Offset(0, -10), // changes position of shadow
+            ),
+          ],
+        ),
+        child: RefreshIndicator(
+          onRefresh: () async => controller.onRefreshTransaction(),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -138,6 +147,7 @@ class HomeViewNewSample extends GetView<HomeController> {
                         subtitle: 'Sedang Berjalan',
                         value: controller.totalOrder.value,
                         iconColor: AppColors.primaryGreen,
+                        onTap: () => controller.routeTo(),
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -146,8 +156,11 @@ class HomeViewNewSample extends GetView<HomeController> {
                         icon: Icons.receipt_long_outlined,
                         title: 'History\nPesanan',
                         subtitle: 'Telah dikerjakan',
-                        value: 100,
+                        value: controller.totalOrderHistory.value,
                         iconColor: AppColors.primaryGreen,
+                        onTap: () {
+                          Get.toNamed(Routes.LIST_HISTORY_ORDER);
+                        },
                       ),
                     ),
                   ],
@@ -158,8 +171,8 @@ class HomeViewNewSample extends GetView<HomeController> {
                 _buildOrdersSection(),
                 const SizedBox(height: 20),
 
-                // Info Banner
-                _buildInfoBanner(),
+                // // Info Banner
+                // _buildInfoBanner(),
               ],
             ),
           ),
@@ -197,7 +210,7 @@ class HomeViewNewSample extends GetView<HomeController> {
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
-              itemCount: 5,
+              itemCount: 1,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) => OrderItem(

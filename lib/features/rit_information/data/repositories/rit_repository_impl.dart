@@ -17,7 +17,7 @@ class RitRepositoryImpl implements RitRepository {
     ParamsRit params,
   ) async {
     try {
-      final response = await dataSource.postEndingOrder(params);
+      final response = await dataSource.postSaveDataDriver(params);
 
       if (response.error == null) {
         return Success(RitEntity(list: []), '');

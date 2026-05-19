@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
+import '../widgets/custom_grid_image.dart';
+import '../widgets/custom_image.dart';
 
 class InputImageView extends StatelessWidget {
   final RitController controller;
@@ -106,31 +106,6 @@ class InputImageView extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle({required String title}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Unggah Foto $title',
-          style: GoogleFonts.hankenGrotesk(
-            color: Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0.48,
-          ),
-        ),
-        Text(
-          '*Upload minimal 1 foto',
-          style: GoogleFonts.hankenGrotesk(
-            color: Colors.red,
-            fontSize: 11,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildImage({required RxList<XFile> mediaFileList}) {
     return InkWell(
       onTap: () => controller.selectImage(ImageSource.camera, mediaFileList),
@@ -162,6 +137,7 @@ class InputImageView extends StatelessWidget {
   }
 
   Widget _buildContentImageNew({
+    int? maxImage,
     required String title,
     required RxList<XFile> mediaFileList,
   }) {
@@ -176,7 +152,7 @@ class InputImageView extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 20),
                 child: Row(
                   children: [
-                    Expanded(child: _buildTitle(title: title)),
+                    Expanded(child: CustomImage().buildTitle(title: title)),
                     Container(
                       alignment: Alignment.centerRight,
                       margin: const EdgeInsets.only(top: 10),
@@ -199,9 +175,10 @@ class InputImageView extends StatelessWidget {
             ),
             Visibility(
               visible: mediaFileList.isNotEmpty,
-              child: _buildContentImage(
+              child: CustomImage().contentImage(
+                maxImage: maxImage,
+                controller: controller,
                 mediaFileList: mediaFileList,
-                title: title,
               ),
             ),
             Visibility(
@@ -210,76 +187,12 @@ class InputImageView extends StatelessWidget {
                 children: [
                   _buildImage(mediaFileList: mediaFileList),
                   const SizedBox(width: 10),
-                  Expanded(child: _buildTitle(title: title)),
+                  Expanded(child: CustomImage().buildTitle(title: title)),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildContentImage({
-    required String title,
-    required RxList<XFile> mediaFileList,
-  }) {
-    return Obx(
-      () => GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        itemCount: mediaFileList.length + 1,
-        itemBuilder: (context, index) {
-          if (index < mediaFileList.length) {
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Image.file(
-                      File(mediaFileList[index].path),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => controller.removeImage(index, mediaFileList),
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else if (mediaFileList.length < 2) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: _buildImage(mediaFileList: mediaFileList),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
       ),
     );
   }

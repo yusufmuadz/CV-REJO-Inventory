@@ -10,15 +10,26 @@ import '../input_assisten_widget.dart';
 
 class AssistantDialog {
   static Widget buildButtonSelect(DetailOrderController controller) {
+    String title1 = 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}';
+    String title2 = 'Lanjut';
+    Color color2 = const Color(0xFF255BF0);
+
+    if (AppRole.isDriver) {
+      if (controller.statusDriver.value == 'completed') {
+        title1 = 'Berangkat';
+        title2 = 'Simpan';
+        color2 = const Color(0xFFd5914d);
+      }
+    }
     return CustomButton.doubleButton(
-      title1: AppRole.isDriver
-          ? 'Maps'
-          : 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}',
-      title2: 'Lanjut',
+      title1: title1,
+      title2: title2,
       color1: const Color(0xFFFF51BD),
-      color2: const Color(0xFF255BF0),
-      visible1: AppRole.isDriver,
-      visibleSpace: AppRole.isDriver,
+      color2: color2,
+      visible1:
+          AppRole.isDriver && controller.statusDriver.value == 'completed',
+      visibleSpace:
+          AppRole.isDriver && controller.statusDriver.value == 'completed',
       onPressed1: () {
         if (AppRole.isDriver) {
           controller.onTapMaps();
@@ -37,6 +48,9 @@ class AssistantDialog {
         );
       },
       onPressed2: () {
+        if (AppRole.isDriver && controller.statusDriver.value == 'completed') {
+          return;
+        }
         Get.toNamed(
           Routes.ENDING_ORDER,
           arguments: {

@@ -215,10 +215,13 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
         role = 'check2';
       }
 
-      final response = await dioClient.post(
-        ApiEndpoints.saveQty(role),
-        data: formData,
-      );
+      String apiEndpoint = ApiEndpoints.saveQty(role);
+
+      if (params.role == 'deliver') {
+        apiEndpoint = ApiEndpoints.saveQtyDriver;
+      }
+
+      final response = await dioClient.post(apiEndpoint, data: formData);
 
       // debugPrint('Data POST Item Product Remote DataSource: ${response.data}');
 
@@ -236,6 +239,35 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
       throw ServerException(message: 'error POST Item Product: $e');
+    }
+  }
+
+  @override
+  Future<ResponseModelBasic> takeItTransactionDriver(
+    ParamsAddAssistant params,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        ApiEndpoints.takeItTransactionDriver,
+        data: {"invoice": params.invoice},
+      );
+
+      // debugPrint('Data Take It Transaction Driver Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: 'error Take It Transaction Driver: $e');
     }
   }
 }

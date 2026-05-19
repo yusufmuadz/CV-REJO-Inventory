@@ -156,10 +156,10 @@ class CustomCardList extends StatelessWidget {
     }
 
     if (AppRole.isDriver) {
-      if (statusDriver != 'ongoing') {
-        text = 'On Progress';
-      } else {
+      if (statusDriver == 'completed') {
         text = 'Ready';
+      } else {
+        text = 'On Progress';
       }
     }
 
@@ -176,10 +176,10 @@ class CustomCardList extends StatelessWidget {
     }
 
     if (AppRole.isDriver) {
-      if (statusDriver != 'ongoing') {
-        color = const Color(0xFF666666);
-      } else {
+      if (statusDriver == 'completed') {
         color = const Color(0xFF5eb75f);
+      } else {
+        color = const Color(0xFF666666);
       }
     }
 

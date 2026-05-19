@@ -20,6 +20,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
       child: SafeArea(
         top: false,
         child: Scaffold(
+          backgroundColor: const Color(0xFFfafaff),
           appBar: AppBar(
             title: Text(
               'Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan',
@@ -95,7 +96,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
       color: const Color(0xFF2ED471),
       onPressed: () {
         if (AppRole.isDriver) {
-          controller.isSelect.value = !controller.isSelect.value;
+          controller.takeItTransactionDriver();
           return;
         }
         if (controller.listUser.isEmpty) {
@@ -117,9 +118,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
           !controller.isSelect.value) {
         return _buildButtonStart();
       } else if ((AppRole.isPIC && !controller.isSelect.value) ||
-          (AppRole.isDriver &&
-              controller.statusDriver.value == 'available' &&
-              !controller.isSelect.value)) {
+          (AppRole.isDriver && controller.statusDriver.value == 'available')) {
         return _buildButtonStart();
       }
     }

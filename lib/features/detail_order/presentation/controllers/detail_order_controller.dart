@@ -85,6 +85,10 @@ class DetailOrderController extends GetxController {
       statusChecker2.value = args['status_checker2'] ?? '';
       statusLoader.value = args['status_loader'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
+
+      if (AppRole.isDriver && statusDriver.value == 'ongoing') {
+        isSelect.value = true;
+      }
       // debugPrint('Status Checker 2 : ${statusChecker2.value}');
       // debugPrint('Status Loader : ${statusLoader.value}');
     }
@@ -341,6 +345,38 @@ class DetailOrderController extends GetxController {
       }
     } finally {
       isLoadingProduct.value = false;
+    }
+  }
+
+  Future<void> takeItTransactionDriver() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+
+    try {
+      final result = await detailOrderUseCase.callTakeItTransactionDriver(
+        ParamsAddAssistant(invoice: noInvoice.value),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          if (data.status) {
+            isSelect.value = !isSelect.value;
+            dialogService.showSuccessSnackbar('Berhasil Mengambil Transaksi');
+          } else {
+            if (Get.isDialogOpen == true) Get.back();
+            dialogService.showError('Failed', data.message);
+          }
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      debugPrint('Error Mengambil Transaksi: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+    } finally {
+      isLoading.value = false;
     }
   }
 

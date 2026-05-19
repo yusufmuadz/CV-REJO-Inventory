@@ -30,4 +30,8 @@ abstract class DetailOrderRepository {
   Future<ResultCustom<Failure, PostItemProductEntity>> postItemProduct(
     ParamsPostProduct params,
   );
+
+  Future<ResultCustom<Failure, BasicEntity>> takeItTransactionDriver(
+    ParamsAddAssistant params,
+  );
 }

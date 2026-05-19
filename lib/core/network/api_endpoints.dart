@@ -30,6 +30,11 @@ class ApiEndpoints {
 
   // PICKING TRANSACTION
   static const String pendingSO = "picking/cancel";
+
+  // DRIVER TRANSACTION
+  static const String saveQtyDriver = "deliverynew/scan1";
+  static const String takeItTransactionDriver = "deliverynew/claiminvoice";
+  static const String saveDataDriver = "deliverynew/reporttruck1";
   
   static String getDetailTransaction(String invoice) => "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";

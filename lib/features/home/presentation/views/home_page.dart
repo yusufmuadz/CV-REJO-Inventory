@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../profile/presentation/views/profile_view.dart';
 import '../sample/home_view_new_sample.dart';
-import '../sample/sample_bottom_bar.dart';
-import 'home_view.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -25,9 +23,9 @@ class HomePage extends GetView<HomeController> {
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        HomeView(controller: controller),
+        // HomeView(controller: controller),
         // CustomBottomBarScreen(),
-        // HomeViewNewSample(),
+        HomeViewNewSample(),
         ProfileView(controller: controller),
       ],
     );

@@ -118,6 +118,7 @@ class TextStyles {
       semiBold.copyWith(fontSize: 18, height: 1.3, color: color);
 
   static TextStyle basicTextStyle({
+    String fontFamily = 'Inter',
     double fontSize = 13,
     FontWeight fontWeight = FontWeight.w400,
     double? height,
@@ -126,7 +127,7 @@ class TextStyles {
     return TextStyle(
       color: color,
       fontSize: fontSize,
-      fontFamily: 'Inter',
+      fontFamily: fontFamily,
       fontWeight: fontWeight,
       height: height,
     );

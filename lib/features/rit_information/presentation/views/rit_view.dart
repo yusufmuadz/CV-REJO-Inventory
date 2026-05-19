@@ -8,6 +8,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/box_rit.dart';
+import '../widgets/custom_image.dart';
 import 'input_image_view.dart';
 
 class RitView extends GetView<RitController> {
@@ -63,14 +64,7 @@ class RitView extends GetView<RitController> {
           controller.pageIndex.value = 1;
           controller.pageController.jumpToPage(1);
         } else {
-          controller.mediaFileList.clear();
-          controller.mediaFileListKM.clear();
-          controller.mediaFileListTangki.clear();
-          controller.mediaFileListSJ.clear();
-          controller.kmController.clear();
-          controller.pageIndex.value = 0;
-          controller.isSave.value = true;
-          controller.pageController.jumpToPage(0);
+          controller.saveOrder();
         }
       },
     );
@@ -146,8 +140,73 @@ class RitView extends GetView<RitController> {
       title2: 'Terima',
       color1: Colors.redAccent[100]!,
       color2: const Color(0xFF2ED471),
-      onPressed1: () => controller.pendingProduct(),
-      onPressed2: () => controller.saveOrder(),
+      onPressed1: () => _inputReason(),
+      onPressed2: () => controller.acceptRit(),
+    );
+  }
+
+  void _inputReason({int? maxImage}) {
+    Get.bottomSheet(
+      SizedBox(
+        height: Get.height * 0.6,
+        child: Obx(() {
+          if (controller.isLoadingReason.value) {
+            return const LoadingView();
+          }
+
+          return Padding(
+            padding: EdgeInsets.fromLTRB(15, 22, 15, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'Masukkan Alasan',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: controller.reasonController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.all(12),
+                    hint: const Text('Masukkan alasan pending...'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                CustomImage().buildTitle(title: 'Alasan'),
+                const SizedBox(height: 10),
+                CustomImage().contentImage(
+                  maxImage: maxImage,
+                  mediaFileList: controller.mediaFileReason,
+                  controller: controller,
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton.basicButton(
+                    title: 'Kirim',
+                    color: const Color(0xFF2ED471),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
     );
   }
 }
