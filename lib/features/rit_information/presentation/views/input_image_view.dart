@@ -209,6 +209,7 @@ class InputImageView extends StatelessWidget {
                         indexImage ?? 0,
                         file,
                         mediaFileList,
+                        isTransportation,
                       ),
                     ),
                   ),

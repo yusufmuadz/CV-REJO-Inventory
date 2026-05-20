@@ -28,6 +28,12 @@ class EndingOrderController extends GetxController {
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
 
+  final selectedInfoInvoice = 'Lunas'.obs;
+  final infoInvoiceList = ['Lunas', 'Belum Lunas'];
+
+  final selectedPaymentType = 'Tunai'.obs;
+  final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek', 'Debit'];
+
   @override
   void onInit() {
     super.onInit();

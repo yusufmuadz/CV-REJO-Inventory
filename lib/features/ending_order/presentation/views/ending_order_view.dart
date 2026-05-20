@@ -6,6 +6,7 @@ import '../../../../utils/loading_custom.dart';
 import '../controllers/ending_order_controller.dart';
 import '../widgets/field_input_widget.dart';
 import '../widgets/image_input_widget.dart';
+import 'driver_arrive.dart';
 
 class EndingOrderView extends GetView<EndingOrderController> {
   const EndingOrderView({super.key});
@@ -16,7 +17,7 @@ class EndingOrderView extends GetView<EndingOrderController> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Akhir Transaksi'),
+          title: const Text('Foto & Keterangan'),
           elevation: 1,
           centerTitle: false,
           leading: IconButton(
@@ -30,14 +31,15 @@ class EndingOrderView extends GetView<EndingOrderController> {
           if (controller.isLoading.value) {
             return const LoadingView();
           }
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              FieldInputWidget(controller: controller),
-              const SizedBox(height: 16),
-              ImageInputWidget(controller: controller),
-            ],
-          );
+          return DriverArrive(controller: controller);
+          // ListView(
+          //   padding: const EdgeInsets.all(16),
+          //   children: [
+          //     FieldInputWidget(controller: controller),
+          //     const SizedBox(height: 16),
+          //     ImageInputWidget(controller: controller),
+          //   ],
+          // );
         }),
         bottomNavigationBar: Obx(() {
           if (controller.isLoading.value) {

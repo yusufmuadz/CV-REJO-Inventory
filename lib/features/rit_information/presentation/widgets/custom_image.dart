@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cv_rejo/features/rit_information/presentation/widgets/custom_grid_image.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,6 +35,36 @@ class CustomImage {
     );
   }
 
+  Widget addImage({Function()? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: DottedBorder(
+        options: RoundedRectDottedBorderOptions(
+          color: const Color(0xFFffd8ab),
+          strokeWidth: 1.5,
+          padding: EdgeInsets.all(3),
+          dashPattern: const [5, 3.5],
+          strokeCap: StrokeCap.round,
+          radius: const Radius.circular(10),
+        ),
+        child: Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xFFfffdfa),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.camera_alt_outlined,
+              color: const Color(0xFFfa913c),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget contentImage({
     int? maxImage,
     bool isTransportation = false,
@@ -44,17 +75,17 @@ class CustomImage {
     return CustomGridImage(
       maxImage: maxImage ?? 2,
       mediaFileList: mediaFileList,
-      controller: controller,
-      isTransportation: isTransportation,
-      onTap: onTap,
+      plusLength: (isTransportation && mediaFileList.length == 4 ? 0 : 1),
+      onAdd: isTransportation
+          ? onTap
+          : () =>
+                controller.selectImage(ImageSource.camera, null, mediaFileList),
+      onRemove: (int index) =>
+          controller.removeImage(index, null, mediaFileList, isTransportation),
     );
   }
 
-  Widget displayImage({
-    required String path,
-    bool isTransportation = false,
-    Function()? onTap,
-  }) {
+  Widget displayImage({required String path, Function()? onTap}) {
     return Stack(
       children: [
         Padding(
@@ -69,21 +100,18 @@ class CustomImage {
             ),
           ),
         ),
-        Visibility(
-          visible: !isTransportation,
-          child: Positioned(
-            top: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: onTap,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.close, size: 16, color: Colors.white),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                color: Colors.black54,
+                shape: BoxShape.circle,
               ),
+              child: const Icon(Icons.close, size: 16, color: Colors.white),
             ),
           ),
         ),
