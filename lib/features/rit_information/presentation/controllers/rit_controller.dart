@@ -45,6 +45,11 @@ class RitController extends GetxController {
   final mediaFileListSJ = <XFile>[].obs;
   final mediaFileReason = <XFile>[].obs;
 
+  final mediaFileFrontTransport = Rx<XFile>(XFile(''));
+  final mediaFileBackTransport = Rx<XFile>(XFile(''));
+  final mediaFileRightTransport = Rx<XFile>(XFile(''));
+  final mediaFileLeftTransport = Rx<XFile>(XFile(''));
+
   final pageIndex = 0.obs;
   final pageController = PageController(initialPage: 0);
 
@@ -251,7 +256,51 @@ class RitController extends GetxController {
     }
   }
 
-  void selectImage(ImageSource source, files) async {
+  bool emptyPath(XFile file) {
+    if (file.path.isNotEmpty && mediaFileList.contains(file) == false) {
+      return true;
+    }
+    return false;
+  }
+
+  void saveImageTransportation() async {
+    try {
+      if (mediaFileFrontTransport.value.path.isEmpty ||
+          mediaFileBackTransport.value.path.isEmpty ||
+          mediaFileLeftTransport.value.path.isEmpty ||
+          mediaFileRightTransport.value.path.isEmpty) {
+        dialogService.showErrorSnackbar(title: 'Gagal!', 'Masukkan semua foto');
+        return;
+      }
+      // isLoading.value = true;
+      if (emptyPath(mediaFileFrontTransport.value)) {
+        mediaFileList.add(mediaFileFrontTransport.value);
+      }
+
+      if (emptyPath(mediaFileBackTransport.value)) {
+        mediaFileList.add(mediaFileBackTransport.value);
+      }
+
+      if (emptyPath(mediaFileLeftTransport.value)) {
+        mediaFileList.add(mediaFileLeftTransport.value);
+      }
+
+      if (emptyPath(mediaFileRightTransport.value)) {
+        mediaFileList.add(mediaFileRightTransport.value);
+      }
+
+      Get.back();
+      dialogService.showSuccessSnackbar('Berhasil Menyimpan Foto');
+    } catch (e) {
+      debugPrint('Error saving image: $e');
+    }
+  }
+
+  void selectImage(
+    ImageSource source,
+    Rx<XFile>? file,
+    RxList<XFile> files,
+  ) async {
     try {
       final pickedFile = await picker.pickImage(
         source: source, // Atau ImageSource.gallery untuk galeri
@@ -259,7 +308,11 @@ class RitController extends GetxController {
       );
 
       if (pickedFile != null) {
-        files.add(pickedFile);
+        if (file != null) {
+          file.value = pickedFile;
+        } else {
+          files.add(pickedFile);
+        }
         update(); // Memperbarui state untuk menampilkan gambar yang dipilih
       }
     } catch (e) {
@@ -267,14 +320,50 @@ class RitController extends GetxController {
     }
   }
 
-  void removeImage(int index, files) {
+  void removeImage(
+    int index,
+    Rx<XFile>? file,
+    RxList<XFile> files,
+    bool isTransportation,
+  ) {
+    if (file != null) {
+      files.remove(file.value);
+      file.value = XFile('');
+      update();
+      return;
+    }
+
     if (index >= 0 && index < files.length) {
       files.removeAt(index);
+
+      if (isTransportation) {
+        if (emptyPath(mediaFileFrontTransport.value)) {
+          mediaFileFrontTransport.value = XFile('');
+        }
+
+        if (emptyPath(mediaFileBackTransport.value)) {
+          mediaFileBackTransport.value = XFile('');
+        }
+
+        if (emptyPath(mediaFileLeftTransport.value)) {
+          mediaFileLeftTransport.value = XFile('');
+        }
+
+        if (emptyPath(mediaFileRightTransport.value)) {
+          mediaFileRightTransport.value = XFile('');
+        }
+      }
       update(); // Memperbarui state setelah gambar dihapus
     }
   }
 
-  void clearAllImages(files) {
+  void clearAllImages(files, isTransportation) {
+    if (isTransportation) {
+      mediaFileFrontTransport.value = XFile('');
+      mediaFileBackTransport.value = XFile('');
+      mediaFileLeftTransport.value = XFile('');
+      mediaFileRightTransport.value = XFile('');
+    }
     files.clear();
     update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }

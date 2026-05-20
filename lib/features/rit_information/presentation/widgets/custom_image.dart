@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cv_rejo/features/rit_information/presentation/widgets/custom_grid_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +36,8 @@ class CustomImage {
 
   Widget contentImage({
     int? maxImage,
+    bool isTransportation = false,
+    Function()? onTap,
     required RxList<XFile> mediaFileList,
     required RitController controller,
   }) {
@@ -41,6 +45,49 @@ class CustomImage {
       maxImage: maxImage ?? 2,
       mediaFileList: mediaFileList,
       controller: controller,
+      isTransportation: isTransportation,
+      onTap: onTap,
+    );
+  }
+
+  Widget displayImage({
+    required String path,
+    bool isTransportation = false,
+    Function()? onTap,
+  }) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(7),
+            child: Image.file(
+              File(path),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: !isTransportation,
+          child: Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 16, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

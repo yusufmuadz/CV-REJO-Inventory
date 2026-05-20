@@ -7,10 +7,12 @@ class CustomButton {
   /// ===== BASIC BUTTON =====
   static Widget basicButton({
     required String title,
-    required Color color,
     required VoidCallback onPressed,
     Size? minimumSize,
+    Color? color,
     Color? shadowColor,
+    Color? textColor,
+    BorderSide? side,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
@@ -18,13 +20,44 @@ class CustomButton {
         minimumSize: minimumSize,
         foregroundColor: Colors.white,
         backgroundColor: color,
-        shadowColor: shadowColor,
+        // shadowColor: shadowColor,
+        side: side,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
       child: Text(
         title,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: textColor ?? Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  static Widget basicOutlinedButton({
+    required String title,
+    required VoidCallback onPressed,
+    Size? minimumSize,
+    Color? color,
+    Color? shadowColor,
+    Color? textColor,
+    BorderSide? side,
+  }) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        minimumSize: minimumSize,
+        foregroundColor: Colors.white,
+        backgroundColor: color,
+        // shadowColor: shadowColor,
+        side: side,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: textColor ?? Colors.white,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),

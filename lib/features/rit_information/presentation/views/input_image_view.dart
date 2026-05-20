@@ -1,3 +1,4 @@
+import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
-import '../widgets/custom_grid_image.dart';
 import '../widgets/custom_image.dart';
 
 class InputImageView extends StatelessWidget {
@@ -20,6 +20,8 @@ class InputImageView extends StatelessWidget {
       children: [
         _buildContentImageNew(
           title: 'kendaraan',
+          isTransportation: true,
+          maxImage: 4,
           mediaFileList: controller.mediaFileList,
         ),
         const SizedBox(height: 10),
@@ -106,9 +108,15 @@ class InputImageView extends StatelessWidget {
     );
   }
 
-  Widget _buildImage({required RxList<XFile> mediaFileList}) {
+  Widget _buildImage({
+    required RxList<XFile> mediaFileList,
+    Rx<XFile>? file,
+    bool isTransportation = false,
+  }) {
     return InkWell(
-      onTap: () => controller.selectImage(ImageSource.camera, mediaFileList),
+      onTap: () => isTransportation
+          ? null
+          : controller.selectImage(ImageSource.camera, file, mediaFileList),
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(
           color: const Color(0xFFffd8ab),
@@ -138,6 +146,11 @@ class InputImageView extends StatelessWidget {
 
   Widget _buildContentImageNew({
     int? maxImage,
+    bool isPopup = false,
+    bool isTransportation = false,
+    int? indexImage,
+    String pathImage = '',
+    Rx<XFile>? file,
     required String title,
     required RxList<XFile> mediaFileList,
   }) {
@@ -147,7 +160,7 @@ class InputImageView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Visibility(
-              visible: mediaFileList.isNotEmpty,
+              visible: mediaFileList.isNotEmpty && !isPopup,
               child: Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 child: Row(
@@ -157,7 +170,7 @@ class InputImageView extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       margin: const EdgeInsets.only(top: 10),
                       child: InkWell(
-                        onTap: () => controller.clearAllImages(mediaFileList),
+                        onTap: () => controller.clearAllImages(mediaFileList, isTransportation),
                         child: const Text(
                           'Hapus Semua',
                           style: TextStyle(
@@ -174,26 +187,199 @@ class InputImageView extends StatelessWidget {
               ),
             ),
             Visibility(
-              visible: mediaFileList.isNotEmpty,
+              visible: mediaFileList.isNotEmpty && !isPopup,
               child: CustomImage().contentImage(
                 maxImage: maxImage,
                 controller: controller,
                 mediaFileList: mediaFileList,
+                isTransportation: isTransportation,
+                onTap: () => popUpUploadImageTransportation(),
               ),
             ),
             Visibility(
-              visible: mediaFileList.isEmpty,
+              visible: pathImage.isNotEmpty && isPopup,
               child: Row(
                 children: [
-                  _buildImage(mediaFileList: mediaFileList),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: CustomImage().displayImage(
+                      path: pathImage,
+                      onTap: () => controller.removeImage(
+                        indexImage ?? 0,
+                        file,
+                        mediaFileList,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 10),
                   Expanded(child: CustomImage().buildTitle(title: title)),
                 ],
               ),
             ),
+            Visibility(
+              visible:
+                  (mediaFileList.isEmpty && !isPopup) ||
+                  (isPopup && pathImage.isEmpty),
+              child: InkWell(
+                onTap: () =>
+                    isTransportation ? popUpUploadImageTransportation() : null,
+                child: Row(
+                  children: [
+                    _buildImage(
+                      file: file,
+                      mediaFileList: mediaFileList,
+                      isTransportation: isTransportation,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(child: CustomImage().buildTitle(title: title)),
+                    Visibility(
+                      visible: isTransportation,
+                      child: Icon(
+                        Icons.keyboard_arrow_right_rounded,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> popUpUploadImageTransportation() {
+    return Get.bottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(32),
+          topLeft: Radius.circular(32),
+        ),
+      ),
+      Obx(() {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 40),
+                  Expanded(
+                    child: Text(
+                      'Tambah Foto Kendaraan',
+                      style: GoogleFonts.hankenGrotesk(
+                        color: const Color(0xFF111827),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.48,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFF3F4F6),
+                      ),
+                      child: Icon(Icons.close, color: const Color(0xFF4B5563)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 15),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFf0f6ff),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 32,
+                      width: 32,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFDBEAFE),
+                      ),
+                      child: const Icon(
+                        Icons.info_outlined,
+                        size: 20,
+                        color: Color(0xFF2563EB),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Pastikan semua foto terlihat jelas dan tidak terpotong.',
+                        style: GoogleFonts.hankenGrotesk(
+                          color: const Color(0xFF1E40AF),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.48,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildContentImageNew(
+                maxImage: 1,
+                isPopup: true,
+                file: controller.mediaFileFrontTransport,
+                title: 'Depan Kendaraan',
+                pathImage: controller.mediaFileFrontTransport.value.path,
+                mediaFileList: controller.mediaFileList,
+              ),
+              const SizedBox(height: 10),
+              _buildContentImageNew(
+                maxImage: 1,
+                isPopup: true,
+                file: controller.mediaFileRightTransport,
+                title: 'Kanan Kendaraan',
+                pathImage: controller.mediaFileRightTransport.value.path,
+                mediaFileList: controller.mediaFileList,
+              ),
+              const SizedBox(height: 10),
+              _buildContentImageNew(
+                maxImage: 1,
+                isPopup: true,
+                file: controller.mediaFileBackTransport,
+                title: 'Belakang Kendaraan',
+                pathImage: controller.mediaFileBackTransport.value.path,
+                mediaFileList: controller.mediaFileList,
+              ),
+              const SizedBox(height: 10),
+              _buildContentImageNew(
+                maxImage: 1,
+                isPopup: true,
+                file: controller.mediaFileLeftTransport,
+                title: 'Kiri Kendaraan',
+                pathImage: controller.mediaFileLeftTransport.value.path,
+                mediaFileList: controller.mediaFileList,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: Get.width,
+                child: CustomButton.basicButton(
+                  title: 'Simpan',
+                  color: const Color(0xFFd68f4d),
+                  onPressed: () => controller.saveImageTransportation(),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

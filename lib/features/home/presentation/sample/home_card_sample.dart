@@ -121,8 +121,8 @@ class OrderItem extends StatelessWidget {
         borderRadius: BorderRadius.only(
           topRight: index == 0 ? Radius.circular(12) : Radius.zero,
           topLeft: index == 0 ? Radius.circular(12) : Radius.zero,
-          bottomRight: index == 4 ? Radius.circular(12) : Radius.zero,
-          bottomLeft: index == 4 ? Radius.circular(12) : Radius.zero,
+          bottomRight: index == 0 ? Radius.circular(12) : Radius.zero,
+          bottomLeft: index == 0 ? Radius.circular(12) : Radius.zero,
         ),
       ),
       child: Row(

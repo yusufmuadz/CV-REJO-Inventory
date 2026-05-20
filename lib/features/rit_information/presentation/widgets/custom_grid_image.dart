@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cv_rejo/features/rit_information/presentation/widgets/custom_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,8 @@ import '../controllers/rit_controller.dart';
 
 class CustomGridImage extends StatelessWidget {
   final int maxImage;
+  final bool isTransportation;
+  final Function()? onTap;
   final RxList<XFile> mediaFileList;
   final RitController controller;
 
@@ -17,6 +20,8 @@ class CustomGridImage extends StatelessWidget {
     required this.maxImage,
     required this.mediaFileList,
     required this.controller,
+    this.isTransportation = false,
+    this.onTap,
   });
 
   @override
@@ -30,48 +35,22 @@ class CustomGridImage extends StatelessWidget {
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
-        itemCount: mediaFileList.length + 1,
+        itemCount: mediaFileList.length + (isTransportation ? 0 : 1),
         itemBuilder: (context, index) {
           if (index < mediaFileList.length) {
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Image.file(
-                      File(mediaFileList[index].path),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => controller.removeImage(index, mediaFileList),
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            return CustomImage().displayImage(
+              path: mediaFileList[index].path,
+              isTransportation: isTransportation,
+              onTap: () => controller.removeImage(index, null, mediaFileList, isTransportation),
             );
           } else if (mediaFileList.length < maxImage) {
             return Padding(
               padding: const EdgeInsets.all(5.0),
-              child: _buildImage(mediaFileList: mediaFileList),
+              child: _buildImage(
+                mediaFileList: mediaFileList,
+                isTransportation: isTransportation,
+                onTap: onTap,
+              ),
             );
           } else {
             return const SizedBox.shrink();
@@ -81,9 +60,16 @@ class CustomGridImage extends StatelessWidget {
     );
   }
 
-  Widget _buildImage({required RxList<XFile> mediaFileList}) {
+  Widget _buildImage({
+    required RxList<XFile> mediaFileList,
+    bool isTransportation = false,
+    Function()? onTap,
+  }) {
     return InkWell(
-      onTap: () => controller.selectImage(ImageSource.camera, mediaFileList),
+      onTap: isTransportation
+          ? onTap
+          : () =>
+                controller.selectImage(ImageSource.camera, null, mediaFileList),
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(
           color: const Color(0xFFffd8ab),

@@ -2,6 +2,7 @@ import 'package:cv_rejo/features/detail_order/data/models/response_model_detail_
 import 'package:cv_rejo/features/detail_order/data/models/response_model_get_transporation.dart';
 import 'package:cv_rejo/features/detail_order/data/models/response_model_basic.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -220,6 +221,10 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       if (params.role == 'deliver') {
         apiEndpoint = ApiEndpoints.saveQtyDriver;
       }
+
+      // debugPrint(
+      //   'Data POST Item Product Remote DataSource: Barcode ${params.barcode}\nInvoice ${params.invoice}\nQty ${params.qty}\nRole ${params.role}',
+      // );
 
       final response = await dioClient.post(apiEndpoint, data: formData);
 

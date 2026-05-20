@@ -56,8 +56,8 @@ class RitView extends GetView<RitController> {
       return _buildButtonSelect();
     }
     return CustomButton.basicButton(
-      title: controller.pageIndex.value == 0 ? 'Berangkat' : 'Simpan',
-      color: const Color(0xFFd5914d),
+      title: controller.pageIndex.value == 0 ? 'Keberangkatan' : 'Simpan',
+      color: controller.pageIndex.value == 0 ? const Color(0xFFd5914d) : const Color(0xFF2ED471),
       onPressed: () {
         debugPrint('Pilih Pesanan');
         if (controller.pageIndex.value == 0) {

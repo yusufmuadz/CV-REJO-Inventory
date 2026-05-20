@@ -34,6 +34,17 @@ class DetailOrderView extends GetView<DetailOrderController> {
                   Get.offAllNamed(Routes.HOME);
                   return;
                 }
+
+                if (AppRole.isDriver && controller.isTakeToTheRoad.value) {
+                  controller.dialogService.showConfirmation(
+                    title: 'Batalkan Keberangkatan',
+                    confirmText: 'Ya',
+                    cancelText: 'Tidak',
+                    description:
+                        'Apakah anda ingin membatalkan keberangkatan sekarang?',
+                  );
+                  return;
+                }
                 Get.back();
               },
             ),

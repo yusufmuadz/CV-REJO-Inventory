@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -38,6 +39,7 @@ class DetailOrderController extends GetxController {
 
   final isSelect = false.obs;
   final isTakeIt = false.obs;
+  final isTakeToTheRoad = false.obs;
 
   final messageProduct = ''.obs;
   final statusPostProduct = false.obs;
@@ -85,6 +87,7 @@ class DetailOrderController extends GetxController {
       statusChecker2.value = args['status_checker2'] ?? '';
       statusLoader.value = args['status_loader'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
+      // statusDriver.value = 'completed';
 
       if (AppRole.isDriver && statusDriver.value == 'ongoing') {
         isSelect.value = true;
@@ -378,6 +381,15 @@ class DetailOrderController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  //////// ====== COPY PHONE NUMBER ====== ////////
+
+  Future<void> copyToClipboard({required String phone}) async {
+    await Clipboard.setData(ClipboardData(text: phone));
+
+    if (Get.isDialogOpen == true) Get.back();
+    dialogService.showSuccessSnackbar('Berhasil Menyalin Nomor Telepon');
   }
 
   //////// ====== LAUNCH MAPS ====== ////////

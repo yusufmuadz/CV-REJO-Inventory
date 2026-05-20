@@ -136,6 +136,7 @@ class HomeViewNewSample extends GetView<HomeController> {
           onRefresh: () async => controller.onRefreshTransaction(),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
                 Row(

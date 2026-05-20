@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 
+import '../../shared/custom/custom_button.dart';
 import 'navigation_service.dart';
 
 class DialogService {
@@ -49,32 +50,87 @@ class DialogService {
   }
 
   /// ===== CONFIRM DIALOG =====
-  // Future<bool> showConfirmation({
-  //   required String title,
-  //   required String description,
-  //   String confirmText = 'Yes',
-  //   String cancelText = 'No',
-  // }) async {
-  //   final result = await showDialog<bool>(
-  //     context: _context!,
-  //     builder: (_) => AlertDialog(
-  //       title: Text(title),
-  //       content: Text(description),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => _navigationService.pop(false),
-  //           child: Text(cancelText),
-  //         ),
-  //         ElevatedButton(
-  //           onPressed: () => _navigationService.pop(true),
-  //           child: Text(confirmText),
-  //         ),
-  //       ],
-  //     ),
-  //   );
+  Future<bool> showConfirmation({
+    required String title,
+    required String description,
+    String confirmText = 'Yes',
+    String cancelText = 'No',
+    Function()? onConfirm,
+    Function()? onCancel,
+  }) async {
+    final result = await Get.dialog<bool>(
+      AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Ikon Trash + Warning
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Ionicons.trash_outline, size: 40, color: Colors.red),
+            ),
+            SizedBox(height: 20),
 
-  //   return result ?? false;
-  // }
+            // Judul
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 8),
+
+            // Deskripsi
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+                height: 1.6,
+              ),
+            ),
+            SizedBox(height: 24),
+
+            // Tombol Batal & Hapus
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton.basicOutlinedButton(
+                    title: cancelText,
+                    textColor: Colors.black,
+                    side: BorderSide(color: Colors.grey[300]!, width: 1),
+                    onPressed: onCancel ?? () => Get.back(),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: CustomButton.basicButton(
+                    title: confirmText,
+                    color: Color(0xFFDC2626),
+                    onPressed:
+                        onConfirm ??
+                        () {
+                          Get.back();
+                          Get.back();
+                        },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    return result ?? false;
+  }
 
   /// ===== LOADING =====
   void showLoading({String message = 'Loading...'}) {

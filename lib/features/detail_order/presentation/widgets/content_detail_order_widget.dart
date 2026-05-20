@@ -1,12 +1,10 @@
-import 'package:cv_rejo/features/detail_order/presentation/controllers/detail_order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/middlewares/app_role.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/text_styles.dart';
-import '../../../../gen/assets.gen.dart';
+import '../controllers/detail_order_controller.dart';
 
 class ContentDetailOrderWidget extends StatelessWidget {
   final DetailOrderController controller;
@@ -40,6 +38,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           tanggalPesanan: controller.orderDetail.value.date.transaction,
           tanggalBatas: controller.orderDetail.value.date.delivery,
           district: controller.orderDetail.value.customer.district,
+          isStatusDriver: controller.statusDriver.value == 'completed',
         ),
         _buildInfoPesanan(),
       ],
@@ -141,6 +140,8 @@ class ContentDetailOrderWidget extends StatelessWidget {
     required String title,
     required String value,
     required IconData icon,
+    bool isPhone = false,
+    bool isAddress = false,
     double mgBottom = 16,
   }) {
     return Container(
@@ -151,28 +152,61 @@ class ContentDetailOrderWidget extends StatelessWidget {
           _buildIconStyle(icon: icon),
           const SizedBox(width: 15),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyles.basicTextStyle(
-                    fontFamily:
-                        GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
-                    fontSize: 12,
-                    color: const Color(0xFF857467),
+            child: InkWell(
+              onTap: () {
+                if (isAddress) {
+                  controller.onTapMaps();
+                }
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyles.basicTextStyle(
+                            fontFamily:
+                                GoogleFonts.hankenGrotesk().fontFamily ??
+                                'Inter',
+                            fontSize: 12,
+                            color: const Color(0xFF857467),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          value,
+                          style: TextStyles.basicTextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF151C27),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF151C27),
+                  Visibility(
+                    visible: isPhone,
+                    child: InkWell(
+                      onTap: () => controller.copyToClipboard(phone: value),
+                      child: Icon(
+                        Icons.copy,
+                        size: 20,
+                        color: const Color(0xFFEC4899),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  Visibility(
+                    visible: isAddress,
+                    child: Icon(
+                      Icons.keyboard_arrow_right_rounded,
+                      size: 20,
+                      color: const Color(0xFFd5914d),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -186,7 +220,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
     String tanggalPesanan = '',
     String tanggalBatas = '',
     String district = '',
+    bool isStatusDriver = false,
   }) {
+    final isDriver = AppRole.isDriver && isStatusDriver;
+
     return _buildBoxStyle(
       vertical: 15,
       child: Column(
@@ -198,8 +235,9 @@ class ContentDetailOrderWidget extends StatelessWidget {
             icon: Icons.person_outline,
           ),
           Visibility(
-            visible: AppRole.isDriver,
+            visible: isDriver,
             child: _buildInfoContent(
+              isPhone: true,
               title: 'Nomor Telepon',
               value: '081234567890',
               icon: Icons.phone_outlined,
@@ -214,11 +252,12 @@ class ContentDetailOrderWidget extends StatelessWidget {
             title: 'KOTA/KABUPATEN',
             value: district,
             icon: Icons.location_on_outlined,
-            mgBottom: AppRole.isDriver ? 16 : 0,
+            mgBottom: isDriver ? 16 : 0,
           ),
           Visibility(
-            visible: AppRole.isDriver,
+            visible: isDriver,
             child: _buildInfoContent(
+              isAddress: true,
               title: 'Alamat Pengiriman',
               value: 'Jl. Jend. Sudirman No. 1, Jakarta Selatan',
               icon: Icons.apartment,

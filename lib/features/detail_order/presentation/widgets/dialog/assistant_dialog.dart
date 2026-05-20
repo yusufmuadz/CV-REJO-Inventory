@@ -10,29 +10,36 @@ import '../input_assisten_widget.dart';
 
 class AssistantDialog {
   static Widget buildButtonSelect(DetailOrderController controller) {
+    bool visible1 = true;
     String title1 = 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}';
     String title2 = 'Lanjut';
+    Color color1 = const Color(0xFFFF51BD);
     Color color2 = const Color(0xFF255BF0);
 
     if (AppRole.isDriver) {
       if (controller.statusDriver.value == 'completed') {
         title1 = 'Berangkat';
         title2 = 'Simpan';
-        color2 = const Color(0xFFd5914d);
+        color1 = const Color(0xFFd5914d);
+        color2 = const Color(0xFF2ED471);
+        visible1 =
+            AppRole.isDriver &&
+            controller.statusDriver.value == 'completed' &&
+            !controller.isTakeToTheRoad.value;
+      } else {
+        visible1 = false;
       }
     }
     return CustomButton.doubleButton(
       title1: title1,
       title2: title2,
-      color1: const Color(0xFFFF51BD),
+      color1: color1,
       color2: color2,
-      visible1:
-          AppRole.isDriver && controller.statusDriver.value == 'completed',
-      visibleSpace:
-          AppRole.isDriver && controller.statusDriver.value == 'completed',
+      visible1: visible1,
+      visibleSpace: visible1,
       onPressed1: () {
         if (AppRole.isDriver) {
-          controller.onTapMaps();
+          controller.isTakeToTheRoad.value = true;
           return;
         }
         if (AppRole.isChecker2) {
@@ -48,7 +55,7 @@ class AssistantDialog {
         );
       },
       onPressed2: () {
-        if (AppRole.isDriver && controller.statusDriver.value == 'completed') {
+        if (visible1) {
           return;
         }
         Get.toNamed(
