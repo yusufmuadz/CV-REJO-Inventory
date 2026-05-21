@@ -63,6 +63,7 @@ class AssistantDialog {
           arguments: {
             'invoice': controller.noInvoice.value,
             'status_checker2': controller.statusChecker2.value,
+            'status_driver': controller.statusDriver.value,
           },
         );
       },

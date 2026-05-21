@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/ending_order_controller.dart';
@@ -31,19 +32,27 @@ class EndingOrderView extends GetView<EndingOrderController> {
           if (controller.isLoading.value) {
             return const LoadingView();
           }
-          return DriverArrive(controller: controller);
-          // ListView(
-          //   padding: const EdgeInsets.all(16),
-          //   children: [
-          //     FieldInputWidget(controller: controller),
-          //     const SizedBox(height: 16),
-          //     ImageInputWidget(controller: controller),
-          //   ],
-          // );
+
+          if (AppRole.isDriver &&
+              controller.statatusDriver.value == 'completed') {
+            return DriverArrive(controller: controller);
+          }
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              FieldInputWidget(controller: controller),
+              const SizedBox(height: 16),
+              ImageInputWidget(controller: controller),
+            ],
+          );
         }),
         bottomNavigationBar: Obx(() {
           if (controller.isLoading.value) {
             return const SizedBox.shrink();
+          }
+          if (AppRole.isDriver &&
+              controller.statatusDriver.value == 'completed') {
+            return CustomButton.bottomBarStyle(child: _buildButtonSave());
           }
           return CustomButton.bottomBarStyle(child: _buildButtonSelect());
         }),
@@ -59,6 +68,14 @@ class EndingOrderView extends GetView<EndingOrderController> {
       color2: const Color(0xFF2ED471),
       onPressed1: () => controller.pendingProduct(),
       onPressed2: () => controller.saveOrder(),
+    );
+  }
+
+  Widget _buildButtonSave() {
+    return CustomButton.basicButton(
+      title: 'Simpan',
+      color: const Color(0xFF2ED471),
+      onPressed: () => controller.saveOrder(),
     );
   }
 }

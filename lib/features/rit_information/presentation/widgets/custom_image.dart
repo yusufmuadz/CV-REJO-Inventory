@@ -118,4 +118,102 @@ class CustomImage {
       ],
     );
   }
+
+  Widget buildContentImage({
+    int? maxImage,
+    bool isShadow = true,
+    required String title,
+    required RitController controller,
+    required RxList<XFile> mediaFileList,
+  }) {
+    return _buildBoxStyle(
+      isShadow: isShadow,
+      child: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Visibility(
+              visible: mediaFileList.isNotEmpty,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  children: [
+                    Expanded(child: CustomImage().buildTitle(title: title)),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      margin: const EdgeInsets.only(top: 10),
+                      child: InkWell(
+                        onTap: () =>
+                            controller.clearAllImages(mediaFileList, false),
+                        child: const Text(
+                          'Hapus Semua',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Visibility(
+              visible: mediaFileList.isNotEmpty,
+              child: CustomGridImage(
+                maxImage: maxImage ?? 2,
+                mediaFileList: mediaFileList,
+                onAdd: () => controller.selectImage(
+                  ImageSource.camera,
+                  null,
+                  mediaFileList,
+                ),
+                onRemove: (int index) =>
+                    controller.removeImage(index, null, mediaFileList, false),
+              ),
+            ),
+            Visibility(
+              visible: mediaFileList.isEmpty,
+              child: Row(
+                children: [
+                  CustomImage().addImage(
+                    onTap: () => controller.selectImage(
+                      ImageSource.camera,
+                      null,
+                      mediaFileList,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(child: CustomImage().buildTitle(title: title)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBoxStyle({required Widget child, bool isShadow = true}) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFFf4f4f5)),
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        boxShadow: !isShadow
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  blurRadius: 1,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+      ),
+      child: child,
+    );
+  }
 }

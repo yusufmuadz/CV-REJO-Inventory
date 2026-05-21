@@ -13,7 +13,7 @@ import '../features/list_order_history/presentation/views/list_history_order_vie
 import '../features/login/presentation/bindings/login_binding.dart';
 import '../features/login/presentation/views/login_view.dart';
 import '../features/rit_information/presentation/bindings/rit_binding.dart';
-import '../features/rit_information/presentation/views/rit_view.dart';
+import '../features/rit_information/presentation/views/rit_page.dart';
 import '../features/scan_product/presentation/bindings/scan_product_binding.dart';
 import '../features/scan_product/presentation/views/scan_product_view.dart';
 import '../features/splash/presentation/bindings/splash_binding.dart';
@@ -69,7 +69,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.RIT_INFORMATION,
-      page: () => const RitView(),
+      page: () => const RitPage(),
       binding: RitBinding(),
     ),
   ];

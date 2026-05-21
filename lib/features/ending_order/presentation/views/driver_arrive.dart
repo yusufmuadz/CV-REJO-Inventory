@@ -1,4 +1,4 @@
-import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,12 +25,14 @@ class DriverArrive extends StatelessWidget {
         const SizedBox(height: 10),
         _buildContentImage(
           title: 'Depan Toko',
-          mediaFileList: controller.mediaFileList,
+          mediaFileList: controller.mediaFileFrontMerchant,
         ),
         const SizedBox(height: 10),
-        _buildSelectInfoInvoice(mediaFileList: controller.mediaFileList),
+        _buildSelectInfoInvoice(
+          mediaFileList: controller.mediaFileListInfoInvoice,
+        ),
         const SizedBox(height: 10),
-        _buildPaymentType(mediaFileList: controller.mediaFileList),
+        _buildPaymentType(mediaFileList: controller.mediaFileListPaymentType),
       ],
     );
   }
@@ -41,7 +43,7 @@ class DriverArrive extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Serah Terima Invoice',
+            'Serah Terima Invoice/Surat Jalan',
             style: GoogleFonts.hankenGrotesk(
               color: Colors.black,
               fontSize: 15,
@@ -147,23 +149,27 @@ class DriverArrive extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          SharedTextField(
+            controller: controller.fieldController,
+            keyboardType: TextInputType.number,
+            hintText: 'Masukkan nominal',
+            prefixIcon: Icon(
+              CupertinoIcons.money_dollar,
+              color: const Color(0xFFfa913c),
+            ),
+            validator: (String? p1) {
+              if (p1 == null || p1.isEmpty) {
+                return 'Masukkan nominal pembayaran terlebih dahulu';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 8),
           _buildContentImage(
             title: 'Bukti Pembayaran',
             isShadow: false,
             mediaFileList: mediaFileList,
           ),
-          // SharedTextField(
-          //   controller: controller.fieldController,
-          //   keyboardType: TextInputType.number,
-          //   hintText: 'Contoh: 12345',
-          //   prefixIcon: Icon(Icons.speed, color: const Color(0xFFfa913c)),
-          //   validator: (String? p1) {
-          //     if (p1 == null || p1.isEmpty) {
-          //       return 'Masukkan KM Kendaraan';
-          //     }
-          //     return null;
-          //   },
-          // ),
         ],
       ),
     );
@@ -192,7 +198,7 @@ class DriverArrive extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       margin: const EdgeInsets.only(top: 10),
                       child: InkWell(
-                        onTap: () => controller.clearAllImages(),
+                        onTap: () => controller.clearAllImages(mediaFileList),
                         child: const Text(
                           'Hapus Semua',
                           style: TextStyle(
@@ -213,8 +219,10 @@ class DriverArrive extends StatelessWidget {
               child: CustomGridImage(
                 maxImage: maxImage ?? 2,
                 mediaFileList: mediaFileList,
-                onAdd: () => controller.selectImage(ImageSource.camera),
-                onRemove: (int index) => controller.removeImage(index),
+                onAdd: () =>
+                    controller.selectImage(ImageSource.camera, mediaFileList),
+                onRemove: (int index) =>
+                    controller.removeImage(index, mediaFileList),
               ),
             ),
             Visibility(
@@ -222,7 +230,10 @@ class DriverArrive extends StatelessWidget {
               child: Row(
                 children: [
                   CustomImage().addImage(
-                    onTap: () => controller.selectImage(ImageSource.camera),
+                    onTap: () => controller.selectImage(
+                      ImageSource.camera,
+                      mediaFileList,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(child: CustomImage().buildTitle(title: title)),

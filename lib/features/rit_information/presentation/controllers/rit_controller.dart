@@ -8,6 +8,7 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/params/post_rit_param.dart';
@@ -49,6 +50,15 @@ class RitController extends GetxController {
   final mediaFileBackTransport = Rx<XFile>(XFile(''));
   final mediaFileRightTransport = Rx<XFile>(XFile(''));
   final mediaFileLeftTransport = Rx<XFile>(XFile(''));
+
+  final mediaFileListRetur = <XFile>[].obs;
+
+  final selectedPoRetur = ''.obs;
+  final selectedInfoRetur = 'Terkait'.obs;
+  final infoReturList = ['Terkait', 'Tidak Terkait'].obs;
+
+  final selectedAllItem = false.obs;
+  final itemPO = <ItemOrderModel>[].obs;
 
   final pageIndex = 0.obs;
   final pageController = PageController(initialPage: 0);
@@ -109,59 +119,95 @@ class RitController extends GetxController {
     // );
   }
 
+  void selectAll() {
+    selectedAllItem.value = !selectedAllItem.value;
+
+    for (var i = 0; i < itemPO.length; i++) {
+      itemPO[i] = itemPO[i].copyWith(isChecked: selectedAllItem.value);
+    }
+  }
+
+  void selectedItem(int index) async {
+    if (index != -1) {
+      final order = itemPO[index];
+
+      bool result = !order.isChecked;
+
+      final updatedOrder = order.copyWith(isChecked: result);
+
+      final updateList = List<ItemOrderModel>.from(itemPO);
+      updateList[index] = updatedOrder;
+
+      itemPO.value = updateList;
+      selectedAllItem.value = itemPO.every((e) => e.isChecked);
+    }
+  }
+
   Future<void> saveOrder() async {
     if (isLoading.value) return;
 
-    if (mediaFileList.isEmpty ||
-        mediaFileListKM.isEmpty ||
-        mediaFileListTangki.isEmpty ||
-        mediaFileListSJ.isEmpty ||
-        kmController.text.isEmpty) {
-      dialogService.showErrorSnackbar(
-        title: 'Gagal!',
-        'Silakan lengkapi data terlebih dahulu!',
-      );
-      return;
-    }
+    /////////// AWAL SEMENTARA ////////////
+
+    isSave.value = true;
+    pageIndex.value = 0;
+    pageController.animateToPage(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+
+    /////////// AKHIR SEMENTARA ////////////
+
+    // if (mediaFileList.isEmpty ||
+    //     mediaFileListKM.isEmpty ||
+    //     mediaFileListTangki.isEmpty ||
+    //     mediaFileListSJ.isEmpty ||
+    //     kmController.text.isEmpty) {
+    //   dialogService.showErrorSnackbar(
+    //     title: 'Gagal!',
+    //     'Silakan lengkapi data terlebih dahulu!',
+    //   );
+    //   return;
+    // }
     isLoading.value = true;
 
     try {
-      final result = await ritUseCase.call(
-        ParamsRit(
-          rit: isDistrictSelected.value,
-          km: kmController.text,
-          kmImage: mediaFileListKM[0],
-          tankTruckImage: mediaFileListTangki[0],
-        ),
-      );
+      // final result = await ritUseCase.call(
+      //   ParamsRit(
+      //     rit: isDistrictSelected.value,
+      //     km: kmController.text,
+      //     kmImage: mediaFileListKM[0],
+      //     tankTruckImage: mediaFileListTangki[0],
+      //   ),
+      // );
 
-      switch (result) {
-        case Success(:final data):
-          debugPrint('Data Save Order: $data');
-          dialogService.showDialogBox(
-            title: 'Success',
-            description: 'Berhasil Menyimpan Data',
-            barrierDismissible: false,
-            onPressed: () {
-              mediaFileList.clear();
-              mediaFileListKM.clear();
-              mediaFileListTangki.clear();
-              mediaFileListSJ.clear();
-              kmController.clear();
-              isSave.value = true;
-              pageIndex.value = 0;
-              pageController.animateToPage(
-                0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-          );
+      // switch (result) {
+      //   case Success(:final data):
+      //     debugPrint('Data Save Order: $data');
+      //     dialogService.showDialogBox(
+      //       title: 'Success',
+      //       description: 'Berhasil Menyimpan Data',
+      //       barrierDismissible: false,
+      //       onPressed: () {
+      //         mediaFileList.clear();
+      //         mediaFileListKM.clear();
+      //         mediaFileListTangki.clear();
+      //         mediaFileListSJ.clear();
+      //         kmController.clear();
+      //         isSave.value = true;
+      //         pageIndex.value = 0;
+      //         pageController.animateToPage(
+      //           0,
+      //           duration: const Duration(milliseconds: 300),
+      //           curve: Curves.easeInOut,
+      //         );
+      //       },
+      //     );
 
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
-      }
+      //   case ErrorResult(:final message):
+      //     if (Get.isDialogOpen == true) Get.back();
+      //     dialogService.showError('Failed', message);
+      // }
     } finally {
       isLoading.value = false;
     }
@@ -366,5 +412,20 @@ class RitController extends GetxController {
     }
     files.clear();
     update(); // Memperbarui state setelah semua gambar dan teks dihapus
+  }
+
+  void addSampleItem() {
+    itemPO.add(
+      ItemOrderModel(
+        item: 'Item Testing ${itemPO.length + 1}',
+        qty: '1',
+        barcode: '',
+        pic: StatusItem(),
+        checker1: StatusItem(),
+        checker2: StatusOrder(),
+        driver: StatusOrder(),
+        isChecked: false,
+      ),
+    );
   }
 }

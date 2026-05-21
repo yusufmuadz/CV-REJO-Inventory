@@ -22,11 +22,15 @@ class EndingOrderController extends GetxController {
   final colorRit = ''.obs;
 
   final statusChecker2 = ''.obs;
+  final statatusDriver = ''.obs;
 
   final fieldController = TextEditingController();
 
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
+  final mediaFileFrontMerchant = <XFile>[].obs;
+  final mediaFileListInfoInvoice = <XFile>[].obs;
+  final mediaFileListPaymentType = <XFile>[].obs;
 
   final selectedInfoInvoice = 'Lunas'.obs;
   final infoInvoiceList = ['Lunas', 'Belum Lunas'];
@@ -43,6 +47,7 @@ class EndingOrderController extends GetxController {
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
+      statatusDriver.value = args['status_driver'] ?? '';
     }
   }
 
@@ -176,7 +181,7 @@ class EndingOrderController extends GetxController {
     }
   }
 
-  void selectImage(ImageSource source) async {
+  void selectImage(ImageSource source, RxList<XFile> files) async {
     try {
       final pickedFile = await picker.pickImage(
         source: source, // Atau ImageSource.gallery untuk galeri
@@ -184,7 +189,7 @@ class EndingOrderController extends GetxController {
       );
 
       if (pickedFile != null) {
-        mediaFileList.add(pickedFile);
+        files.add(pickedFile);
         update(); // Memperbarui state untuk menampilkan gambar yang dipilih
       }
     } catch (e) {
@@ -192,15 +197,15 @@ class EndingOrderController extends GetxController {
     }
   }
 
-  void removeImage(int index) {
-    if (index >= 0 && index < mediaFileList.length) {
-      mediaFileList.removeAt(index);
+  void removeImage(int index, RxList<XFile> files) {
+    if (index >= 0 && index < files.length) {
+      files.removeAt(index);
       update(); // Memperbarui state setelah gambar dihapus
     }
   }
 
-  void clearAllImages() {
-    mediaFileList.clear();
+  void clearAllImages(RxList<XFile> files) {
+    files.clear();
     update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }
 }

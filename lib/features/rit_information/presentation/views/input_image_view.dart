@@ -170,7 +170,10 @@ class InputImageView extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       margin: const EdgeInsets.only(top: 10),
                       child: InkWell(
-                        onTap: () => controller.clearAllImages(mediaFileList, isTransportation),
+                        onTap: () => controller.clearAllImages(
+                          mediaFileList,
+                          isTransportation,
+                        ),
                         child: const Text(
                           'Hapus Semua',
                           style: TextStyle(
@@ -269,7 +272,7 @@ class InputImageView extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const SizedBox(width: 40),
+                  const SizedBox(width: 35),
                   Expanded(
                     child: Text(
                       'Tambah Foto Kendaraan',
@@ -284,13 +287,17 @@ class InputImageView extends StatelessWidget {
                   InkWell(
                     onTap: () => Get.back(),
                     child: Container(
-                      height: 40,
-                      width: 40,
+                      height: 35,
+                      width: 35,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFF3F4F6),
                       ),
-                      child: Icon(Icons.close, color: const Color(0xFF4B5563)),
+                      child: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: const Color(0xFF4B5563),
+                      ),
                     ),
                   ),
                 ],

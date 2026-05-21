@@ -26,7 +26,7 @@ class ImageInputWidget extends StatelessWidget {
             blurRadius: 2,
             offset: Offset(0, 1),
             spreadRadius: 0,
-          )
+          ),
         ],
       ),
       child: Column(
@@ -47,11 +47,12 @@ class ImageInputWidget extends StatelessWidget {
           const Text(
             '*Upload minimal 1 foto untuk bukti akhir transaksi',
             style: TextStyle(
-                color: Colors.red,
-                fontSize: 10,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.italic),
+              color: Colors.red,
+              fontSize: 10,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.italic,
+            ),
           ),
           Obx(
             () => Visibility(
@@ -60,16 +61,18 @@ class ImageInputWidget extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 margin: const EdgeInsets.only(top: 10),
                 child: InkWell(
-                    onTap: () => controller.clearAllImages(),
-                    child: const Text(
-                      'Hapus Semua',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
+                  onTap: () =>
+                      controller.clearAllImages(controller.mediaFileList),
+                  child: const Text(
+                    'Hapus Semua',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -104,7 +107,10 @@ class ImageInputWidget extends StatelessWidget {
                         top: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: () => controller.removeImage(index),
+                          onTap: () => controller.removeImage(
+                            index,
+                            controller.mediaFileList,
+                          ),
                           child: Container(
                             padding: const EdgeInsets.all(2),
                             decoration: const BoxDecoration(
@@ -125,15 +131,20 @@ class ImageInputWidget extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(
-                      onTap: () => controller.selectImage(ImageSource.camera),
+                      onTap: () => controller.selectImage(
+                        ImageSource.camera,
+                        controller.mediaFileList,
+                      ),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(7),
                           color: Colors.grey[200],
                         ),
                         child: const Center(
-                          child: Icon(Icons.camera_alt_outlined,
-                              color: Colors.grey),
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
