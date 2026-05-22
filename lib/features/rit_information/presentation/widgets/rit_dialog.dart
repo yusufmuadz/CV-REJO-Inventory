@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../detail_order/data/models/item_order_model.dart';
 import '../controllers/rit_controller.dart';
 import 'custom_image.dart';
 
@@ -37,7 +39,7 @@ class RitDialog {
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.all(12),
-                    hint: const Text('Masukkan alasan pending...'),
+                    hint: const Text('Masukkan alasan tolak...'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -185,58 +187,73 @@ class RitDialog {
     );
   }
 
-  void inputProductRetur() {
-    final nameProductController = TextEditingController();
-    final qtyProductController = TextEditingController();
-    final descProductController = TextEditingController();
+  void inputProductRetur({
+    required RitController controller,
+    int? index,
+    String? name,
+    String? qty,
+    String? desc,
+    bool isPreview = false,
+    RxList<XFile>? mediaFileListPreview,
+  }) {
+    final nameProductController = TextEditingController(text: name);
+    final qtyProductController = TextEditingController(text: qty);
+    final descProductController = TextEditingController(text: desc);
+    final mediaFileList = <XFile>[].obs;
+
+    if (isPreview) {
+      mediaFileList.value = mediaFileListPreview ?? [];
+    }
+
+    bool isEdit = false;
+    bool isPreviewMode = isPreview;
 
     Get.bottomSheet(
-      SizedBox(
-        height: Get.height * 0.65,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(15, 22, 15, 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      StatefulBuilder(
+        builder: (context, StateSetter setState) {
+          return SizedBox(
+            height: Get.height * 0.75,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(15, 22, 15, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(width: 35),
-                  Expanded(
-                    child: Text(
-                      'Tambah Barang Retur',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                  Row(
+                    children: [
+                      const SizedBox(width: 35),
+                      Expanded(
+                        child: Text(
+                          'Tambah Barang Retur',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
+                      InkWell(
+                        onTap: () => Get.back(),
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFFF3F4F6),
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: const Color(0xFF4B5563),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFF3F4F6),
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
-                        color: const Color(0xFF4B5563),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 23),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  const SizedBox(height: 23),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           'Nama Barang *',
                           style: TextStyle(
                             color: Colors.black,
@@ -245,8 +262,29 @@ class RitDialog {
                             letterSpacing: 0.38,
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        SharedTextField(
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                          'Qty(Jumlah)*',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.38,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SharedTextField(
+                          readOnly: isPreviewMode && !isEdit,
                           controller: nameProductController,
                           hintText: 'Masukkan nama barang',
                           validator: (String? p1) {
@@ -256,26 +294,12 @@ class RitDialog {
                             return null;
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 100,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Qty(Jumlah)*',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.38,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        SharedTextField(
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 100,
+                        child: SharedTextField(
+                          readOnly: isPreviewMode && !isEdit,
                           controller: qtyProductController,
                           keyboardType: TextInputType.number,
                           hintText: '0',
@@ -286,14 +310,121 @@ class RitDialog {
                             return null;
                           },
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    'Keterangan',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.38,
                     ),
+                  ),
+                  const SizedBox(height: 5),
+                  TextField(
+                    readOnly: isPreviewMode && !isEdit,
+                    controller: descProductController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: const EdgeInsets.all(12),
+                      hint: Text(
+                        'Masukkan alasan retur (opsional)',
+                        style: GoogleFonts.hankenGrotesk(
+                          color: Color(0xFF9FA2B4),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.48,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  CustomImage().buildContentImage(
+                    readOnly: isPreviewMode && !isEdit,
+                    title: 'Barang Retur',
+                    controller: controller,
+                    mediaFileList: mediaFileList,
+                  ),
+                  const Spacer(),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton.basicOutlinedButton(
+                          title: isPreviewMode && !isEdit ? 'Edit' : 'Batal',
+                          textColor: isPreviewMode && !isEdit
+                              ? Colors.red
+                              : const Color(0xFF8A5012),
+                          minimumSize: Size.fromHeight(48),
+                          side: BorderSide(
+                            color: isPreviewMode && !isEdit
+                                ? Colors.red
+                                : const Color(0xFF8A5012),
+                            width: 1,
+                          ),
+                          onPressed: () {
+                            if (isPreviewMode && !isEdit) {
+                              setState(() {
+                                isPreviewMode = false;
+                                isEdit = true;
+                              });
+                            } else {
+                              Get.back();
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: CustomButton.basicButton(
+                          title: 'Simpan',
+                          minimumSize: Size.fromHeight(48),
+                          color: const Color(0xFF0056D2),
+                          onPressed: () {
+                            if (!isPreviewMode && isEdit && index != null) {
+                              final order = controller.itemPoAddRetur[index];
+
+                              final updateOrder = order.copyWith(
+                                item: nameProductController.text,
+                                qty: qtyProductController.text,
+                                note: descProductController.text,
+                                mediaFileList: mediaFileList,
+                              );
+
+                              controller.itemPoAddRetur[index] = updateOrder;
+                            } else {
+                              controller.itemPoAddRetur.add(
+                                ItemOrderModel(
+                                  item: nameProductController.text,
+                                  qty: qtyProductController.text,
+                                  barcode: '',
+                                  pic: StatusItem(),
+                                  checker1: StatusItem(),
+                                  checker2: StatusOrder(),
+                                  driver: StatusOrder(),
+                                  note: descProductController.text,
+                                  mediaFileList: mediaFileList,
+                                ),
+                              );
+                            }
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       isScrollControlled: true,
       backgroundColor: Colors.white,
@@ -352,10 +483,6 @@ class RitDialog {
   }
 
   _buildRetur({required String status, required RitController controller}) {
-    // if (status != 'Terkait') {
-    //   return SizedBox.shrink();
-    // }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -439,6 +566,7 @@ class RitDialog {
                   ),
                   child: _buildTitleIconList(
                     isRelated: status == 'Terkait',
+                    controller: controller,
                     valueCheckbox: controller.selectedAllItem.value,
                     onChanged: (value) {
                       controller.selectAll();
@@ -447,7 +575,9 @@ class RitDialog {
                 ),
                 ListView.separated(
                   shrinkWrap: true,
-                  itemCount: controller.itemPO.length,
+                  itemCount: status == 'Terkait'
+                      ? controller.itemPO.length
+                      : controller.itemPoAddRetur.length,
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   physics: const NeverScrollableScrollPhysics(),
                   separatorBuilder: (context, index) => const Divider(
@@ -456,18 +586,33 @@ class RitDialog {
                     color: Color(0xFFD7C3B4),
                   ),
                   itemBuilder: (context, index) {
-                    final item = controller.itemPO[index];
+                    final item = status == 'Terkait'
+                        ? controller.itemPO[index]
+                        : controller.itemPoAddRetur[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: _buildTitleIconList(
-                        isRelated: status == 'Terkait',
-                        title: item.item,
-                        isIcon: false,
-                        number: '${index + 1}',
-                        valueCheckbox: item.isChecked,
-                        onChanged: (value) {
-                          controller.selectedItem(index);
-                        },
+                      child: InkWell(
+                        onTap: () => inputProductRetur(
+                          index: index,
+                          isPreview: true,
+                          controller: controller,
+                          name: item.item,
+                          qty: item.qty,
+                          desc: item.note,
+                          mediaFileListPreview: item.mediaFileList,
+                        ),
+                        child: _buildTitleIconList(
+                          isRelated: status == 'Terkait',
+                          title: item.item,
+                          isIcon: false,
+                          index: index,
+                          number: '${index + 1}',
+                          controller: controller,
+                          valueCheckbox: item.isChecked,
+                          onChanged: (value) {
+                            controller.selectedItem(index);
+                          },
+                        ),
                       ),
                     );
                   },
@@ -483,10 +628,12 @@ class RitDialog {
   Widget _buildTitleIconList({
     required bool isRelated,
     bool isIcon = true,
+    int? index,
     String? title,
     String? number,
     bool? valueCheckbox,
     Function(bool?)? onChanged,
+    required RitController controller,
   }) {
     String resultTitle = 'PILIH SEMUA';
 
@@ -542,7 +689,7 @@ class RitDialog {
         Visibility(
           visible: !isRelated && isIcon,
           child: InkWell(
-            onTap: () => inputProductRetur(),
+            onTap: () => inputProductRetur(controller: controller),
             child: const Icon(
               Icons.add_circle_outline_outlined,
               size: 28,
@@ -553,7 +700,9 @@ class RitDialog {
         Visibility(
           visible: !isRelated && title != null && !isIcon,
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              controller.itemPoAddRetur.removeAt(index ?? 0);
+            },
             child: const Icon(
               Ionicons.close_circle_outline,
               size: 28,

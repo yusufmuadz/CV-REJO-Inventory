@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
 class ItemOrderModel {
   final String item;
   late final String qty;
@@ -7,6 +10,8 @@ class ItemOrderModel {
   final StatusOrder checker2;
   final StatusOrder driver;
   bool isChecked;
+  String? note;
+  RxList<XFile>? mediaFileList;
 
   ItemOrderModel({
     required this.item,
@@ -17,6 +22,8 @@ class ItemOrderModel {
     required this.checker2,
     required this.driver,
     this.isChecked = false,
+    this.note = '',
+    this.mediaFileList,
   });
 
   factory ItemOrderModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +47,8 @@ class ItemOrderModel {
     StatusOrder? checker2,
     StatusOrder? driver,
     bool? isChecked,
+    String? note,
+    RxList<XFile>? mediaFileList,
   }) {
     return ItemOrderModel(
       item: item ?? this.item,
@@ -50,6 +59,8 @@ class ItemOrderModel {
       checker2: checker2 ?? this.checker2,
       driver: driver ?? this.driver,
       isChecked: isChecked ?? this.isChecked,
+      note: note ?? this.note,
+      mediaFileList: mediaFileList ?? this.mediaFileList,
     );
   }
 }

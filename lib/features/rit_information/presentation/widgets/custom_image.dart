@@ -122,6 +122,7 @@ class CustomImage {
   Widget buildContentImage({
     int? maxImage,
     bool isShadow = true,
+    bool readOnly = false,
     required String title,
     required RitController controller,
     required RxList<XFile> mediaFileList,
@@ -133,7 +134,7 @@ class CustomImage {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Visibility(
-              visible: mediaFileList.isNotEmpty,
+              visible: mediaFileList.isNotEmpty && !readOnly,
               child: Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 child: Row(
@@ -165,13 +166,18 @@ class CustomImage {
               child: CustomGridImage(
                 maxImage: maxImage ?? 2,
                 mediaFileList: mediaFileList,
-                onAdd: () => controller.selectImage(
-                  ImageSource.camera,
-                  null,
-                  mediaFileList,
-                ),
-                onRemove: (int index) =>
-                    controller.removeImage(index, null, mediaFileList, false),
+                onAdd: () {
+                  if (readOnly) return;
+                  controller.selectImage(
+                    ImageSource.camera,
+                    null,
+                    mediaFileList,
+                  );
+                },
+                onRemove: (int index) {
+                  if (readOnly) return;
+                  controller.removeImage(index, null, mediaFileList, false);
+                },
               ),
             ),
             Visibility(
@@ -179,11 +185,13 @@ class CustomImage {
               child: Row(
                 children: [
                   CustomImage().addImage(
-                    onTap: () => controller.selectImage(
-                      ImageSource.camera,
-                      null,
-                      mediaFileList,
-                    ),
+                    onTap: readOnly
+                        ? null
+                        : () => controller.selectImage(
+                            ImageSource.camera,
+                            null,
+                            mediaFileList,
+                          ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(child: CustomImage().buildTitle(title: title)),

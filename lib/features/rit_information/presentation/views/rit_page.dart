@@ -6,6 +6,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/rit_dialog.dart';
+import 'arrive_at_office.dart';
 import 'input_image_view.dart';
 import 'rit_view.dart';
 
@@ -39,12 +40,25 @@ class RitPage extends GetView<RitController> {
         }),
         bottomNavigationBar: Obx(() {
           if (controller.loadState.value == LoadState.initial ||
-              controller.orders.isEmpty) {
+              controller.orders.isEmpty ||
+              controller.isArrive.value) {
             return const SizedBox.shrink();
           }
           return CustomButton.bottomBarStyle(child: _buildButton());
         }),
       ),
+    );
+  }
+
+  Widget _buildPage() {
+    return PageView(
+      controller: controller.pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        RitView(controller: controller),
+        InputImageView(controller: controller),
+        ArriveAtOffice(controller: controller),
+      ],
     );
   }
 
@@ -54,6 +68,9 @@ class RitPage extends GetView<RitController> {
     }
     if (!controller.isAccept.value) {
       return _buildButtonSelect();
+    }
+    if (controller.isArriveInput.value) {
+      return _buildButtonArrive();
     }
     return CustomButton.basicButton(
       title: controller.pageIndex.value == 0 ? 'Keberangkatan' : 'Simpan',
@@ -69,17 +86,6 @@ class RitPage extends GetView<RitController> {
           controller.saveOrder();
         }
       },
-    );
-  }
-
-  Widget _buildPage() {
-    return PageView(
-      controller: controller.pageController,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        RitView(controller: controller),
-        InputImageView(controller: controller),
-      ],
     );
   }
 
@@ -101,7 +107,26 @@ class RitPage extends GetView<RitController> {
       color1: Colors.redAccent[200]!,
       color2: const Color(0xFF2ED471),
       onPressed1: () => RitDialog().inputRetur(controller: controller),
-      onPressed2: () => controller.acceptRit(),
+      onPressed2: () {
+        controller.isSave.value = false;
+        controller.isArriveInput.value = true;
+        controller.pageIndex.value = 2;
+        controller.pageController.animateToPage(
+          2,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
+  }
+
+  Widget _buildButtonArrive() {
+    return CustomButton.basicButton(
+      title: 'Simpan',
+      color: const Color(0xFF2ED471),
+      onPressed: () {
+        controller.isArrive.value = true;
+      },
     );
   }
 }

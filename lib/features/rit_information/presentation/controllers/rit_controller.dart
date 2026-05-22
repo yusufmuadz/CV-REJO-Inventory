@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
-import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
-import '../../domain/params/post_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 
 class RitController extends GetxController {
@@ -35,6 +31,8 @@ class RitController extends GetxController {
 
   final isAccept = false.obs;
   final isSave = false.obs;
+  final isArriveInput = false.obs;
+  final isArrive = false.obs;
 
   final kmController = TextEditingController();
   final reasonController = TextEditingController();
@@ -52,6 +50,11 @@ class RitController extends GetxController {
   final mediaFileLeftTransport = Rx<XFile>(XFile(''));
 
   final mediaFileListRetur = <XFile>[].obs;
+  final mediaFileListAddRetur = <XFile>[].obs;
+
+  final mediaFileRecipientInvoice = <XFile>[].obs;
+  final mediaFileRecipientMoney = <XFile>[].obs;
+  final mediaFileRecipientMoneyRit = <XFile>[].obs;
 
   final selectedPoRetur = ''.obs;
   final selectedInfoRetur = 'Terkait'.obs;
@@ -59,9 +62,12 @@ class RitController extends GetxController {
 
   final selectedAllItem = false.obs;
   final itemPO = <ItemOrderModel>[].obs;
+  final itemPoAddRetur = <ItemOrderModel>[].obs;
 
-  final pageIndex = 0.obs;
-  final pageController = PageController(initialPage: 0);
+  final recipientName = TextEditingController();
+
+  final pageIndex = 2.obs;
+  final pageController = PageController(initialPage: 2);
 
   @override
   void onInit() {

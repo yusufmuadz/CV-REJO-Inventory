@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class SharedTextField extends StatelessWidget {
   final TextEditingController controller;
+  final bool? readOnly;
   final String? labelText;
   final String? hintText;
   final Icon? prefixIcon;
@@ -14,6 +15,7 @@ class SharedTextField extends StatelessWidget {
   const SharedTextField({
     super.key,
     required this.controller,
+    this.readOnly,
     this.labelText,
     this.hintText,
     this.prefixIcon,
@@ -27,6 +29,7 @@ class SharedTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly ?? false,
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText ?? false,
