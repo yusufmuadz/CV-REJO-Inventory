@@ -49,18 +49,22 @@ class ListRitView extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: InkWell(
-                  onTap: () => controller.onSelectedRit(ritOrder.city),
+                  onTap: () => controller.onSelectedRit(index),
                   child: Container(
                     height: 20,
                     width: 20,
-                    padding: controller.isSelected.value == ritOrder.city
+                    padding:
+                        controller.isSelected.value == ritOrder.city &&
+                            controller.tanggalRit.value == ritOrder.tanggalRit
                         ? const EdgeInsets.all(2)
                         : null,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(width: 2, color: Colors.blue),
                     ),
-                    child: controller.isSelected.value == ritOrder.city
+                    child:
+                        controller.isSelected.value == ritOrder.city &&
+                            controller.tanggalRit.value == ritOrder.tanggalRit
                         ? Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
@@ -74,12 +78,14 @@ class ListRitView extends StatelessWidget {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => controller.onSelectedRit(ritOrder.city),
+                onTap: () => controller.onSelectedRit(index),
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Colors.grey.shade100),
-                    color: controller.isSelected.value == ritOrder.city
+                    color:
+                        controller.isSelected.value == ritOrder.city &&
+                            controller.tanggalRit.value == ritOrder.tanggalRit
                         ? Colors.grey.shade100
                         : Colors.white,
                     borderRadius: BorderRadius.circular(7),

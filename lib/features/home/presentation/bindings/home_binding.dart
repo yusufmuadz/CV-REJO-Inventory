@@ -1,6 +1,7 @@
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:get/get.dart';
 
+import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../data/datasource/home_remote_datasource.dart';
 import '../../data/datasource/home_remote_datasource_impl.dart';
 import '../../data/repositories/home_repository_impl.dart';
@@ -24,5 +25,7 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomeController>(
       () => HomeController(homeUseCase: Get.find<GetHomeUseCase>()),
     );
+
+    ListOrderBinding().dependencies();
   }
 }

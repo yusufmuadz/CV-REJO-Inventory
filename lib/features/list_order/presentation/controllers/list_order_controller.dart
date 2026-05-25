@@ -138,13 +138,13 @@ class ListOrderController extends GetxController {
     }
   }
 
-  void onSelectedRit(String id) {
+  void onSelectedRit(int index) {
     if (!isSelection.value && !AppRole.isDriver) return;
 
-    final index = listRit.indexWhere((order) => order.city == id);
+    // final index = listRit.indexWhere((order) => order.city == id);
 
     if (index != -1) {
-      isSelected.value = id;
+      isSelected.value = listRit[index].city;
       colorRit.value = listRit[index].color;
       tanggalRit.value = listRit[index].tanggalRit;
     }
