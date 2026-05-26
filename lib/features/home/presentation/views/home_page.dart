@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../profile/presentation/views/profile_view.dart';
 import '../sample/home_view_new_sample.dart';
+import 'home_view.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});

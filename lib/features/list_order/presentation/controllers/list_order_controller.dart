@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
@@ -141,8 +142,6 @@ class ListOrderController extends GetxController {
   void onSelectedRit(int index) {
     if (!isSelection.value && !AppRole.isDriver) return;
 
-    // final index = listRit.indexWhere((order) => order.city == id);
-
     if (index != -1) {
       isSelected.value = listRit[index].city;
       colorRit.value = listRit[index].color;
@@ -259,6 +258,10 @@ class ListOrderController extends GetxController {
           sort: sortByNew.value ? 'newest' : 'oldest',
           filter: isStatusSelected.value.toLowerCase(),
           district: isDistrictSelected.value.toLowerCase(),
+          dateRit: tanggalRit.value,
+          // DateFormat(
+          //   'yyyy-MM-dd',
+          // ).format(DateTime.parse(tanggalRit.value)),
         ),
       );
 

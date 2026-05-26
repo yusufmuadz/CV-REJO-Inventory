@@ -6,6 +6,7 @@ class ParamsGetTransaction {
   final String? sort;
   final String? filter;
   final String? district;
+  final String? dateRit;
   final List<String>? courier;
 
   ParamsGetTransaction({
@@ -16,5 +17,6 @@ class ParamsGetTransaction {
     this.filter,
     this.district,
     this.courier,
+    this.dateRit,
   });
 }

@@ -66,8 +66,8 @@ class RitController extends GetxController {
 
   final recipientName = TextEditingController();
 
-  final pageIndex = 2.obs;
-  final pageController = PageController(initialPage: 2);
+  final pageIndex = 0.obs;
+  final pageController = PageController(initialPage: 0);
 
   @override
   void onInit() {
@@ -278,6 +278,7 @@ class RitController extends GetxController {
           filter: 'all',
           // sort: sortByNew.value ? 'newest' : 'oldest',
           district: isDistrictSelected.value.toLowerCase(),
+          dateRit: tanggalRit.value,
         ),
       );
 

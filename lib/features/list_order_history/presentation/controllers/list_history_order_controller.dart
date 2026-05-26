@@ -17,23 +17,17 @@ class ListHistoryOrderController extends GetxController
   ListHistoryOrderController({required this.listHistoryOrderUseCase});
 
   final isLoadingSort = false.obs;
-  final isLoadingLoader = false.obs;
   final dialogService = Get.find<DialogService>();
   late final TabController tabController;
 
-  final isStatusSelected = ''.obs;
   final isDistrictSelected = ''.obs;
 
   final listDistrict = <DistrictEntity>[].obs;
 
   final orders = <OrderEntity>[].obs;
-  final loaderOrders = <OrderEntity>[].obs;
   final currentPage = 1.obs;
-  int currentPageLoader = 1;
   final hasmore = true.obs;
-  final hasmoreLoader = true.obs;
   final scrollController = ScrollController();
-  final scrollControllerLoader = ScrollController();
 
   final searchController = TextEditingController();
 
@@ -49,16 +43,12 @@ class ListHistoryOrderController extends GetxController
       vsync: this,
     );
     scrollController.addListener(_onScroll);
-    // scrollControllerLoader.addListener(_onScrollLoader);
   }
 
   @override
   void onReady() {
     super.onReady();
     _getOrder();
-    // if (AppRole.isChecker2) {
-    //   _getLoaderOrder();
-    // }
   }
 
   @override
@@ -66,7 +56,6 @@ class ListHistoryOrderController extends GetxController
     super.onClose();
     scrollController.dispose();
     isLoadingSort.value = false;
-    isLoadingLoader.value = false;
     tabController.dispose();
     loadState.value = LoadState.idle;
   }
@@ -80,37 +69,22 @@ class ListHistoryOrderController extends GetxController
 
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
 
-  void onRefreshLoaderTransaction() {
-    currentPageLoader = 1;
-    hasmoreLoader.value = true;
-    // loaderOrders.clear();
-    _getLoaderOrder();
-  }
-
   void onResetSort() {
     currentPage.value = 1;
-    // hasmore.value = true;
     orders.clear();
     sortByNew.value = true;
-    isStatusSelected.value = '';
     isDistrictSelected.value = '';
     _getOrder(isRefresh: true);
   }
 
   void _onScroll() {
     final canLoad = loadState.value == LoadState.idle;
-    // ||
-    // loadState.value == LoadState.noMore;
 
     if (canLoad &&
         scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200) {
-      // loadState.value = LoadState.loadingMore;
-      // Panggil fungsi untuk memuat lebih banyak data
-      // if (hasmore.value && loadState.value == LoadState.idle) {
       currentPage.value++;
       _getOrder();
-      // }
     }
   }
 
@@ -154,43 +128,6 @@ class ListHistoryOrderController extends GetxController
       dialogService.showError('Failed', 'Error Get Data: $e');
     } finally {
       // loadState.value = LoadState.idle;
-    }
-  }
-
-  Future<void> _getLoaderOrder() async {
-    if (isLoadingLoader.value) return;
-    isLoadingLoader.value = true;
-
-    try {
-      final result = await listHistoryOrderUseCase.call(
-        ParamsGetTransaction(limit: '8', page: '$currentPageLoader'),
-      );
-
-      switch (result) {
-        case Success(:final data):
-          debugPrint('Data Loader Order: ${data.length}');
-          if (data.isEmpty) {
-            hasmoreLoader.value = false;
-            isLoadingLoader.value = false;
-            if (loaderOrders.isNotEmpty) {
-              dialogService.showInfoSnackbar(
-                'Info',
-                'Tidak ada data pesanan lagi',
-              );
-            }
-            return;
-          }
-          loaderOrders.addAll(data);
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
-      }
-    } catch (e) {
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data: $e');
-    } finally {
-      isLoadingLoader.value = false;
     }
   }
 

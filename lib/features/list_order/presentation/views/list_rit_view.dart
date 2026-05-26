@@ -39,8 +39,12 @@ class ListRitView extends StatelessWidget {
   Widget _buildOrder({required int index}) {
     RitListEntity ritOrder = controller.listRit[index];
 
-    return Obx(
-      () => Padding(
+    return Obx(() {
+      final isSelected =
+          controller.isSelected.value == ritOrder.city &&
+          controller.tanggalRit.value == ritOrder.tanggalRit;
+
+      return Padding(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
         child: Row(
           children: [
@@ -53,18 +57,12 @@ class ListRitView extends StatelessWidget {
                   child: Container(
                     height: 20,
                     width: 20,
-                    padding:
-                        controller.isSelected.value == ritOrder.city &&
-                            controller.tanggalRit.value == ritOrder.tanggalRit
-                        ? const EdgeInsets.all(2)
-                        : null,
+                    padding: isSelected ? const EdgeInsets.all(2) : null,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(width: 2, color: Colors.blue),
                     ),
-                    child:
-                        controller.isSelected.value == ritOrder.city &&
-                            controller.tanggalRit.value == ritOrder.tanggalRit
+                    child: isSelected
                         ? Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
@@ -82,12 +80,8 @@ class ListRitView extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.grey.shade100),
-                    color:
-                        controller.isSelected.value == ritOrder.city &&
-                            controller.tanggalRit.value == ritOrder.tanggalRit
-                        ? Colors.grey.shade100
-                        : Colors.white,
+                    border: Border.all(width: isSelected ? 2 : 1, color: isSelected ? const Color(0x4617ACF1) : Colors.grey.shade100),
+                    color: Color(int.parse('0xFF${ritOrder.color.replaceAll('#', '')}')),
                     borderRadius: BorderRadius.circular(7),
                   ),
                   child: Column(
@@ -136,8 +130,8 @@ class ListRitView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {

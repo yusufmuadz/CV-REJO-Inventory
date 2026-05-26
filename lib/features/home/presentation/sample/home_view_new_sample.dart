@@ -39,8 +39,8 @@ class HomeViewNewSample extends GetView<HomeController> {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         _buildHome(),
-        ListOrderPage(),
-        // Container(),
+        // ListOrderPage(),
+        Container(),
         Container(),
         ProfileView(controller: controller),
       ],

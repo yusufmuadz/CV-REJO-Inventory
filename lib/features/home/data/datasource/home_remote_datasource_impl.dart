@@ -26,6 +26,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         if (params.sort != null) 'sort': '${params.sort}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
+        if (params.dateRit != null) 'daterit': '${params.dateRit}',
       };
 
       String queryString = Uri(queryParameters: body).query;
