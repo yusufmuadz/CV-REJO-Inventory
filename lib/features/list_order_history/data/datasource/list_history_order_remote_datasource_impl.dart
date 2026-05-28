@@ -51,7 +51,7 @@ class ListHistoryOrderRemoteDataSourceImpl
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error List History Order: $e');
+      throw ServerException(message: '$e');
     }
   }
 

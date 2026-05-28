@@ -298,6 +298,7 @@ class RitController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
     } catch (e) {

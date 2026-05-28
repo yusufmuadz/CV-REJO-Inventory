@@ -159,9 +159,9 @@ class CustomButton {
             label: 'Pesanan',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Ionicons.time_outline, color: Color(0xFF8890a0)),
-            activeIcon: Icon(Ionicons.time, color: Color(0xFF06823f)),
-            label: 'History',
+            icon: Icon(Ionicons.help_circle_outline, color: Color(0xFF8890a0)),
+            activeIcon: Icon(Ionicons.help_circle, color: Color(0xFF06823f)),
+            label: 'Kendala',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -174,39 +174,6 @@ class CustomButton {
             ),
             label: 'Profil',
           ),
-          // BottomNavigationBarItem(
-          //   icon: SvgPicture.asset('assets/icons/task-edit-02-1.svg'),
-          //   activeIcon: SvgPicture.asset(
-          //     'assets/icons/task-edit-02-1.svg',
-          //     colorFilter: ColorFilter.mode(
-          //       const Color(0xFF00336A),
-          //       BlendMode.srcIn,
-          //     ),
-          //   ),
-          //   label: 'Task',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: SvgPicture.asset('assets/icons/sticky-note-02.svg'),
-          //   activeIcon: SvgPicture.asset(
-          //     'assets/icons/sticky-note-02.svg',
-          //     colorFilter: ColorFilter.mode(
-          //       const Color(0xFF00336A),
-          //       BlendMode.srcIn,
-          //     ),
-          //   ),
-          //   label: 'PKTR',
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: SvgPicture.asset('assets/icons/Frame-1.svg'),
-          //   activeIcon: SvgPicture.asset(
-          //     'assets/icons/Frame-1.svg',
-          //     colorFilter: ColorFilter.mode(
-          //       const Color(0xFF00336A),
-          //       BlendMode.srcIn,
-          //     ),
-          //   ),
-          //   label: 'Akun',
-          // ),
         ],
       ),
     );

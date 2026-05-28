@@ -55,7 +55,8 @@ class AssistantDialog {
         );
       },
       onPressed2: () {
-        if (visible1) {
+        if (!visible1) {
+          debugPrint('Lanjut');
           return;
         }
         Get.toNamed(

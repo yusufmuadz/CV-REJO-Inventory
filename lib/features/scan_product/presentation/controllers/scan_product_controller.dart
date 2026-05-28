@@ -97,6 +97,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
           );
 
         case ErrorResult(:final message):
+        // loadState.value = LoadState.error;
           if (Get.isDialogOpen == true) Get.back();
           dialogService.showError(
             'Failed',
@@ -131,6 +132,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
           searchResults.value = data;
 
         case ErrorResult(:final message):
+        // loadState.value = LoadState.error;
           if (Get.isDialogOpen == true) Get.back();
           dialogService.showError('Failed', message);
       }

@@ -1,4 +1,5 @@
 import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
+import 'package:cv_rejo/features/home/presentation/widgets/rit_contsraint.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
 import 'package:cv_rejo/features/list_order/presentation/views/list_order_page.dart';
@@ -41,7 +42,7 @@ class HomeViewNewSample extends GetView<HomeController> {
         _buildHome(),
         // ListOrderPage(),
         Container(),
-        Container(),
+        RitConstraint(),
         ProfileView(controller: controller),
       ],
     );

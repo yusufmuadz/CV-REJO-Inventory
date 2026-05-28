@@ -47,7 +47,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -66,15 +66,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           'message': '',
           'data': [],
         });
-        // throw ServerException(
-        //   message: response.data['message'],
-        //   statusCode: response.statusCode ?? 500,
-        // );
       }
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 }

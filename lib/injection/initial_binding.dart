@@ -3,14 +3,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 import '../core/middlewares/session_manager.dart';
+// import '../core/network/connectivity_network.dart';
 import '../core/network/dio_client.dart';
+import '../core/network/koneksi_check.dart';
 import '../core/services/dialog_service.dart';
-import '../core/services/navigation_service.dart';
 import '../core/services/storage_service.dart';
 
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
+    Get.put<KoneksiCheck>(KoneksiCheck(), permanent: true);
     Get.lazyPut<FlutterSecureStorage>(() {
       debugPrint('✅ FlutterSecureStorage created');
       return FlutterSecureStorage();

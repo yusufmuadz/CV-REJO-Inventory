@@ -1,3 +1,4 @@
+import 'package:cv_rejo/core/network/connection_banner.dart';
 import 'package:cv_rejo/core/theme/app_theme.dart';
 import 'package:cv_rejo/injection/initial_binding.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,17 @@ class MyApp extends StatelessWidget {
         initialBinding: InitialBinding(),
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
-        builder: (context, child) =>
-            SafeArea(top: false, bottom: true, child: child!),
+        // ✅ Global snackbar config (opsional)
+        defaultTransition: Transition.fade,
+        enableLog: true,
+        builder: (context, child) => SafeArea(
+          top: false,
+          bottom: true,
+          child: Column(
+            // fit: StackFit.expand,
+            children: [Expanded(child: child!), ConnectionBanner()],
+          ),
+        ),
         // navigatorKey: navigationService.navigatorKey,
         routingCallback: (routing) {
           debugPrint('➡️ Route: ${routing?.current}');

@@ -192,6 +192,7 @@ class DetailOrderController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
     } catch (e) {
@@ -225,6 +226,7 @@ class DetailOrderController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
 
@@ -245,6 +247,7 @@ class DetailOrderController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
     } finally {
@@ -299,6 +302,7 @@ class DetailOrderController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
     } catch (e) {
@@ -343,6 +347,7 @@ class DetailOrderController extends GetxController {
           dialogService.showSuccessSnackbar('Berhasil Menambahkan Produk');
 
         case ErrorResult(:final message):
+          // loadState.value = LoadState.error;
           messageProduct.value = message;
           statusPostProduct.value = false;
       }
@@ -372,6 +377,7 @@ class DetailOrderController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
     } catch (e) {
