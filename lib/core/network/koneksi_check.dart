@@ -46,7 +46,7 @@ class KoneksiCheck extends GetxController {
         _updateStatus(ConnectionStatus.offline);
       } else {
         // ✅ Delay agar network stack siap
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 8));
         _checkQuality();
       }
     });

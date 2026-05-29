@@ -4,7 +4,7 @@ import '../../../home/presentation/controllers/home_controller.dart';
 
 class ProfileAboutWidget extends StatelessWidget {
   final HomeController controller;
-  
+
   const ProfileAboutWidget({super.key, required this.controller});
 
   @override
@@ -29,6 +29,20 @@ class ProfileAboutWidget extends StatelessWidget {
               ),
               Text(
                 controller.versionApp.value,
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Tanggal Update Version',
+                style: TextStyle(fontSize: 12, color: Colors.black),
+              ),
+              Text(
+                controller.updateVersionApp.value,
                 style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],

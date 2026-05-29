@@ -159,8 +159,8 @@ class CustomButton {
             label: 'Pesanan',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Ionicons.help_circle_outline, color: Color(0xFF8890a0)),
-            activeIcon: Icon(Ionicons.help_circle, color: Color(0xFF06823f)),
+            icon: Icon(Ionicons.alert_circle_outline, color: Color(0xFF8890a0)),
+            activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
             label: 'Kendala',
           ),
           BottomNavigationBarItem(

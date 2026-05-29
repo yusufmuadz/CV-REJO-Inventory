@@ -22,14 +22,26 @@ class HomeViewNewSample extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
+      bottom: false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppRole.isDriver
             ? Color(0xFFf5f0fa)
             : AppColors.backgroundMint,
-        body: Stack(children: [_buildPage()]),
-        bottomNavigationBar: Obx(
-          () => CustomButton.bottomBarIcon(controller: controller),
+        body: Stack(
+          children: [
+            _buildPage(),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: CustomButton.bottomBarIcon(controller: controller),
+            ),
+          ],
         ),
+        // bottomNavigationBar: Obx(
+        //   () => CustomButton.bottomBarIcon(controller: controller),
+        // ),
       ),
     );
   }
@@ -42,7 +54,7 @@ class HomeViewNewSample extends GetView<HomeController> {
         _buildHome(),
         // ListOrderPage(),
         Container(),
-        RitConstraint(),
+        RitConstraint(controller: controller),
         ProfileView(controller: controller),
       ],
     );

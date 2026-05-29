@@ -62,9 +62,9 @@ class EndingOrderView extends GetView<EndingOrderController> {
 
   Widget _buildButtonSelect() {
     return CustomButton.doubleButton(
-      title1: 'Pending',
-      title2: 'Simpan',
-      color1: Colors.redAccent[100]!,
+      title1: 'Pending PO',
+      title2: 'Simpan PO',
+      color1: Colors.redAccent,
       color2: const Color(0xFF2ED471),
       onPressed1: () => controller.pendingProduct(),
       onPressed2: () => controller.saveOrder(),

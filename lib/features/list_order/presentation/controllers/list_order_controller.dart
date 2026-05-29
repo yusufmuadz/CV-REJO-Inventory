@@ -35,7 +35,7 @@ class ListOrderController extends GetxController {
 
   final isSelection = false.obs;
   final isSelected = ''.obs;
-  final isStatusSelected = 'Available'.obs;
+  final isStatusSelected = 'All'.obs;
   final isDistrictSelected = ''
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
   final listSelected = <dynamic>[].obs;
@@ -51,8 +51,9 @@ class ListOrderController extends GetxController {
   final loadState = LoadState.initial.obs;
 
   final status = [
-    {'id': '0', 'name': 'Available', 'isSelected': true},
-    {'id': '1', 'name': 'Ongoing', 'isSelected': false},
+    {'id': '0', 'name': 'All', 'isSelected': true},
+    {'id': '1', 'name': 'Available', 'isSelected': false},
+    {'id': '2', 'name': 'Ongoing', 'isSelected': false},
   ].obs;
 
   @override
@@ -159,10 +160,15 @@ class ListOrderController extends GetxController {
     isSelection.value = !isSelection.value;
   }
 
-  void takeItOrder() async {
+  void takeItOrder({
+    String rit = '',
+    String clrRit = '',
+    String tglRit = '',
+  }) async {
     if (isLoading.value) return;
 
-    if (isSelected.value.isEmpty && !AppRole.isDriver) {
+    if ((pageIndex.value == 1 && isSelected.value.isEmpty) &&
+        !AppRole.isDriver) {
       dialogService.showError('Error', 'Pilih pesanan terlebih dahulu');
       return;
     }
@@ -170,26 +176,32 @@ class ListOrderController extends GetxController {
     if (pageIndex.value == 0) {
       pageIndex.value = 1;
       isSelection.value = false;
-      isDistrictSelected.value = isSelected.value;
-      GetStorage().write('city', isSelected.value);
-      GetStorage().write('colorRit', colorRit.value);
-      GetStorage().write('tanggalRit', tanggalRit.value);
+      isDistrictSelected.value = rit;
+      GetStorage().write('city', rit);
+      GetStorage().write('colorRit', clrRit);
+      GetStorage().write('tanggalRit', tglRit);
       if (AppRole.isDriver) {
         Get.offNamed(
           Routes.RIT_INFORMATION,
           arguments: {
             'invoice': '',
             'city': isSelected.value,
-            'colorRit': colorRit.value,
-            'tanggalRit': tanggalRit.value,
+            'colorRit': clrRit,
+            'tanggalRit': tglRit,
             'routeFrom': 'listOrder',
           },
         );
       } else {
+        searchController.text = '';
+        sortByNew.value = true;
+        isStatusSelected.value = 'All';
+        isDistrictSelected.value = rit;
+        tanggalRit.value = tglRit;
+        orders.clear();
         _getOrder();
       }
       isSelected.value = '';
-      listRit.clear();
+      // listRit.clear();
       return;
     }
 

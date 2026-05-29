@@ -82,8 +82,7 @@ class ListOrderPage extends GetView<ListOrderController> {
             : Obx(() {
                 if ((controller.orders.isEmpty &&
                         controller.pageIndex.value == 1) ||
-                    (controller.listRit.isEmpty &&
-                        controller.pageIndex.value == 0) ||
+                    controller.pageIndex.value == 0 ||
                     controller.isLoading.value) {
                   return const SizedBox.shrink();
                 }
@@ -105,20 +104,17 @@ class ListOrderPage extends GetView<ListOrderController> {
     if (controller.isSelection.value) {
       return _buildButtonSelect();
     }
-    return CustomButton.basicButton(
-      title: controller.pageIndex.value == 0 ? 'Pilih Rit' : 'Pilih Pesanan',
-      color: const Color(0xFFd5914d),
-      onPressed: () {
-        debugPrint('Pilih Pesanan');
-        controller.isSelection.value = !controller.isSelection.value;
-      },
-    );
+
+    if (controller.pageIndex.value == 1) {
+      return _buildButtonSelectRIT();
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildButtonSelect() {
     return CustomButton.doubleButton(
       title1: 'Batal',
-      title2: 'Ambil ${controller.pageIndex.value == 0 ? 'Rit' : 'Pesanan'}',
+      title2: 'Ambil Pesanan',
       color1: Colors.redAccent,
       color2: const Color(0xFFc7a16d),
       onPressed1: () {
@@ -126,6 +122,24 @@ class ListOrderPage extends GetView<ListOrderController> {
         controller.cancelSelection();
       },
       onPressed2: () => controller.takeItOrder(),
+    );
+  }
+
+  Widget _buildButtonSelectRIT() {
+    return CustomButton.doubleButton(
+      title1: 'Ubah RIT',
+      title2: 'Pilih Pesanan',
+      color1: const Color.fromARGB(150, 77, 123, 241),
+      color2: const Color(0xFFc7a16d),
+      onPressed1: () {
+        debugPrint('Ubah RIT');
+        if (controller.listRit.isEmpty) {
+          controller.getRit();
+        }
+        controller.pageIndex.value = 0;
+      },
+      onPressed2: () =>
+          controller.isSelection.value = !controller.isSelection.value,
     );
   }
 }

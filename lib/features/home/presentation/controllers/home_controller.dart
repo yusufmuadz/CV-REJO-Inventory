@@ -31,8 +31,10 @@ class HomeController extends GetxController {
 
   final totalOrder = 0.obs;
   final totalOrderHistory = 0.obs;
-  final versionApp = '1.0.0'.obs;
+  final versionApp = '2.0.0'.obs;
+  final updateVersionApp = '29 Mei 2026'.obs;
 
+  final searchController = TextEditingController();
   final tabIndex = 0.obs;
 
   late final ListOrderController listOrderController;
@@ -82,14 +84,24 @@ class HomeController extends GetxController {
     // }
 
     if (invoice.isNotEmpty) {
+      GetStorage().remove('noInvoice');
       Get.toNamed(
-        Routes.DETAIL_ORDER,
+        Routes.LIST_ORDER,
         arguments: {
-          'invoice': invoice,
           'routeFrom': 'home',
-          'status_checker2': statusChecker2,
+          'city': rit,
+          'colorRit': colorRit,
+          'tanggalRit': tanggalRit,
         },
       );
+      // Get.toNamed(
+      //   Routes.DETAIL_ORDER,
+      //   arguments: {
+      //     'invoice': invoice,
+      //     'routeFrom': 'home',
+      //     'status_checker2': statusChecker2,
+      //   },
+      // );
     } else {
       GetStorage().remove('noInvoice');
       if (AppRole.isDriver && rit.isNotEmpty) {

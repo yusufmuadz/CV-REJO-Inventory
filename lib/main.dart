@@ -46,7 +46,10 @@ class MyApp extends StatelessWidget {
           bottom: true,
           child: Column(
             // fit: StackFit.expand,
-            children: [Expanded(child: child!), ConnectionBanner()],
+            children: [
+              Expanded(child: child!),
+              ConnectionBanner(),
+            ],
           ),
         ),
         // navigatorKey: navigationService.navigatorKey,

@@ -46,89 +46,68 @@ class ListRitView extends StatelessWidget {
 
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-        child: Row(
-          children: [
-            Visibility(
-              visible: controller.isSelection.value,
-              child: Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: InkWell(
-                  onTap: () => controller.onSelectedRit(index),
-                  child: Container(
-                    height: 20,
-                    width: 20,
-                    padding: isSelected ? const EdgeInsets.all(2) : null,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(width: 2, color: Colors.blue),
-                    ),
-                    child: isSelected
-                        ? Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue,
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
+        child: InkWell(
+          onTap: () => controller.takeItOrder(
+            rit: ritOrder.city,
+            clrRit: ritOrder.color,
+            tglRit: ritOrder.tanggalRit,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: isSelected ? 2 : 1,
+                color: isSelected
+                    ? const Color(0x4617ACF1)
+                    : Colors.grey.shade100,
               ),
+              color: Color(
+                int.parse('0xFF${ritOrder.color.replaceAll('#', '')}'),
+              ),
+              borderRadius: BorderRadius.circular(7),
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () => controller.onSelectedRit(index),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(width: isSelected ? 2 : 1, color: isSelected ? const Color(0x4617ACF1) : Colors.grey.shade100),
-                    color: Color(int.parse('0xFF${ritOrder.color.replaceAll('#', '')}')),
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'RIT - ${ritOrder.city}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '${ritOrder.totalPO} PO',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        DateFormat(
-                          'dd MMMM yyyy',
-                        ).format(DateTime.parse(ritOrder.tanggalRit)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'RIT - ${ritOrder.city}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
                         ),
                       ),
-                    ],
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '${ritOrder.totalPO} PO',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  DateFormat(
+                    'dd MMMM yyyy',
+                  ).format(DateTime.parse(ritOrder.tanggalRit)),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       );
     });
