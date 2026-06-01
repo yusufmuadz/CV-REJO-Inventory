@@ -59,12 +59,10 @@ class ListOrderPage extends GetView<ListOrderController> {
           ],
         ),
         body: Obx(() {
-          if (controller.isLoading.value ||
-              (controller.loadState.value == LoadState.initial &&
-                  (controller.pageIndex.value == 1 &&
-                          controller.orders.isEmpty ||
-                      controller.pageIndex.value == 0 &&
-                          controller.listRit.isEmpty))) {
+          if (controller.loadState.value == LoadState.initial &&
+              (controller.pageIndex.value == 1 && controller.orders.isEmpty ||
+                  controller.pageIndex.value == 0 &&
+                      controller.listRit.isEmpty)) {
             return const LoadingView();
           }
           return RefreshIndicator(
@@ -80,9 +78,7 @@ class ListOrderPage extends GetView<ListOrderController> {
         bottomNavigationBar: AppRole.isDriver
             ? null
             : Obx(() {
-                if ((controller.orders.isEmpty &&
-                        controller.pageIndex.value == 1) ||
-                    controller.pageIndex.value == 0 ||
+                if (controller.pageIndex.value == 0 ||
                     controller.isLoading.value) {
                   return const SizedBox.shrink();
                 }
@@ -126,11 +122,17 @@ class ListOrderPage extends GetView<ListOrderController> {
   }
 
   Widget _buildButtonSelectRIT() {
+    if (controller.loadState.value == LoadState.initial) {
+      return const SizedBox.shrink();
+    }
+
     return CustomButton.doubleButton(
       title1: 'Ubah RIT',
       title2: 'Pilih Pesanan',
       color1: const Color.fromARGB(150, 77, 123, 241),
       color2: const Color(0xFFc7a16d),
+      visible2: controller.orders.isNotEmpty,
+      visibleSpace: controller.orders.isNotEmpty,
       onPressed1: () {
         debugPrint('Ubah RIT');
         if (controller.listRit.isEmpty) {

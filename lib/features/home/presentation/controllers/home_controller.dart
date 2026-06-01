@@ -105,7 +105,7 @@ class HomeController extends GetxController {
     } else {
       GetStorage().remove('noInvoice');
       if (AppRole.isDriver && rit.isNotEmpty) {
-        debugPrint('Tanggal RIT HOME : ${tanggalRit}');
+        // debugPrint('Tanggal RIT HOME : ${tanggalRit}');
         Get.toNamed(
           Routes.RIT_INFORMATION,
           arguments: {

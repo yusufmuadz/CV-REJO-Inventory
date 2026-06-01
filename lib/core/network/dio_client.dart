@@ -108,8 +108,9 @@ class DioClient {
         if (code == 401) return '🔑 Sesi expired, silakan login ulang.';
         if (code == 403) return '⛔ Akses ditolak.';
         if (code == 404) return '📍 Data tidak ditemukan.';
-        if (code != null && code >= 500)
+        if (code != null && code >= 500) {
           return '🖥️ Server error, coba beberapa saat lagi.';
+        }
         return '❌ Error: ${e.response?.data['message'] ?? 'Unknown error'}';
 
       case DioExceptionType.cancel:

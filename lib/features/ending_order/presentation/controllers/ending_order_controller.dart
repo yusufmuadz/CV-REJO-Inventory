@@ -106,10 +106,10 @@ class EndingOrderController extends GetxController {
                   },
                 );
               } else {
-                debugPrint('Data TOTAL PO: ${data.totalPO}');
-                if (data.totalPO != null && data.totalPO == '0') {
-                  GetStorage().remove('city');
-                }
+                // debugPrint('Data TOTAL PO: ${data.totalPO}');
+                // if (data.totalPO != null && data.totalPO == '0') {
+                //   GetStorage().remove('city');
+                // }
                 GetStorage().remove('noInvoice');
                 GetStorage().remove('status_checker2');
                 Get.offAllNamed(
@@ -125,9 +125,15 @@ class EndingOrderController extends GetxController {
           );
 
         case ErrorResult(:final message):
+          debugPrint('Error Simpan Pesanan: $message');
           if (Get.isDialogOpen == true) Get.back();
+          String pesan = message;
+
+          if (message.contains('Bad state: No element')) {
+            pesan = 'Kemungkinan pesanan sudah disimpan sebelumnya. Silakan cek di history pesanan.';
+          }
           // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
+          dialogService.showError('Failed', pesan);
       }
     } finally {
       isLoading.value = false;

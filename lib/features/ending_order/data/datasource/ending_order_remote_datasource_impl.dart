@@ -23,7 +23,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (params.role == 'deliver') {
         nameFile = 'foto';
       }
-      
+
       final formData = FormData.fromMap({
         'invoice': params.invoice,
         'desc': params.desc,
@@ -68,7 +68,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: 'error $e');
     }
   }
 
