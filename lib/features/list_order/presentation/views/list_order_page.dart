@@ -59,9 +59,8 @@ class ListOrderPage extends GetView<ListOrderController> {
           ],
         ),
         body: Obx(() {
-          if (controller.loadState.value == LoadState.initial &&
-              (controller.pageIndex.value == 1 && controller.orders.isEmpty ||
-                  controller.pageIndex.value == 0 &&
+          if ((controller.loadState.value == LoadState.initial || controller.isLoading.value) &&
+              (controller.pageIndex.value == 1 && controller.orders.isEmpty || controller.pageIndex.value == 0 &&
                       controller.listRit.isEmpty)) {
             return const LoadingView();
           }

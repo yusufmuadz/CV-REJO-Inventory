@@ -15,8 +15,9 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../domain/entities/rit_constraint_entity.dart';
 
-class HomeController extends GetxController {
+class HomeController extends GetxController with WidgetsBindingObserver {
   final GetHomeUseCase homeUseCase;
 
   HomeController({required this.homeUseCase});
@@ -39,6 +40,10 @@ class HomeController extends GetxController {
 
   late final ListOrderController listOrderController;
 
+  final isKeyboardOpen = false.obs;
+
+  final ritConstraints = <RitConstraintEntity>[].obs;
+
   final List<Widget> pages = [
     HomeViewNewSample(),
     Container(),
@@ -55,6 +60,20 @@ class HomeController extends GetxController {
       _getHomeData();
       // _getTransaction();
     }
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding
+        .instance
+        .platformDispatcher
+        .views
+        .first
+        .viewInsets
+        .bottom;
+
+    isKeyboardOpen.value = bottomInset > 0;
   }
 
   @override
@@ -63,6 +82,7 @@ class HomeController extends GetxController {
     pageController.dispose();
     pageControllerSample.dispose();
     isLoading.value = false;
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   void onRefreshTransaction() {
@@ -83,50 +103,50 @@ class HomeController extends GetxController {
     //   return;
     // }
 
-    if (invoice.isNotEmpty) {
-      GetStorage().remove('noInvoice');
+    // if (invoice.isNotEmpty) {
+    //   GetStorage().remove('noInvoice');
+    //   Get.toNamed(
+    //     Routes.LIST_ORDER,
+    //     arguments: {
+    //       'routeFrom': 'home',
+    //       'city': rit,
+    //       'colorRit': colorRit,
+    //       'tanggalRit': tanggalRit,
+    //     },
+    //   );
       Get.toNamed(
-        Routes.LIST_ORDER,
+        Routes.DETAIL_ORDER,
         arguments: {
+          'invoice': invoice,
           'routeFrom': 'home',
-          'city': rit,
-          'colorRit': colorRit,
-          'tanggalRit': tanggalRit,
+          'status_checker2': statusChecker2,
         },
       );
-      // Get.toNamed(
-      //   Routes.DETAIL_ORDER,
-      //   arguments: {
-      //     'invoice': invoice,
-      //     'routeFrom': 'home',
-      //     'status_checker2': statusChecker2,
-      //   },
-      // );
-    } else {
-      GetStorage().remove('noInvoice');
-      if (AppRole.isDriver && rit.isNotEmpty) {
-        // debugPrint('Tanggal RIT HOME : ${tanggalRit}');
-        Get.toNamed(
-          Routes.RIT_INFORMATION,
-          arguments: {
-            'invoice': invoice,
-            'city': rit,
-            'colorRit': colorRit,
-            'tanggalRit': tanggalRit,
-          },
-        );
-        return;
-      }
-      Get.toNamed(
-        Routes.LIST_ORDER,
-        arguments: {
-          'routeFrom': 'home',
-          'city': rit,
-          'colorRit': colorRit,
-          'tanggalRit': tanggalRit,
-        },
-      );
-    }
+    // } else {
+    //   GetStorage().remove('noInvoice');
+    //   if (AppRole.isDriver && rit.isNotEmpty) {
+    //     debugPrint('Tanggal RIT HOME : ${tanggalRit}');
+    //     Get.toNamed(
+    //       Routes.RIT_INFORMATION,
+    //       arguments: {
+    //         'invoice': invoice,
+    //         'city': rit,
+    //         'colorRit': colorRit,
+    //         'tanggalRit': tanggalRit,
+    //       },
+    //     );
+    //     return;
+    //   }
+    //   Get.toNamed(
+    //     Routes.LIST_ORDER,
+    //     arguments: {
+    //       'routeFrom': 'home',
+    //       'city': rit,
+    //       'colorRit': colorRit,
+    //       'tanggalRit': tanggalRit,
+    //     },
+    //   );
+    // }
   }
 
   ///// HOME
@@ -154,6 +174,27 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  ///// TROUBLE RIT DRIVER
+
+  void addTrouble({
+    required String title,
+    required String nominal,
+    required String date,
+    required String status,
+    required String description,
+  }) async {
+    ritConstraints.add(
+      RitConstraintEntity(
+        title: title,
+        nominal: nominal,
+        date: date,
+        status: status,
+        desc: description,
+        mediaFileList: [],
+      ),
+    );
   }
 
   ///// PROFILE

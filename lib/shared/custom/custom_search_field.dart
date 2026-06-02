@@ -6,6 +6,9 @@ class CustomSearchField extends StatelessWidget {
   final Function() onSuffixTap;
   final String placeholder;
   final EdgeInsetsGeometry? prefixInsets;
+  final FocusNode? focusNode;
+  final BoxDecoration? decoration;
+
   const CustomSearchField({
     super.key,
     required this.searchController,
@@ -13,11 +16,14 @@ class CustomSearchField extends StatelessWidget {
     required this.onSuffixTap,
     required this.placeholder,
     this.prefixInsets,
+    this.focusNode,
+    this.decoration
   });
 
   @override
   Widget build(BuildContext context) {
     return CupertinoSearchTextField(
+      focusNode: focusNode,
       placeholder: placeholder,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       prefixInsets:
@@ -34,6 +40,7 @@ class CustomSearchField extends StatelessWidget {
       // suffixMode: OverlayVisibilityMode.editing,
       onSubmitted: onSubmitted,
       onSuffixTap: onSuffixTap,
+      decoration: decoration
     );
   }
 }

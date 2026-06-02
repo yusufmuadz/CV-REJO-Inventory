@@ -41,17 +41,21 @@ class MyApp extends StatelessWidget {
         // ✅ Global snackbar config (opsional)
         defaultTransition: Transition.fade,
         enableLog: true,
-        builder: (context, child) => SafeArea(
-          top: false,
-          bottom: true,
-          child: Column(
-            // fit: StackFit.expand,
-            children: [
-              Expanded(child: child!),
-              ConnectionBanner(),
-            ],
-          ),
-        ),
+        builder: (context, child) {
+          final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
+          return SafeArea(
+            top: false,
+            bottom: true,
+            child: Column(
+              // fit: StackFit.expand,
+              children: [
+                Expanded(child: child!),
+                if (!keyboardOpen) ConnectionBanner(),
+              ],
+            ),
+          );
+        },
         // navigatorKey: navigationService.navigatorKey,
         routingCallback: (routing) {
           debugPrint('➡️ Route: ${routing?.current}');

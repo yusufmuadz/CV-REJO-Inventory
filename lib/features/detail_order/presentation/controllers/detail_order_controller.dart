@@ -154,7 +154,8 @@ class DetailOrderController extends GetxController {
     isLoading.value = true;
 
     try {
-      final result = await detailOrderUseCase.call(noInvoice.value);
+      final result = await detailOrderUseCase.call('01SL20260600005');
+      // final result = await detailOrderUseCase.call(noInvoice.value);
 
       switch (result) {
         case Success(:final data):

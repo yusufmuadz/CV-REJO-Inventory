@@ -20,29 +20,16 @@ class HomeViewNewSample extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      bottom: false,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppRole.isDriver
-            ? Color(0xFFf5f0fa)
-            : AppColors.backgroundMint,
-        body: Stack(
-          children: [
-            _buildPage(),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              left: 0,
-              child: CustomButton.bottomBarIcon(controller: controller),
-            ),
-          ],
-        ),
-        // bottomNavigationBar: Obx(
-        //   () => CustomButton.bottomBarIcon(controller: controller),
-        // ),
-      ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: AppRole.isDriver
+          ? Color(0xFFf5f0fa)
+          : AppColors.backgroundMint,
+      body: _buildPage(),
+      bottomNavigationBar: Obx(() {
+        if (controller.isKeyboardOpen.value) return const SizedBox();
+        return CustomButton.bottomBarIcon(controller: controller);
+      }),
     );
   }
 

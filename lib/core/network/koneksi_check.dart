@@ -56,7 +56,7 @@ class KoneksiCheck extends GetxController {
   }
 
   Future<void> _checkQuality() async {
-    debugPrint('📡 [Ping] Starting check...');
+    // debugPrint('📡 [Ping] Starting check...');
     final stopwatch = Stopwatch()..start();
     
     try {
@@ -68,7 +68,7 @@ class KoneksiCheck extends GetxController {
       stopwatch.stop();
       final latency = stopwatch.elapsedMilliseconds;
       
-      debugPrint('✅ [Ping] Success: ${response.statusCode} in ${latency}ms');
+      // debugPrint('✅ [Ping] Success: ${response.statusCode} in ${latency}ms');
 
       if (response.statusCode == 200) {
         _updateStatus(latency < 800 ? ConnectionStatus.online : ConnectionStatus.weak);

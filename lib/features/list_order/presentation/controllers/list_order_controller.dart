@@ -78,8 +78,10 @@ class ListOrderController extends GetxController {
   void onReady() {
     super.onReady();
     if (pageIndex.value == 0) {
+      debugPrint('List RIT');
       getRit();
     } else {
+      debugPrint('List Order');
       _getOrder();
     }
   }
@@ -302,32 +304,9 @@ class ListOrderController extends GetxController {
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      // isLoading.value = false;
+      isLoading.value = false;
     }
   }
-
-  // Future<void> getDistrict() async {
-  //   if (isLoadingSort.value) return;
-  //   isLoadingSort.value = true;
-
-  //   final result = await listOrderUseCase.callGetDistrict();
-
-  //   try {
-  //     switch (result) {
-  //       case Success(:final data):
-  //         listDistrict.value = data;
-
-  //       case ErrorResult(:final message):
-  //         if (Get.isDialogOpen == true) Get.back();
-  //         dialogService.showError('Failed', message);
-  //     }
-  //   } catch (e) {
-  //     if (Get.isDialogOpen == true) Get.back();
-  //     dialogService.showError('Failed', 'Error Get Data');
-  //   } finally {
-  //     isLoadingSort.value = false;
-  //   }
-  // }
 
   Future<void> getRit() async {
     if (isLoading.value) return;
@@ -350,6 +329,10 @@ class ListOrderController extends GetxController {
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
       isLoading.value = false;
+      loadState.value = LoadState.idle;
     }
+
+    debugPrint('List RIT: ${isLoading.value}');
+    debugPrint('List RIT: ${loadState.value}');
   }
 }
