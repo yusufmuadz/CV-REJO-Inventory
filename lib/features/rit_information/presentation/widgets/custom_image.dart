@@ -124,7 +124,7 @@ class CustomImage {
     bool isShadow = true,
     bool readOnly = false,
     required String title,
-    required RitController controller,
+    RitController? controller,
     required RxList<XFile> mediaFileList,
   }) {
     return _buildBoxStyle(
@@ -144,8 +144,7 @@ class CustomImage {
                       alignment: Alignment.centerRight,
                       margin: const EdgeInsets.only(top: 10),
                       child: InkWell(
-                        onTap: () =>
-                            controller.clearAllImages(mediaFileList, false),
+                        onTap: () => clearAllImages(mediaFileList),
                         child: const Text(
                           'Hapus Semua',
                           style: TextStyle(
@@ -168,15 +167,11 @@ class CustomImage {
                 mediaFileList: mediaFileList,
                 onAdd: () {
                   if (readOnly) return;
-                  controller.selectImage(
-                    ImageSource.camera,
-                    null,
-                    mediaFileList,
-                  );
+                  selectImage(ImageSource.camera, null, mediaFileList);
                 },
                 onRemove: (int index) {
                   if (readOnly) return;
-                  controller.removeImage(index, null, mediaFileList, false);
+                  removeImage(index, null, mediaFileList);
                 },
               ),
             ),
@@ -187,7 +182,7 @@ class CustomImage {
                   CustomImage().addImage(
                     onTap: readOnly
                         ? null
-                        : () => controller.selectImage(
+                        : () => selectImage(
                             ImageSource.camera,
                             null,
                             mediaFileList,
@@ -223,5 +218,46 @@ class CustomImage {
       ),
       child: child,
     );
+  }
+
+  void selectImage(
+    ImageSource source,
+    Rx<XFile>? file,
+    RxList<XFile> files,
+  ) async {
+    final picker = ImagePicker();
+
+    try {
+      final pickedFile = await picker.pickImage(
+        source: source, // Atau ImageSource.gallery untuk galeri
+        imageQuality: 70,
+      );
+
+      if (pickedFile != null) {
+        if (file != null) {
+          file.value = pickedFile;
+        } else {
+          files.add(pickedFile);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void removeImage(int index, Rx<XFile>? file, RxList<XFile> files) {
+    if (file != null) {
+      files.remove(file.value);
+      file.value = XFile('');
+      return;
+    }
+
+    if (index >= 0 && index < files.length) {
+      files.removeAt(index);
+    }
+  }
+
+  void clearAllImages(files) {
+    files.clear();
   }
 }

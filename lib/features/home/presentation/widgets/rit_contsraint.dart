@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
+import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
+import '../../../../utils/thousand_formatter.dart';
 import '../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../domain/entities/rit_constraint_entity.dart';
 
 class RitConstraint extends StatelessWidget {
   final HomeController controller;
@@ -45,7 +49,7 @@ class RitConstraint extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  _popupAddTrouble();
+                  _popupAddTrouble(isPreviewMode: false);
                 },
                 child: Icon(
                   Icons.add_circle_outline,
@@ -78,90 +82,107 @@ class RitConstraint extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Expanded(
-          child: ListView.separated(
-            itemBuilder: (context, index) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 1, color: const Color(0xFFD7C3B4)),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+        Obx(
+          () => Expanded(
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+                final item = controller.ritConstraints[index];
+
+                return InkWell(
+                  onTap: () => _popupAddTrouble(
+                    isPreviewMode: true,
+                    title: item.title,
+                    nominal: item.nominal,
+                    date: DateFormat('dd MMMM yyyy, HH:mm').format(item.date),
+                    desc: item.desc,
+                    files: item.mediaFileList,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        width: 1,
+                        color: const Color(0xFFD7C3B4),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            'Beli Bensin',
-                            style: GoogleFonts.hankenGrotesk(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF151C27),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: GoogleFonts.hankenGrotesk(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF151C27),
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Rp${formatNumber(int.parse(item.nominal))}',
+                              style: GoogleFonts.hankenGrotesk(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF151C27),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(height: 5),
                         Text(
-                          'Rp150.000',
+                          '${DateFormat('dd MMMM yyyy').format(item.date)} • ${DateFormat('HH:mm').format(item.date)}',
                           style: GoogleFonts.hankenGrotesk(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF151C27),
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF524439),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '29 Mei 2025 • 10:30',
-                      style: GoogleFonts.hankenGrotesk(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF524439),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFDCFCE7),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            'SELESAI',
-                            style: GoogleFonts.hankenGrotesk(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                              color: Color(0xFF15803D),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDCFCE7),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'SELESAI',
+                                style: GoogleFonts.hankenGrotesk(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                  color: Color(0xFF15803D),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 15,
-                          color: Color(0xFF857467),
+                            const SizedBox(width: 10),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 15,
+                              color: Color(0xFF857467),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: controller.ritConstraints.length,
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: controller.ritConstraints.length,
+            ),
           ),
         ),
       ],
@@ -173,21 +194,24 @@ class RitConstraint extends StatelessWidget {
     String? nominal,
     String? date,
     String? desc,
-    RxList<XFile>? files,
+    List<XFile>? files,
+    required isPreviewMode,
   }) {
     final titleProductController = TextEditingController(text: title);
     final nominalProductController = TextEditingController(text: nominal);
     final descProductController = TextEditingController(text: desc);
     final mediaFileList = <XFile>[].obs;
 
-    if (files != null) {
+    if (files != null && files.isNotEmpty) {
       mediaFileList.value = mediaFileList;
     }
 
+    date ??= DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now());
+
     Get.bottomSheet(
       SizedBox(
-        height: Get.height * 0.75,
-        child: Padding(
+        height: Get.height * 0.85,
+        child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 22, 15, 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,46 +248,22 @@ class RitConstraint extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 23),
-              Text(
-                'Kendala *',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.38,
-                ),
-              ),
-              const SizedBox(height: 5),
-              SharedTextField(
-                controller: titleProductController,
-                hintText: 'Masukkan kendala',
-                validator: (String? p1) {
-                  if (p1 == null || p1.isEmpty) {
-                    return 'Masukkan kendala terlebih dahulu';
-                  }
-                  return null;
-                },
+              _buildTitleField(
+                isReadOnly: true,
+                title: 'Tanggal laporan',
+                controller: TextEditingController(text: date),
               ),
               const SizedBox(height: 15),
-              Text(
-                'Nominal *',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.38,
-                ),
+              _buildTitleField(
+                isReadOnly: isPreviewMode,
+                title: 'Kendala',
+                controller: titleProductController,
               ),
-              const SizedBox(height: 5),
-              SharedTextField(
+              const SizedBox(height: 15),
+              _buildTitleField(
+                isReadOnly: isPreviewMode,
+                title: 'Nominal',
                 controller: nominalProductController,
-                hintText: 'Masukkan nominal',
-                validator: (String? p1) {
-                  if (p1 == null || p1.isEmpty) {
-                    return 'Masukkan nominal terlebih dahulu';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 15),
               Text(
@@ -277,8 +277,9 @@ class RitConstraint extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               TextField(
-                controller: descProductController,
                 maxLines: 4,
+                readOnly: isPreviewMode,
+                controller: descProductController,
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: const EdgeInsets.all(12),
@@ -297,79 +298,58 @@ class RitConstraint extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 15),
-              // CustomImage().buildContentImage(
-              //   title: 'Bukti Kendala',
-              //   controller: controller,
-              //   mediaFileList: mediaFileList,
-              // ),
-              // const Spacer(),
-              // const SizedBox(height: 15),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: CustomButton.basicOutlinedButton(
-              //         title: isPreviewMode && !isEdit ? 'Edit' : 'Batal',
-              //         textColor: isPreviewMode && !isEdit
-              //             ? Colors.red
-              //             : const Color(0xFF8A5012),
-              //         minimumSize: Size.fromHeight(48),
-              //         side: BorderSide(
-              //           color: isPreviewMode && !isEdit
-              //               ? Colors.red
-              //               : const Color(0xFF8A5012),
-              //           width: 1,
-              //         ),
-              //         onPressed: () {
-              //           if (isPreviewMode && !isEdit) {
-              //             setState(() {
-              //               isPreviewMode = false;
-              //               isEdit = true;
-              //             });
-              //           } else {
-              //             Get.back();
-              //           }
-              //         },
-              //       ),
-              //     ),
-              //     SizedBox(width: 12),
-              //     Expanded(
-              //       child: CustomButton.basicButton(
-              //         title: 'Simpan',
-              //         minimumSize: Size.fromHeight(48),
-              //         color: const Color(0xFF0056D2),
-              //         onPressed: () {
-              //           if (!isPreviewMode && isEdit && index != null) {
-              //             final order = controller.itemPoAddRetur[index];
-
-              //             final updateOrder = order.copyWith(
-              //               item: nameProductController.text,
-              //               qty: qtyProductController.text,
-              //               note: descProductController.text,
-              //               mediaFileList: mediaFileList,
-              //             );
-
-              //             controller.itemPoAddRetur[index] = updateOrder;
-              //           } else {
-              //             controller.itemPoAddRetur.add(
-              //               ItemOrderModel(
-              //                 item: nameProductController.text,
-              //                 qty: qtyProductController.text,
-              //                 barcode: '',
-              //                 pic: StatusItem(),
-              //                 checker1: StatusItem(),
-              //                 checker2: StatusOrder(),
-              //                 driver: StatusOrder(),
-              //                 note: descProductController.text,
-              //                 mediaFileList: mediaFileList,
-              //               ),
-              //             );
-              //           }
-              //           Get.back();
-              //         },
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              CustomImage().buildContentImage(
+                title: 'Bukti Kendala',
+                readOnly: isPreviewMode,
+                mediaFileList: mediaFileList,
+              ),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton.basicOutlinedButton(
+                      title: isPreviewMode ? 'Kembali' : 'Batal',
+                      textColor: isPreviewMode
+                          ? Colors.red
+                          : const Color(0xFF8A5012),
+                      minimumSize: Size.fromHeight(48),
+                      side: BorderSide(
+                        color: isPreviewMode
+                            ? Colors.red
+                            : const Color(0xFF8A5012),
+                        width: 1,
+                      ),
+                      onPressed: () {
+                        Get.back();
+                      },
+                    ),
+                  ),
+                  Visibility(
+                    visible: !isPreviewMode,
+                    child: Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 12),
+                        child: CustomButton.basicButton(
+                          title: 'Simpan',
+                          minimumSize: Size.fromHeight(48),
+                          color: const Color(0xFF0056D2),
+                          onPressed: () {
+                            controller.addConstraint(
+                              title: titleProductController.text,
+                              nominal: nominalProductController.text,
+                              date: DateTime.now(),
+                              status: 'SELESAI',
+                              description: descProductController.text,
+                              mediaFileList: mediaFileList,
+                            );
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -379,6 +359,44 @@ class RitConstraint extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+    );
+  }
+
+  Widget _buildTitleField({
+    required bool isReadOnly,
+    required String title,
+    required TextEditingController controller,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$title*',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.38,
+          ),
+        ),
+        const SizedBox(height: 5),
+        SharedTextField(
+          readOnly: isReadOnly,
+          fillColor: isReadOnly ? const Color(0xFFf0f3ff) : Colors.white70,
+          controller: controller,
+          hintText: 'Masukkan $title',
+          keyboardType: title == 'Nominal' ? TextInputType.number : null,
+          inputFormatters: title == 'Nominal'
+              ? [ThousandsSeparatorInputFormatter()]
+              : [],
+          validator: (String? p1) {
+            if (p1 == null || p1.isEmpty) {
+              return 'Masukkan $title terlebih dahulu';
+            }
+            return null;
+          },
+        ),
+      ],
     );
   }
 }

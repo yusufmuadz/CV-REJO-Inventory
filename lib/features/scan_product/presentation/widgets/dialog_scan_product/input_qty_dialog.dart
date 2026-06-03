@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../../core/middlewares/app_role.dart';
+import '../../../../../routes/app_pages.dart';
 import '../../../../../utils/loading_custom.dart';
 import '../../controllers/scan_product_controller.dart';
 
@@ -61,10 +64,12 @@ class ContentInputDialog extends StatelessWidget {
 
           if (controller.messageProduct.isNotEmpty) {
             return SizedBox(
-              height: 50,
-              child: Text(
-                controller.messageProduct.value,
-                textAlign: TextAlign.center,
+              height: 70,
+              child: SingleChildScrollView(
+                child: Text(
+                  controller.messageProduct.value,
+                  textAlign: TextAlign.center,
+                ),
               ),
             );
           }
@@ -118,46 +123,75 @@ class ContentInputDialog extends StatelessWidget {
         }),
         actions: [
           Visibility(
-            visible: true,
+            visible: AppRole.isChecker1 && controller.isMaxFailureChecker.value,
             child: TextButton(
               onPressed: () {
-                if (controller.isMaxFailureChecker.value) {
-                  controller.onTapHubungiAdmin();
-                  return;
-                }
-                if (!controller.statusPostProduct.value &&
-                    controller.messageProduct.isNotEmpty) {
-                  controller.messageProduct.value = '';
-                  return;
-                }
-                Get.back(); // Tutup dialog
-                qtyController.clear();
-                controller.mediaFileList.clear();
-                controller.messageProduct.value = '';
-                controller.startScanner(); // Mulai ulang pemindaian
+                final rit = GetStorage().read('city') ?? '';
+                final colorRit = GetStorage().read('colorRit') ?? '';
+                final tanggalRit = GetStorage().read('tanggalRit') ?? '';
+
+                Get.toNamed(
+                  Routes.LIST_ORDER,
+                  arguments: {
+                    'routeFrom': 'home',
+                    'city': rit,
+                    'colorRit': colorRit,
+                    'tanggalRit': tanggalRit,
+                  },
+                );
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white, // Warna teks & ikon
-                backgroundColor: Colors.redAccent[100], // Warna latar belakang
+                backgroundColor: Colors.red, // Warna latar belakang
                 disabledForegroundColor: Colors.grey, // Warna saat disabled
                 disabledBackgroundColor: Colors.blue[100],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(7),
                 ),
               ),
-              child: Obx(
-                () => Text(
-                  controller.isMaxFailureChecker.value
-                      ? 'Hubungi Admin'
-                      : controller.messageProduct.isEmpty
-                      ? 'Batal'
-                      : controller.messageProduct.isNotEmpty &&
-                            !controller.statusPostProduct.value
-                      ? 'Ulangi'
-                      : 'Kembali',
-                ),
+              child: Text('Kembali'),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              if (controller.isMaxFailureChecker.value) {
+                controller.onTapHubungiAdmin();
+                return;
+              }
+              if (!controller.statusPostProduct.value &&
+                  controller.messageProduct.isNotEmpty) {
+                controller.messageProduct.value = '';
+                return;
+              }
+              Get.back(); // Tutup dialog
+              qtyController.clear();
+              controller.mediaFileList.clear();
+              controller.messageProduct.value = '';
+              controller.startScanner(); // Mulai ulang pemindaian
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white, // Warna teks & ikon
+              backgroundColor: Colors.redAccent[100], // Warna latar belakang
+              disabledForegroundColor: Colors.grey, // Warna saat disabled
+              disabledBackgroundColor: Colors.blue[100],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7),
               ),
             ),
+            child: Obx(() {
+              String text = 'Kembali';
+
+              if (controller.isMaxFailureChecker.value) {
+                text = 'Hubungi Admin';
+              } else if (controller.messageProduct.isEmpty) {
+                text = 'Batal';
+              } else if (controller.messageProduct.isNotEmpty &&
+                  !controller.statusPostProduct.value) {
+                text = 'Ulangi';
+              }
+
+              return Text(text);
+            }),
           ),
           Obx(
             () => Visibility(

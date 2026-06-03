@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -301,15 +302,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
               ),
               color: const Color(0xFFF0F3FF),
             ),
-            child: _buildTitleIconList(
-              isRelated: true,
-              valueCheckbox: false,
-              onChanged: (value) {},
-            ),
+            child: _buildTitleIconList(),
           ),
           Obx(
             () => Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(width: 1, color: Color(0xFFE2E8F8)),
@@ -328,8 +325,11 @@ class ContentDetailOrderWidget extends StatelessWidget {
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 13),
+                separatorBuilder: (context, index) => const Divider(
+                  thickness: 1,
+                  height: 23,
+                  color: Color(0xFFE2E8F8),
+                ),
                 itemBuilder: (context, index) {
                   final orderDetail =
                       controller.orderDetail.value.orderDetails?[index];
@@ -349,81 +349,98 @@ class ContentDetailOrderWidget extends StatelessWidget {
                     }
                   }
 
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 30,
-                        child: Text(
-                          '${index + 1}.',
-                          style: TextStyles.basicTextStyle(
-                            fontSize: 14,
-                            fontFamily:
-                                GoogleFonts.hankenGrotesk().fontFamily ??
-                                'Inter',
-                            color: Color(0xFF524439),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${orderDetail?.item}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                  return InkWell(
+                    onTap: () => _popupDetailItem(
+                      nameProduct: orderDetail?.item ?? '-',
+                      qty: orderDetail?.qty ?? '-',
+                      location: orderDetail?.locationRack ?? '-',
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 30,
+                            child: Text(
+                              '${index + 1}.',
+                              textAlign: TextAlign.center,
                               style: TextStyles.basicTextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.bold,
                                 fontFamily:
                                     GoogleFonts.hankenGrotesk().fontFamily ??
                                     'Inter',
-
-                                color: Color(0xFF151C27),
+                                color: Color(0xFF524439),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Lokasi: ${orderDetail?.locationRack}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyles.basicTextStyle(
-                                fontSize: 12,
-                                fontFamily:
-                                    GoogleFonts.hankenGrotesk().fontFamily ??
-                                    'Inter',
-
-                                color: Color(0xFF5D5E61),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        width: 50,
-                        child: Text(
-                          setQty,
-                          style: TextStyles.basicTextStyle(
-                            fontSize: 14,
-                            fontFamily:
-                                GoogleFonts.hankenGrotesk().fontFamily ??
-                                'Inter',
-
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${orderDetail?.item}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyles.basicTextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily:
+                                        GoogleFonts.hankenGrotesk()
+                                            .fontFamily ??
+                                        'Inter',
+
+                                    color: Color(0xFF151C27),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Lokasi: ${orderDetail?.locationRack}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyles.basicTextStyle(
+                                    fontSize: 12,
+                                    fontFamily:
+                                        GoogleFonts.hankenGrotesk()
+                                            .fontFamily ??
+                                        'Inter',
+
+                                    color: Color(0xFF5D5E61),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          SizedBox(
+                            width: 70,
+                            child: Text(
+                              setQty,
+                              style: TextStyles.basicTextStyle(
+                                fontSize: 14,
+                                fontFamily:
+                                    GoogleFonts.hankenGrotesk().fontFamily ??
+                                    'Inter',
+
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF8A5012),
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: AppRole.isChecker2 || AppRole.isDriver,
+                            child: SizedBox(
+                              width: 30,
+                              child: _buildCheckBox(
+                                check: isChecked,
+                                index: index,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Visibility(
-                        visible: AppRole.isChecker2 || AppRole.isDriver,
-                        child: SizedBox(
-                          width: 30,
-                          child: _buildCheckBox(check: isChecked, index: index),
-                        ),
-                      ),
-                    ],
+                    ),
                   );
                 },
               ),
@@ -463,24 +480,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleIconList({
-    required bool isRelated,
-    bool isIcon = true,
-    int? index,
-    String? title,
-    String? number,
-    bool? valueCheckbox,
-    Function(bool?)? onChanged,
-  }) {
-    String resultTitle = 'PILIH SEMUA';
-
-    if (!isRelated) {
-      resultTitle = 'TAMBAH BARANG';
-    }
-
-    if (title != null) {
-      resultTitle = title;
-    }
+  Widget _buildTitleIconList() {
     return Row(
       children: [
         SizedBox(
@@ -510,7 +510,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         SizedBox(
-          width: 50,
+          width: 70,
           child: Text(
             'Qty',
             textAlign: TextAlign.left,
@@ -527,6 +527,101 @@ class ContentDetailOrderWidget extends StatelessWidget {
           child: const SizedBox(width: 30),
         ),
       ],
+    );
+  }
+
+  _popupDetailItem({
+    required String nameProduct,
+    required String qty,
+    required String location,
+  }) {
+    controller.dialogService.defaulDialog(
+      height: 0.32,
+      title: 'Detail Produk',
+      onPressed2: () => Get.back(),
+      singleButton: true,
+      titleButton1: 'Oke',
+      color1: const Color(0xFF8A5012),
+      insetPadding: const EdgeInsets.all(30),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      titlePadding: const EdgeInsets.only(top: 16),
+      titleStyle: GoogleFonts.hankenGrotesk(
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        color: const Color(0xFF8A5012),
+      ),
+      content: Column(
+        children: [
+          const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
+          const SizedBox(height: 16),
+          _buildBoxIconText(
+            title: 'Nama Barang',
+            value: nameProduct,
+            icon: Icons.inventory_2_outlined,
+          ),
+          const SizedBox(height: 24),
+          _buildBoxIconText(
+            title: 'Jumlah Barang',
+            value: qty,
+            icon: CupertinoIcons.cube_box,
+          ),
+          const SizedBox(height: 24),
+          _buildBoxIconText(
+            title: 'Lokasi Simpan (Rak)',
+            value: location,
+            icon: Icons.shelves,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBoxIconText({
+    required String title,
+    required String value,
+    required IconData icon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE7EEFE),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: Color(0xFF8A5012)),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.hankenGrotesk(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF524439),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  value,
+                  style: GoogleFonts.hankenGrotesk(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF151C27),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

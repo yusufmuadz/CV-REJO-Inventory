@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -103,50 +104,50 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     //   return;
     // }
 
-    // if (invoice.isNotEmpty) {
-    //   GetStorage().remove('noInvoice');
-    //   Get.toNamed(
-    //     Routes.LIST_ORDER,
-    //     arguments: {
-    //       'routeFrom': 'home',
-    //       'city': rit,
-    //       'colorRit': colorRit,
-    //       'tanggalRit': tanggalRit,
-    //     },
-    //   );
+    if (invoice.isNotEmpty) {
+      GetStorage().remove('noInvoice');
       Get.toNamed(
-        Routes.DETAIL_ORDER,
+        Routes.LIST_ORDER,
         arguments: {
-          'invoice': invoice,
           'routeFrom': 'home',
-          'status_checker2': statusChecker2,
+          'city': rit,
+          'colorRit': colorRit,
+          'tanggalRit': tanggalRit,
         },
       );
-    // } else {
-    //   GetStorage().remove('noInvoice');
-    //   if (AppRole.isDriver && rit.isNotEmpty) {
-    //     debugPrint('Tanggal RIT HOME : ${tanggalRit}');
-    //     Get.toNamed(
-    //       Routes.RIT_INFORMATION,
-    //       arguments: {
-    //         'invoice': invoice,
-    //         'city': rit,
-    //         'colorRit': colorRit,
-    //         'tanggalRit': tanggalRit,
-    //       },
-    //     );
-    //     return;
-    //   }
-    //   Get.toNamed(
-    //     Routes.LIST_ORDER,
-    //     arguments: {
-    //       'routeFrom': 'home',
-    //       'city': rit,
-    //       'colorRit': colorRit,
-    //       'tanggalRit': tanggalRit,
-    //     },
-    //   );
-    // }
+      // Get.toNamed(
+      //   Routes.DETAIL_ORDER,
+      //   arguments: {
+      //     'invoice': invoice,
+      //     'routeFrom': 'home',
+      //     'status_checker2': statusChecker2,
+      //   },
+      // );
+    } else {
+      GetStorage().remove('noInvoice');
+      if (AppRole.isDriver && rit.isNotEmpty) {
+        debugPrint('Tanggal RIT HOME : ${tanggalRit}');
+        Get.toNamed(
+          Routes.RIT_INFORMATION,
+          arguments: {
+            'invoice': invoice,
+            'city': rit,
+            'colorRit': colorRit,
+            'tanggalRit': tanggalRit,
+          },
+        );
+        return;
+      }
+      Get.toNamed(
+        Routes.LIST_ORDER,
+        arguments: {
+          'routeFrom': 'home',
+          'city': rit,
+          'colorRit': colorRit,
+          'tanggalRit': tanggalRit,
+        },
+      );
+    }
   }
 
   ///// HOME
@@ -178,21 +179,22 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   ///// TROUBLE RIT DRIVER
 
-  void addTrouble({
+  void addConstraint({
     required String title,
     required String nominal,
-    required String date,
+    required DateTime date,
     required String status,
     required String description,
+    List<XFile>? mediaFileList,
   }) async {
     ritConstraints.add(
       RitConstraintEntity(
         title: title,
-        nominal: nominal,
+        nominal: nominal.replaceAll(',', ''),
         date: date,
         status: status,
         desc: description,
-        mediaFileList: [],
+        mediaFileList: mediaFileList ?? [],
       ),
     );
   }

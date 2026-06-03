@@ -224,6 +224,65 @@ class DialogService {
     );
   }
 
+  Future<void> defaulDialog({
+    required String title,
+    required Widget content,
+    EdgeInsets? insetPadding,
+    EdgeInsetsGeometry? contentPadding,
+    EdgeInsetsGeometry? actionsPadding,
+    EdgeInsetsGeometry? titlePadding,
+    TextStyle? titleStyle,
+    double height = 0.45,
+    bool singleButton = false,
+    String titleButton1 = 'Batal',
+    String titleButton2 = 'Simpan',
+    Color color1 = const Color(0xFFc7a16d),
+    Color color2 = const Color(0xFF2ED471),
+    VoidCallback? onPressed1,
+    VoidCallback? onPressed2,
+    EdgeInsetsGeometry? marginButton,
+  }) {
+    return Get.dialog(
+      AlertDialog(
+        insetPadding: insetPadding ?? EdgeInsets.zero, // ⬅️ Hapus padding luar
+        contentPadding:
+            contentPadding ?? EdgeInsets.all(16), // Padding dalam konten
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // Opsional: sudut kotak
+        ),
+        actionsPadding: actionsPadding ?? const EdgeInsets.all(10),
+        titlePadding: titlePadding ?? const EdgeInsets.all(16),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style:
+              titleStyle ??
+              const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+        ),
+        content: SizedBox(height: Get.height * height, child: content),
+        actions: [
+          SizedBox(
+            height: 45,
+            width: double.infinity,
+            child: _builtButton(
+              title1: titleButton1,
+              title2: titleButton2,
+              singleButton: singleButton,
+              color1: color1,
+              color2: color2,
+              onPressed1: onPressed1,
+              onPressed2: onPressed2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> inputDialog({
     required String title,
     double height = 0.45,
@@ -235,22 +294,27 @@ class DialogService {
     Color color2 = const Color(0xFF2ED471),
     VoidCallback? onPressed1,
     VoidCallback? onPressed2,
+    TextStyle? titleStyle,
+    EdgeInsetsGeometry? marginButton,
     required Widget content,
   }) {
     return Get.defaultDialog(
       radius: 10,
       title: title,
       titlePadding: const EdgeInsets.only(top: 20),
-      titleStyle: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: Colors.black87,
-      ),
+      titleStyle:
+          titleStyle ??
+          const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
       contentPadding: padding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
       content: SizedBox(height: Get.height * height, child: content),
-      confirm: SizedBox(
+      confirm: Container(
         height: 45,
         width: double.infinity,
+        margin: marginButton,
         child: _builtButton(
           title1: titleButton1,
           title2: titleButton2,

@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 class RitConstraintEntity {
   final String title;
   final String nominal;
-  final String date;
+  final DateTime date;
   final String status;
   final String desc;
   final List<XFile> mediaFileList;

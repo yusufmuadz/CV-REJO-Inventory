@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SharedTextField extends StatelessWidget {
@@ -12,6 +13,9 @@ class SharedTextField extends StatelessWidget {
   final bool? obscureText;
   final Widget? suffixIcon;
   final Function(String?) validator;
+  final List<TextInputFormatter>? inputFormatters;
+  final Color? fillColor;
+  
   const SharedTextField({
     super.key,
     required this.controller,
@@ -23,6 +27,8 @@ class SharedTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
+    this.inputFormatters,
+    this.fillColor,
     required this.validator,
   });
 
@@ -35,6 +41,7 @@ class SharedTextField extends StatelessWidget {
       obscureText: obscureText ?? false,
       textInputAction: textInputAction,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
@@ -46,7 +53,8 @@ class SharedTextField extends StatelessWidget {
           letterSpacing: 0.48,
           color: Colors.grey.shade400,
         ),
-        fillColor: Colors.white70,
+        filled: true,
+        fillColor: fillColor ?? Colors.white70,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(),
