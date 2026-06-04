@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
@@ -142,24 +144,57 @@ class ListOrderController extends GetxController {
     }
   }
 
-  void onSelectedRit(int index) {
-    if (!isSelection.value && !AppRole.isDriver) return;
+  // void onSelectedRit(int index) {
+  //   if (!isSelection.value && !AppRole.isDriver) return;
 
-    if (index != -1) {
-      isSelected.value = listRit[index].city;
-      colorRit.value = listRit[index].color;
-      tanggalRit.value = listRit[index].tanggalRit;
-    }
+  //   if (index != -1) {
+  //     isSelected.value = listRit[index].city;
+  //     colorRit.value = listRit[index].color;
+  //     tanggalRit.value = listRit[index].tanggalRit;
+  //   }
 
-    if (AppRole.isDriver) {
-      takeItOrder();
-      return;
-    }
-  }
+  //   if (AppRole.isDriver) {
+  //     takeItOrder();
+  //     return;
+  //   }
+  // }
 
   void cancelSelection() {
     isSelected.value = '';
     isSelection.value = !isSelection.value;
+  }
+
+  void takeItRIT({String rit = '', String clrRit = '', String tglRit = ''}) {
+    pageIndex.value = 1;
+    isSelection.value = false;
+    isDistrictSelected.value = rit;
+    colorRit.value = clrRit;
+    tanggalRit.value = tglRit;
+    GetStorage().write('city', rit);
+    GetStorage().write('colorRit', clrRit);
+    GetStorage().write('tanggalRit', tglRit);
+    if (AppRole.isDriver) {
+      Get.offNamed(
+        Routes.RIT_INFORMATION,
+        arguments: {
+          'invoice': '',
+          'city': isSelected.value,
+          'colorRit': clrRit,
+          'tanggalRit': tglRit,
+          'routeFrom': 'listOrder',
+        },
+      );
+    } else {
+      searchController.text = '';
+      sortByNew.value = true;
+      isStatusSelected.value = 'All';
+      isDistrictSelected.value = rit;
+      tanggalRit.value = tglRit;
+      orders.clear();
+      _getOrder();
+    }
+    isSelected.value = '';
+    // listRit.clear();
   }
 
   void takeItOrder({
@@ -176,34 +211,7 @@ class ListOrderController extends GetxController {
     }
 
     if (pageIndex.value == 0) {
-      pageIndex.value = 1;
-      isSelection.value = false;
-      isDistrictSelected.value = rit;
-      GetStorage().write('city', rit);
-      GetStorage().write('colorRit', clrRit);
-      GetStorage().write('tanggalRit', tglRit);
-      if (AppRole.isDriver) {
-        Get.offNamed(
-          Routes.RIT_INFORMATION,
-          arguments: {
-            'invoice': '',
-            'city': isSelected.value,
-            'colorRit': clrRit,
-            'tanggalRit': tglRit,
-            'routeFrom': 'listOrder',
-          },
-        );
-      } else {
-        searchController.text = '';
-        sortByNew.value = true;
-        isStatusSelected.value = 'All';
-        isDistrictSelected.value = rit;
-        tanggalRit.value = tglRit;
-        orders.clear();
-        _getOrder();
-      }
-      isSelected.value = '';
-      // listRit.clear();
+      takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit);
       return;
     }
 
@@ -243,12 +251,26 @@ class ListOrderController extends GetxController {
             );
           } else {
             if (Get.isDialogOpen == true) Get.back();
-            dialogService.showError('Failed', data.message);
+            loadState.value = LoadState.error;
+            List<String> daftarKata = data.message.split('.');
+            bool lockPO = false;
+
+            if (daftarKata.isNotEmpty && daftarKata.contains('LockPO')) {
+              lockPO = true;
+            }
+
+            dialogService.showError(
+              'Failed',
+              data.message.replaceAll('LockPO', ''),
+              singleButton: !lockPO,
+              onPressed2: () => onTapHubungiAdmin(),
+            );
           }
         // debugPrint('Data Take It Order: ${data.length}');
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
           loadState.value = LoadState.error;
+
           dialogService.showError('Failed', message);
       }
     } catch (e) {
@@ -264,6 +286,11 @@ class ListOrderController extends GetxController {
       loadState.value = (isRefresh || currentPage.value == 1)
           ? LoadState.initial
           : LoadState.loadingMore;
+
+      if (isRefresh) {
+        orders.clear();
+        currentPage.value = 1;
+      }
 
       final result = await listOrderUseCase.call(
         ParamsGetTransaction(
@@ -334,5 +361,14 @@ class ListOrderController extends GetxController {
 
     debugPrint('List RIT: ${isLoading.value}');
     debugPrint('List RIT: ${loadState.value}');
+  }
+
+  void onTapHubungiAdmin() async {
+    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
+        ? launchUrl(
+            Uri.parse(ApiEndpoints.hubungiAdmin),
+            mode: LaunchMode.externalApplication,
+          )
+        : debugPrint("Can't open WhatsApp");
   }
 }

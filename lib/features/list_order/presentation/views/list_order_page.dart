@@ -59,9 +59,8 @@ class ListOrderPage extends GetView<ListOrderController> {
           ],
         ),
         body: Obx(() {
-          if ((controller.loadState.value == LoadState.initial || controller.isLoading.value) &&
-              (controller.pageIndex.value == 1 && controller.orders.isEmpty || controller.pageIndex.value == 0 &&
-                      controller.listRit.isEmpty)) {
+          if (controller.loadState.value == LoadState.initial ||
+              controller.isLoading.value) {
             return const LoadingView();
           }
           return RefreshIndicator(
@@ -86,14 +85,6 @@ class ListOrderPage extends GetView<ListOrderController> {
       ),
     );
   }
-
-  // Widget _buildPage() {
-  //   return PageView(
-  //     controller: controller.pageController,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //     children: [ListOrderView(controller: controller)],
-  //   );
-  // }
 
   Widget _buildButton() {
     if (controller.isSelection.value) {

@@ -162,12 +162,32 @@ class DialogService {
   Future<void> showError(
     String title,
     String message, {
-    Function()? onPressed,
+    bool singleButton = true,
+    String titleButton1 = 'Kembali',
+    String titleButton2 = 'Hubungi Admin',
+    VoidCallback? onPressed1,
+    VoidCallback? onPressed2,
   }) {
-    return showDialogBox(
+    return defaulDialog(
+      height: 0.15,
       title: title,
-      description: message,
-      onPressed: onPressed,
+      onPressed1: onPressed1,
+      onPressed2: onPressed2,
+      singleButton: singleButton,
+      titleButton1: titleButton1,
+      titleButton2: titleButton2,
+      barrierDismissible: false,
+      color1: Colors.red,
+      color2: const Color(0xFF0c8ce8),
+      actionsPadding: const EdgeInsets.all(16),
+      content: PopScope(
+        canPop: false,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Text(message, textAlign: TextAlign.center),
+          ),
+        ),
+      ),
     );
   }
 
@@ -206,6 +226,8 @@ class DialogService {
     );
   }
 
+  /// ===== HANDLE EXIT =====
+
   Future<void> handleExit() {
     return Get.dialog(
       AlertDialog(
@@ -224,6 +246,8 @@ class DialogService {
     );
   }
 
+  /// ===== DEFAULT DIALOG =====
+
   Future<void> defaulDialog({
     required String title,
     required Widget content,
@@ -233,6 +257,7 @@ class DialogService {
     EdgeInsetsGeometry? titlePadding,
     TextStyle? titleStyle,
     double height = 0.45,
+    double width = 1,
     bool singleButton = false,
     String titleButton1 = 'Batal',
     String titleButton2 = 'Simpan',
@@ -241,10 +266,13 @@ class DialogService {
     VoidCallback? onPressed1,
     VoidCallback? onPressed2,
     EdgeInsetsGeometry? marginButton,
+    bool barrierDismissible = true,
   }) {
     return Get.dialog(
+      barrierDismissible: barrierDismissible,
       AlertDialog(
-        insetPadding: insetPadding ?? EdgeInsets.zero, // ⬅️ Hapus padding luar
+        insetPadding:
+            insetPadding ?? EdgeInsets.all(30), // ⬅️ Hapus padding luar
         contentPadding:
             contentPadding ?? EdgeInsets.all(16), // Padding dalam konten
         shape: RoundedRectangleBorder(
@@ -263,12 +291,16 @@ class DialogService {
                 color: Colors.black87,
               ),
         ),
-        content: SizedBox(height: Get.height * height, child: content),
+        content: SizedBox(
+          height: Get.height * height,
+          width: Get.width * width,
+          child: content,
+        ),
         actions: [
           SizedBox(
             height: 45,
             width: double.infinity,
-            child: _builtButton(
+            child: _buildButton(
               title1: titleButton1,
               title2: titleButton2,
               singleButton: singleButton,
@@ -282,6 +314,8 @@ class DialogService {
       ),
     );
   }
+
+  /// ===== INPUT DIALOG =====
 
   Future<void> inputDialog({
     required String title,
@@ -315,7 +349,7 @@ class DialogService {
         height: 45,
         width: double.infinity,
         margin: marginButton,
-        child: _builtButton(
+        child: _buildButton(
           title1: titleButton1,
           title2: titleButton2,
           singleButton: singleButton,
@@ -328,7 +362,9 @@ class DialogService {
     );
   }
 
-  Widget _builtButton({
+  /// ===== BUILD BUTTON =====
+
+  Widget _buildButton({
     required bool singleButton,
     required String title1,
     required String? title2,

@@ -84,7 +84,6 @@ class CustomCardList extends StatelessWidget {
                     children: [
                       _buildInfoText(
                         title: 'ID Transaksi',
-                        isStatus: true,
                         value: AppRole.isDriver
                             ? transaction.suratJalan!.replaceAll('SJ/', '')
                             : transaction.orderNo.replaceAll('SL', 'SO'),
@@ -138,17 +137,24 @@ class CustomCardList extends StatelessWidget {
 
   String _buildText({
     String statusPIC = '',
+    String statusChecker1 = '',
     String statusChecker2 = '',
     String statusDriver = '',
   }) {
     String text = 'Checker';
 
-    if (AppRole.isPIC) {
-      if (statusPIC == 'available') {
+    if (AppRole.isPIC || AppRole.isChecker1) {
+      String status = statusPIC;
+
+      if (statusPIC == 'completed') {
+        status = statusChecker1;
+      }
+
+      if (status == 'available') {
         text = 'Available';
-      } else if (statusPIC == 'ongoing') {
+      } else if (status == 'ongoing') {
         text = 'Ongoing';
-      } else if (statusPIC == 'completed') {
+      } else if (status == 'completed') {
         text = 'Completed';
       }
     } else {
@@ -170,15 +176,22 @@ class CustomCardList extends StatelessWidget {
 
   Color _buildColor({
     String statusPIC = '',
+    String statusChecker1 = '',
     String statusChecker2 = '',
     String statusDriver = '',
   }) {
     Color color = Color(0xFF5eb75f);
 
-    if (AppRole.isPIC) {
-      if (statusPIC == 'available') {
+    if (AppRole.isPIC || AppRole.isChecker1) {
+      String status = statusPIC;
+
+      if (statusPIC == 'completed') {
+        status = statusChecker1;
+      }
+
+      if (status == 'available') {
         color = const Color(0xFF5eb75f);
-      } else if (statusPIC == 'ongoing' || statusPIC == 'completed') {
+      } else if (status == 'ongoing' || status == 'completed') {
         color = const Color(0xFF666666);
       }
     } else {
@@ -236,12 +249,14 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoText({
-    required String title,
-    required String value,
-    bool isStatus = false,
-  }) {
+  Widget _buildInfoText({required String title, required String value}) {
     final statusLoader = transaction.loader?.status ?? '';
+    bool isShowStatus = true;
+
+    if (AppRole.isChecker2 && statusLoader == 'completed') {
+      isShowStatus = false;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       // crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,10 +269,7 @@ class CustomCardList extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible:
-              (AppRole.isChecker2 && isStatus && statusLoader != 'completed') ||
-              AppRole.isDriver ||
-              AppRole.isPIC,
+          visible: isShowStatus,
           child: Container(
             padding: const EdgeInsets.all(5),
             margin: const EdgeInsets.only(left: 10),
@@ -265,6 +277,7 @@ class CustomCardList extends StatelessWidget {
               borderRadius: BorderRadius.circular(7),
               color: _buildColor(
                 statusPIC: transaction.pic?.status ?? '',
+                statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',
                 statusDriver: transaction.driver?.status ?? '',
               ),
@@ -272,6 +285,7 @@ class CustomCardList extends StatelessWidget {
             child: Text(
               _buildText(
                 statusPIC: transaction.pic?.status ?? '',
+                statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',
                 statusDriver: transaction.driver?.status ?? '',
               ),

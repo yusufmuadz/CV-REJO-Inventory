@@ -12,13 +12,15 @@ class SharedTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool? obscureText;
   final Widget? suffixIcon;
-  final Function(String?) validator;
-  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
+  final bool? isDense;
   final Color? fillColor;
-  
+  final EdgeInsetsGeometry? contentPadding;
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
+
   const SharedTextField({
     super.key,
-    required this.controller,
     this.readOnly,
     this.labelText,
     this.hintText,
@@ -27,14 +29,19 @@ class SharedTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
+    this.maxLines,
+    this.isDense,
     this.inputFormatters,
     this.fillColor,
-    required this.validator,
+    this.validator,
+    this.contentPadding,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines ?? 1,
       readOnly: readOnly ?? false,
       controller: controller,
       keyboardType: keyboardType,
@@ -43,15 +50,16 @@ class SharedTextField extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
+        isDense: isDense,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
         hintText: hintText,
         hintStyle: GoogleFonts.hankenGrotesk(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
           letterSpacing: 0.48,
-          color: Colors.grey.shade400,
+          color: const Color(0xFF9FA2B4),
         ),
         filled: true,
         fillColor: fillColor ?? Colors.white70,
@@ -66,7 +74,7 @@ class SharedTextField extends StatelessWidget {
         labelText: labelText,
         labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade600),
       ),
-      validator: (value) => validator(value),
+      validator: validator,
     );
   }
 }

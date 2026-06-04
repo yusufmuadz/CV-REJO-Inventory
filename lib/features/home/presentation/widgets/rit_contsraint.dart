@@ -1,5 +1,6 @@
 import 'package:cv_rejo/features/home/presentation/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +11,6 @@ import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/thousand_formatter.dart';
 import '../../../rit_information/presentation/widgets/custom_image.dart';
-import '../../domain/entities/rit_constraint_entity.dart';
 
 class RitConstraint extends StatelessWidget {
   final HomeController controller;
@@ -49,7 +49,7 @@ class RitConstraint extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  _popupAddTrouble(isPreviewMode: false);
+                  _popupAddConstraint(isPreviewMode: false);
                 },
                 child: Icon(
                   Icons.add_circle_outline,
@@ -89,7 +89,7 @@ class RitConstraint extends StatelessWidget {
                 final item = controller.ritConstraints[index];
 
                 return InkWell(
-                  onTap: () => _popupAddTrouble(
+                  onTap: () => _popupAddConstraint(
                     isPreviewMode: true,
                     title: item.title,
                     nominal: item.nominal,
@@ -189,7 +189,7 @@ class RitConstraint extends StatelessWidget {
     );
   }
 
-  _popupAddTrouble({
+  _popupAddConstraint({
     String? title,
     String? nominal,
     String? date,
@@ -210,145 +210,136 @@ class RitConstraint extends StatelessWidget {
 
     Get.bottomSheet(
       SizedBox(
-        height: Get.height * 0.85,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(15, 22, 15, 10),
+        height: Get.height * 0.9,
+        child: Padding(
+          padding: EdgeInsets.only(top: 22, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const SizedBox(width: 35),
-                  Expanded(
-                    child: Text(
-                      'Tambah Kendala Perjalanan',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFF3F4F6),
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
-                        color: const Color(0xFF4B5563),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 23),
-              _buildTitleField(
-                isReadOnly: true,
-                title: 'Tanggal laporan',
-                controller: TextEditingController(text: date),
-              ),
-              const SizedBox(height: 15),
-              _buildTitleField(
-                isReadOnly: isPreviewMode,
-                title: 'Kendala',
-                controller: titleProductController,
-              ),
-              const SizedBox(height: 15),
-              _buildTitleField(
-                isReadOnly: isPreviewMode,
-                title: 'Nominal',
-                controller: nominalProductController,
-              ),
-              const SizedBox(height: 15),
-              Text(
-                'Keterangan',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.38,
-                ),
-              ),
-              const SizedBox(height: 5),
-              TextField(
-                maxLines: 4,
-                readOnly: isPreviewMode,
-                controller: descProductController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.all(12),
-                  hint: Text(
-                    'Masukkan keterangan kendala (opsional)',
-                    style: GoogleFonts.hankenGrotesk(
-                      color: Color(0xFF9FA2B4),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 0.48,
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              CustomImage().buildContentImage(
-                title: 'Bukti Kendala',
-                readOnly: isPreviewMode,
-                mediaFileList: mediaFileList,
-              ),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton.basicOutlinedButton(
-                      title: isPreviewMode ? 'Kembali' : 'Batal',
-                      textColor: isPreviewMode
-                          ? Colors.red
-                          : const Color(0xFF8A5012),
-                      minimumSize: Size.fromHeight(48),
-                      side: BorderSide(
-                        color: isPreviewMode
-                            ? Colors.red
-                            : const Color(0xFF8A5012),
-                        width: 1,
-                      ),
-                      onPressed: () {
-                        Get.back();
-                      },
-                    ),
-                  ),
-                  Visibility(
-                    visible: !isPreviewMode,
-                    child: Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 12),
-                        child: CustomButton.basicButton(
-                          title: 'Simpan',
-                          minimumSize: Size.fromHeight(48),
-                          color: const Color(0xFF0056D2),
-                          onPressed: () {
-                            controller.addConstraint(
-                              title: titleProductController.text,
-                              nominal: nominalProductController.text,
-                              date: DateTime.now(),
-                              status: 'SELESAI',
-                              description: descProductController.text,
-                              mediaFileList: mediaFileList,
-                            );
-                            Get.back();
-                          },
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10.0),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 35),
+                    Expanded(
+                      child: Text(
+                        'Tambah Kendala Perjalanan',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
+                    InkWell(
+                      onTap: () => Get.back(),
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFFF3F4F6),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: const Color(0xFF4B5563),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 5, thickness: 1, color: Color(0xFFE2E8F8)),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(16, 13, 16, 16),
+                  child: Column(
+                    children: [
+                      _buildTitleField(
+                        isReadOnly: true,
+                        title: 'Tanggal laporan',
+                        controller: TextEditingController(text: date),
+                      ),
+                      const SizedBox(height: 15),
+                      _buildTitleField(
+                        isReadOnly: isPreviewMode,
+                        title: 'Kendala',
+                        controller: titleProductController,
+                      ),
+                      const SizedBox(height: 15),
+                      _buildTitleField(
+                        isReadOnly: isPreviewMode,
+                        title: 'Nominal',
+                        controller: nominalProductController,
+                      ),
+                      const SizedBox(height: 15),
+                      _buildTitleField(
+                        isDesc: true,
+                        isReadOnly: isPreviewMode,
+                        title: 'Keterangan',
+                        controller: descProductController,
+                      ),
+                      const SizedBox(height: 15),
+                      CustomImage().buildContentImage(
+                        title: 'Bukti Kendala',
+                        readOnly: isPreviewMode,
+                        mediaFileList: mediaFileList,
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ),
+              const Divider(height: 2, thickness: 1, color: Color(0xFFE2E8F8)),
+              // const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12.0, 16, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomButton.basicOutlinedButton(
+                        title: isPreviewMode ? 'Kembali' : 'Batal',
+                        textColor: isPreviewMode
+                            ? Colors.red
+                            : const Color(0xFF8A5012),
+                        minimumSize: Size.fromHeight(48),
+                        side: BorderSide(
+                          color: isPreviewMode
+                              ? Colors.red
+                              : const Color(0xFF8A5012),
+                          width: 1,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                        },
+                      ),
+                    ),
+                    Visibility(
+                      visible: !isPreviewMode,
+                      child: Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 12),
+                          child: CustomButton.basicButton(
+                            title: 'Simpan',
+                            minimumSize: Size.fromHeight(48),
+                            color: const Color(0xFF0056D2),
+                            onPressed: () {
+                              controller.addConstraint(
+                                title: titleProductController.text,
+                                nominal: nominalProductController.text,
+                                date: DateTime.now(),
+                                status: 'SELESAI',
+                                description: descProductController.text,
+                                mediaFileList: mediaFileList,
+                              );
+                              Get.back();
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -366,12 +357,33 @@ class RitConstraint extends StatelessWidget {
     required bool isReadOnly,
     required String title,
     required TextEditingController controller,
+    bool? isDesc = false,
   }) {
+    String titleField = '$title*';
+    String hintText = 'Masukkan $title';
+    TextInputType? keyboardType;
+    Color fillColor = Colors.white70;
+    List<TextInputFormatter>? inputFormatters;
+
+    if (title == 'Nominal') {
+      keyboardType = TextInputType.number;
+      inputFormatters = [ThousandsSeparatorInputFormatter()];
+    }
+
+    if (isReadOnly) {
+      fillColor = const Color(0xFFf0f3ff);
+    }
+
+    if (isDesc == true) {
+      titleField = title;
+      hintText = 'Masukkan keterangan kendala (opsional)';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$title*',
+          titleField,
           style: TextStyle(
             color: Colors.black,
             fontSize: 15,
@@ -381,20 +393,23 @@ class RitConstraint extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         SharedTextField(
+          isDense: isDesc,
           readOnly: isReadOnly,
-          fillColor: isReadOnly ? const Color(0xFFf0f3ff) : Colors.white70,
+          maxLines: isDesc == true ? 4 : null,
+          fillColor: fillColor,
           controller: controller,
-          hintText: 'Masukkan $title',
-          keyboardType: title == 'Nominal' ? TextInputType.number : null,
-          inputFormatters: title == 'Nominal'
-              ? [ThousandsSeparatorInputFormatter()]
-              : [],
-          validator: (String? p1) {
-            if (p1 == null || p1.isEmpty) {
-              return 'Masukkan $title terlebih dahulu';
-            }
-            return null;
-          },
+          hintText: hintText,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          contentPadding: isDesc == true ? const EdgeInsets.all(12) : null,
+          validator: isDesc == true
+              ? null
+              : (String? p1) {
+                  if (p1 == null || p1.isEmpty) {
+                    return 'Masukkan $title terlebih dahulu';
+                  }
+                  return null;
+                },
         ),
       ],
     );

@@ -354,6 +354,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                       nameProduct: orderDetail?.item ?? '-',
                       qty: orderDetail?.qty ?? '-',
                       location: orderDetail?.locationRack ?? '-',
+                      color: orderDetail?.color ?? '-',
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -534,15 +535,16 @@ class ContentDetailOrderWidget extends StatelessWidget {
     required String nameProduct,
     required String qty,
     required String location,
+    required String color,
   }) {
     controller.dialogService.defaulDialog(
-      height: 0.32,
+      height: 0.45,
       title: 'Detail Produk',
       onPressed2: () => Get.back(),
       singleButton: true,
       titleButton1: 'Oke',
       color1: const Color(0xFF8A5012),
-      insetPadding: const EdgeInsets.all(30),
+      insetPadding: const EdgeInsets.all(10),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
       actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       titlePadding: const EdgeInsets.only(top: 16),
@@ -551,28 +553,38 @@ class ContentDetailOrderWidget extends StatelessWidget {
         fontWeight: FontWeight.w400,
         color: const Color(0xFF8A5012),
       ),
-      content: Column(
-        children: [
-          const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
-          const SizedBox(height: 16),
-          _buildBoxIconText(
-            title: 'Nama Barang',
-            value: nameProduct,
-            icon: Icons.inventory_2_outlined,
-          ),
-          const SizedBox(height: 24),
-          _buildBoxIconText(
-            title: 'Jumlah Barang',
-            value: qty,
-            icon: CupertinoIcons.cube_box,
-          ),
-          const SizedBox(height: 24),
-          _buildBoxIconText(
-            title: 'Lokasi Simpan (Rak)',
-            value: location,
-            icon: Icons.shelves,
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
+            const SizedBox(height: 16),
+            _buildBoxIconText(
+              title: 'Nama Produk',
+              value: nameProduct,
+              icon: Icons.inventory_2_outlined,
+            ),
+
+            _buildBoxIconText(
+              title: 'Jumlah Produk',
+              value: qty,
+              icon: CupertinoIcons.cube_box,
+            ),
+
+            _buildBoxIconText(
+              title: 'Lokasi Simpan (Rak)',
+              value: location,
+              icon: Icons.shelves,
+              isBox: AppRole.isPIC,
+            ),
+
+            _buildBoxIconText(
+              title: 'Warna Produk',
+              value: color,
+              icon: Icons.palette_outlined,
+              isBox: !AppRole.isPIC,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -581,16 +593,31 @@ class ContentDetailOrderWidget extends StatelessWidget {
     required String title,
     required String value,
     required IconData icon,
+    bool isBox = false,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: isBox ? 10 : 0, vertical: 12),
+      decoration: isBox
+          ? BoxDecoration(
+              color: Color(0xFFE7EEFE),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  blurRadius: 1,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+            )
+          : null,
       child: Row(
         children: [
           Container(
             height: 40,
             width: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFFE7EEFE),
+              color: isBox ? Colors.white : const Color(0xFFE7EEFE),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: Color(0xFF8A5012)),

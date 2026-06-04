@@ -94,6 +94,11 @@ class ListHistoryOrderController extends GetxController
           ? LoadState.initial
           : LoadState.loadingMore;
 
+      if (isRefresh) {
+        orders.clear();
+        currentPage.value = 1;
+      }
+
       final result = await listHistoryOrderUseCase.call(
         ParamsGetTransaction(
           limit: '10',

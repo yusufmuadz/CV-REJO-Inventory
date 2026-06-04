@@ -26,6 +26,7 @@ class CustomButton {
       ),
       child: Text(
         title,
+        textAlign: TextAlign.center,
         style: TextStyle(
           color: textColor ?? Colors.white,
           fontSize: 14,

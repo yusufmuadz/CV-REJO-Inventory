@@ -11,6 +11,7 @@ class ItemOrderModel {
   final StatusOrder driver;
   final bool statusChecker2;
   final bool statusDriver;
+  final String? color;
   bool isChecked;
   String? note;
   final String? locationRack;
@@ -24,6 +25,7 @@ class ItemOrderModel {
     required this.checker1,
     required this.checker2,
     required this.driver,
+    this.color = '-',
     this.statusChecker2 = false,
     this.statusDriver = false,
     this.isChecked = false,
@@ -44,6 +46,7 @@ class ItemOrderModel {
       statusChecker2: json['status_checker2'] ?? false,
       statusDriver: json['status_driver'] ?? false,
       locationRack: json['lokasi'] ?? '-',
+      color: json['warna'] ?? '-',
     );
   }
 
@@ -60,6 +63,7 @@ class ItemOrderModel {
     bool? isChecked,
     String? note,
     String? locationRack,
+    String? color,
     RxList<XFile>? mediaFileList,
   }) {
     return ItemOrderModel(
@@ -74,6 +78,7 @@ class ItemOrderModel {
       statusDriver: statusDriver ?? this.statusDriver,
       isChecked: isChecked ?? this.isChecked,
       note: note ?? this.note,
+      color: color ?? this.color,
       locationRack: locationRack ?? this.locationRack,
       mediaFileList: mediaFileList ?? this.mediaFileList,
     );

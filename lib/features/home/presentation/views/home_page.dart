@@ -24,9 +24,9 @@ class HomePage extends GetView<HomeController> {
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        // HomeView(controller: controller),
+        HomeView(controller: controller),
         // CustomBottomBarScreen(),
-        HomeViewNewSample(),
+        // HomeViewNewSample(),
         ProfileView(controller: controller),
       ],
     );
