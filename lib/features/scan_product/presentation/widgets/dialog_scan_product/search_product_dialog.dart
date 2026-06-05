@@ -159,7 +159,7 @@ class SearchProduct extends StatelessWidget {
                 //   barcodeValue: item.barcode,
                 //   controller: controller,
                 // );
-                controller.getProduct(item.barcode);
+                controller.getProduct(item.barcode, isSearch: true);
               },
             ),
           );

@@ -68,9 +68,15 @@ class ListOrderController extends GetxController {
       isDistrictSelected.value = args['city'] ?? '';
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
-      if (isDistrictSelected.value.isNotEmpty) {
-        pageIndex.value = 1;
-        // pageController.jumpToPage(1);
+      final page = args['page'] ?? 0;
+
+      if (AppRole.isDriver) {
+        pageIndex.value = page;
+      } else {
+        if (isDistrictSelected.value.isNotEmpty) {
+          pageIndex.value = 1;
+          // pageController.jumpToPage(1);
+        }
       }
     }
     scrollController.addListener(_onScroll);
@@ -138,26 +144,8 @@ class ListOrderController extends GetxController {
     final index = orders.indexWhere((order) => order.invoice == id);
     if (index != -1) {
       isSelected.value = id;
-      // final order = orders[index];
-      // final updatedOrder = order.copyWith(isSelected: !order.isSelected);
-      // orders[index] = updatedOrder;
     }
   }
-
-  // void onSelectedRit(int index) {
-  //   if (!isSelection.value && !AppRole.isDriver) return;
-
-  //   if (index != -1) {
-  //     isSelected.value = listRit[index].city;
-  //     colorRit.value = listRit[index].color;
-  //     tanggalRit.value = listRit[index].tanggalRit;
-  //   }
-
-  //   if (AppRole.isDriver) {
-  //     takeItOrder();
-  //     return;
-  //   }
-  // }
 
   void cancelSelection() {
     isSelected.value = '';
@@ -178,12 +166,17 @@ class ListOrderController extends GetxController {
         Routes.RIT_INFORMATION,
         arguments: {
           'invoice': '',
-          'city': isSelected.value,
+          'city': rit,
           'colorRit': clrRit,
           'tanggalRit': tglRit,
           'routeFrom': 'listOrder',
         },
       );
+      pageIndex.value = 0;
+      isSelection.value = true;
+      isDistrictSelected.value = '';
+      colorRit.value = '';
+      tanggalRit.value = '';
     } else {
       searchController.text = '';
       sortByNew.value = true;

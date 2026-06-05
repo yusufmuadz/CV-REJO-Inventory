@@ -73,7 +73,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  Future<void> getProduct(String barcode) async {
+  Future<void> getProduct(String barcode, {bool isSearch = false}) async {
     if (isLoading.value) return;
     isLoading.value = true;
 
@@ -100,11 +100,18 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
           // loadState.value = LoadState.error;
           if (Get.isDialogOpen == true) Get.back();
           dialogService.showError(
-            'Failed',
+            'Failed Error Scanner',
             message,
+            // singleButton: false,
             onPressed1: () {
+              debugPrint('Error Scanner: $message');
               Get.back();
-              startScanner();
+              if (isSearch) startScanner();
+            },
+            onPressed2: () {
+              debugPrint('Error Scanner 2: $message');
+              Get.back();
+              if (isSearch) startScanner();
             },
           );
       }
@@ -134,7 +141,13 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
         case ErrorResult(:final message):
           // loadState.value = LoadState.error;
           if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
+          dialogService.showError(
+            'Failed Error',
+            message,
+            onPressed1: () {
+              Get.back();
+            },
+          );
       }
     } finally {
       isLoadingSearch.value = false;

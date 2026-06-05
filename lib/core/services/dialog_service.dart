@@ -168,7 +168,7 @@ class DialogService {
     VoidCallback? onPressed1,
     VoidCallback? onPressed2,
   }) {
-    return defaulDialog(
+    return defaultDialog(
       height: 0.15,
       title: title,
       onPressed1: onPressed1,
@@ -248,7 +248,7 @@ class DialogService {
 
   /// ===== DEFAULT DIALOG =====
 
-  Future<void> defaulDialog({
+  Future<void> defaultDialog({
     required String title,
     required Widget content,
     EdgeInsets? insetPadding,
@@ -377,7 +377,7 @@ class DialogService {
       return CustomButton.basicButton(
         title: title1,
         color: color1,
-        onPressed: () => onPressed1 ?? Get.back(),
+        onPressed: onPressed1 ?? () => Get.back(),
       );
     }
 

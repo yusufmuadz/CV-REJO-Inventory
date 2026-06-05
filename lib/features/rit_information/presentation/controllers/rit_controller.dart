@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/result/result_custom.dart';
@@ -7,7 +8,10 @@ import '../../../../core/services/dialog_service.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
+import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../../list_order/presentation/bindings/list_order_binding.dart';
+import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../domain/usecases/rit_usecase.dart';
 
 class RitController extends GetxController {
@@ -69,9 +73,21 @@ class RitController extends GetxController {
   final pageIndex = 0.obs;
   final pageController = PageController(initialPage: 0);
 
+  late final ListOrderController listOrderController;
+
   @override
   void onInit() {
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    if (!Get.isRegistered<ListOrderController>()) {
+      ListOrderBinding().dependencies();
+      listOrderController = Get.find<ListOrderController>();
+    }
+
     final args = Get.arguments;
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
@@ -79,13 +95,8 @@ class RitController extends GetxController {
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
+      _getOrder();
     }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    _getOrder();
   }
 
   @override
@@ -107,9 +118,6 @@ class RitController extends GetxController {
   }
 
   void onRefreshTransaction() {
-    currentPage.value = 1;
-
-    orders.clear();
     _getOrder(isRefresh: true);
   }
 
@@ -271,13 +279,18 @@ class RitController extends GetxController {
           ? LoadState.initial
           : LoadState.loadingMore;
 
+      if (isRefresh) {
+        orders.clear();
+        currentPage.value = 1;
+      }
+
       final result = await ritUseCase.callGetOrders(
         ParamsGetTransaction(
           limit: '10',
           page: '$currentPage',
           filter: 'all',
           // sort: sortByNew.value ? 'newest' : 'oldest',
-          district: isDistrictSelected.value.toLowerCase(),
+          district: isDistrictSelected.value,
           dateRit: tanggalRit.value,
         ),
       );
@@ -308,6 +321,20 @@ class RitController extends GetxController {
     } finally {
       // isLoading.value = false;
     }
+  }
+
+  void changeRit(RitListEntity item) {
+    isDistrictSelected.value = item.city;
+    colorRit.value = item.color;
+    tanggalRit.value = item.tanggalRit;
+
+    GetStorage().write('city', item.city);
+    GetStorage().write('colorRit', item.color);
+    GetStorage().write('tanggalRit', item.tanggalRit);
+
+    _getOrder(isRefresh: true);
+
+    Get.back();
   }
 
   bool emptyPath(XFile file) {

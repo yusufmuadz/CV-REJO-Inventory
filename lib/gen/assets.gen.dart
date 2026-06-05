@@ -84,6 +84,10 @@ class $AssetsImagesGen {
   AssetGenImage get bgDriver =>
       const AssetGenImage('assets/images/bg_driver.png');
 
+  /// File path: assets/images/bg_packing_man.png
+  AssetGenImage get bgPackingMan =>
+      const AssetGenImage('assets/images/bg_packing_man.png');
+
   /// File path: assets/images/bg_picking_man.png
   AssetGenImage get bgPickingMan =>
       const AssetGenImage('assets/images/bg_picking_man.png');
@@ -93,7 +97,12 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/picking_man.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [bgDriver, bgPickingMan, pickingMan];
+  List<AssetGenImage> get values => [
+    bgDriver,
+    bgPackingMan,
+    bgPickingMan,
+    pickingMan,
+  ];
 }
 
 class $AssetsLogoGen {

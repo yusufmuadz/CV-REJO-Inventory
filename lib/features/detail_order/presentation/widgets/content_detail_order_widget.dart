@@ -537,7 +537,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
     required String location,
     required String color,
   }) {
-    controller.dialogService.defaulDialog(
+    controller.dialogService.defaultDialog(
       height: 0.45,
       title: 'Detail Produk',
       onPressed2: () => Get.back(),

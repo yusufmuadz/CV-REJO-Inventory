@@ -1,6 +1,9 @@
 // lib/core/widgets/stat_card.dart
 import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../shared/box/box_status.dart';
 import 'app_colors.dart';
 
 class StatCard extends StatelessWidget {
@@ -112,7 +115,7 @@ class OrderItem extends StatelessWidget {
         // color: AppColors.cardBackground,
         border: Border(
           top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
-          bottom: index == 0
+          bottom: index == 1
               ? BorderSide(color: Colors.grey.withOpacity(0.1), width: 1)
               : BorderSide.none,
           right: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
@@ -121,91 +124,113 @@ class OrderItem extends StatelessWidget {
         borderRadius: BorderRadius.only(
           topRight: index == 0 ? Radius.circular(12) : Radius.zero,
           topLeft: index == 0 ? Radius.circular(12) : Radius.zero,
-          bottomRight: index == 0 ? Radius.circular(12) : Radius.zero,
-          bottomLeft: index == 0 ? Radius.circular(12) : Radius.zero,
+          bottomRight: index == 1 ? Radius.circular(12) : Radius.zero,
+          bottomLeft: index == 1 ? Radius.circular(12) : Radius.zero,
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(
+            Routes.DETAIL_ORDER,
+            arguments: {
+              'invoice': order.invoice,
+              'routeFrom': 'listOrder',
+              'status_checker2': order.checker2?.status,
+            },
+          );
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    order.orderNo,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: 'Lokasi : ',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: order.district,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  order.invoice,
+                  '50 Item',
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 5),
-                RichText(
-                  text: TextSpan(
-                    text: order.date.transaction, // Lokasi :
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w400,
+                const SizedBox(height: 6),
+                Visibility(
+                  visible: showStatus ?? false,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
                     ),
-                    children: [
-                      // TextSpan(
-                      //   text: 'Semarang',
-                      //   style: const TextStyle(
-                      //     fontSize: 10,
-                      //     color: AppColors.textSecondary,
-                      //     fontWeight: FontWeight.w400,
-                      //   ),
-                      // ),
-                    ],
+                    decoration: BoxDecoration(
+                      color: BoxStatus.buildColor(
+                        statusPIC: order.pic?.status ?? '',
+                        statusChecker1: order.checker1?.status ?? '',
+                        statusChecker2: order.checker2?.status ?? '',
+                        statusDriver: order.driver?.status ?? '',
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      BoxStatus.buildText(
+                        statusPIC: order.pic?.status ?? '',
+                        statusChecker1: order.checker1?.status ?? '',
+                        statusChecker2: order.checker2?.status ?? '',
+                        statusDriver: order.driver?.status ?? '',
+                      ),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '50 Item',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Visibility(
-                visible: showStatus ?? false,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: order.pic?.status == 'Sedang Proses'
-                        ? AppColors.statusGreenBg
-                        : AppColors.statusOrangeBg,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    order.pic?.status ?? '-',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: order.pic?.status == 'Sedang Proses'
-                          ? AppColors.statusGreen
-                          : AppColors.statusOrange,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          const Icon(Icons.chevron_right, color: AppColors.textLight, size: 20),
-        ],
+            const SizedBox(width: 10),
+            const Icon(
+              Icons.chevron_right,
+              color: AppColors.textLight,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }

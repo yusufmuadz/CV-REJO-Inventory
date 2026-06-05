@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../home/presentation/sample/app_colors.dart';
 import '../../domain/entities/rit_list_entity.dart';
@@ -85,7 +86,7 @@ class ListRitView extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      '${ritOrder.totalPO} PO',
+                      '${ritOrder.totalPO} ${AppRole.isDriver ? 'SJ' : 'PO'}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

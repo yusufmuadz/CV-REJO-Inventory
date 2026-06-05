@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../../core/middlewares/app_role.dart';
+
 class CustomButton {
   /// ===== BASIC BUTTON =====
   static Widget basicButton({
@@ -142,8 +144,7 @@ class CustomButton {
         type: BottomNavigationBarType.fixed,
         elevation: 1,
         onTap: (index) {
-          controller.tabIndex.value = index;
-          controller.pageControllerSample.jumpToPage(index);
+          controller.changePage(index);
         },
         items: [
           BottomNavigationBarItem(
@@ -151,19 +152,23 @@ class CustomButton {
             activeIcon: Icon(Ionicons.home, color: Color(0xFF06823f)),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Ionicons.document_text_outline,
-              color: Color(0xFF8890a0),
+          // BottomNavigationBarItem(
+          //   icon: Icon(
+          //     Ionicons.document_text_outline,
+          //     color: Color(0xFF8890a0),
+          //   ),
+          //   activeIcon: Icon(Ionicons.document_text, color: Color(0xFF06823f)),
+          //   label: 'Pesanan',
+          // ),
+          if (AppRole.isDriver)
+            BottomNavigationBarItem(
+              icon: Icon(
+                Ionicons.alert_circle_outline,
+                color: Color(0xFF8890a0),
+              ),
+              activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
+              label: 'Kendala',
             ),
-            activeIcon: Icon(Ionicons.document_text, color: Color(0xFF06823f)),
-            label: 'Pesanan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Ionicons.alert_circle_outline, color: Color(0xFF8890a0)),
-            activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
-            label: 'Kendala',
-          ),
           BottomNavigationBarItem(
             icon: Icon(
               Ionicons.person_circle_outline,

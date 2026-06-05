@@ -119,7 +119,7 @@ class ListOrderPage extends GetView<ListOrderController> {
     return CustomButton.doubleButton(
       title1: 'Ubah RIT',
       title2: 'Pilih Pesanan',
-      color1: const Color.fromARGB(150, 77, 123, 241),
+      color1: const Color(0x954D7BF1),
       color2: const Color(0xFFc7a16d),
       visible2: controller.orders.isNotEmpty,
       visibleSpace: controller.orders.isNotEmpty,

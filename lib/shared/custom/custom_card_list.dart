@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/list_order/domain/entities/list_order_entity.dart';
 import '../../gen/assets.gen.dart';
+import '../box/box_status.dart';
 
 class CustomCardList extends StatelessWidget {
   final Function() onTap;
@@ -135,84 +136,6 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  String _buildText({
-    String statusPIC = '',
-    String statusChecker1 = '',
-    String statusChecker2 = '',
-    String statusDriver = '',
-  }) {
-    String text = 'Checker';
-
-    if (AppRole.isPIC || AppRole.isChecker1) {
-      String status = statusPIC;
-
-      if (statusPIC == 'completed') {
-        status = statusChecker1;
-      }
-
-      if (status == 'available') {
-        text = 'Available';
-      } else if (status == 'ongoing') {
-        text = 'Ongoing';
-      } else if (status == 'completed') {
-        text = 'Completed';
-      }
-    } else {
-      if (statusChecker2 == 'completed') {
-        text = 'Leader';
-      }
-    }
-
-    if (AppRole.isDriver) {
-      if (statusDriver == 'completed') {
-        text = 'Ready';
-      } else {
-        text = 'On Progress';
-      }
-    }
-
-    return text;
-  }
-
-  Color _buildColor({
-    String statusPIC = '',
-    String statusChecker1 = '',
-    String statusChecker2 = '',
-    String statusDriver = '',
-  }) {
-    Color color = Color(0xFF5eb75f);
-
-    if (AppRole.isPIC || AppRole.isChecker1) {
-      String status = statusPIC;
-
-      if (statusPIC == 'completed') {
-        status = statusChecker1;
-      }
-
-      if (status == 'available') {
-        color = const Color(0xFF5eb75f);
-      } else if (status == 'ongoing' || status == 'completed') {
-        color = const Color(0xFF666666);
-      }
-    } else {
-      if (statusChecker2 == 'ongoing') {
-        color = const Color(0xFF5eb75f);
-      } else if (statusChecker2 == 'completed') {
-        color = const Color(0xFF666666);
-      }
-    }
-
-    if (AppRole.isDriver) {
-      if (statusDriver == 'completed') {
-        color = const Color(0xFF5eb75f);
-      } else {
-        color = const Color(0xFF666666);
-      }
-    }
-
-    return color;
-  }
-
   Widget buildShippingText(String text) {
     final parts = text.split('-');
 
@@ -275,7 +198,7 @@ class CustomCardList extends StatelessWidget {
             margin: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              color: _buildColor(
+              color: BoxStatus.buildColor(
                 statusPIC: transaction.pic?.status ?? '',
                 statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',
@@ -283,7 +206,7 @@ class CustomCardList extends StatelessWidget {
               ),
             ),
             child: Text(
-              _buildText(
+              BoxStatus.buildText(
                 statusPIC: transaction.pic?.status ?? '',
                 statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',

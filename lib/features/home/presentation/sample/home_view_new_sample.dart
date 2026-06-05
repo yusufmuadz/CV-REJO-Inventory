@@ -22,7 +22,7 @@ class HomeViewNewSample extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppRole.isDriver
+      backgroundColor: AppRole.isDriver || AppRole.isChecker1
           ? Color(0xFFf5f0fa)
           : AppColors.backgroundMint,
       body: _buildPage(),
@@ -40,8 +40,8 @@ class HomeViewNewSample extends GetView<HomeController> {
       children: [
         _buildHome(),
         // ListOrderPage(),
-        Container(),
-        RitConstraint(controller: controller),
+        // Container(),
+        if (AppRole.isDriver) RitConstraint(controller: controller),
         ProfileView(controller: controller),
       ],
     );
@@ -64,12 +64,17 @@ class HomeViewNewSample extends GetView<HomeController> {
   }
 
   Widget _buildHeader() {
+    String imagePath = Assets.images.bgPickingMan.path;
+
+    if (AppRole.isDriver) {
+      imagePath = Assets.images.bgDriver.path;
+    } else if (AppRole.isChecker1) {
+      imagePath = Assets.images.bgPackingMan.path;
+    }
     return Stack(
       children: [
         Image.asset(
-          AppRole.isDriver
-              ? Assets.images.bgDriver.path
-              : Assets.images.bgPickingMan.path,
+          imagePath,
           width: double.infinity,
           fit: BoxFit.fitWidth,
           // color: Colors.black,
@@ -209,21 +214,28 @@ class HomeViewNewSample extends GetView<HomeController> {
             ),
           ),
           const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 1,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemBuilder: (context, index) => OrderItem(
-                index: index,
-                showStatus: true,
-                order: OrderEntity(
-                  invoice: 'PO/2000/000${index + 1}',
-                  orderNo: '${index + 1}',
-                  customer: 'Halo',
-                  district: 'Jakarta',
-                  date: DateModel(transaction: '', delivery: ''),
-                ),
+          Visibility(
+            visible: controller.orders.isEmpty,
+            child: Expanded(
+              child: const Center(child: Text('Tidak ada pesanan')),
+            ),
+          ),
+          Visibility(
+            visible: controller.orders.isNotEmpty,
+            child: Expanded(
+              child: ListView.builder(
+                itemCount: controller.orders.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemBuilder: (context, index) {
+                  OrderEntity transaction = controller.orders[index];
+            
+                  return OrderItem(
+                    index: index,
+                    showStatus: true,
+                    order: transaction,
+                  );
+                },
               ),
             ),
           ),

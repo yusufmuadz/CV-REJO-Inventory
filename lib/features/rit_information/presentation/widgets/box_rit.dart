@@ -1,45 +1,54 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../controllers/rit_controller.dart';
-
 class BoxRit extends StatelessWidget {
-  final RitController controller;
-  const BoxRit({super.key, required this.controller});
+  final String rit;
+  final String? dateRit;
+  final Color? colorBox;
+  final Function()? onPressed;
+
+  const BoxRit({
+    super.key,
+    required this.rit,
+    this.dateRit,
+    this.colorBox,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFf5f6f6),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 33,
-            width: 33,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFFdaeafc),
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: colorBox ?? const Color(0xFFf5f6f6),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 33,
+              width: 33,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFdaeafc),
+              ),
+              child: Icon(
+                Icons.calendar_month_outlined,
+                color: const Color(0xFF165be3),
+                size: 20,
+              ),
             ),
-            child: Icon(
-              Icons.calendar_month_outlined,
-              color: const Color(0xFF165be3),
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Obx(
-            () => Expanded(
+            const SizedBox(width: 16),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'RIT-${controller.isDistrictSelected.value}',
+                    'RIT-$rit',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -50,9 +59,11 @@ class BoxRit extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    DateFormat(
-                      'dd MMMM yyyy',
-                    ).format(DateTime.parse(controller.tanggalRit.value)),
+                    dateRit != null
+                        ? DateFormat(
+                            'dd MMMM yyyy',
+                          ).format(DateTime.parse(dateRit!))
+                        : '-',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
@@ -62,25 +73,29 @@ class BoxRit extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          // const SizedBox(width: 10),
-          // Container(
-          //   padding: const EdgeInsets.all(5),
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(7),
-          //     color: const Color(0xFFd6f2dd),
-          //   ),
-          //   child: Text(
-          //     'Selesai',
-          //     style: _textStyle(
-          //       fontSize: 12,
-          //       fontWeight: FontWeight.w600,
-          //       letterSpacing: 0.45,
-          //       color: Color(0xFF69b47c),
-          //     ),
-          //   ),
-          // ),
-        ],
+            Visibility(
+              visible: onPressed != null,
+              child: Icon(CupertinoIcons.arrow_right_arrow_left_circle, size: 24),
+            ),
+            // const SizedBox(width: 10),
+            // Container(
+            //   padding: const EdgeInsets.all(5),
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(7),
+            //     color: const Color(0xFFd6f2dd),
+            //   ),
+            //   child: Text(
+            //     'Selesai',
+            //     style: _textStyle(
+            //       fontSize: 12,
+            //       fontWeight: FontWeight.w600,
+            //       letterSpacing: 0.45,
+            //       color: Color(0xFF69b47c),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }

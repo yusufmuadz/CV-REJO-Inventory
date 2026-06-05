@@ -64,7 +64,7 @@ class ProfileView extends StatelessWidget {
               ),
             ),
             ProfileHeaderView(controller: controller),
-            _iconBack(),
+            // _iconBack(),
           ],
         );
       }

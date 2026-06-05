@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/rit_controller.dart';
+import '../widgets/box_rit.dart';
 import '../widgets/rit_dialog.dart';
 import 'arrive_at_office.dart';
 import 'input_image_view.dart';
@@ -127,6 +129,28 @@ class RitPage extends GetView<RitController> {
       onPressed: () {
         controller.isArrive.value = true;
       },
+    );
+  }
+
+  Widget _buildButtonChangeRIT() {
+    return SizedBox(
+      width: Get.width,
+      child: CustomButton.basicButton(
+        title: 'Ubah RIT',
+        color: const Color(0x954D7BF1),
+        onPressed: () {
+          Get.toNamed(
+            Routes.LIST_ORDER,
+            arguments: {
+              'routeFrom': 'endingOrder',
+              'city': '',
+              'colorRit': '',
+              'tanggalRit': '',
+              'page': 0,
+            },
+          );
+        },
+      ),
     );
   }
 }
