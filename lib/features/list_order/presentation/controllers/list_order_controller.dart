@@ -165,6 +165,7 @@ class ListOrderController extends GetxController {
     GetStorage().write('city', rit);
     GetStorage().write('colorRit', clrRit);
     GetStorage().write('tanggalRit', tglRit);
+    GetStorage().write('isRitToday', isRitToday.value);
     if (AppRole.isDriver) {
       Get.offNamed(
         Routes.RIT_INFORMATION,

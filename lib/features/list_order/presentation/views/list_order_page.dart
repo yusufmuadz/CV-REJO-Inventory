@@ -67,7 +67,9 @@ class ListOrderPage extends GetView<ListOrderController> {
             ),
             Obx(
               () => Visibility(
-                visible: !controller.isRitToday.value,
+                visible:
+                    controller.pageIndex.value == 0 &&
+                    !controller.isRitToday.value,
                 child: IconButton(
                   icon: const Icon(
                     Icons.calendar_month_outlined,
@@ -78,7 +80,9 @@ class ListOrderPage extends GetView<ListOrderController> {
                     DateTime initialDate = DateTime.now();
 
                     if (controller.pastRitDateSelected.isNotEmpty) {
-                      initialDate = DateTime.parse(controller.pastRitDateSelected.value);
+                      initialDate = DateTime.parse(
+                        controller.pastRitDateSelected.value,
+                      );
                     }
 
                     final selectedDate = await showDatePicker(
@@ -88,15 +92,15 @@ class ListOrderPage extends GetView<ListOrderController> {
                       lastDate: DateTime.now().add(const Duration(days: 360)),
                       builder: (context, child) {
                         return Theme(
-                          data: Theme.of(context).copyWith(
-                          ),
+                          data: Theme.of(context).copyWith(),
                           child: child!,
                         );
                       },
                     );
 
                     if (selectedDate != null) {
-                      controller.pastRitDateSelected.value = selectedDate.toString();
+                      controller.pastRitDateSelected.value = selectedDate
+                          .toString();
                       controller.onRefreshTransaction();
                     }
                   },

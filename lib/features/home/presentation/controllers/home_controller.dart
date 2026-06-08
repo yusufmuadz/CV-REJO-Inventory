@@ -41,11 +41,12 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final rit = ''.obs;
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final isRitToday = false.obs;
 
   final totalOrder = 0.obs;
   final totalOrderHistory = 0.obs;
   final versionApp = '3.0.0'.obs;
-  final updateVersionApp = '12 Mei 2026'.obs;
+  final updateVersionApp = '08 Juni 2026'.obs;
 
   final searchController = TextEditingController();
   final tabIndex = 0.obs;
@@ -104,37 +105,37 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     _getOrder(isRefresh: true);
   }
 
-  void routeTo({bool isRitToday = true}) {
+  void routeTo({bool ritToday = true}) {
     final invoice = GetStorage().read('noInvoice') ?? '';
     _getLocalRit();
 
-    if (invoice.isNotEmpty) {
-      GetStorage().remove('noInvoice');
+    if (ritToday != isRitToday.value) {
+      // GetStorage().remove('noInvoice');
+      GetStorage().remove('city');
+      GetStorage().remove('colorRit');
+      GetStorage().remove('tanggalRit');
+      GetStorage().remove('isRitToday');
+
+      rit.value = '';
+      colorRit.value = '';
+      tanggalRit.value = '';
+      isRitToday.value = ritToday;
+    }
+
+    GetStorage().remove('noInvoice');
+
+    if (AppRole.isDriver && rit.isNotEmpty) {
+      debugPrint('Tanggal RIT HOME : ${tanggalRit}');
       Get.toNamed(
-        Routes.LIST_ORDER,
+        Routes.RIT_INFORMATION,
         arguments: {
-          'routeFrom': 'home',
+          'invoice': invoice,
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
-          'isRitToday': isRitToday,
         },
       );
     } else {
-      GetStorage().remove('noInvoice');
-      if (AppRole.isDriver && rit.isNotEmpty) {
-        debugPrint('Tanggal RIT HOME : ${tanggalRit}');
-        Get.toNamed(
-          Routes.RIT_INFORMATION,
-          arguments: {
-            'invoice': invoice,
-            'city': rit.value,
-            'colorRit': colorRit.value,
-            'tanggalRit': tanggalRit.value,
-          },
-        );
-        return;
-      }
       Get.toNamed(
         Routes.LIST_ORDER,
         arguments: {
@@ -142,7 +143,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
-          'isRitToday': isRitToday,
+          'isRitToday': ritToday,
         },
       );
     }
@@ -230,6 +231,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     rit.value = GetStorage().read('city') ?? '';
     colorRit.value = GetStorage().read('colorRit') ?? '';
     tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
+    isRitToday.value = GetStorage().read('isRitToday') ?? false;
   }
 
   ///// TROUBLE RIT DRIVER

@@ -176,7 +176,7 @@ class HomeViewNewSample extends GetView<HomeController> {
                         iconColor: const Color(0xFFC2410C),
                         bgIconColor: const Color(0xFFFFEDD5),
                         onTap: () {
-                          controller.routeTo(isRitToday: false);
+                          controller.routeTo(ritToday: false);
                         },
                       ),
                     ),
@@ -259,6 +259,7 @@ class HomeViewNewSample extends GetView<HomeController> {
                     index: index,
                     showStatus: true,
                     order: transaction,
+                    length: controller.orders.length,
                   );
                 },
               ),

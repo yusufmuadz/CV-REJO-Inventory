@@ -93,12 +93,14 @@ class StatCard extends StatelessWidget {
 
 class OrderItem extends StatelessWidget {
   final int index;
+  final int length;
   final bool? showStatus;
   final OrderEntity order;
 
   const OrderItem({
     super.key,
     required this.index,
+    required this.length,
     required this.order,
     this.showStatus,
   });
@@ -111,7 +113,7 @@ class OrderItem extends StatelessWidget {
         // color: AppColors.cardBackground,
         border: Border(
           top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
-          bottom: index == 1
+          bottom: index == length - 1
               ? BorderSide(color: Colors.grey.withOpacity(0.1), width: 1)
               : BorderSide.none,
           right: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
@@ -120,8 +122,8 @@ class OrderItem extends StatelessWidget {
         borderRadius: BorderRadius.only(
           topRight: index == 0 ? Radius.circular(12) : Radius.zero,
           topLeft: index == 0 ? Radius.circular(12) : Radius.zero,
-          bottomRight: index == 1 ? Radius.circular(12) : Radius.zero,
-          bottomLeft: index == 1 ? Radius.circular(12) : Radius.zero,
+          bottomRight: index == length - 1 ? Radius.circular(12) : Radius.zero,
+          bottomLeft: index == length - 1 ? Radius.circular(12) : Radius.zero,
         ),
       ),
       child: InkWell(

@@ -29,7 +29,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
       String queryString = Uri(queryParameters: body).query;
       final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll}?$queryString',
+        '${ApiEndpoints.fetchTransactionAll('all')}?$queryString',
       );
 
       // debugPrint('Data Home Transaction Remote DataSource: ${response.data['data']}');

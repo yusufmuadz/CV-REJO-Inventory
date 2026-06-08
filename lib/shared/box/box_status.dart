@@ -14,7 +14,7 @@ class BoxStatus {
     if (AppRole.isPIC || AppRole.isChecker1) {
       String status = statusPIC;
 
-      if (statusPIC == 'completed') {
+      if (statusPIC == 'completed' && AppRole.isChecker1) {
         status = statusChecker1;
       }
 
@@ -53,7 +53,7 @@ class BoxStatus {
     if (AppRole.isPIC || AppRole.isChecker1) {
       String status = statusPIC;
 
-      if (statusPIC == 'completed') {
+      if (statusPIC == 'completed' && AppRole.isChecker1) {
         status = statusChecker1;
       }
 
