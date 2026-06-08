@@ -373,7 +373,7 @@ class RitController extends GetxController {
       Get.back();
       dialogService.showSuccessSnackbar('Berhasil Menyimpan Foto');
     } catch (e) {
-      debugPrint('Error saving image: $e');
+      debugPrint('$e');
     }
   }
 

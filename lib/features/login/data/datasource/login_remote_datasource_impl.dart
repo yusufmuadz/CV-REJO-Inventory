@@ -35,7 +35,7 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error login: $e');
+      throw ServerException(message: '$e');
     }
   }
 

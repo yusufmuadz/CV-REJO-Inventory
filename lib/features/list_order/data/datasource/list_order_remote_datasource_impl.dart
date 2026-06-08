@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
 import '../models/response_model_get_district.dart';
@@ -23,6 +25,14 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     ParamsGetTransaction params,
   ) async {
     try {
+      String date = '';
+
+      if (params.pastRit == true && params.dateRit != null) {
+        date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(params.dateRit ?? '2026-01-01'));
+      }
+      
       Map<String, String> body = {
         if (params.limit != null) 'limit': '${params.limit}',
         if (params.page != null) 'page': '${params.page}',
@@ -34,9 +44,15 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.dateRit != null) 'daterit': '${params.dateRit}',
       };
 
+      String url = 'all';
+
+      if (params.pastRit == true) {
+        url = 'past';
+      }
+
       String queryString = Uri(queryParameters: body).query;
       final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll}?$queryString',
+        '${ApiEndpoints.fetchTransactionAll(url)}?$queryString',
       );
 
       // debugPrint('Data Home Transaction Remote DataSource: ${response.data}');
@@ -54,7 +70,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -68,7 +84,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
       }
-      
+
       final response = await dioClient.put(
         ApiEndpoints.takeItTransaction(role),
         data: {"invoice": params.invoice},
@@ -89,7 +105,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Take It Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -113,14 +129,37 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get District: $e');
+      throw ServerException(message: '$e');
     }
   }
 
   @override
-  Future<ResponseModelGetRit> getRit(String search) async {
+  Future<ResponseModelGetRit> getRit(ParamGetRIT params) async {
     try {
-      final response = await dioClient.get(ApiEndpoints.getRit(search));
+      String date = '';
+
+      if (params.isPastRit && params.date != null) {
+        date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(params.date ?? '2026-01-01'));
+      }
+
+      Map<String, String> body = {
+        if (params.search != null) 'search': '${params.search}',
+        if (params.isPastRit) 'date': date,
+      };
+
+      String url = 'getrit';
+
+      String queryString = Uri(queryParameters: body).query;
+
+      if (params.isPastRit) {
+        url = 'pastrit';
+      }
+
+      final response = await dioClient.get(
+        '${ApiEndpoints.getRit(url)}?$queryString',
+      );
 
       // debugPrint('Data Get Rit Remote DataSource: ${response.data}');
 
@@ -137,7 +176,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get Rit: $e');
+      throw ServerException(message: '$e');
     }
   }
 }

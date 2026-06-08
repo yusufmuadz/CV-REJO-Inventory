@@ -13,6 +13,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
 import '../../domain/entities/rit_list_entity.dart';
+import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
@@ -42,6 +43,9 @@ class ListOrderController extends GetxController {
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
   final listSelected = <dynamic>[].obs;
 
+  final isRitToday = false.obs;
+  final pastRitDateSelected = DateTime.now().toString().obs;
+
   final listDistrict = <DistrictEntity>[].obs;
   final listRit = <RitListEntity>[].obs;
 
@@ -68,6 +72,7 @@ class ListOrderController extends GetxController {
       isDistrictSelected.value = args['city'] ?? '';
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
+      isRitToday.value = args['isRitToday'] ?? false;
       final page = args['page'] ?? 0;
 
       if (AppRole.isDriver) {
@@ -75,7 +80,6 @@ class ListOrderController extends GetxController {
       } else {
         if (isDistrictSelected.value.isNotEmpty) {
           pageIndex.value = 1;
-          // pageController.jumpToPage(1);
         }
       }
     }
@@ -294,9 +298,7 @@ class ListOrderController extends GetxController {
           filter: isStatusSelected.value.toLowerCase(),
           district: isDistrictSelected.value.toLowerCase(),
           dateRit: tanggalRit.value,
-          // DateFormat(
-          //   'yyyy-MM-dd',
-          // ).format(DateTime.parse(tanggalRit.value)),
+          pastRit: !isRitToday.value,
         ),
       );
 
@@ -332,7 +334,12 @@ class ListOrderController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    final result = await listOrderUseCase.callGetRit('');
+    final result = await listOrderUseCase.callGetRit(
+      ParamGetRIT(
+        isPastRit: !isRitToday.value,
+        date: pastRitDateSelected.value,
+      ),
+    );
 
     try {
       switch (result) {

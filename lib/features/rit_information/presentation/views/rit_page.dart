@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
@@ -127,30 +128,25 @@ class RitPage extends GetView<RitController> {
       title: 'Simpan',
       color: const Color(0xFF2ED471),
       onPressed: () {
-        controller.isArrive.value = true;
-      },
-    );
-  }
+        if (controller.recipientName.text.isEmpty ||
+            controller.mediaFileRecipientInvoice.isEmpty ||
+            controller.mediaFileRecipientMoney.isEmpty ||
+            controller.mediaFileRecipientMoneyRit.isEmpty) {
+          return;
+        }
 
-  Widget _buildButtonChangeRIT() {
-    return SizedBox(
-      width: Get.width,
-      child: CustomButton.basicButton(
-        title: 'Ubah RIT',
-        color: const Color(0x954D7BF1),
-        onPressed: () {
-          Get.toNamed(
-            Routes.LIST_ORDER,
-            arguments: {
-              'routeFrom': 'endingOrder',
-              'city': '',
-              'colorRit': '',
-              'tanggalRit': '',
-              'page': 0,
-            },
-          );
-        },
-      ),
+        GetStorage().remove('noInvoice');
+        GetStorage().remove('city');
+        GetStorage().remove('colorRit');
+        GetStorage().remove('tanggalRit');
+        controller.isArrive.value = true;
+
+        Get.toNamed(Routes.LIST_ORDER, arguments: {'routeFrom': 'home'});
+
+        controller.dialogService.showSuccessSnackbar(
+          'Berhasil Menyimpan Pesanan',
+        );
+      },
     );
   }
 }

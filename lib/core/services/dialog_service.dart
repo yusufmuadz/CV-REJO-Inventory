@@ -267,6 +267,7 @@ class DialogService {
     VoidCallback? onPressed2,
     EdgeInsetsGeometry? marginButton,
     bool barrierDismissible = true,
+    List<Widget>? actions,
   }) {
     return Get.dialog(
       barrierDismissible: barrierDismissible,
@@ -296,21 +297,23 @@ class DialogService {
           width: Get.width * width,
           child: content,
         ),
-        actions: [
-          SizedBox(
-            height: 45,
-            width: double.infinity,
-            child: _buildButton(
-              title1: titleButton1,
-              title2: titleButton2,
-              singleButton: singleButton,
-              color1: color1,
-              color2: color2,
-              onPressed1: onPressed1,
-              onPressed2: onPressed2,
-            ),
-          ),
-        ],
+        actions:
+            actions ??
+            [
+              SizedBox(
+                height: 45,
+                width: double.infinity,
+                child: _buildButton(
+                  title1: titleButton1,
+                  title2: titleButton2,
+                  singleButton: singleButton,
+                  color1: color1,
+                  color2: color2,
+                  onPressed1: onPressed1,
+                  onPressed2: onPressed2,
+                ),
+              ),
+            ],
       ),
     );
   }

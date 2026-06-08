@@ -17,16 +17,16 @@ class ApiEndpoints {
   static const String home = "main/getinfo";
 
   // Transaction
-  static const String fetchTransactionAll = "transaction/all";
   static const String fetchHistoryTransaction = "transaction/history/get";
   static const String getItemProduct = "items/get";
   static const String getDistrict = "city/getcity";
+  static String fetchTransactionAll(String url) => "transaction/$url";
   static String takeItTransaction(String role) => "$role/claim";
   static String saveQty(String role) => "$role/scan/multiple";
   static String completeOrder(String role) => "$role/complete";
   static String pendingOrder(String role) => "$role/cancel";
   static String addAssistant(String role) => "$role/claimcoba";
-  static String getRit(String search) => "rit/getrit?search=$search";
+  static String getRit(String url) => "rit/$url";
 
   // PICKING TRANSACTION
   static const String pendingSO = "picking/cancel";

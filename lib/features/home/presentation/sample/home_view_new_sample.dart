@@ -6,12 +6,18 @@ import 'package:cv_rejo/features/list_order/presentation/views/list_order_page.d
 import 'package:cv_rejo/features/profile/presentation/views/profile_view.dart';
 import 'package:cv_rejo/shared/custom/custom_button.dart';
 import 'package:cv_rejo/utils/loading_custom.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../detail_order/presentation/bindings/detail_order_binding.dart';
+import '../../../detail_order/presentation/controllers/detail_order_controller.dart';
+import '../../../scan_product/presentation/bindings/scan_product_binding.dart';
+import '../../../scan_product/presentation/controllers/scan_product_controller.dart';
+import '../../../scan_product/presentation/widgets/dialog_scan_product/input_qty_dialog.dart';
 import 'app_colors.dart';
 import 'home_card_sample.dart';
 
@@ -148,22 +154,41 @@ class HomeViewNewSample extends GetView<HomeController> {
                   children: [
                     Expanded(
                       child: StatCard(
-                        icon: Icons.shopping_bag_outlined,
+                        icon: Icons.inventory_2_outlined,
                         title: 'Total\nPesanan',
                         subtitle: 'Sedang Berjalan',
                         value: controller.totalOrder.value,
-                        iconColor: AppColors.primaryGreen,
-                        onTap: () => controller.routeTo(),
+                        iconColor: const Color(0xFF15803D),
+                        bgIconColor: const Color(0xFFDCFCE7),
+                        onTap: () {
+                          controller.routeTo();
+                        },
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: StatCard(
-                        icon: Icons.receipt_long_outlined,
+                        isPast: true,
+                        icon: CupertinoIcons.cube_box,
+                        title: 'Total\nPesanan',
+                        subtitle: 'Pesanan Lampau',
+                        value: 0,
+                        iconColor: const Color(0xFFC2410C),
+                        bgIconColor: const Color(0xFFFFEDD5),
+                        onTap: () {
+                          controller.routeTo(isRitToday: false);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: StatCard(
+                        icon: Icons.history_rounded,
                         title: 'History\nPesanan',
                         subtitle: 'Telah dikerjakan',
                         value: controller.totalOrderHistory.value,
-                        iconColor: AppColors.primaryGreen,
+                        iconColor: const Color(0xFF1D4ED8),
+                        bgIconColor: const Color(0xFFDBEAFE),
                         onTap: () {
                           Get.toNamed(Routes.LIST_HISTORY_ORDER);
                         },
@@ -197,7 +222,7 @@ class HomeViewNewSample extends GetView<HomeController> {
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
-            blurRadius: 10,
+            blurRadius: 3,
             offset: const Offset(0, 0),
           ),
         ],
@@ -229,7 +254,7 @@ class HomeViewNewSample extends GetView<HomeController> {
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   OrderEntity transaction = controller.orders[index];
-            
+
                   return OrderItem(
                     index: index,
                     showStatus: true,

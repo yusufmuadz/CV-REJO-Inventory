@@ -5,6 +5,7 @@ import '../../../../core/result/result_custom.dart';
 import '../entities/district_entity.dart';
 import '../entities/list_order_entity.dart';
 import '../entities/rit_list_entity.dart';
+import '../params/get_rit_param.dart';
 import '../params/get_transaction_param.dart';
 import '../params/take_it_param.dart';
 import '../repositories/list_order_repository.dart';
@@ -30,7 +31,7 @@ class ListOrderUseCase {
     return repository.getDistrict();
   }
 
-  Future<ResultCustom<Failure, List<RitListEntity>>> callGetRit(String search) {
-    return repository.getRit(search);
+  Future<ResultCustom<Failure, List<RitListEntity>>> callGetRit(ParamGetRIT param) {
+    return repository.getRit(param);
   }
 }

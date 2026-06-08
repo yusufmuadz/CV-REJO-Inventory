@@ -43,7 +43,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -67,7 +67,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get Users: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -97,7 +97,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get Transportations: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -123,7 +123,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get Loader Transportations: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -158,7 +158,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Add Assistant: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -185,7 +185,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Pending SO: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -243,7 +243,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error POST Item Product: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -272,7 +272,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Take It Transaction Driver: $e');
+      throw ServerException(message: '$e');
     }
   }
 }

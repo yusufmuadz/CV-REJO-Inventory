@@ -10,7 +10,6 @@ import '../controllers/scan_product_controller.dart';
 class ScanProductBinding extends Bindings {
   @override
   void dependencies() {
-
     /// UseCase
     Get.lazyPut<ScanProductUseCase>(() => ScanProductUseCase(Get.find()));
 
@@ -20,7 +19,9 @@ class ScanProductBinding extends Bindings {
     );
 
     /// Repository
-    Get.lazyPut<ScanProductRepository>(() => ScanProductRepositoryImpl(Get.find()));
+    Get.lazyPut<ScanProductRepository>(
+      () => ScanProductRepositoryImpl(Get.find()),
+    );
 
     Get.lazyPut<ScanProductController>(
       () => ScanProductController(scanProductUseCase: Get.find()),

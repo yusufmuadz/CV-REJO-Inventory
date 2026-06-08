@@ -39,7 +39,7 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -66,7 +66,7 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get Item Product: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -108,7 +108,7 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error POST Item Product: $e');
+      throw ServerException(message: '$e');
     }
   }
 }

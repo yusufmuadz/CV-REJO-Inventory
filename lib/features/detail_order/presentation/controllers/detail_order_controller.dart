@@ -198,7 +198,7 @@ class DetailOrderController extends GetxController {
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data: $e');
+      dialogService.showError('Failed', '$e');
     } finally {
       isLoading.value = false;
     }

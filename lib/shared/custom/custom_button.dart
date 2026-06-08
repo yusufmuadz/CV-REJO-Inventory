@@ -133,6 +133,40 @@ class CustomButton {
   }
 
   static Widget bottomBarIcon({required HomeController controller}) {
+    final List<BottomNavigationBarItem> items = [
+      BottomNavigationBarItem(
+        icon: Icon(Ionicons.home_outline, color: Color(0xFF8890a0)),
+        activeIcon: Icon(Ionicons.home, color: Color(0xFF06823f)),
+        label: 'Home',
+      ),
+      // BottomNavigationBarItem(
+      //   icon: Icon(
+      //     Ionicons.document_text_outline,
+      //     color: Color(0xFF8890a0),
+      //   ),
+      //   activeIcon: Icon(Ionicons.document_text, color: Color(0xFF06823f)),
+      //   label: 'Pesanan',
+      // ),
+      if (AppRole.isDriver)
+        BottomNavigationBarItem(
+          icon: Icon(Ionicons.alert_circle_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
+          label: 'Kendala',
+        ),
+      BottomNavigationBarItem(
+        icon: Icon(Ionicons.person_circle_outline, color: Color(0xFF8890a0)),
+        activeIcon: Icon(
+          Ionicons.person_circle_sharp,
+          color: Color(0xFF06823f),
+        ),
+        label: 'Profil',
+      ),
+    ];
+
+    if (items.length < 2) {
+      return const SizedBox.shrink();
+    }
+    
     return SizedBox(
       height: 60,
       child: BottomNavigationBar(
@@ -146,41 +180,7 @@ class CustomButton {
         onTap: (index) {
           controller.changePage(index);
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Ionicons.home_outline, color: Color(0xFF8890a0)),
-            activeIcon: Icon(Ionicons.home, color: Color(0xFF06823f)),
-            label: 'Home',
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(
-          //     Ionicons.document_text_outline,
-          //     color: Color(0xFF8890a0),
-          //   ),
-          //   activeIcon: Icon(Ionicons.document_text, color: Color(0xFF06823f)),
-          //   label: 'Pesanan',
-          // ),
-          if (AppRole.isDriver)
-            BottomNavigationBarItem(
-              icon: Icon(
-                Ionicons.alert_circle_outline,
-                color: Color(0xFF8890a0),
-              ),
-              activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
-              label: 'Kendala',
-            ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Ionicons.person_circle_outline,
-              color: Color(0xFF8890a0),
-            ),
-            activeIcon: Icon(
-              Ionicons.person_circle_sharp,
-              color: Color(0xFF06823f),
-            ),
-            label: 'Profil',
-          ),
-        ],
+        items: items,
       ),
     );
   }

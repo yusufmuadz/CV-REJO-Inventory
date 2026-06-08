@@ -82,8 +82,13 @@ class RitConstraint extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Obx(
-          () => Expanded(
+        Obx(() {
+          if (controller.ritConstraints.isEmpty) {
+            return Expanded(
+              child: const Center(child: Text('Belum ada kendala')),
+            );
+          }
+          return Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
                 final item = controller.ritConstraints[index];
@@ -183,8 +188,8 @@ class RitConstraint extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: controller.ritConstraints.length,
             ),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }

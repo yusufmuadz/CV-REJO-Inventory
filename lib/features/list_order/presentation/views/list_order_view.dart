@@ -56,9 +56,15 @@ class ListOrderView extends StatelessWidget {
   }
 
   Widget _buildEmptyOrder() {
+    String message = 'Tidak ada pesanan';
+
+    if (controller.pageIndex.value == 0) {
+      message = 'Tidak ada RIT';
+    }
+    
     return SliverFillRemaining(
       hasScrollBody: false, // Mencegah stretching konten
-      child: const Center(child: Text('Tidak ada pesanan')),
+      child: Center(child: Text(message)),
     );
   }
 

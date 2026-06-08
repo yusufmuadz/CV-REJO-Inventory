@@ -131,7 +131,7 @@ class ListHistoryOrderController extends GetxController
     } catch (e) {
       loadState.value = LoadState.error;
       if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data: $e');
+      dialogService.showError('Failed', '$e');
     } finally {
       // loadState.value = LoadState.idle;
     }

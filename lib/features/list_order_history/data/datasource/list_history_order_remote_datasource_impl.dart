@@ -75,7 +75,7 @@ class ListHistoryOrderRemoteDataSourceImpl
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Get District: $e');
+      throw ServerException(message: '$e');
     }
   }
 }

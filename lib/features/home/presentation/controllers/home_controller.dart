@@ -44,8 +44,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   final totalOrder = 0.obs;
   final totalOrderHistory = 0.obs;
-  final versionApp = '2.0.0'.obs;
-  final updateVersionApp = '29 Mei 2026'.obs;
+  final versionApp = '3.0.0'.obs;
+  final updateVersionApp = '12 Mei 2026'.obs;
 
   final searchController = TextEditingController();
   final tabIndex = 0.obs;
@@ -104,15 +104,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     _getOrder(isRefresh: true);
   }
 
-  void routeTo() {
+  void routeTo({bool isRitToday = true}) {
     final invoice = GetStorage().read('noInvoice') ?? '';
-    final statusChecker2 = GetStorage().read('status_checker2') ?? '';
     _getLocalRit();
-
-    // if (AppRole.isDriver) {
-    //   Get.toNamed(Routes.RIT_INFORMATION);
-    //   return;
-    // }
 
     if (invoice.isNotEmpty) {
       GetStorage().remove('noInvoice');
@@ -123,16 +117,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
+          'isRitToday': isRitToday,
         },
       );
-      // Get.toNamed(
-      //   Routes.DETAIL_ORDER,
-      //   arguments: {
-      //     'invoice': invoice,
-      //     'routeFrom': 'home',
-      //     'status_checker2': statusChecker2,
-      //   },
-      // );
     } else {
       GetStorage().remove('noInvoice');
       if (AppRole.isDriver && rit.isNotEmpty) {
@@ -155,6 +142,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
+          'isRitToday': isRitToday,
         },
       );
     }
@@ -302,6 +290,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     GetStorage().remove('tanggalRit');
     AppRole.logout();
     _tokenStorage.clear();
+    tabIndex.value = 0;
     Get.offAllNamed(Routes.LOGIN);
   }
 
@@ -331,7 +320,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void _changeStatusBar(int index) {
     bool isDark = true;
 
-    if (index > 1) {
+    if ((AppRole.isDriver && index > 1) || (!AppRole.isDriver && index == 1)) {
       isDark = false;
     }
 

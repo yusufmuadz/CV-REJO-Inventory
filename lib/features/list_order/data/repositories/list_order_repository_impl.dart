@@ -5,6 +5,7 @@ import '../../../../core/error/failures.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/rit_list_entity.dart';
 import '../../domain/entities/take_it_order_entity.dart';
+import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/params/take_it_param.dart';
 import '../../domain/repositories/list_order_repository.dart';
@@ -58,9 +59,9 @@ class ListOrderRepositoryImpl implements ListOrderRepository {
   }
 
   @override
-  Future<ResultCustom<Failure, List<RitListEntity>>> getRit(String search) async {
+  Future<ResultCustom<Failure, List<RitListEntity>>> getRit(ParamGetRIT param) async {
     try {
-      final response = await dataSource.getRit(search);
+      final response = await dataSource.getRit(param);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

@@ -20,7 +20,20 @@ class ListOrderPage extends GetView<ListOrderController> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('List Pesanan'),
+          title: Obx(() {
+            String title = 'List Pesanan';
+            String dateName = 'Hari Ini';
+
+            if (controller.pageIndex.value == 0) {
+              title = 'List RIT';
+            }
+
+            if (!controller.isRitToday.value) {
+              dateName = 'Lampau';
+            }
+
+            return Text('$title $dateName');
+          }),
           elevation: 1,
           centerTitle: false,
           systemOverlayStyle: SystemUiOverlayStyle(
@@ -44,14 +57,48 @@ class ListOrderPage extends GetView<ListOrderController> {
                 child: IconButton(
                   icon: const Icon(Icons.filter_list),
                   onPressed: () {
-                    // if (controller.listDistrict.isEmpty) {
-                    //   controller.getDistrict();
-                    // }
-
                     Get.bottomSheet(
                       SortWidget(controller: controller),
                       isScrollControlled: true,
                     );
+                  },
+                ),
+              ),
+            ),
+            Obx(
+              () => Visibility(
+                visible: !controller.isRitToday.value,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 22,
+                    color: Color.fromARGB(205, 138, 80, 18),
+                  ),
+                  onPressed: () async {
+                    DateTime initialDate = DateTime.now();
+
+                    if (controller.pastRitDateSelected.isNotEmpty) {
+                      initialDate = DateTime.parse(controller.pastRitDateSelected.value);
+                    }
+
+                    final selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: initialDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now().add(const Duration(days: 360)),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (selectedDate != null) {
+                      controller.pastRitDateSelected.value = selectedDate.toString();
+                      controller.onRefreshTransaction();
+                    }
                   },
                 ),
               ),

@@ -50,7 +50,7 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error RIT Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -100,7 +100,7 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Pending Order: $e');
+      throw ServerException(message: '$e');
     }
   }
 
@@ -140,7 +140,7 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
     } catch (e) {
-      throw ServerException(message: 'error Home Get Transaction: $e');
+      throw ServerException(message: '$e');
     }
   }
 }
