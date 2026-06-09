@@ -370,6 +370,7 @@ class DetailOrderController extends GetxController {
         case Success(:final data):
           if (data.status) {
             isSelect.value = !isSelect.value;
+            statusDriver.value = 'ongoing';
             dialogService.showSuccessSnackbar('Berhasil Mengambil Transaksi');
           } else {
             if (Get.isDialogOpen == true) Get.back();

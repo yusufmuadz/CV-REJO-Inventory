@@ -135,13 +135,24 @@ class RitPage extends GetView<RitController> {
           return;
         }
 
+        final dateRit = GetStorage().read('tanggalRit') ?? '';
+        final isRitToday = GetStorage().read('isRitToday') ?? false;
+
         GetStorage().remove('noInvoice');
         GetStorage().remove('city');
         GetStorage().remove('colorRit');
-        GetStorage().remove('tanggalRit');
         controller.isArrive.value = true;
 
-        Get.toNamed(Routes.LIST_ORDER, arguments: {'routeFrom': 'home'});
+        ///// ========== KE HALAMAN LIST RIT =========== ///// 
+
+        Get.toNamed(
+          Routes.LIST_ORDER,
+          arguments: {
+            'routeFrom': 'home',
+            'tanggalRit': dateRit,
+            'isRitToday': isRitToday,
+          },
+        );
 
         controller.dialogService.showSuccessSnackbar(
           'Berhasil Menyimpan Pesanan',

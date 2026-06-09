@@ -25,14 +25,16 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     ParamsGetTransaction params,
   ) async {
     try {
-      String date = '';
+      String? date = params.dateRit;
 
-      if (params.pastRit == true && params.dateRit != null) {
-        date = DateFormat(
-          'yyyy-MM-dd',
-        ).format(DateTime.parse(params.dateRit ?? '2026-01-01'));
+      if (params.pastRit == true) {
+        if (date != null) {
+          date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+        } else {
+          date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        }
       }
-      
+
       Map<String, String> body = {
         if (params.limit != null) 'limit': '${params.limit}',
         if (params.page != null) 'page': '${params.page}',
@@ -41,7 +43,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'daterit': date,
+        if (params.dateRit != null) 'daterit': date ?? '',
       };
 
       String url = 'all';
@@ -136,17 +138,19 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
   @override
   Future<ResponseModelGetRit> getRit(ParamGetRIT params) async {
     try {
-      String date = '';
+      String? date = params.date;
 
-      if (params.isPastRit && params.date != null) {
-        date = DateFormat(
-          'yyyy-MM-dd',
-        ).format(DateTime.parse(params.date ?? '2026-01-01'));
+      if (params.isPastRit == true) {
+        if (date != null) {
+          date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+        } else {
+          date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        }
       }
 
       Map<String, String> body = {
         if (params.search != null) 'search': '${params.search}',
-        if (params.isPastRit) 'date': date,
+        if (params.isPastRit) 'date': date ?? '',
       };
 
       String url = 'getrit';

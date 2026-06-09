@@ -251,10 +251,17 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   Future<ResponseModelBasic> takeItTransactionDriver(
     ParamsAddAssistant params,
   ) async {
+    debugPrint('Invoice Params: ${params.invoice}');
+
     try {
+      final Map<String, dynamic> requestData = {
+        "invoice": params.invoice.toString().trim(), // Trim untuk hapus spasi
+      };
+
       final response = await dioClient.post(
         ApiEndpoints.takeItTransactionDriver,
-        data: {"invoice": params.invoice},
+        contentType: Headers.formUrlEncodedContentType,
+        data: requestData,
       );
 
       // debugPrint('Data Take It Transaction Driver Remote DataSource: ${response.data}');

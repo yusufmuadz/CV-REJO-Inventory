@@ -65,48 +65,6 @@ class ListOrderPage extends GetView<ListOrderController> {
                 ),
               ),
             ),
-            Obx(
-              () => Visibility(
-                visible:
-                    controller.pageIndex.value == 0 &&
-                    !controller.isRitToday.value,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_month_outlined,
-                    size: 22,
-                    color: Color.fromARGB(205, 138, 80, 18),
-                  ),
-                  onPressed: () async {
-                    DateTime initialDate = DateTime.now();
-
-                    if (controller.pastRitDateSelected.isNotEmpty) {
-                      initialDate = DateTime.parse(
-                        controller.pastRitDateSelected.value,
-                      );
-                    }
-
-                    final selectedDate = await showDatePicker(
-                      context: context,
-                      initialDate: initialDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now().add(const Duration(days: 360)),
-                      builder: (context, child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(),
-                          child: child!,
-                        );
-                      },
-                    );
-
-                    if (selectedDate != null) {
-                      controller.pastRitDateSelected.value = selectedDate
-                          .toString();
-                      controller.onRefreshTransaction();
-                    }
-                  },
-                ),
-              ),
-            ),
           ],
         ),
         body: Obx(() {

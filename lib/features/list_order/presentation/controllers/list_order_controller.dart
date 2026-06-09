@@ -75,6 +75,12 @@ class ListOrderController extends GetxController {
       isRitToday.value = args['isRitToday'] ?? false;
       final page = args['page'] ?? 0;
 
+      // if (tanggalRit.isEmpty) {
+      //   tanggalRit.value = DateTime.now().toString();
+      // }
+
+      debugPrint('DATE RIT : ${tanggalRit.value}');
+
       if (AppRole.isDriver) {
         pageIndex.value = page;
       } else {

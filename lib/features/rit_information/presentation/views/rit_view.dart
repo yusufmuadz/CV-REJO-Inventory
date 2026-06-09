@@ -21,7 +21,10 @@ class RitView extends StatelessWidget {
           child: BoxRit(
             rit: controller.isDistrictSelected.value,
             dateRit: controller.tanggalRit.value,
-            onPressed: () => _openChangeRit(),
+            onPressed: () {
+              controller.registerListController();
+              _openChangeRit();
+            },
           ),
         ),
         Divider(thickness: 1, height: 1, color: Colors.grey.shade100),
@@ -94,26 +97,28 @@ class RitView extends StatelessWidget {
       titlePadding: const EdgeInsets.all(10),
       insetPadding: const EdgeInsets.all(20),
       contentPadding: const EdgeInsets.all(5),
-      content: ListView.separated(
-        itemCount: controller.listOrderController.listRit.length,
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemBuilder: (context, index) {
-          final item = controller.listOrderController.listRit[index];
+      content: Obx(
+        () => ListView.separated(
+          itemCount: controller.listOrderController.listRit.length,
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final item = controller.listOrderController.listRit[index];
 
-          return InkWell(
-            onTap: () => controller.changeRit(item),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: BoxRit(
-                rit: item.city,
-                dateRit: item.tanggalRit,
-                colorBox: const Color.fromARGB(255, 197, 221, 245),
+            return InkWell(
+              onTap: () => controller.changeRit(item),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: BoxRit(
+                  rit: item.city,
+                  dateRit: item.tanggalRit,
+                  colorBox: const Color.fromARGB(255, 197, 221, 245),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

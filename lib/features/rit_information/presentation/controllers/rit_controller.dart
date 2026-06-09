@@ -46,6 +46,8 @@ class RitController extends GetxController {
   final mediaFileListKM = <XFile>[].obs;
   final mediaFileListTangki = <XFile>[].obs;
   final mediaFileListSJ = <XFile>[].obs;
+  final mediaFileListInvoice = <XFile>[].obs;
+  final mediaFileListTransportMoney = <XFile>[].obs;
   final mediaFileReason = <XFile>[].obs;
 
   final mediaFileFrontTransport = Rx<XFile>(XFile(''));
@@ -83,10 +85,7 @@ class RitController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (!Get.isRegistered<ListOrderController>()) {
-      ListOrderBinding().dependencies();
-      listOrderController = Get.find<ListOrderController>();
-    }
+    registerListController();
 
     final args = Get.arguments;
     if (args != null) {
@@ -125,12 +124,6 @@ class RitController extends GetxController {
 
   Future<void> acceptRit() async {
     isAccept.value = !isAccept.value;
-    // pageIndex.value = 1;
-    // pageController.animateToPage(
-    //   1,
-    //   duration: const Duration(milliseconds: 300),
-    //   curve: Curves.easeInOut,
-    // );
   }
 
   void selectAll() {
@@ -335,6 +328,13 @@ class RitController extends GetxController {
     _getOrder(isRefresh: true);
 
     Get.back();
+  }
+
+  void registerListController() {
+    if (!Get.isRegistered<ListOrderController>()) {
+      ListOrderBinding().dependencies();
+      listOrderController = Get.find<ListOrderController>();
+    }
   }
 
   bool emptyPath(XFile file) {

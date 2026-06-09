@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/theme/text_styles.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../home/presentation/sample/app_colors.dart';
 import '../../domain/entities/rit_list_entity.dart';
@@ -39,79 +42,159 @@ class ListRitView extends StatelessWidget {
 
   Widget _buildOrder({required int index}) {
     RitListEntity ritOrder = controller.listRit[index];
+    String onProgressPO = '0';
+    final colorRIT = int.parse('0xFF${ritOrder.color.replaceAll('#', '')}');
 
-    return Obx(() {
-      final isSelected =
-          controller.isSelected.value == ritOrder.city &&
-          controller.tanggalRit.value == ritOrder.tanggalRit;
+    if (AppRole.isPIC) {
+      onProgressPO = ritOrder.poPendingPic;
+    } else if (AppRole.isChecker1) {
+      onProgressPO = ritOrder.poPendingCheck1;
+    } else if (AppRole.isChecker2) {
+      onProgressPO = ritOrder.poPendingCheck2;
+    } else if (AppRole.isDriver) {
+      onProgressPO = ritOrder.poPendingDelivery;
+    }
 
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-        child: InkWell(
-          onTap: () => controller.takeItOrder(
-            rit: ritOrder.city,
-            clrRit: ritOrder.color,
-            tglRit: ritOrder.tanggalRit,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: isSelected ? 2 : 1,
-                color: isSelected
-                    ? const Color(0x4617ACF1)
-                    : Colors.grey.shade100,
-              ),
-              color: Color(
-                int.parse('0xFF${ritOrder.color.replaceAll('#', '')}'),
-              ),
-              borderRadius: BorderRadius.circular(7),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
+      child: InkWell(
+        onTap: () => controller.takeItOrder(
+          rit: ritOrder.city,
+          clrRit: ritOrder.color,
+          tglRit: ritOrder.tanggalRit,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(width: 1, color: Color(colorRIT)),
+              bottom: BorderSide(width: 1, color: Color(colorRIT)),
+              right: BorderSide(width: 1, color: Color(colorRIT)),
+              left: BorderSide(width: 7, color: Color(colorRIT)),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'RIT - ${ritOrder.city}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      '${ritOrder.totalPO} ${AppRole.isDriver ? 'SJ' : 'PO'}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  DateFormat(
-                    'dd MMMM yyyy',
-                  ).format(DateTime.parse(ritOrder.tanggalRit)),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w400,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRowContent(
+                title: 'NOMOR RIT',
+                value: 'Tanggal',
+                color: const Color(0xFF524439),
+                fontWeightTitle: FontWeight.w600,
+              ),
+              const SizedBox(height: 3),
+              _buildRowContent(
+                title: 'RIT - ${ritOrder.city}',
+                value: DateFormat(
+                  'dd MMMM yyyy',
+                ).format(DateTime.parse(ritOrder.tanggalRit)),
+                color: const Color(0xFF151C27),
+                fontWeightTitle: FontWeight.bold,
+                fontWeightValue: FontWeight.w500,
+              ),
+              const Divider(thickness: 1, height: 24, color: Color(0xFFE7EEFE)),
+              Row(
+                children: [
+                  Icon(
+                    Icons.inventory_2_outlined,
+                    size: 18,
+                    color: const Color(0xFF8A5012),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: '${ritOrder.totalPO} ',
+                      style: TextStyles.basicTextStyle(
+                        fontSize: 16,
+                        fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF151C27),
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Total PO',
+                          style: TextStyles.basicTextStyle(
+                            fontSize: 16,
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF524439),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    CupertinoIcons.cube_box,
+                    size: 18,
+                    color: const Color(0xFFD68F4D),
+                  ),
+                  const SizedBox(width: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: '$onProgressPO ',
+                      style: TextStyles.basicTextStyle(
+                        fontSize: 16,
+                        fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF151C27),
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'PO Berjalan',
+                          style: TextStyles.basicTextStyle(
+                            fontSize: 16,
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF524439),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRowContent({
+    required String title,
+    required String value,
+    required Color color,
+    required FontWeight fontWeightTitle,
+    FontWeight fontWeightValue = FontWeight.w400,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyles.basicTextStyle(
+              fontSize: 16,
+              fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+              fontWeight: fontWeightTitle,
+              color: color,
             ),
           ),
         ),
-      );
-    });
+        const SizedBox(width: 10),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: fontWeightValue,
+            color: color,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {

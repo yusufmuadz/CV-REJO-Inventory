@@ -77,23 +77,6 @@ class BoxRit extends StatelessWidget {
               visible: onPressed != null,
               child: Icon(CupertinoIcons.arrow_right_arrow_left_circle, size: 24),
             ),
-            // const SizedBox(width: 10),
-            // Container(
-            //   padding: const EdgeInsets.all(5),
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(7),
-            //     color: const Color(0xFFd6f2dd),
-            //   ),
-            //   child: Text(
-            //     'Selesai',
-            //     style: _textStyle(
-            //       fontSize: 12,
-            //       fontWeight: FontWeight.w600,
-            //       letterSpacing: 0.45,
-            //       color: Color(0xFF69b47c),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

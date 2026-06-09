@@ -122,7 +122,7 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
 
       String queryString = Uri(queryParameters: body).query;
       final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll}?$queryString',
+        '${ApiEndpoints.fetchTransactionAll('all')}?$queryString',
       );
 
       // debugPrint('Data Home Get Transaction Remote DataSource: ${response.data}');

@@ -63,9 +63,12 @@ Future<void> openInputQtyDialog({
                   controller.isMaxFailureChecker.value),
           onPressed1: () {
             if (controller.isMaxFailureChecker.value) {
+              ///// ========== KE HALAMAN LIST PESANAN =========== /////
+
               final rit = GetStorage().read('city') ?? '';
               final colorRit = GetStorage().read('colorRit') ?? '';
               final tanggalRit = GetStorage().read('tanggalRit') ?? '';
+              final isRitToday = GetStorage().read('isRitToday') ?? false;
 
               Get.toNamed(
                 Routes.LIST_ORDER,
@@ -74,6 +77,7 @@ Future<void> openInputQtyDialog({
                   'city': rit,
                   'colorRit': colorRit,
                   'tanggalRit': tanggalRit,
+                  'isRitToday': isRitToday,
                 },
               );
               return;

@@ -12,6 +12,7 @@ class CustomCardList extends StatelessWidget {
   final Function()? onCheckboxChanged;
   final OrderEntity transaction;
   final String? color;
+  final bool isHistory;
 
   const CustomCardList({
     super.key,
@@ -21,6 +22,7 @@ class CustomCardList extends StatelessWidget {
     this.showSelection = false,
     this.isSelected = '',
     this.color,
+    this.isHistory = false,
   });
 
   @override
@@ -84,6 +86,7 @@ class CustomCardList extends StatelessWidget {
                   Column(
                     children: [
                       _buildInfoText(
+                        showStatus: !isHistory,
                         title: 'ID Transaksi',
                         value: AppRole.isDriver
                             ? transaction.suratJalan!.replaceAll('SJ/', '')
@@ -107,6 +110,7 @@ class CustomCardList extends StatelessWidget {
                       _buildInfoIconText(
                         image: Assets.icons.district.path,
                         value: transaction.district,
+                        isDistrict: true,
                       ),
                     ],
                   ),
@@ -172,12 +176,20 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoText({required String title, required String value}) {
+  Widget _buildInfoText({
+    required String title,
+    required String value,
+    bool showStatus = false,
+  }) {
     final statusLoader = transaction.loader?.status ?? '';
     bool isShowStatus = true;
 
     if (AppRole.isChecker2 && statusLoader == 'completed') {
       isShowStatus = false;
+    }
+
+    if (AppRole.isDriver) {
+      isShowStatus = showStatus;
     }
 
     return Row(
@@ -220,7 +232,11 @@ class CustomCardList extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoIconText({required String image, required String value}) {
+  Widget _buildInfoIconText({
+    required String image,
+    required String value,
+    bool isDistrict = false,
+  }) {
     return Row(
       children: [
         Container(
@@ -236,6 +252,7 @@ class CustomCardList extends StatelessWidget {
             style: _textStyle(fontSize: 14, fontWeight: FontWeight.w400),
           ),
         ),
+        Visibility(visible: isDistrict, child: const SizedBox(width: 30)),
       ],
     );
   }

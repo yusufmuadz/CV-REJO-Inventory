@@ -149,6 +149,7 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         },
         isSelected: '',
         showSelection: false,
+        isHistory: true,
         transaction: transaction,
       ),
     );

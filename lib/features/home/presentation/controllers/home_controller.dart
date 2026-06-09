@@ -136,6 +136,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
         },
       );
     } else {
+      ///// ========== KE HALAMAN LIST RIT/PESANAN =========== /////
+      ///// ================== JIKA ADA RIT =================== /////
+
       Get.toNamed(
         Routes.LIST_ORDER,
         arguments: {

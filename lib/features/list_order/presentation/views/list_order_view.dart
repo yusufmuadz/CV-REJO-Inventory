@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../shared/custom/custom_search_field.dart';
@@ -19,6 +22,90 @@ class ListOrderView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Visibility(
+          visible:
+              !controller.isRitToday.value && controller.pageIndex.value == 0,
+          child: InkWell(
+            onTap: () async {
+              DateTime initialDate = DateTime.now();
+
+              if (controller.pastRitDateSelected.isNotEmpty) {
+                initialDate = DateTime.parse(
+                  controller.pastRitDateSelected.value,
+                );
+              }
+
+              final selectedDate = await showDatePicker(
+                context: context,
+                initialDate: initialDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now().add(const Duration(days: 360)),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (selectedDate != null) {
+                controller.pastRitDateSelected.value = selectedDate.toString();
+                controller.onRefreshTransaction();
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 8, 16, 2),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFE2E8F8)),
+                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFFF0F3FF),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 18,
+                    color: const Color(0xFF524439),
+                  ),
+                  const SizedBox(width: 6),
+                  Obx(
+                    () => Visibility(
+                      visible: controller.pastRitDateSelected.isNotEmpty,
+                      child: Text(
+                        DateFormat('dd MMM yyyy').format(
+                          DateTime.parse(controller.pastRitDateSelected.value),
+                        ),
+                        style: TextStyles.basicTextStyle(
+                          fontSize: 16,
+                          fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF151C27),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Ubah Tanggal',
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 16,
+                      fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF8A5012),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.edit_calendar_outlined,
+                    size: 18,
+                    color: Color(0xFF8A5012),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
         Visibility(
           visible: !AppRole.isPIC && controller.pageIndex.value == 1,
           child: Container(
@@ -61,7 +148,7 @@ class ListOrderView extends StatelessWidget {
     if (controller.pageIndex.value == 0) {
       message = 'Tidak ada RIT';
     }
-    
+
     return SliverFillRemaining(
       hasScrollBody: false, // Mencegah stretching konten
       child: Center(child: Text(message)),

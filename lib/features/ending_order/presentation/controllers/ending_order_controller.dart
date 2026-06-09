@@ -19,7 +19,9 @@ class EndingOrderController extends GetxController {
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
   final rit = ''.obs;
+  final dateRit = ''.obs;
   final colorRit = ''.obs;
+  final isRitToday = false.obs;
 
   final statusChecker2 = ''.obs;
   final statatusDriver = ''.obs;
@@ -43,7 +45,10 @@ class EndingOrderController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     rit.value = GetStorage().read('city') ?? '';
+    dateRit.value = GetStorage().read('tanggalRit') ?? '';
     colorRit.value = GetStorage().read('colorRit') ?? '';
+    isRitToday.value = GetStorage().read('isRitToday') ?? false;
+
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
@@ -110,6 +115,9 @@ class EndingOrderController extends GetxController {
                 // if (data.totalPO != null && data.totalPO == '0') {
                 //   GetStorage().remove('city');
                 // }
+
+                ///// ========== KE HALAMAN LIST PESANAN =========== /////
+
                 GetStorage().remove('noInvoice');
                 GetStorage().remove('status_checker2');
                 Get.offAllNamed(
@@ -117,7 +125,9 @@ class EndingOrderController extends GetxController {
                   arguments: {
                     'routeFrom': 'endingOrder',
                     'city': rit.value,
+                    'tanggalRit': dateRit.value,
                     'colorRit': colorRit.value,
+                    'isRitToday': isRitToday.value,
                   },
                 );
               }
@@ -130,7 +140,8 @@ class EndingOrderController extends GetxController {
           String pesan = message;
 
           if (message.contains('Bad state: No element')) {
-            pesan = 'Kemungkinan pesanan sudah disimpan sebelumnya. Silakan cek di history pesanan.';
+            pesan =
+                'Kemungkinan pesanan sudah disimpan sebelumnya. Silakan cek di history pesanan.';
           }
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', pesan);
@@ -174,7 +185,13 @@ class EndingOrderController extends GetxController {
               GetStorage().remove('noInvoice');
               Get.offAllNamed(
                 Routes.LIST_ORDER,
-                arguments: {'routeFrom': 'endingOrder'},
+                arguments: {
+                  'routeFrom': 'endingOrder',
+                  'city': rit.value,
+                  'tanggalRit': dateRit.value,
+                  'colorRit': colorRit.value,
+                  'isRitToday': isRitToday.value,
+                },
               );
             },
           );

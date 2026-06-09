@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/services/storage_service.dart';
 import '../../../../routes/app_pages.dart';
@@ -37,12 +38,22 @@ class SplashController extends GetxController {
         // await Get.forceAppUpdate();
         Get.offAllNamed(Routes.HOME);
       } else {
+        _removeStorage();
         Get.offAllNamed(Routes.LOGIN);
       }
     } catch (e) {
+      _removeStorage();
       Get.offAndToNamed(Routes.LOGIN);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _removeStorage() {
+    GetStorage().remove('noInvoice');
+    GetStorage().remove('user');
+    GetStorage().remove('city');
+    GetStorage().remove('colorRit');
+    GetStorage().remove('tanggalRit');
   }
 }

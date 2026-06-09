@@ -158,7 +158,7 @@ class DioClient {
   }
 
   // Generic POST
-  Future<Response> post(String path, {dynamic data}) async {
+  Future<Response> post(String path, {dynamic data, String? contentType}) async {
     try {
       return await dio.post(
         path,
@@ -168,6 +168,7 @@ class DioClient {
             "Content-Type": "application/json",
             "Accept": "application/json",
           },
+          contentType: contentType ?? Headers.jsonContentType,
           method: "POST",
           validateStatus: (status) => status != null && status < 500,
         ),
