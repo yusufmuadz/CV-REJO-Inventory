@@ -231,6 +231,14 @@ class ContentDetailOrderWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Visibility(
+            visible: controller.isFromHistory.value,
+            child: _buildInfoContent(
+              title: 'Penanggung Jawab PO',
+              value: 'PENANGGUNG JAWAB PO',
+              icon: Icons.groups_outlined,
+            ),
+          ),
           _buildInfoContent(
             title: 'Nama Penerima',
             value: namePenerima,
@@ -351,6 +359,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
 
                   return InkWell(
                     onTap: () => _popupDetailItem(
+                      idProduct: orderDetail?.barcode ?? '-',
                       nameProduct: orderDetail?.item ?? '-',
                       qty: orderDetail?.qty ?? '-',
                       location: orderDetail?.locationRack ?? '-',
@@ -381,7 +390,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${orderDetail?.item}',
+                                  '${orderDetail?.barcode}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyles.basicTextStyle(
@@ -532,13 +541,14 @@ class ContentDetailOrderWidget extends StatelessWidget {
   }
 
   _popupDetailItem({
+    required String idProduct,
     required String nameProduct,
     required String qty,
     required String location,
     required String color,
   }) {
     controller.dialogService.defaultDialog(
-      height: 0.45,
+      height: 0.50,
       title: 'Detail Produk',
       onPressed2: () => Get.back(),
       singleButton: true,
@@ -558,6 +568,12 @@ class ContentDetailOrderWidget extends StatelessWidget {
           children: [
             const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
             const SizedBox(height: 16),
+            _buildBoxIconText(
+              title: 'Id Produk',
+              value: idProduct,
+              icon: Icons.fingerprint_outlined,
+            ),
+
             _buildBoxIconText(
               title: 'Nama Produk',
               value: nameProduct,

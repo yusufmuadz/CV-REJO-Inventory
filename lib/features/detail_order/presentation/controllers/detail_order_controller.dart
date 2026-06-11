@@ -33,6 +33,8 @@ class DetailOrderController extends GetxController {
   final routeFrom = ''.obs;
   final takeItOrder = false.obs;
 
+  final isFromHistory = false.obs;
+
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
   final statusDriver = ''.obs;
@@ -92,6 +94,14 @@ class DetailOrderController extends GetxController {
       if (AppRole.isDriver && statusDriver.value == 'ongoing') {
         isSelect.value = true;
       }
+
+      if (routeFrom.value == 'listHistoryOrder') {
+        isFromHistory.value = true;
+      }
+
+      // debugPrint('No Invoice : ${noInvoice.value}');
+      // debugPrint('Route From : ${routeFrom.value}');
+      // debugPrint('Take It Order : ${takeItOrder.value}');
       // debugPrint('Status Checker 2 : ${statusChecker2.value}');
       // debugPrint('Status Loader : ${statusLoader.value}');
     }

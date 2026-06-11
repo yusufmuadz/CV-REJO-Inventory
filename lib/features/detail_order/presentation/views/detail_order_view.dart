@@ -23,7 +23,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
           backgroundColor: const Color(0xFFfafaff),
           appBar: AppBar(
             title: Text(
-              'Detail ${controller.routeFrom.value == 'listHistoryOrder' ? 'History ' : ''}Pesanan',
+              'Detail ${controller.isFromHistory.value ? 'History ' : ''}Pesanan',
             ),
             elevation: 1,
             centerTitle: false,
@@ -90,7 +90,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
           }),
           bottomNavigationBar: Obx(() {
             if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
-                controller.routeFrom.value == 'listHistoryOrder' ||
+                controller.isFromHistory.value ||
                 controller.isLoading.value) {
               return const SizedBox.shrink();
             }

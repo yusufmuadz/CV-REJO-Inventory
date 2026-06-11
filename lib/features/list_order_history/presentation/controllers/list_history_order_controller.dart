@@ -160,4 +160,22 @@ class ListHistoryOrderController extends GetxController
       isLoadingSort.value = false;
     }
   }
+
+  void reorderOrders(int oldIndex, int newIndex) {
+    // 1. Sesuaikan index (quirk bawaan Flutter)
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+
+    // 2. Pindahkan item di dalam list
+    final item = orders.removeAt(oldIndex);
+    orders.insert(newIndex, item);
+
+    // 3. (Opsional) Jika Anda menggunakan GetBuilder, Anda bisa memanggil update()
+    // TAPI baca "Catatan Penting" di bawah agar animasi tidak rusak!
+    // update(['orders']); 
+
+    // 4. (Opsional) Panggil API untuk menyimpan urutan baru ke server
+    // _saveNewOrderToServer();
+  }
 }

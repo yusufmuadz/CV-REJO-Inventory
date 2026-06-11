@@ -55,10 +55,10 @@ class AssistantDialog {
         );
       },
       onPressed2: () {
-        if (!visible1) {
-          debugPrint('Lanjut');
-          return;
-        }
+        // if (!visible1) {
+        //   debugPrint('Lanjut');
+        //   return;
+        // }
         Get.toNamed(
           Routes.ENDING_ORDER,
           arguments: {

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -91,11 +93,62 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
   }
 
   Widget _buildEmptyOrder() {
-    return SliverFillRemaining(
-      hasScrollBody: false, // Mencegah stretching konten
-      child: const Center(child: Text('Tidak ada pesanan')),
-    );
+    return const Center(child: Text('Tidak ada pesanan'));
   }
+
+  //////======== AFTER DRAG & DROP ========//////
+
+  // Widget _buildContent() {
+  //   if (controller.orders.isEmpty) {
+  //     return _buildEmptyOrder();
+  //   }
+
+  //   return ReorderableListView.builder(
+  //     itemCount: controller.orders.length,
+  //     scrollController: controller.scrollController,
+  //     physics: const AlwaysScrollableScrollPhysics(),
+  //     padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+  //     itemBuilder: (context, index) {
+  //       // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
+  //       // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
+  //       return _buildOrder(index: index, margin: const EdgeInsets.only(bottom: 15));
+  //     },
+  //     footer:
+  //         (controller.loadState.value == LoadState.loadingMore ||
+  //             controller.loadState.value == LoadState.error ||
+  //             controller.loadState.value == LoadState.noMore)
+  //         ? _buildBottomIndicator(
+  //             controller.loadState.value,
+  //             controller.retryFetch,
+  //           )
+  //         : const SizedBox.shrink(),
+  //     proxyDecorator: (Widget child, int index, Animation<double> animation) {
+  //     return AnimatedBuilder(
+  //       animation: animation,
+  //       builder: (BuildContext context, Widget? child) {
+  //         // Animasi elevasi (shadow) saat diangkat
+  //         final double elevation = Tween<double>(begin: 0.0, end: 8.0).evaluate(animation);
+
+  //         return Material(
+  //           color: Colors.transparent,
+  //           elevation: elevation,
+  //           borderRadius: BorderRadius.circular(12), // Sesuaikan dengan sudut box Anda
+  //           clipBehavior: Clip.antiAlias,
+
+  //           // PANGGIL FUNGSI YANG SAMA, TAPI TANPA PADDING PEMBUNGKUS!
+  //           // Sehingga yang di-drag HANYA kotak visualnya saja.
+  //           child: _buildOrder(index: index),
+  //         );
+  //       },
+  //     );
+  //   },
+  //     onReorder: (int oldIndex, int newIndex) {
+  //       controller.reorderOrders(oldIndex, newIndex);
+  //     },
+  //   );
+  // }
+
+  //////======== SEBELUM DRAG & DROP ========//////
 
   Widget _buildContent() {
     return CustomScrollView(
