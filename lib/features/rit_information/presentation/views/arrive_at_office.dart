@@ -37,19 +37,16 @@ class ArriveAtOffice extends StatelessWidget {
         const SizedBox(height: 20),
         CustomImage().buildContentImage(
           title: 'Surat Jalan/Invoice',
-          controller: controller,
           mediaFileList: controller.mediaFileRecipientInvoice,
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(
           title: 'Bukti Transfer/Uang Cash Pembayaran',
-          controller: controller,
           mediaFileList: controller.mediaFileRecipientMoney,
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(
           title: 'Penggunaan Uang Perjalanan',
-          controller: controller,
           mediaFileList: controller.mediaFileRecipientMoneyRit,
         ),
       ],

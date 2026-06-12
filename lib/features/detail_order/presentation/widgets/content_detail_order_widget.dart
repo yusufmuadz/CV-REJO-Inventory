@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../rit_information/presentation/widgets/custom_image.dart';
 import '../controllers/detail_order_controller.dart';
 
 class ContentDetailOrderWidget extends StatelessWidget {
@@ -43,6 +44,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
           isStatusDriver: controller.statusDriver.value == 'completed',
         ),
         _buildInfoPesanan(),
+        Visibility(
+          visible: controller.isFromHistory.value,
+          child: _buildPreviewImage(),
+        ),
       ],
     );
   }
@@ -262,7 +267,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
             title: 'KOTA/KABUPATEN',
             value: district,
             icon: Icons.location_on_outlined,
-            mgBottom: isDriver ? 16 : 0,
+            mgBottom: 16,
           ),
           Visibility(
             visible: isDriver,
@@ -271,8 +276,14 @@ class ContentDetailOrderWidget extends StatelessWidget {
               title: 'Alamat Pengiriman',
               value: 'Jl. Jend. Sudirman No. 1, Jakarta Selatan',
               icon: Icons.apartment,
-              mgBottom: 0,
+              mgBottom: 16,
             ),
+          ),
+          _buildInfoContent(
+            title: 'Catatan',
+            value: '-',
+            icon: Icons.description_outlined,
+            mgBottom: 0,
           ),
         ],
       ),
@@ -284,20 +295,9 @@ class ContentDetailOrderWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _buildIconStyle(icon: Icons.inventory_2_outlined),
-              const SizedBox(width: 8),
-              Text(
-                'Pesanan',
-                style: TextStyles.basicTextStyle(
-                  fontSize: 16,
-                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily ?? 'Inter',
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF151C27),
-                ),
-              ),
-            ],
+          _buildTitleIconText(
+            title: 'Pesanan',
+            icon: Icons.inventory_2_outlined,
           ),
           const SizedBox(height: 20),
           Container(
@@ -461,6 +461,24 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildTitleIconText({required String title, required IconData icon}) {
+    return Row(
+      children: [
+        _buildIconStyle(icon: icon),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyles.basicTextStyle(
+            fontSize: 16,
+            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF151C27),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCheckBox({required bool check, required int index}) {
     if ((controller.statusChecker2.value == 'completed' &&
             !controller.isSelect.value) ||
@@ -569,7 +587,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
             const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
             const SizedBox(height: 16),
             _buildBoxIconText(
-              title: 'Id Produk',
+              title: 'Kode Produk',
               value: idProduct,
               icon: Icons.fingerprint_outlined,
             ),
@@ -662,6 +680,40 @@ class ContentDetailOrderWidget extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviewImage() {
+    final path =
+        '/data/user/0/com.example.cv_rejo/cache/scaled_3bc63cbc-36ea-48ea-8f5a-3f626ecb249e4335120780293089847.jpg';
+    final path2 =
+        '/data/user/0/com.example.cv_rejo/cache/scaled_d3f88841-c36d-4287-9dff-51bc574d80b2295637012260647764.jpg';
+    final path3 =
+        '/data/user/0/com.example.cv_rejo/cache/scaled_2c0f5da0-bafe-4356-bd48-ed3025c0f89f7908266508335097410.jpg';
+    RxList<XFile> mediaFileList = <XFile>[
+      XFile(path),
+      XFile(path2),
+      XFile(path3),
+    ].obs;
+
+    return _buildBoxStyle(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitleIconText(
+            title: 'Foto Semua Produk',
+            icon: Icons.image_outlined,
+          ),
+          const SizedBox(height: 20),
+          CustomImage().buildContentImage(
+            readOnly: true,
+            isPreview: true,
+            maxImage: mediaFileList.length,
+            title: 'Semuanya',
+            mediaFileList: mediaFileList,
           ),
         ],
       ),

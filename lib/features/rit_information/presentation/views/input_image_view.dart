@@ -208,7 +208,7 @@ class InputImageView extends StatelessWidget {
                     width: 60,
                     child: CustomImage().displayImage(
                       path: pathImage,
-                      onTap: () => controller.removeImage(
+                      onTapRemove: () => controller.removeImage(
                         indexImage ?? 0,
                         file,
                         mediaFileList,

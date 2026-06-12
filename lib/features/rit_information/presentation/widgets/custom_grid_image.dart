@@ -1,14 +1,13 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../controllers/rit_controller.dart';
 import 'custom_image.dart';
 
 class CustomGridImage extends StatelessWidget {
   final int maxImage;
   final int? plusLength;
+  final bool isPreview;
   final Function()? onAdd;
   final Function(int) onRemove;
   final RxList<XFile> mediaFileList;
@@ -20,6 +19,7 @@ class CustomGridImage extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.plusLength,
+    this.isPreview = false,
   });
 
   @override
@@ -37,10 +37,11 @@ class CustomGridImage extends StatelessWidget {
         itemBuilder: (context, index) {
           if (index < mediaFileList.length) {
             return CustomImage().displayImage(
+              isPreview: isPreview,
               path: mediaFileList[index].path,
-              onTap: () => onRemove(index),
+              onTapRemove: () => onRemove(index),
             );
-          } else if (mediaFileList.length < maxImage) {
+          } else if (mediaFileList.length < maxImage && !isPreview) {
             return Padding(
               padding: const EdgeInsets.all(5.0),
               child: CustomImage().addImage(onTap: onAdd),

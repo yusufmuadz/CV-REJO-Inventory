@@ -11,6 +11,7 @@ import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/thousand_formatter.dart';
 import '../../../rit_information/presentation/widgets/custom_image.dart';
+import 'app_bar_widget.dart';
 
 class RitConstraint extends StatelessWidget {
   final HomeController controller;
@@ -21,44 +22,11 @@ class RitConstraint extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          height: 90,
-          padding: EdgeInsets.all(16),
-          alignment: Alignment.bottomLeft,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                blurRadius: 3,
-                offset: const Offset(0, 0),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Kendala',
-                style: GoogleFonts.hankenGrotesk(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
-                  color: Color(0xFF151C27),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  _popupAddConstraint(isPreviewMode: false);
-                },
-                child: Icon(
-                  Icons.add_circle_outline,
-                  size: 27,
-                  color: Color(0xFF151C27),
-                ),
-              ),
-            ],
-          ),
+        AppBarWidget().content(
+          title: 'Kendala',
+          onTap: () {
+            _popupAddConstraint(isPreviewMode: false);
+          },
         ),
         const SizedBox(height: 10),
         Container(
@@ -130,7 +98,9 @@ class RitConstraint extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'Rp${formatNumber(int.parse(item.nominal))}',
+                              item.nominal.isEmpty
+                                  ? 'Rp0'
+                                  : 'Rp${formatNumber(int.parse(item.nominal))}',
                               style: GoogleFonts.hankenGrotesk(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

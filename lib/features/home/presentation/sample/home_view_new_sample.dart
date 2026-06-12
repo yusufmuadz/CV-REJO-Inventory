@@ -18,6 +18,7 @@ import '../../../detail_order/presentation/controllers/detail_order_controller.d
 import '../../../scan_product/presentation/bindings/scan_product_binding.dart';
 import '../../../scan_product/presentation/controllers/scan_product_controller.dart';
 import '../../../scan_product/presentation/widgets/dialog_scan_product/input_qty_dialog.dart';
+import '../views/take_it_order_view.dart';
 import 'app_colors.dart';
 import 'home_card_sample.dart';
 
@@ -46,8 +47,8 @@ class HomeViewNewSample extends GetView<HomeController> {
       children: [
         _buildHome(),
         // ListOrderPage(),
-        // Container(),
         if (AppRole.isDriver) RitConstraint(controller: controller),
+        if (AppRole.isDriver) TakeItOrderView(controller: controller),
         ProfileView(controller: controller),
       ],
     );

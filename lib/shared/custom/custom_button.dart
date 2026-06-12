@@ -153,6 +153,13 @@ class CustomButton {
           activeIcon: Icon(Ionicons.alert_circle, color: Color(0xFF06823f)),
           label: 'Kendala',
         ),
+
+      if (AppRole.isDriver)
+        BottomNavigationBarItem(
+          icon: Icon(Ionicons.reader_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.reader, color: Color(0xFF06823f)),
+          label: 'Pesanan',
+        ),
       BottomNavigationBarItem(
         icon: Icon(Ionicons.person_circle_outline, color: Color(0xFF8890a0)),
         activeIcon: Icon(
@@ -166,7 +173,7 @@ class CustomButton {
     if (items.length < 2) {
       return const SizedBox.shrink();
     }
-    
+
     return SizedBox(
       height: 60,
       child: BottomNavigationBar(

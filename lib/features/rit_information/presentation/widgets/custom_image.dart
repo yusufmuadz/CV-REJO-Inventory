@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/services/dialog_service.dart';
 import '../controllers/rit_controller.dart';
 
 class CustomImage {
@@ -85,33 +86,43 @@ class CustomImage {
     );
   }
 
-  Widget displayImage({required String path, Function()? onTap}) {
+  Widget displayImage({
+    required String path,
+    bool isPreview = false,
+    Function()? onTapRemove,
+  }) {
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(7),
-            child: Image.file(
-              File(path),
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+        InkWell(
+          onTap: isPreview ? () => previewImage(path: path) : null,
+          child: Padding(
+            padding: !isPreview ? const EdgeInsets.all(5.0) : EdgeInsets.zero,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(7),
+              child: Image.file(
+                File(path),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
             ),
           ),
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: GestureDetector(
-            onTap: onTap,
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(
-                color: Colors.black54,
-                shape: BoxShape.circle,
+        Visibility(
+          visible: !isPreview,
+          child: Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: onTapRemove,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 16, color: Colors.white),
               ),
-              child: const Icon(Icons.close, size: 16, color: Colors.white),
             ),
           ),
         ),
@@ -123,8 +134,8 @@ class CustomImage {
     int? maxImage,
     bool isShadow = true,
     bool readOnly = false,
+    bool isPreview = false,
     required String title,
-    RitController? controller,
     required RxList<XFile> mediaFileList,
   }) {
     return _buildBoxStyle(
@@ -163,6 +174,7 @@ class CustomImage {
             Visibility(
               visible: mediaFileList.isNotEmpty,
               child: CustomGridImage(
+                isPreview: isPreview,
                 maxImage: maxImage ?? 2,
                 mediaFileList: mediaFileList,
                 onAdd: () {
@@ -220,6 +232,18 @@ class CustomImage {
     );
   }
 
+  void previewImage({required String path}) {
+    final dialogService = Get.find<DialogService>();
+
+    dialogService.defaultDialog(
+      height: 0.35,
+      title: 'Preview Image',
+      singleButton: true,
+      titleButton1: 'Kembali',
+      content: Image.file(File(path), fit: BoxFit.cover),
+    );
+  }
+
   void selectImage(
     ImageSource source,
     Rx<XFile>? file,
@@ -239,6 +263,7 @@ class CustomImage {
         } else {
           files.add(pickedFile);
         }
+        // debugPrint('Image path: ${pickedFile.path}');
       }
     } catch (e) {
       debugPrint('Error picking image: $e');

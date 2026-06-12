@@ -122,6 +122,7 @@ class TextStyles {
     double fontSize = 13,
     FontWeight fontWeight = FontWeight.w400,
     double? height,
+    double? letterSpacing,
     Color color = const Color(0xFF171717),
   }) {
     return TextStyle(
@@ -130,6 +131,7 @@ class TextStyles {
       fontFamily: fontFamily ?? 'Inter',
       fontWeight: fontWeight,
       height: height,
+      letterSpacing: letterSpacing,
     );
   }
 }

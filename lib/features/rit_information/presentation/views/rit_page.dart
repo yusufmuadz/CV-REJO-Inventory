@@ -7,8 +7,9 @@ import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/rit_controller.dart';
-import '../widgets/box_rit.dart';
+import '../widgets/enum_rit.dart';
 import '../widgets/rit_dialog.dart';
+import '../widgets/rit_dialog_info_po.dart';
 import 'arrive_at_office.dart';
 import 'input_image_view.dart';
 import 'rit_view.dart';
@@ -44,7 +45,9 @@ class RitPage extends GetView<RitController> {
         bottomNavigationBar: Obx(() {
           if (controller.loadState.value == LoadState.initial ||
               controller.orders.isEmpty ||
-              controller.isArrive.value) {
+              controller.isArrive.value ||
+              controller.buttonRIT.value == ButtonSequenceState.saveChange ||
+              controller.buttonRIT.value == ButtonSequenceState.cancelRIT) {
             return const SizedBox.shrink();
           }
           return CustomButton.bottomBarStyle(child: _buildButton());
@@ -66,6 +69,16 @@ class RitPage extends GetView<RitController> {
   }
 
   Widget _buildButton() {
+    final buttonRIT = controller.buttonRIT.value;
+
+    if (buttonRIT == ButtonSequenceState.selectChange) {
+      return _buildButtonSequence();
+    }
+
+    if (buttonRIT == ButtonSequenceState.afterSelectChange) {
+      return _buildButtonChangePO();
+    }
+
     if (controller.isSave.value) {
       return _buildAfterSave();
     }
@@ -123,6 +136,31 @@ class RitPage extends GetView<RitController> {
     );
   }
 
+  Widget _buildButtonSequence() {
+    return CustomButton.basicButton(
+      title: 'Ubah Urutan PO',
+      color: const Color.fromARGB(255, 58, 175, 225),
+      onPressed: () {
+        controller.buttonRIT.value = ButtonSequenceState.afterSelectChange;
+      },
+    );
+  }
+
+  Widget _buildButtonChangePO() {
+    return CustomButton.doubleButton(
+      title1: 'Batal',
+      title2: 'Konfirmasi',
+      color1: Colors.redAccent[200]!,
+      color2: const Color(0xFF8B97F3),
+      onPressed1: () {
+        controller.buttonRIT.value = ButtonSequenceState.selectChange;
+      },
+      onPressed2: () {
+        RitDialogInfoPo().confirmPO(controller: controller);
+      },
+    );
+  }
+
   Widget _buildButtonArrive() {
     return CustomButton.basicButton(
       title: 'Simpan',
@@ -143,7 +181,7 @@ class RitPage extends GetView<RitController> {
         GetStorage().remove('colorRit');
         controller.isArrive.value = true;
 
-        ///// ========== KE HALAMAN LIST RIT =========== ///// 
+        ///// ========== KE HALAMAN LIST RIT =========== /////
 
         Get.toNamed(
           Routes.LIST_ORDER,

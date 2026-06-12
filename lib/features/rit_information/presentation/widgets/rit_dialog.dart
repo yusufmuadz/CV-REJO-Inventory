@@ -10,6 +10,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../controllers/rit_controller.dart';
 import 'custom_image.dart';
+import 'enum_rit.dart';
 
 class RitDialog {
   void inputReason({int? maxImage, required RitController controller}) {
@@ -61,6 +62,8 @@ class RitDialog {
                     color: const Color(0xFF2ED471),
                     onPressed: () {
                       Get.back();
+                      controller.buttonRIT.value =
+                          ButtonSequenceState.cancelRIT;
                     },
                   ),
                 ),
@@ -349,7 +352,6 @@ class RitDialog {
                   CustomImage().buildContentImage(
                     readOnly: isPreviewMode && !isEdit,
                     title: 'Barang Retur',
-                    controller: controller,
                     mediaFileList: mediaFileList,
                   ),
                   const Spacer(),
@@ -524,7 +526,6 @@ class RitDialog {
             margin: const EdgeInsets.only(bottom: 15),
             child: CustomImage().buildContentImage(
               title: 'Barang Retur',
-              controller: controller,
               mediaFileList: controller.mediaFileListRetur,
             ),
           ),
