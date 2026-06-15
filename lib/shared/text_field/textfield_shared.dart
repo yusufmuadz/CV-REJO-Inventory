@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/theme/text_styles.dart';
+
 class SharedTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? readOnly;
@@ -55,7 +57,8 @@ class SharedTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
         hintText: hintText,
-        hintStyle: GoogleFonts.hankenGrotesk(
+        hintStyle: TextStyles.basicTextStyle(
+          fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
           fontSize: 15,
           fontWeight: FontWeight.w400,
           letterSpacing: 0.48,

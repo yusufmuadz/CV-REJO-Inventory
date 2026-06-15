@@ -3,12 +3,12 @@ import 'package:cv_rejo/features/list_order/domain/entities/list_order_entity.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/text_styles.dart';
-import '../../../../routes/app_pages.dart';
-import '../../../../shared/box/box_status.dart';
-import 'app_colors.dart';
+import '../../../../../core/theme/text_styles.dart';
+import '../../../../../routes/app_pages.dart';
+import '../../../../../shared/box/box_status.dart';
+import '../../../../../core/theme/app_colors.dart';
 
-class StatCard extends StatelessWidget {
+class HomeCardWidget extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
@@ -18,7 +18,7 @@ class StatCard extends StatelessWidget {
   final bool isPast;
   final Function() onTap;
 
-  const StatCard({
+  const HomeCardWidget({
     super.key,
     required this.icon,
     required this.title,

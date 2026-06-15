@@ -11,7 +11,7 @@ import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/thousand_formatter.dart';
 import '../../../rit_information/presentation/widgets/custom_image.dart';
-import 'app_bar_widget.dart';
+import '../widgets/app_bar_widget.dart';
 
 class RitConstraint extends StatelessWidget {
   final HomeController controller;
@@ -88,7 +88,7 @@ class RitConstraint extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                item.title,
+                                item.title ?? '',
                                 style: GoogleFonts.hankenGrotesk(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -98,9 +98,9 @@ class RitConstraint extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              item.nominal.isEmpty
+                              item.nominal?.isEmpty ?? true
                                   ? 'Rp0'
-                                  : 'Rp${formatNumber(int.parse(item.nominal))}',
+                                  : 'Rp${formatNumber(int.parse(item.nominal ?? '0'))}',
                               style: GoogleFonts.hankenGrotesk(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

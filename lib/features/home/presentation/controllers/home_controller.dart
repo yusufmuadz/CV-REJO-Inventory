@@ -1,6 +1,5 @@
 import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
-import 'package:cv_rejo/features/home/presentation/sample/home_view_new_sample.dart';
 import 'package:cv_rejo/features/list_order/presentation/controllers/list_order_controller.dart';
 import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -56,13 +55,14 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final isKeyboardOpen = false.obs;
 
   final ritConstraints = <RitConstraintEntity>[].obs;
+  final listTakeItTransaction = <RitConstraintEntity>[].obs;
 
-  final List<Widget> pages = [
-    HomeViewNewSample(),
-    Container(),
-    Container(),
-    Container(),
-  ];
+  // final List<Widget> pages = [
+  //   HomeViewNewSample(),
+  //   Container(),
+  //   Container(),
+  //   Container(),
+  // ];
 
   @override
   void onReady() {
@@ -251,6 +251,24 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       RitConstraintEntity(
         title: title,
         nominal: nominal.replaceAll(',', ''),
+        date: date,
+        status: status,
+        desc: description,
+        mediaFileList: mediaFileList ?? [],
+      ),
+    );
+  }
+
+  ///// TAKE IT TRANSACTION
+
+  void addTakeIt({
+    required DateTime date,
+    required String status,
+    required String description,
+    List<XFile>? mediaFileList,
+  }) async {
+    listTakeItTransaction.add(
+      RitConstraintEntity(
         date: date,
         status: status,
         desc: description,

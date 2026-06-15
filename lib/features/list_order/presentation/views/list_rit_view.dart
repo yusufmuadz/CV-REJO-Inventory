@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../home/presentation/sample/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/rit_list_entity.dart';
 import '../controllers/list_order_controller.dart';
 
@@ -42,17 +42,17 @@ class ListRitView extends StatelessWidget {
 
   Widget _buildOrder({required int index}) {
     RitListEntity ritOrder = controller.listRit[index];
-    String onProgressPO = '0';
+    String finishPO = '0';
     final colorRIT = int.parse('0xFF${ritOrder.color.replaceAll('#', '')}');
 
     if (AppRole.isPIC) {
-      onProgressPO = ritOrder.poPendingPic;
+      finishPO = ritOrder.poDonePic;
     } else if (AppRole.isChecker1) {
-      onProgressPO = ritOrder.poPendingCheck1;
+      finishPO = ritOrder.poDoneCheck1;
     } else if (AppRole.isChecker2) {
-      onProgressPO = ritOrder.poPendingCheck2;
+      finishPO = ritOrder.poDoneCheck2;
     } else if (AppRole.isDriver) {
-      onProgressPO = ritOrder.poPendingDelivery;
+      finishPO = ritOrder.poDoneDelivery;
     }
 
     return Padding(
@@ -133,7 +133,7 @@ class ListRitView extends StatelessWidget {
                   const SizedBox(width: 5),
                   RichText(
                     text: TextSpan(
-                      text: '$onProgressPO ',
+                      text: '$finishPO ',
                       style: TextStyles.basicTextStyle(
                         fontSize: 16,
                         fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
@@ -142,7 +142,7 @@ class ListRitView extends StatelessWidget {
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'PO Berjalan',
+                          text: 'PO Selesai',
                           style: TextStyles.basicTextStyle(
                             fontSize: 16,
                             fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
@@ -151,6 +151,26 @@ class ListRitView extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on_outlined,
+                    size: 18,
+                    color: Color(0xFF8A5012),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Malang, Jogja, Semarang',
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 16,
+                      fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF524439),
                     ),
                   ),
                 ],

@@ -5,7 +5,7 @@ import '../features/detail_order/presentation/views/detail_order_view.dart';
 import '../features/ending_order/presentation/bindings/ending_order_binding.dart';
 import '../features/ending_order/presentation/views/ending_order_view.dart';
 import '../features/home/presentation/bindings/home_binding.dart';
-import '../features/home/presentation/views/home_page.dart';
+import '../features/home/presentation/pages/home_page.dart';
 import '../features/list_order/presentation/bindings/list_order_binding.dart';
 import '../features/list_order/presentation/views/list_order_page.dart';
 import '../features/list_order_history/presentation/bindings/list_history_order_binding.dart';
