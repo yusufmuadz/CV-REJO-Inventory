@@ -11,7 +11,7 @@ import '../../../../core/services/dialog_service.dart';
 import '../controllers/rit_controller.dart';
 
 class CustomImage {
-  Widget buildTitle({required String title}) {
+  Widget buildTitle({required String title, bool isNotOptional = true}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -24,12 +24,15 @@ class CustomImage {
             letterSpacing: 0.48,
           ),
         ),
-        Text(
-          '*Upload minimal 1 foto',
-          style: GoogleFonts.hankenGrotesk(
-            color: Colors.red,
-            fontSize: 11,
-            fontWeight: FontWeight.w400,
+        Visibility(
+          visible: isNotOptional,
+          child: Text(
+            '*Upload minimal 1 foto',
+            style: GoogleFonts.hankenGrotesk(
+              color: Colors.red,
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       ],

@@ -31,7 +31,8 @@ class DetailOrderView extends GetView<DetailOrderController> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 if (controller.takeItOrder.value) {
-                  Get.offAllNamed(Routes.HOME);
+                  Get.back();
+                  // Get.offAllNamed(Routes.HOME);
                   return;
                 }
 
@@ -110,10 +111,8 @@ class DetailOrderView extends GetView<DetailOrderController> {
           controller.takeItTransactionDriver();
           return;
         }
-        if (controller.listUser.isEmpty) {
-          controller.getAssisten();
-        }
-        AssistantDialog.inputAsisten(controller);
+        
+        controller.startingPO();
       },
     );
   }
@@ -123,15 +122,8 @@ class DetailOrderView extends GetView<DetailOrderController> {
   }
 
   Widget _buildButton() {
-    if (AppRole.isPIC || AppRole.isChecker2 || AppRole.isDriver) {
-      if (AppRole.isChecker2 &&
-          controller.statusChecker2.value == 'completed' &&
-          !controller.isSelect.value) {
-        return _buildButtonStart();
-      } else if ((AppRole.isPIC && !controller.isSelect.value) ||
-          (AppRole.isDriver && controller.statusDriver.value == 'available')) {
-        return _buildButtonStart();
-      }
+    if (controller.statusPO.value == 'available') {
+      return _buildButtonStart();
     }
     return _buildDoubleButton();
   }

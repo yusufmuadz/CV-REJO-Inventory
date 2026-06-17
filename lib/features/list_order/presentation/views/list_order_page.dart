@@ -7,7 +7,9 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../detail_order/presentation/widgets/dialog/assistant_dialog.dart';
 import '../controllers/list_order_controller.dart';
+import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
 import 'list_order_view.dart';
 
@@ -85,8 +87,7 @@ class ListOrderPage extends GetView<ListOrderController> {
         bottomNavigationBar: AppRole.isDriver
             ? null
             : Obx(() {
-                if (controller.pageIndex.value == 0 ||
-                    controller.isLoading.value) {
+                if (controller.isLoading.value) {
                   return const SizedBox.shrink();
                 }
                 return CustomButton.bottomBarStyle(child: _buildButton());
@@ -100,8 +101,12 @@ class ListOrderPage extends GetView<ListOrderController> {
       return _buildButtonSelect();
     }
 
-    if (controller.pageIndex.value == 1) {
+    if (controller.pageIndex.value == 0) {
       return _buildButtonSelectRIT();
+    }
+
+    if (controller.pageIndex.value == 1) {
+      return _buildButtonChangeRIT();
     }
     return const SizedBox.shrink();
   }
@@ -109,14 +114,31 @@ class ListOrderPage extends GetView<ListOrderController> {
   Widget _buildButtonSelect() {
     return CustomButton.doubleButton(
       title1: 'Batal',
-      title2: 'Ambil Pesanan',
+      title2: 'Ambil RIT',
       color1: Colors.redAccent,
       color2: const Color(0xFFc7a16d),
       onPressed1: () {
         debugPrint('Batal');
         controller.cancelSelection();
       },
-      onPressed2: () => controller.takeItOrder(),
+      onPressed2: () {
+        controller.takeItOrder();
+      },
+    );
+  }
+
+  Widget _buildButtonChangeRIT() {
+    if (controller.loadState.value == LoadState.initial) {
+      return const SizedBox.shrink();
+    }
+
+    return CustomButton.basicButton(
+      title: 'Pending RIT',
+      color: Colors.red,
+      onPressed: () {
+        debugPrint('Pending RIT');
+        InputPendingDialog.inputReason(controller: controller);
+      },
     );
   }
 
@@ -126,18 +148,18 @@ class ListOrderPage extends GetView<ListOrderController> {
     }
 
     return CustomButton.doubleButton(
-      title1: 'Ubah RIT',
-      title2: 'Pilih Pesanan',
-      color1: const Color(0x954D7BF1),
-      color2: const Color(0xFFc7a16d),
-      visible2: controller.orders.isNotEmpty,
-      visibleSpace: controller.orders.isNotEmpty,
+      title1: 'Batal',
+      title2: 'Pilih RIT',
+      color1: Colors.redAccent,
+      color2: const Color(0xFF2ED471),
+      visible1: controller.isSelection.value,
+      visibleSpace: controller.isSelection.value,
       onPressed1: () {
-        debugPrint('Ubah RIT');
-        if (controller.listRit.isEmpty) {
-          controller.getRit();
-        }
-        controller.pageIndex.value = 0;
+        debugPrint('Pilih RIT');
+        // if (controller.listRit.isEmpty) {
+        //   controller.getRit();
+        // }
+        controller.pageIndex.value = 1;
       },
       onPressed2: () =>
           controller.isSelection.value = !controller.isSelection.value,

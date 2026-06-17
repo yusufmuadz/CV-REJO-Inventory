@@ -343,7 +343,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void _changeStatusBar(int index) {
     bool isDark = true;
 
-    if ((AppRole.isDriver && index > 2) || (!AppRole.isDriver && index == 2)) {
+    if ((AppRole.isDriver && index > 2) || (!AppRole.isDriver && index == 1)) {
       isDark = false;
     }
 

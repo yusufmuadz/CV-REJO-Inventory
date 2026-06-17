@@ -201,6 +201,20 @@ class ListOrderView extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
         child: CustomCardList(
           onTap: () {
+            String statusPO = transaction.pic?.status ?? '';
+
+            if (AppRole.isChecker1) {
+              statusPO = transaction.checker1?.status ?? '';
+            } else if (AppRole.isChecker2) {
+              if (transaction.checker2?.status != 'completed') {
+                statusPO = transaction.checker2?.status ?? '';
+              } else {
+                statusPO = transaction.loader?.status ?? '';
+              }
+            } else if (AppRole.isDriver) {
+              statusPO = transaction.driver?.status ?? '';
+            }
+
             if (AppRole.isDriver) {
               Get.toNamed(
                 Routes.DETAIL_ORDER,
@@ -209,9 +223,22 @@ class ListOrderView extends StatelessWidget {
               return;
             }
 
-            if (controller.isSelection.value) {
-              controller.onSelected(transaction.invoice);
-            }
+            Get.toNamed(
+              Routes.DETAIL_ORDER,
+              arguments: {
+                'invoice': transaction.invoice,
+                'routeFrom': 'listOrder',
+                'take_it_order': true,
+                'status_checker2': transaction.checker2?.status ?? '',
+                'status_po': statusPO,
+              },
+            );
+
+            // controller.takeItOrder(invoicePO: transaction.invoice);
+
+            // if (controller.isSelection.value) {
+            //   controller.onSelected(transaction.invoice);
+            // }
           },
           showSelection: controller.isSelection.value,
           isSelected: controller.isSelected.value,

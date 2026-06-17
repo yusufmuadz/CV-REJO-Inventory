@@ -2,8 +2,6 @@ import 'package:get/get.dart';
 
 import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
 import '../../../list_order/data/datasource/list_order_remote_datasource_impl.dart';
-import '../../../list_order/data/repositories/list_order_repository_impl.dart';
-import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../data/datasource/ending_order_remote_datasource.dart';
 import '../../data/datasource/ending_order_remote_datasource_impl.dart';
 import '../../data/repositories/ending_order_repository_impl.dart';

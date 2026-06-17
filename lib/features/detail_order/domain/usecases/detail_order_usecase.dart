@@ -5,6 +5,8 @@ import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dar
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../list_order/domain/entities/take_it_order_entity.dart';
+import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../login/domain/entities/user_entity.dart';
 import '../../../scan_product/domain/entities/post_item_product_entity.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
@@ -18,26 +20,6 @@ class DetailOrderUseCase {
 
   Future<ResultCustom<Failure, DetailOrderEntity>> call(String noInvoice) {
     return repository.getListOrders(noInvoice);
-  }
-
-  Future<ResultCustom<Failure, List<UserEntity>>> callUsers() {
-    return repository.getUsers();
-  }
-
-  Future<ResultCustom<Failure, List<TransportationEntity>>>
-  callTransportations() {
-    return repository.getTransportations();
-  }
-
-  Future<ResultCustom<Failure, List<TransportationEntity>>>
-  callLoaderTransportations() {
-    return repository.getLoaderTransportations();
-  }
-
-  Future<ResultCustom<Failure, BasicEntity>> callPostAssistant(
-    ParamsAddAssistant params,
-  ) {
-    return repository.addAssistant(params);
   }
 
   Future<ResultCustom<Failure, BasicEntity>> callPendingSO(
@@ -56,5 +38,11 @@ class DetailOrderUseCase {
     ParamsAddAssistant params,
   ) {
     return repository.takeItTransactionDriver(params);
+  }
+
+  Future<ResultCustom<Failure, TakeItOrderEntity>> callTakeItTransaction(
+    ParamsTakeIt params,
+  ) {
+    return repository.takeItTransaction(params);
   }
 }

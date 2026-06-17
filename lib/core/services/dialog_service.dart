@@ -320,7 +320,7 @@ class DialogService {
 
   /// ===== INPUT DIALOG =====
 
-  Future<void> inputDialog({
+  Future<bool?> inputDialog({
     required String title,
     double height = 0.45,
     bool singleButton = false,
@@ -334,8 +334,8 @@ class DialogService {
     TextStyle? titleStyle,
     EdgeInsetsGeometry? marginButton,
     required Widget content,
-  }) {
-    return Get.defaultDialog(
+  }) async {
+    return await Get.defaultDialog(
       radius: 10,
       title: title,
       titlePadding: const EdgeInsets.only(top: 20),

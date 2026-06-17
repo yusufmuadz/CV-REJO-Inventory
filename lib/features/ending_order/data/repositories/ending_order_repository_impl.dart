@@ -21,8 +21,8 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       final response = await dataSource.postEndingOrder(params);
 
       if (response.error == null) {
-        // final rit = GetStorage().read('city');
-        // final responseRit = await listOrderDataSource.getRit(rit);
+        final rit = GetStorage().read('city');
+        final responseRit = await listOrderDataSource.getRit(rit);
 
         return Success(
           EndingOrderEntity(

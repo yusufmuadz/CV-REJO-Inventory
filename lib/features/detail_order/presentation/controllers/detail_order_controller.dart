@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../core/middlewares/app_role.dart';
@@ -10,12 +12,11 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
-import '../../../login/domain/entities/user_entity.dart';
+import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
-import '../../domain/entities/transportation_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/usecases/detail_order_usecase.dart';
 import '../widgets/dialog/input_product_dialog.dart';
@@ -32,6 +33,7 @@ class DetailOrderController extends GetxController {
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
   final takeItOrder = false.obs;
+  final statusPO = ''.obs;
 
   final isFromHistory = false.obs;
 
@@ -46,22 +48,17 @@ class DetailOrderController extends GetxController {
   final messageProduct = ''.obs;
   final statusPostProduct = false.obs;
 
-  final driverSelected = ''.obs;
-  final assistantSelected = ''.obs;
-  final selectTransportation = ''.obs;
-  final statusTransportationSelected = 'Internal'.obs;
-  final nopolTransportation = ''.obs;
-
   final isChecked = false.obs;
 
   final reasonController = TextEditingController();
 
-  final listUser = <UserEntity>[].obs;
-  final transportations = <TransportationEntity>[].obs;
-  final statusTransportations = ['Internal', 'External'].obs;
-
   final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
+
+  final driverSelected = ''.obs;
+  final assistantSelected = ''.obs;
+  final selectTransportation = ''.obs;
+  final nopolTransportation = ''.obs;
 
   final orderDetail = DetailOrderEntity(
     invoice: '',
@@ -89,6 +86,7 @@ class DetailOrderController extends GetxController {
       statusChecker2.value = args['status_checker2'] ?? '';
       statusLoader.value = args['status_loader'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
+      statusPO.value = args['status_po'] ?? '';
       // statusDriver.value = 'completed';
 
       if (AppRole.isDriver && statusDriver.value == 'ongoing') {
@@ -121,10 +119,6 @@ class DetailOrderController extends GetxController {
 
   void onRefreshDetailOrder() {
     _getDetailOrder();
-  }
-
-  void onRefreshAssistant() {
-    getAssisten();
   }
 
   void selectedProduct(int index) async {
@@ -214,112 +208,63 @@ class DetailOrderController extends GetxController {
     }
   }
 
-  Future<void> getAssisten() async {
-    if (isLoadingAssistant.value) return;
-    isLoadingAssistant.value = true;
-
-    try {
-      final result = await Future.wait([
-        detailOrderUseCase.callUsers(),
-        if (!AppRole.isChecker2) detailOrderUseCase.callTransportations(),
-        if (AppRole.isChecker2) detailOrderUseCase.callLoaderTransportations(),
-      ]);
-
-      final usersResult = result[0];
-      final transportationsResult = result[1];
-
-      switch (usersResult) {
-        case Success(:final data):
-          debugPrint('Data Detail Order Users: $data');
-          listUser.value = data as List<UserEntity>;
-          driverSelected.value = data.first.nama;
-          assistantSelected.value = data.first.nama;
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-
-      switch (transportationsResult) {
-        case Success(:final data):
-          debugPrint('Data Detail Order Transportations: $data');
-          transportations.value = data as List<TransportationEntity>;
-
-          if (data.first.namaKendaraan != null &&
-              data.first.namaKendaraan != '-') {
-            selectTransportation.value = data.first.namaKendaraan!;
-          } else if (data.first.jenisKendaraan != null &&
-              data.first.jenisKendaraan != '-') {
-            selectTransportation.value = data.first.jenisKendaraan!;
-          }
-
-          nopolTransportation.value = data.first.idDeliveryMobil ?? '-';
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-    } finally {
-      isLoadingAssistant.value = false;
-    }
-  }
-
-  Future<void> addAssistant() async {
+  void startingPO() async {
     if (isLoading.value) return;
+
+    // if (pageIndex.value == 0 && isSelected.value.isEmpty) {
+    //   dialogService.showError('Error', 'Pilih RIT terlebih dahulu');
+    //   return;
+    // }
+
     isLoading.value = true;
 
-    debugPrint('Driver: ${driverSelected.value}');
-    debugPrint('Asisten: ${assistantSelected.value}');
-    debugPrint('Kendaraan: ${selectTransportation.value}');
-    debugPrint('Nopol: ${nopolTransportation.value}');
-
-    // debugPrint('Kendaraan: ${loader}');
-    // debugPrint('Driver: ${driver}');
-    // debugPrint('Asisten: ${kenek}');
+    final result = await detailOrderUseCase.callTakeItTransaction(
+      ParamsTakeIt(
+        role: AppRole.current!.name.toLowerCase(),
+        statusChecker2: statusChecker2.value,
+        invoice: noInvoice.value,
+      ),
+    );
 
     try {
-      final loader = transportations.firstWhereOrNull(
-        (element) => element.namaKendaraan == selectTransportation.value,
-      );
-      final driver = listUser.firstWhereOrNull(
-        (element) => element.nama == driverSelected.value,
-      );
-      final kenek = listUser.firstWhereOrNull(
-        (element) => element.nama == assistantSelected.value,
-      );
-
-      final result = await detailOrderUseCase.callPostAssistant(
-        ParamsAddAssistant(
-          invoice: noInvoice.value,
-          idKendaraan: AppRole.isChecker2
-              ? nopolTransportation.value
-              : loader!.id,
-          idDriver: driver!.userId,
-          idKenek: kenek!.userId,
-        ),
-      );
-
       switch (result) {
         case Success(:final data):
-          if (data.status) {
+          if (data.status && data.message.isEmpty) {
+            GetStorage().write('noInvoice', noInvoice.value);
+            if (AppRole.isChecker2) {
+              GetStorage().write('status_checker2', statusChecker2.value);
+            }
+
             isSelect.value = !isSelect.value;
-            dialogService.showSuccessSnackbar('Berhasil Menambahkan Asisten');
+            statusPO.value = 'ongoing';
+            dialogService.showSuccessSnackbar('Berhasil Memulai PO');
           } else {
             if (Get.isDialogOpen == true) Get.back();
-            dialogService.showError('Failed', data.message);
-          }
+            isLoading.value = false;
+            List<String> daftarKata = data.message.split('.');
+            bool lockPO = false;
 
+            if (daftarKata.isNotEmpty && daftarKata.contains('LockPO')) {
+              lockPO = true;
+            }
+
+            dialogService.showError(
+              'Failed',
+              data.message.replaceAll('LockPO', ''),
+              singleButton: !lockPO,
+              onPressed2: () => onTapHubungiAdmin(),
+            );
+          }
+        // debugPrint('Data Take It Order: ${data.length}');
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
+          isLoading.value = false;
+
           dialogService.showError('Failed', message);
       }
     } catch (e) {
-      debugPrint('Error Add Assistant: $e');
       if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', '$e');
+      dialogService.showError('Failed', 'Error Get Data');
     } finally {
       isLoading.value = false;
     }
@@ -425,6 +370,17 @@ class DetailOrderController extends GetxController {
     await canLaunchUrlString(url)
         ? launchUrlString(url)
         : debugPrint("Can't open Terms and Conditions");
+  }
+
+  //////// ====== LAUNCH WHATSAPP ====== ////////
+
+  void onTapHubungiAdmin() async {
+    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
+        ? launchUrl(
+            Uri.parse(ApiEndpoints.hubungiAdmin),
+            mode: LaunchMode.externalApplication,
+          )
+        : debugPrint("Can't open WhatsApp");
   }
 
   //////// ====== PICK IMAGE ====== ////////

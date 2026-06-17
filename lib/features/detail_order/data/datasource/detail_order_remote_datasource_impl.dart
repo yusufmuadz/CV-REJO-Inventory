@@ -9,6 +9,8 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../list_order/data/models/response_model_take_it_transaction.dart';
+import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../scan_product/data/models/response_model_post_item_product.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/params/add_assistant_param.dart';
@@ -34,121 +36,6 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelDetailOrder.fromMap(response.data);
-      } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
-      }
-    } on DioException catch (e) {
-      throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
-      throw ServerException(message: '$e');
-    }
-  }
-
-  @override
-  Future<ResponseModelGetUser> getUsers() async {
-    try {
-      final response = await dioClient.get(ApiEndpoints.getUsers);
-
-      // debugPrint('Data Get Users Remote DataSource: ${response.data}');
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.data != null) {
-        return ResponseModelGetUser.fromMap(response.data);
-      } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
-      }
-    } on DioException catch (e) {
-      throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
-      throw ServerException(message: '$e');
-    }
-  }
-
-  @override
-  Future<ResponseModelGetTransportation> getTransportations() async {
-    try {
-      String apiEndpoint = ApiEndpoints.getTransportations('');
-
-      if (AppRole.isChecker2) {
-        apiEndpoint = ApiEndpoints.getLoaderTransportations('');
-      }
-
-      final response = await dioClient.get(apiEndpoint);
-
-      // debugPrint('Data Get Users Remote DataSource: ${response.data}');
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.data != null) {
-        return ResponseModelGetTransportation.fromMap(response.data);
-      } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
-      }
-    } on DioException catch (e) {
-      throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
-      throw ServerException(message: '$e');
-    }
-  }
-
-  @override
-  Future<ResponseModelGetTransportation> getLoaderTransportations() async {
-    try {
-      final response = await dioClient.get(
-        ApiEndpoints.getLoaderTransportations(''),
-      );
-
-      // debugPrint('Data Get Loader Remote DataSource: ${response.data}');
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.data != null) {
-        return ResponseModelGetTransportation.fromMap(response.data);
-      } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
-      }
-    } on DioException catch (e) {
-      throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
-      throw ServerException(message: '$e');
-    }
-  }
-
-  @override
-  Future<ResponseModelBasic> addAssistant(ParamsAddAssistant params) async {
-    try {
-      final response = await dioClient.put(
-        ApiEndpoints.addAssistant(
-          AppRole.current?.name.toLowerCase() ?? 'picking',
-        ),
-        data: {
-          "invoice": params.invoice,
-          "id_driver": params.idDriver,
-          "id_kenek": params.idKenek,
-          if (!AppRole.isChecker2) "id_loader": params.idKendaraan,
-          if (AppRole.isChecker2) "id_mobil": params.idKendaraan,
-        },
-      );
-
-      // debugPrint('Data Add Assistant Remote DataSource: ${response.data}');
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.data != null) {
-        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -270,6 +157,41 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelTakeItTransaction> takeItTransaction(
+    ParamsTakeIt params,
+  ) async {
+    try {
+      String role = params.role;
+
+      if (params.role == 'loader' && params.statusChecker2 != 'completed') {
+        role = 'check2';
+      }
+
+      final response = await dioClient.put(
+        ApiEndpoints.takeItTransaction(role),
+        data: {"invoice": params.invoice},
+      );
+
+      // debugPrint('Data Take It Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelTakeItTransaction.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

@@ -6,6 +6,7 @@ import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../../../../shared/custom/custom_button.dart';
 import '../../../../../utils/loading_custom.dart';
+import '../../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../input_assisten_widget.dart';
 
 class AssistantDialog {
@@ -71,29 +72,34 @@ class AssistantDialog {
     );
   }
 
-  static void inputAsisten(DetailOrderController controller) {
-    controller.dialogService.inputDialog(
-      title: 'Masukkan ${AppRole.isChecker2 ? 'Muat Barang' : 'Asisten'}',
-      onPressed2: () {
-        // if (!AppRole.isChecker2) {
-        controller.addAssistant();
-        Get.back();
-        // } else {
-        //   controller.isSelect.value = !controller.isSelect.value;
-        //   if (Get.isDialogOpen == true) Get.back();
-        //   controller.dialogService.showSuccessSnackbar(
-        //     'Berhasil Menambahkan Asisten',
-        //   );
-        // }
-      },
-      content: Obx(() {
-        if (controller.isLoadingAssistant.value) {
-          return const LoadingView();
-        }
+  static Future<bool> inputAsisten(ListOrderController controller) async {
+    final bool result =
+        await controller.dialogService.inputDialog(
+          title: 'Masukkan ${AppRole.isChecker2 ? 'Muat Barang' : 'Asisten'}',
+          onPressed1: () => Get.back(result: false),
+          onPressed2: () async {
+            if (controller.isLoadingAssistant.value) return;
 
-        return InputAssistenWidget(controller: controller);
-      }),
-    );
+            final resultAdd = await controller.addAssistant();
+
+            debugPrint('resultAdd: $resultAdd');
+
+            Get.back(result: resultAdd);
+            controller.dialogService.showSuccessSnackbar(
+              'Berhasil Menambahkan Asisten',
+            );
+          },
+          content: Obx(() {
+            if (controller.isLoadingAssistant.value) {
+              return const LoadingView();
+            }
+
+            return InputAssistenWidget(controller: controller);
+          }),
+        ) ??
+        false;
+
+    return result;
   }
 
   static void detailAssistant(DetailOrderController controller) {

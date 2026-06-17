@@ -28,7 +28,7 @@ class ListHistoryOrderRemoteDataSourceImpl
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'daterit': '${params.dateRit}',
+        if (params.dateRit != null) 'date_rit': '${params.dateRit}',
       };
 
       String queryString = Uri(queryParameters: body).query;

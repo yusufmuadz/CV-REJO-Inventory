@@ -3,6 +3,8 @@ import 'package:cv_rejo/features/detail_order/domain/entities/transportation_ent
 import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dart';
 import 'package:cv_rejo/features/login/domain/entities/user_entity.dart';
 import '../../../../core/error/failures.dart';
+import '../../../list_order/domain/entities/take_it_order_entity.dart';
+import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../scan_product/domain/entities/post_item_product_entity.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/entities/basic_entity.dart';
@@ -24,60 +26,6 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
       final response = await dataSource.fetchTransaction(noInvoice);
 
       return Success(response.data!.toEntity(), '');
-    } catch (e) {
-      return ErrorResult(message: e.toString());
-    }
-  }
-
-  @override
-  Future<ResultCustom<Failure, List<UserEntity>>> getUsers() async {
-    try {
-      final response = await dataSource.getUsers();
-
-      return Success(response.data!.toEntity(), '');
-    } catch (e) {
-      return ErrorResult(message: e.toString());
-    }
-  }
-
-  @override
-  Future<ResultCustom<Failure, List<TransportationEntity>>>
-  getTransportations() async {
-    try {
-      final response = await dataSource.getTransportations();
-
-      return Success(response.data!.toEntity(), '');
-    } catch (e) {
-      return ErrorResult(message: e.toString());
-    }
-  }
-
-  @override
-  Future<ResultCustom<Failure, List<TransportationEntity>>>
-  getLoaderTransportations() async {
-    try {
-      final response = await dataSource.getLoaderTransportations();
-
-      return Success(response.data!.toEntity(), '');
-    } catch (e) {
-      return ErrorResult(message: e.toString());
-    }
-  }
-
-  @override
-  Future<ResultCustom<Failure, BasicEntity>> addAssistant(
-    ParamsAddAssistant params,
-  ) async {
-    try {
-      final response = await dataSource.addAssistant(params);
-
-      return Success(
-        BasicEntity(
-          status: response.status ?? false,
-          message: response.message ?? '-',
-        ),
-        '',
-      );
     } catch (e) {
       return ErrorResult(message: e.toString());
     }
@@ -133,6 +81,25 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
         BasicEntity(
           status: response.status ?? false,
           message: response.message ?? '-',
+        ),
+        '',
+      );
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, TakeItOrderEntity>> takeItTransaction(
+    ParamsTakeIt params,
+  ) async {
+    try {
+      final response = await dataSource.takeItTransaction(params);
+
+      return Success(
+        TakeItOrderEntity(
+          status: response.status!,
+          message: response.error ?? '',
         ),
         '',
       );

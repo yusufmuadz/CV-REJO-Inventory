@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,6 +11,10 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../detail_order/domain/entities/transportation_entity.dart';
+import '../../../detail_order/domain/params/add_assistant_param.dart';
+import '../../../detail_order/presentation/widgets/dialog/assistant_dialog.dart';
+import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
 import '../../domain/entities/rit_list_entity.dart';
@@ -25,6 +30,8 @@ class ListOrderController extends GetxController {
 
   final isLoading = false.obs;
   final isLoadingSort = false.obs;
+  final isLoadingAssistant = false.obs;
+  final isLoadingReason = false.obs;
   final isRouteFrom = ''.obs;
   final dialogService = Get.find<DialogService>();
 
@@ -52,9 +59,22 @@ class ListOrderController extends GetxController {
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
 
+  final reasonPendingRITController = TextEditingController();
+  final mediaFileReasonPendingRIT = <XFile>[].obs;
+
   final sortByNew = true.obs;
 
   final loadState = LoadState.initial.obs;
+
+  final driverSelected = ''.obs;
+  final assistantSelected = ''.obs;
+  final selectTransportation = ''.obs;
+  final statusTransportationSelected = 'Internal'.obs;
+  final nopolTransportation = ''.obs;
+
+  final listUser = <UserEntity>[].obs;
+  final transportations = <TransportationEntity>[].obs;
+  final statusTransportations = ['Internal', 'External'].obs;
 
   final status = [
     {'id': '0', 'name': 'All', 'isSelected': true},
@@ -124,6 +144,10 @@ class ListOrderController extends GetxController {
     }
   }
 
+  void onRefreshAssistant() {
+    getAssisten();
+  }
+
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
 
   void onResetSort() {
@@ -157,9 +181,26 @@ class ListOrderController extends GetxController {
     }
   }
 
+  void onSelectedRit(int index) {
+    if (!isSelection.value && !AppRole.isDriver) return;
+
+    if (index != -1) {
+      isSelected.value = listRit[index].city;
+      colorRit.value = listRit[index].color;
+      tanggalRit.value = listRit[index].tanggalRit;
+    }
+
+    if (AppRole.isDriver) {
+      takeItOrder();
+      return;
+    }
+  }
+
   void cancelSelection() {
     isSelected.value = '';
     isSelection.value = !isSelection.value;
+    colorRit.value = '';
+    tanggalRit.value = '';
   }
 
   void takeItRIT({String rit = '', String clrRit = '', String tglRit = ''}) {
@@ -205,84 +246,98 @@ class ListOrderController extends GetxController {
     String rit = '',
     String clrRit = '',
     String tglRit = '',
+    String invoicePO = '',
   }) async {
     if (isLoading.value) return;
 
-    if ((pageIndex.value == 1 && isSelected.value.isEmpty) &&
-        !AppRole.isDriver) {
-      dialogService.showError('Error', 'Pilih pesanan terlebih dahulu');
+    if (pageIndex.value == 0 && isSelected.value.isEmpty) {
+      dialogService.showError('Error', 'Pilih RIT terlebih dahulu');
       return;
     }
 
     if (pageIndex.value == 0) {
+      if (listUser.isEmpty) {
+        getAssisten();
+      }
+
+      final resultAddAssistant = await AssistantDialog.inputAsisten(this);
+
+      if (!resultAddAssistant) return;
+
+      if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {
+        rit = isSelected.value;
+        clrRit = colorRit.value;
+        tglRit = tanggalRit.value;
+      }
+
       takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit);
       return;
     }
 
-    isLoading.value = true;
+    // isLoading.value = true;
 
-    final index = orders.indexWhere(
-      (order) => order.invoice == isSelected.value,
-    );
+    // final index = orders.indexWhere((order) => order.invoice == invoicePO);
 
-    final result = await listOrderUseCase.callTakeItTransaction(
-      ParamsTakeIt(
-        role: AppRole.current!.name.toLowerCase(),
-        statusChecker2: orders[index].checker2?.status ?? '',
-        invoice: isSelected.value,
-      ),
-    );
+    // final result = await listOrderUseCase.callTakeItTransaction(
+    //   ParamsTakeIt(
+    //     role: AppRole.current!.name.toLowerCase(),
+    //     statusChecker2: orders[index].checker2?.status ?? '',
+    //     invoice: invoicePO,
+    //   ),
+    // );
 
-    try {
-      switch (result) {
-        case Success(:final data):
-          if (data.status && data.message.isEmpty) {
-            GetStorage().write('noInvoice', isSelected.value);
-            if (AppRole.isChecker2) {
-              GetStorage().write(
-                'status_checker2',
-                orders[index].checker2?.status ?? '',
-              );
-            }
-            Get.offNamed(
-              Routes.DETAIL_ORDER,
-              arguments: {
-                'invoice': isSelected.value,
-                'routeFrom': 'listOrder',
-                'take_it_order': true,
-                'status_checker2': orders[index].checker2?.status ?? '',
-              },
-            );
-          } else {
-            if (Get.isDialogOpen == true) Get.back();
-            loadState.value = LoadState.error;
-            List<String> daftarKata = data.message.split('.');
-            bool lockPO = false;
+    // try {
+    //   switch (result) {
+    //     case Success(:final data):
+    //       if (data.status && data.message.isEmpty) {
+    //         GetStorage().write('noInvoice', isSelected.value);
+    //         if (AppRole.isChecker2) {
+    //           GetStorage().write(
+    //             'status_checker2',
+    //             orders[index].checker2?.status ?? '',
+    //           );
+    //         }
+    //         Get.offNamed(
+    //           Routes.DETAIL_ORDER,
+    //           arguments: {
+    //             'invoice': invoicePO,
+    //             'routeFrom': 'listOrder',
+    //             'take_it_order': true,
+    //             'status_checker2': orders[index].checker2?.status ?? '',
+    //           },
+    //         );
+    //       } else {
+    //         if (Get.isDialogOpen == true) Get.back();
+    //         loadState.value = LoadState.error;
+    //         isLoading.value = false;
+    //         List<String> daftarKata = data.message.split('.');
+    //         bool lockPO = false;
 
-            if (daftarKata.isNotEmpty && daftarKata.contains('LockPO')) {
-              lockPO = true;
-            }
+    //         if (daftarKata.isNotEmpty && daftarKata.contains('LockPO')) {
+    //           lockPO = true;
+    //         }
 
-            dialogService.showError(
-              'Failed',
-              data.message.replaceAll('LockPO', ''),
-              singleButton: !lockPO,
-              onPressed2: () => onTapHubungiAdmin(),
-            );
-          }
-        // debugPrint('Data Take It Order: ${data.length}');
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          loadState.value = LoadState.error;
+    //         dialogService.showError(
+    //           'Failed',
+    //           data.message.replaceAll('LockPO', ''),
+    //           singleButton: !lockPO,
+    //           onPressed2: () => onTapHubungiAdmin(),
+    //         );
+    //       }
+    //     // debugPrint('Data Take It Order: ${data.length}');
+    //     case ErrorResult(:final message):
+    //       if (Get.isDialogOpen == true) Get.back();
+    //       loadState.value = LoadState.error;
+    //       isLoading.value = false;
 
-          dialogService.showError('Failed', message);
-      }
-    } catch (e) {
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data');
-    } finally {
-      isLoading.value = false;
-    }
+    //       dialogService.showError('Failed', message);
+    //   }
+    // } catch (e) {
+    //   if (Get.isDialogOpen == true) Get.back();
+    //   dialogService.showError('Failed', 'Error Get Data');
+    // } finally {
+    //   isLoading.value = false;
+    // }
   }
 
   Future<void> _getOrder({bool isRefresh = false}) async {
@@ -292,7 +347,12 @@ class ListOrderController extends GetxController {
           : LoadState.loadingMore;
 
       if (isRefresh) {
-        orders.clear();
+        if (pageIndex.value == 0) {
+          listRit.clear();
+        } else {
+          orders.clear();
+        }
+
         currentPage.value = 1;
       }
 
@@ -377,5 +437,128 @@ class ListOrderController extends GetxController {
             mode: LaunchMode.externalApplication,
           )
         : debugPrint("Can't open WhatsApp");
+  }
+
+  Future<void> getAssisten() async {
+    if (isLoadingAssistant.value) return;
+    isLoadingAssistant.value = true;
+
+    try {
+      final result = await Future.wait([
+        listOrderUseCase.callUsers(),
+        if (!AppRole.isChecker2) listOrderUseCase.callTransportations(),
+        if (AppRole.isChecker2) listOrderUseCase.callLoaderTransportations(),
+      ]);
+
+      final usersResult = result[0];
+      final transportationsResult = result[1];
+
+      switch (usersResult) {
+        case Success(:final data):
+          // debugPrint('Data Detail Order Users: $data');
+          listUser.value = data as List<UserEntity>;
+          driverSelected.value = data.first.nama;
+          assistantSelected.value = data.first.nama;
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+
+      switch (transportationsResult) {
+        case Success(:final data):
+          debugPrint('Data Detail Order Transportations: $data');
+          transportations.value = data as List<TransportationEntity>;
+
+          if (data.first.namaKendaraan != null &&
+              data.first.namaKendaraan != '-') {
+            selectTransportation.value = data.first.namaKendaraan!;
+          } else if (data.first.jenisKendaraan != null &&
+              data.first.jenisKendaraan != '-') {
+            selectTransportation.value = data.first.jenisKendaraan!;
+          }
+
+          nopolTransportation.value = data.first.idDeliveryMobil ?? '-';
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+    } finally {
+      isLoadingAssistant.value = false;
+    }
+  }
+
+  Future<bool> addAssistant() async {
+    if (isLoadingAssistant.value) return false;
+    isLoadingAssistant.value = true;
+
+    debugPrint('Driver: ${driverSelected.value}');
+    debugPrint('Asisten: ${assistantSelected.value}');
+    debugPrint('Kendaraan: ${selectTransportation.value}');
+    debugPrint('Nopol: ${nopolTransportation.value}');
+
+    // debugPrint('Kendaraan: ${loader}');
+    // debugPrint('Driver: ${driver}');
+    // debugPrint('Asisten: ${kenek}');
+
+    try {
+      final loader = transportations.firstWhereOrNull(
+        (element) => element.namaKendaraan == selectTransportation.value,
+      );
+      final driver = listUser.firstWhereOrNull(
+        (element) => element.nama == driverSelected.value,
+      );
+      final kenek = listUser.firstWhereOrNull(
+        (element) => element.nama == assistantSelected.value,
+      );
+
+      final idKendaraan = AppRole.isChecker2
+          ? loader!.idDeliveryMobil
+          : loader!.id;
+
+      final dateRIT = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.parse(tanggalRit.value));
+
+      final result = await listOrderUseCase.callPostAssistant(
+        ParamsAddAssistant(
+          district: isSelected.value,
+          idKendaraan: idKendaraan,
+          idDriver: driver!.userId,
+          idKenek: kenek!.userId,
+          dateRIT: dateRIT,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          if (data.status) {
+            // takeItOrder();
+            // isSelect.value = !isSelect.value;
+            debugPrint('Success Add Assistant: ${data.message}');
+            return true;
+          } else {
+            if (Get.isDialogOpen == true) Get.back();
+            dialogService.showError('Failed', data.message);
+            return false;
+          }
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+          return false;
+      }
+    } catch (e) {
+      debugPrint('Error Add Assistant: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+      return false;
+    } finally {
+      isLoadingAssistant.value = false;
+    }
   }
 }

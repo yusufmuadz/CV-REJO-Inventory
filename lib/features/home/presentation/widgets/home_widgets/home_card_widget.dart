@@ -180,7 +180,7 @@ class OrderItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '50 Item',
+                  order.date.transaction,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

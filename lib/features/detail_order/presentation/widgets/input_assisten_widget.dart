@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/middlewares/app_role.dart';
+import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../controllers/detail_order_controller.dart';
 
 class InputAssistenWidget extends StatelessWidget {
-  final DetailOrderController controller;
+  final ListOrderController controller;
 
   const InputAssistenWidget({super.key, required this.controller});
 
