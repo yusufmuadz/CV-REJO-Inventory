@@ -61,6 +61,7 @@ class ListRitView extends StatelessWidget {
 
     return Obx(() {
       final bool isSelected =
+          AppRole.isDriver &&
           controller.isSelected.value == ritOrder.city &&
           controller.tanggalRit.value == ritOrder.tanggalRit;
 
@@ -197,27 +198,27 @@ class ListRitView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 18,
-                            color: Color(0xFF8A5012),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            'Malang, Jogja, Semarang',
-                            style: TextStyles.basicTextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  GoogleFonts.hankenGrotesk().fontFamily,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF524439),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // const SizedBox(height: 10),
+                      // Row(
+                      //   children: [
+                      //     const Icon(
+                      //       Icons.location_on_outlined,
+                      //       size: 18,
+                      //       color: Color(0xFF8A5012),
+                      //     ),
+                      //     const SizedBox(width: 5),
+                      //     Text(
+                      //       'Malang, Jogja, Semarang',
+                      //       style: TextStyles.basicTextStyle(
+                      //         fontSize: 16,
+                      //         fontFamily:
+                      //             GoogleFonts.hankenGrotesk().fontFamily,
+                      //         fontWeight: FontWeight.w400,
+                      //         color: const Color(0xFF524439),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),

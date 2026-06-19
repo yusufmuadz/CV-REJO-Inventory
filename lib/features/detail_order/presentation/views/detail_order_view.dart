@@ -122,7 +122,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
   }
 
   Widget _buildButton() {
-    if (controller.statusPO.value == 'available') {
+    if (AppRole.isDriver || controller.statusPO.value == 'available') {
       return _buildButtonStart();
     }
     return _buildDoubleButton();

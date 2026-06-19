@@ -96,6 +96,7 @@ class OrderItem extends StatelessWidget {
   final int length;
   final bool? showStatus;
   final OrderEntity order;
+  final Function()? onTap;
 
   const OrderItem({
     super.key,
@@ -103,6 +104,7 @@ class OrderItem extends StatelessWidget {
     required this.length,
     required this.order,
     this.showStatus,
+    this.onTap,
   });
 
   @override
@@ -127,16 +129,18 @@ class OrderItem extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: () {
-          Get.toNamed(
-            Routes.DETAIL_ORDER,
-            arguments: {
-              'invoice': order.invoice,
-              'routeFrom': 'listOrder',
-              'status_checker2': order.checker2?.status,
+        onTap:
+            onTap ??
+            () {
+              // Get.toNamed(
+              //   Routes.DETAIL_ORDER,
+              //   arguments: {
+              //     'invoice': order.invoice,
+              //     'routeFrom': 'listOrder',
+              //     'status_checker2': order.checker2?.status,
+              //   },
+              // );
             },
-          );
-        },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -146,7 +150,7 @@ class OrderItem extends StatelessWidget {
                 children: [
                   Text(
                     order.orderNo,
-                    style: const TextStyle(
+                    style: TextStyles.basicTextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -156,7 +160,7 @@ class OrderItem extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       text: 'Lokasi : ',
-                      style: const TextStyle(
+                      style: TextStyles.basicTextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w400,
@@ -164,7 +168,7 @@ class OrderItem extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: order.district,
-                          style: const TextStyle(
+                          style: TextStyles.basicTextStyle(
                             fontSize: 11,
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w400,
@@ -181,7 +185,7 @@ class OrderItem extends StatelessWidget {
               children: [
                 Text(
                   order.date.transaction,
-                  style: const TextStyle(
+                  style: TextStyles.basicTextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textPrimary,
@@ -211,7 +215,7 @@ class OrderItem extends StatelessWidget {
                         statusChecker2: order.checker2?.status ?? '',
                         statusDriver: order.driver?.status ?? '',
                       ),
-                      style: TextStyle(
+                      style: TextStyles.basicTextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,

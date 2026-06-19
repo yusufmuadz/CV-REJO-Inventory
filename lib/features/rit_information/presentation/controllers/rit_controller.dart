@@ -34,6 +34,7 @@ class RitController extends GetxController {
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
   final isRitToday = false.obs;
+  final isAcceptRIT = false.obs;
 
   final buttonRIT = ButtonSequenceState.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
@@ -106,6 +107,12 @@ class RitController extends GetxController {
       _getOrder();
     }
 
+    final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
+
+    if (isAccepted) {
+      buttonRIT.value = ButtonSequenceState.selectChange;
+    }
+
     scrollController.addListener(_onScroll);
   }
 
@@ -150,6 +157,13 @@ class RitController extends GetxController {
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
 
   Future<void> acceptRit() async {
+    GetStorage().write('city', isDistrictSelected.value);
+    GetStorage().write('colorRit', colorRit.value);
+    GetStorage().write('tanggalRit', tanggalRit.value);
+    GetStorage().write('isRitToday', isRitToday.value);
+    GetStorage().write('isAcceptRIT', true);
+    isAcceptRIT.value = true;
+
     buttonRIT.value = ButtonSequenceState.selectChange;
     // isAccept.value = !isAccept.value;
   }
@@ -363,6 +377,10 @@ class RitController extends GetxController {
     if (!Get.isRegistered<ListOrderController>()) {
       ListOrderBinding().dependencies();
       listOrderController = Get.find<ListOrderController>();
+      debugPrint('Register List Order Controller');
+    } else {
+      listOrderController = Get.find<ListOrderController>();
+      debugPrint('Get List Order Controller');
     }
   }
 

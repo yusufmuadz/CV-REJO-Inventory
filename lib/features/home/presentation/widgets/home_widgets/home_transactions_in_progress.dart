@@ -99,6 +99,9 @@ class HomeTransactionsInProgress extends StatelessWidget {
                     showStatus: true,
                     order: transaction,
                     length: controller.orders.length,
+                    onTap: () => controller.dialogService.showErrorSnackbar(
+                      'Coming Soon',
+                    ),
                   );
                 },
               ),

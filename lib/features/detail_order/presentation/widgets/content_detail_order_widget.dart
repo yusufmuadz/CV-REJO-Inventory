@@ -378,8 +378,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                               style: TextStyles.basicTextStyle(
                                 fontSize: 14,
                                 fontFamily:
-                                    GoogleFonts.hankenGrotesk().fontFamily ??
-                                    'Inter',
+                                    GoogleFonts.hankenGrotesk().fontFamily,
                                 color: Color(0xFF524439),
                               ),
                             ),
@@ -397,10 +396,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     fontFamily:
-                                        GoogleFonts.hankenGrotesk()
-                                            .fontFamily ??
-                                        'Inter',
-
+                                        GoogleFonts.hankenGrotesk().fontFamily,
                                     color: Color(0xFF151C27),
                                   ),
                                 ),
@@ -412,10 +408,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                                   style: TextStyles.basicTextStyle(
                                     fontSize: 12,
                                     fontFamily:
-                                        GoogleFonts.hankenGrotesk()
-                                            .fontFamily ??
-                                        'Inter',
-
+                                        GoogleFonts.hankenGrotesk().fontFamily,
                                     color: Color(0xFF5D5E61),
                                   ),
                                 ),
@@ -430,9 +423,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
                               style: TextStyles.basicTextStyle(
                                 fontSize: 14,
                                 fontFamily:
-                                    GoogleFonts.hankenGrotesk().fontFamily ??
-                                    'Inter',
-
+                                    GoogleFonts.hankenGrotesk().fontFamily,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF8A5012),
                               ),
@@ -479,10 +470,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckBox({required bool check, int? index}) {
+  Widget _buildCheckBox({required bool check, required int index}) {
     if ((controller.statusChecker2.value == 'completed' &&
             !controller.isSelect.value) ||
-        (AppRole.isDriver && !controller.isSelect.value) ||
+        // (AppRole.isDriver && !controller.isSelect.value) ||
         controller.routeFrom.value == 'listHistoryOrder') {
       return SizedBox.shrink();
     }
@@ -494,7 +485,13 @@ class ContentDetailOrderWidget extends StatelessWidget {
         visualDensity: VisualDensity(horizontal: -4, vertical: -4),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onChanged: (value) {
-          if (check || index == null) return;
+          if (check) return;
+
+          if (index < 0) {
+            // controller.selectedProduct(-1);
+            return;
+          }
+
           controller.selectedProduct(index);
         },
       ),
@@ -547,7 +544,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           visible: AppRole.isChecker2 || AppRole.isDriver,
           child: SizedBox(
             width: 30,
-            child: _buildCheckBox(check: false, index: 0),
+            // child: _buildCheckBox(check: false, index: -1),
           ),
         ),
       ],

@@ -18,25 +18,25 @@ class RitView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 15),
-          child: BoxRit(
-            rit: controller.isDistrictSelected.value,
-            dateRit: controller.tanggalRit.value,
-            onPressed: () {
-              controller.registerListController();
-              if (controller.listOrderController.listRit.isEmpty) {
-                controller.listOrderController.getRit(
-                  isPashRit: controller.isRitToday.value,
-                  dateRIT: controller.tanggalRit.value,
-                );
-              }
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(16, 16, 16, 15),
+        //   child: BoxRit(
+        //     rit: controller.isDistrictSelected.value,
+        //     dateRit: controller.tanggalRit.value,
+        //     onPressed: () {
+        //       controller.registerListController();
+        //       if (controller.listOrderController.listRit.isEmpty) {
+        //         controller.listOrderController.getRit(
+        //           isPashRit: controller.isRitToday.value,
+        //           dateRIT: controller.tanggalRit.value,
+        //         );
+        //       }
 
-              _openChangeRit();
-            },
-          ),
-        ),
-        Divider(thickness: 1, height: 1, color: Colors.grey.shade100),
+        //       _openChangeRit();
+        //     },
+        //   ),
+        // ),
+        // Divider(thickness: 1, height: 1, color: Colors.grey.shade100),
         Expanded(child: _buildContent()),
       ],
     );

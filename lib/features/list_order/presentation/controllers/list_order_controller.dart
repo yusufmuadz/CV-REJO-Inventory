@@ -211,12 +211,9 @@ class ListOrderController extends GetxController {
     isDistrictSelected.value = rit;
     colorRit.value = clrRit;
     tanggalRit.value = tglRit;
-    GetStorage().write('city', rit);
-    GetStorage().write('colorRit', clrRit);
-    GetStorage().write('tanggalRit', tglRit);
-    GetStorage().write('isRitToday', isRitToday.value);
+
     if (AppRole.isDriver) {
-      Get.offNamed(
+      Get.toNamed(
         Routes.RIT_INFORMATION,
         arguments: {
           'invoice': '',
@@ -224,14 +221,19 @@ class ListOrderController extends GetxController {
           'colorRit': clrRit,
           'tanggalRit': tglRit,
           'routeFrom': 'listOrder',
+          'isRitToday': isRitToday.value,
         },
       );
       pageIndex.value = 0;
-      isSelection.value = true;
-      isDistrictSelected.value = '';
-      colorRit.value = '';
-      tanggalRit.value = '';
+      // isSelection.value = true;
+      // isDistrictSelected.value = '';
+      // colorRit.value = '';
+      // tanggalRit.value = '';
     } else {
+      GetStorage().write('city', rit);
+      GetStorage().write('colorRit', clrRit);
+      GetStorage().write('tanggalRit', tglRit);
+      GetStorage().write('isRitToday', isRitToday.value);
       searchController.text = '';
       sortByNew.value = true;
       isStatusSelected.value = 'All';
@@ -267,6 +269,9 @@ class ListOrderController extends GetxController {
         final resultAddAssistant = await AssistantDialog.inputAsisten(this);
 
         if (!resultAddAssistant) return;
+      } else if (!AppRole.isDriver) {
+        final resultTakRIT = await takeRIT();
+        if (!resultTakRIT) return;
       }
 
       if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {
@@ -278,71 +283,6 @@ class ListOrderController extends GetxController {
       takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit);
       return;
     }
-
-    // isLoading.value = true;
-
-    // final index = orders.indexWhere((order) => order.invoice == invoicePO);
-
-    // final result = await listOrderUseCase.callTakeItTransaction(
-    //   ParamsTakeIt(
-    //     role: AppRole.current!.name.toLowerCase(),
-    //     statusChecker2: orders[index].checker2?.status ?? '',
-    //     invoice: invoicePO,
-    //   ),
-    // );
-
-    // try {
-    //   switch (result) {
-    //     case Success(:final data):
-    //       if (data.status && data.message.isEmpty) {
-    //         GetStorage().write('noInvoice', isSelected.value);
-    //         if (AppRole.isChecker2) {
-    //           GetStorage().write(
-    //             'status_checker2',
-    //             orders[index].checker2?.status ?? '',
-    //           );
-    //         }
-    //         Get.offNamed(
-    //           Routes.DETAIL_ORDER,
-    //           arguments: {
-    //             'invoice': invoicePO,
-    //             'routeFrom': 'listOrder',
-    //             'take_it_order': true,
-    //             'status_checker2': orders[index].checker2?.status ?? '',
-    //           },
-    //         );
-    //       } else {
-    //         if (Get.isDialogOpen == true) Get.back();
-    //         loadState.value = LoadState.error;
-    //         isLoading.value = false;
-    //         List<String> daftarKata = data.message.split('.');
-    //         bool lockPO = false;
-
-    //         if (daftarKata.isNotEmpty && daftarKata.contains('LockPO')) {
-    //           lockPO = true;
-    //         }
-
-    //         dialogService.showError(
-    //           'Failed',
-    //           data.message.replaceAll('LockPO', ''),
-    //           singleButton: !lockPO,
-    //           onPressed2: () => onTapHubungiAdmin(),
-    //         );
-    //       }
-    //     // debugPrint('Data Take It Order: ${data.length}');
-    //     case ErrorResult(:final message):
-    //       if (Get.isDialogOpen == true) Get.back();
-    //       loadState.value = LoadState.error;
-    //       isLoading.value = false;
-
-    //       dialogService.showError('Failed', message);
-    //   }
-    // } catch (e) {
-    //   if (Get.isDialogOpen == true) Get.back();
-    //   dialogService.showError('Failed', 'Error Get Data');
-    // } finally {
-    //   isLoading.value = false;
-    // }
   }
 
   Future<void> _getOrder({bool isRefresh = false}) async {
@@ -487,6 +427,53 @@ class ListOrderController extends GetxController {
     }
   }
 
+  Future<bool> takeRIT({
+    String rit = '',
+    String clrRit = '',
+    String tglRit = '',
+    bool isRitDate = false,
+  }) async {
+    if (isLoading.value) return false;
+    isLoading.value = true;
+
+    try {
+      final dateRIT = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.parse(tanggalRit.value));
+
+      final result = await listOrderUseCase.callPostAssistant(
+        ParamsAddAssistant(district: isSelected.value, dateRIT: dateRIT),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          if (data.status) {
+            // takeItOrder();
+            // isSelect.value = !isSelect.value;
+            debugPrint('Success Add Assistant: ${data.message}');
+            return true;
+          } else {
+            if (Get.isDialogOpen == true) Get.back();
+            dialogService.showError('Failed', data.message);
+            return false;
+          }
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+          return false;
+      }
+    } catch (e) {
+      debugPrint('Error Add Assistant: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<bool> addAssistant() async {
     if (isLoadingAssistant.value) return false;
     isLoadingAssistant.value = true;
@@ -501,15 +488,28 @@ class ListOrderController extends GetxController {
     // debugPrint('Asisten: ${kenek}');
 
     try {
-      final loader = transportations.firstWhereOrNull(
-        (element) => element.namaKendaraan == selectTransportation.value,
-      );
+      final loader = transportations.firstWhereOrNull((element) {
+        bool result = false;
+        String kendaraan = element.namaKendaraan ?? '';
+
+        if (AppRole.isChecker2) {
+          kendaraan = element.jenisKendaraan ?? '';
+        }
+
+        if (kendaraan == selectTransportation.value) {
+          result = true;
+        }
+        return result;
+      });
       final driver = listUser.firstWhereOrNull(
         (element) => element.nama == driverSelected.value,
       );
       final kenek = listUser.firstWhereOrNull(
         (element) => element.nama == assistantSelected.value,
       );
+
+      debugPrint('ID Kendaraan: ${loader}');
+      // debugPrint('ID Forklift: ${loader.id}');
 
       final idKendaraan = AppRole.isChecker2
           ? loader!.idDeliveryMobil

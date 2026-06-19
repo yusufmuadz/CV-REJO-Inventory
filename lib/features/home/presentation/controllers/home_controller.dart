@@ -44,8 +44,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   final totalOrder = 0.obs;
   final totalOrderHistory = 0.obs;
-  final versionApp = '3.0.0'.obs;
-  final updateVersionApp = '08 Juni 2026'.obs;
+  final versionApp = '4.0.0'.obs;
+  final updateVersionApp = '19 Juni 2026'.obs;
 
   final searchController = TextEditingController();
   final tabIndex = 0.obs;
@@ -108,7 +108,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void routeTo({bool ritToday = true}) {
     final invoice = GetStorage().read('noInvoice') ?? '';
     _getLocalRit();
-
+    
     if (ritToday != isRitToday.value) {
       // GetStorage().remove('noInvoice');
       GetStorage().remove('city');
@@ -311,6 +311,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     GetStorage().remove('city');
     GetStorage().remove('colorRit');
     GetStorage().remove('tanggalRit');
+    GetStorage().remove('isRitToday');
+    GetStorage().remove('isAcceptRIT');
     AppRole.logout();
     _tokenStorage.clear();
     tabIndex.value = 0;

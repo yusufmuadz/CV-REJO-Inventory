@@ -6,6 +6,7 @@ import '../../data/datasource/home_remote_datasource_impl.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/repositories/home_repository.dart';
 import '../controllers/home_controller.dart';
+import '../controllers/home_rit_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
@@ -23,6 +24,10 @@ class HomeBinding extends Bindings {
 
     Get.lazyPut<HomeController>(
       () => HomeController(homeUseCase: Get.find<GetHomeUseCase>()),
+    );
+
+    Get.lazyPut<HomeRITController>(
+      () => HomeRITController(homeUseCase: Get.find<GetHomeUseCase>()),
     );
 
     // ListOrderBinding().dependencies();

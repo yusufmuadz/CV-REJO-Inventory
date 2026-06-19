@@ -150,6 +150,21 @@ class DetailOrderController extends GetxController {
       updateList[index] = updatedOrder;
 
       orderDetail.value = orderDetail.value.copyWith(orderDetails: updateList);
+    } else {
+      if (orderDetail.value.orderDetails == null) return;
+
+      final result =
+          await openInputListProductDialog(
+            itemName: '',
+            qty: '',
+            controller: this,
+            barcodeValue: '',
+          ) ??
+          false;
+
+      // for (var element in orderDetail.value.orderDetails!) {
+      //   element.isChecked = result;
+      // }
     }
   }
 
@@ -317,6 +332,7 @@ class DetailOrderController extends GetxController {
     isLoading.value = true;
 
     try {
+      debugPrint('No Invoice: ${noInvoice.value}');
       final result = await detailOrderUseCase.callTakeItTransactionDriver(
         ParamsAddAssistant(invoice: noInvoice.value),
       );

@@ -23,14 +23,18 @@ class RitPage extends GetView<RitController> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Detail Rit'),
+          title: Obx(
+            () => Text('Detail Rit - ${controller.isDistrictSelected.value}'),
+          ),
           elevation: 1,
           centerTitle: false,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if (controller.routeFrom.value == 'listOrder') {
+              if (controller.routeFrom.value == 'listOrder' ||
+                  controller.isAccept.value) {
                 Get.offNamed(Routes.HOME);
+                return;
               }
               Get.back();
             },

@@ -26,7 +26,7 @@ class ApiEndpoints {
   static String completeOrder(String role) => "$role/complete";
   static String pendingOrder(String role) => "$role/cancel";
   static String addAssistant(String role) => "$role/claimcoba";
-  static String addAssistantRIT(String role) => "$role/tugas";
+  static String takeItRIT(String role) => "$role/tugas";
   static String getRit(String url) => "rit/$url";
 
   // PICKING TRANSACTION
@@ -36,15 +36,21 @@ class ApiEndpoints {
   static const String saveQtyDriver = "deliverynew/scan1";
   static const String takeItTransactionDriver = "deliverynew/claiminvoice";
   static const String saveDataDriver = "deliverynew/reporttruck1";
-  
-  static String getDetailTransaction(String invoice) => "transaction/get?invoice=$invoice";
+
+  static String getDetailTransaction(String invoice) =>
+      "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";
-  static String getTransportations(String search) => "vehicle/getloader?q=$search";
-  static String getLoaderTransportations(String search) => "vehicle/gettruck?q=$search";
+  static String getTransportations(String search) =>
+      "vehicle/getloader?q=$search";
+  static String getLoaderTransportations(String search) =>
+      "vehicle/gettruck?q=$search";
 
   static const String hubungiAdmin = "https://wa.me/628112936865";
-  static const String privacyPolicy = "http://lite2.indopustakaplus.com/admin/privacy_policy.html";
-  static const String termsAndCondition = "https://lite2.indopustakaplus.com/admin/terms_and_condition.html";
+  static const String privacyPolicy =
+      "http://lite2.indopustakaplus.com/admin/privacy_policy.html";
+  static const String termsAndCondition =
+      "https://lite2.indopustakaplus.com/admin/terms_and_condition.html";
 
-  static String maps(String latitude, String longitude) => "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+  static String maps(String latitude, String longitude) =>
+      "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
 }

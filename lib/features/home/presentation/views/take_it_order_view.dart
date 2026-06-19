@@ -51,9 +51,10 @@ class TakeItOrderView extends StatelessWidget {
         Obx(() {
           if (controller.listTakeItTransaction.isEmpty) {
             return Expanded(
-              child: const Center(child: Text('Belum ada kendala')),
+              child: const Center(child: Text('Belum ada data ambil RIT')),
             );
           }
+
           return Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
@@ -80,35 +81,15 @@ class TakeItOrderView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item.title ?? '',
-                                style: TextStyles.basicTextStyle(
-                                  fontFamily:
-                                      GoogleFonts.hankenGrotesk().fontFamily,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF151C27),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              item.nominal?.isEmpty ?? true
-                                  ? 'Rp0'
-                                  : 'Rp${formatNumber(int.parse(item.nominal ?? '0'))}',
-                              style: TextStyles.basicTextStyle(
-                                fontFamily:
-                                    GoogleFonts.hankenGrotesk().fontFamily,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF151C27),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          item.title ?? '',
+                          style: TextStyles.basicTextStyle(
+                            fontFamily:
+                                GoogleFonts.hankenGrotesk().fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF151C27),
+                          ),
                         ),
                         const SizedBox(height: 5),
                         Text(
@@ -157,7 +138,7 @@ class TakeItOrderView extends StatelessWidget {
               },
               separatorBuilder: (context, index) => const SizedBox(height: 10),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: controller.ritConstraints.length,
+              itemCount: controller.listTakeItTransaction.length,
             ),
           );
         }),

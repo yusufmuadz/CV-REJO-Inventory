@@ -236,7 +236,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
   Future<ResponseModelBasic> addAssistant(ParamsAddAssistant params) async {
     try {
       final response = await dioClient.put(
-        ApiEndpoints.addAssistantRIT(
+        ApiEndpoints.takeItRIT(
           AppRole.current?.name.toLowerCase() ?? 'picking',
         ),
         data: {
