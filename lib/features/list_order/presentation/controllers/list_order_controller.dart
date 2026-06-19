@@ -58,6 +58,7 @@ class ListOrderController extends GetxController {
 
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final totalPendingPoRITCheck2 = '0'.obs;
 
   final reasonPendingRITController = TextEditingController();
   final mediaFileReasonPendingRIT = <XFile>[].obs;
@@ -181,13 +182,14 @@ class ListOrderController extends GetxController {
     }
   }
 
-  void onSelectedRit(int index) {
+  void onSelectedRit(int index, {required String pendingPoRIT}) {
     if (!isSelection.value && !AppRole.isDriver) return;
 
     if (index != -1) {
       isSelected.value = listRit[index].city;
       colorRit.value = listRit[index].color;
       tanggalRit.value = listRit[index].tanggalRit;
+      totalPendingPoRITCheck2.value = pendingPoRIT;
     }
 
     if (AppRole.isDriver) {
@@ -256,13 +258,16 @@ class ListOrderController extends GetxController {
     }
 
     if (pageIndex.value == 0) {
-      if (listUser.isEmpty) {
-        getAssisten();
+      if (AppRole.isPIC ||
+          (AppRole.isChecker2 && totalPendingPoRITCheck2.value == '0')) {
+        if (listUser.isEmpty) {
+          getAssisten();
+        }
+
+        final resultAddAssistant = await AssistantDialog.inputAsisten(this);
+
+        if (!resultAddAssistant) return;
       }
-
-      final resultAddAssistant = await AssistantDialog.inputAsisten(this);
-
-      if (!resultAddAssistant) return;
 
       if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {
         rit = isSelected.value;
@@ -397,14 +402,14 @@ class ListOrderController extends GetxController {
     }
   }
 
-  Future<void> getRit() async {
+  Future<void> getRit({bool? isPashRit, String? dateRIT}) async {
     if (isLoading.value) return;
     isLoading.value = true;
 
     final result = await listOrderUseCase.callGetRit(
       ParamGetRIT(
-        isPastRit: !isRitToday.value,
-        date: pastRitDateSelected.value,
+        isPastRit: isPashRit ?? !isRitToday.value,
+        date: dateRIT ?? pastRitDateSelected.value,
       ),
     );
 
@@ -428,15 +433,6 @@ class ListOrderController extends GetxController {
 
     debugPrint('List RIT: ${isLoading.value}');
     debugPrint('List RIT: ${loadState.value}');
-  }
-
-  void onTapHubungiAdmin() async {
-    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
-        ? launchUrl(
-            Uri.parse(ApiEndpoints.hubungiAdmin),
-            mode: LaunchMode.externalApplication,
-          )
-        : debugPrint("Can't open WhatsApp");
   }
 
   Future<void> getAssisten() async {
@@ -468,7 +464,7 @@ class ListOrderController extends GetxController {
 
       switch (transportationsResult) {
         case Success(:final data):
-          debugPrint('Data Detail Order Transportations: $data');
+          // debugPrint('Data Detail Order Transportations: $data');
           transportations.value = data as List<TransportationEntity>;
 
           if (data.first.namaKendaraan != null &&
@@ -560,5 +556,21 @@ class ListOrderController extends GetxController {
     } finally {
       isLoadingAssistant.value = false;
     }
+  }
+
+  void onTapHubungiAdmin() async {
+    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
+        ? launchUrl(
+            Uri.parse(ApiEndpoints.hubungiAdmin),
+            mode: LaunchMode.externalApplication,
+          )
+        : debugPrint("Can't open WhatsApp");
+  }
+
+  void changeRIT() {
+    if (listRit.isEmpty) {
+      getRit();
+    }
+    pageIndex.value = 0;
   }
 }

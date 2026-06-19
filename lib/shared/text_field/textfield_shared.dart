@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../core/theme/text_styles.dart';
 
 class SharedTextField extends StatelessWidget {
@@ -16,7 +17,10 @@ class SharedTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final int? maxLines;
   final bool? isDense;
+  final double? radius;
   final Color? fillColor;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
   final EdgeInsetsGeometry? contentPadding;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
@@ -37,6 +41,9 @@ class SharedTextField extends StatelessWidget {
     this.fillColor,
     this.validator,
     this.contentPadding,
+    this.radius,
+    this.textStyle,
+    this.hintStyle,
     required this.controller,
   });
 
@@ -51,28 +58,37 @@ class SharedTextField extends StatelessWidget {
       textInputAction: textInputAction,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       inputFormatters: inputFormatters,
+      style: textStyle,
       decoration: InputDecoration(
         isDense: isDense,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        contentPadding:
+            contentPadding ??
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
         hintText: hintText,
-        hintStyle: TextStyles.basicTextStyle(
-          fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0.48,
-          color: const Color(0xFF9FA2B4),
-        ),
+        hintStyle:
+            hintStyle ??
+            TextStyles.basicTextStyle(
+              fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.48,
+              color: const Color(0xFF9FA2B4),
+            ),
         filled: true,
         fillColor: fillColor ?? Colors.white70,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(),
+          borderRadius: BorderRadius.circular(radius ?? 10),
+          borderSide: const BorderSide(color: AppTheme.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(),
+          borderRadius: BorderRadius.circular(radius ?? 10),
+          borderSide: const BorderSide(color: AppTheme.divider),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius ?? 10),
+          borderSide: const BorderSide(color: AppTheme.divider),
         ),
         labelText: labelText,
         labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade600),

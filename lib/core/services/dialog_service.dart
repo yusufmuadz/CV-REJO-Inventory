@@ -324,7 +324,9 @@ class DialogService {
     required String title,
     double height = 0.45,
     bool singleButton = false,
-    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? contentPadding,
+    EdgeInsetsGeometry? actionsPadding,
+    EdgeInsetsGeometry? titlePadding,
     String titleButton1 = 'Batal',
     String titleButton2 = 'Simpan',
     Color color1 = const Color(0xFFc7a16d),
@@ -333,12 +335,15 @@ class DialogService {
     VoidCallback? onPressed2,
     TextStyle? titleStyle,
     EdgeInsetsGeometry? marginButton,
+    bool barrierDismissible = true,
+    Widget? confirmButton,
     required Widget content,
   }) async {
     return await Get.defaultDialog(
       radius: 10,
+      barrierDismissible: barrierDismissible,
       title: title,
-      titlePadding: const EdgeInsets.only(top: 20),
+      titlePadding: titlePadding ?? const EdgeInsets.only(top: 20),
       titleStyle:
           titleStyle ??
           const TextStyle(
@@ -346,21 +351,96 @@ class DialogService {
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
-      contentPadding: padding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
+      contentPadding:
+          contentPadding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
       content: SizedBox(height: Get.height * height, child: content),
-      confirm: Container(
-        height: 45,
-        width: double.infinity,
-        margin: marginButton,
-        child: _buildButton(
-          title1: titleButton1,
-          title2: titleButton2,
-          singleButton: singleButton,
-          color1: color1,
-          color2: color2,
-          onPressed1: onPressed1,
-          onPressed2: onPressed2,
+      confirm:
+          confirmButton ??
+          Container(
+            height: 45,
+            width: double.infinity,
+            margin: marginButton,
+            child: _buildButton(
+              title1: titleButton1,
+              title2: titleButton2,
+              singleButton: singleButton,
+              color1: color1,
+              color2: color2,
+              onPressed1: onPressed1,
+              onPressed2: onPressed2,
+            ),
+          ),
+    );
+  }
+
+  Future<bool?> inputDialogWithAlertDialog({
+    required String title,
+    required Widget content,
+    EdgeInsets? insetPadding,
+    EdgeInsetsGeometry? contentPadding,
+    EdgeInsetsGeometry? actionsPadding,
+    EdgeInsetsGeometry? titlePadding,
+    TextStyle? titleStyle,
+    double height = 0.45,
+    double width = 1,
+    bool singleButton = false,
+    String titleButton1 = 'Batal',
+    String titleButton2 = 'Simpan',
+    Color color1 = const Color(0xFFc7a16d),
+    Color color2 = const Color(0xFF2ED471),
+    VoidCallback? onPressed1,
+    VoidCallback? onPressed2,
+    EdgeInsetsGeometry? marginButton,
+    bool barrierDismissible = true,
+    Color backgroundColor = Colors.white,
+    List<Widget>? actions,
+  }) async {
+    return Get.dialog(
+      barrierDismissible: barrierDismissible,
+      AlertDialog(
+        insetPadding:
+            insetPadding ?? EdgeInsets.all(30), // ⬅️ Hapus padding luar
+        contentPadding:
+            contentPadding ?? EdgeInsets.all(16), // Padding dalam konten
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // Opsional: sudut kotak
         ),
+        actionsPadding: actionsPadding ?? const EdgeInsets.all(10),
+        titlePadding: titlePadding ?? const EdgeInsets.all(16),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style:
+              titleStyle ??
+              const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+        ),
+        content: SizedBox(
+          height: Get.height * height,
+          width: Get.width * width,
+          child: content,
+        ),
+        backgroundColor: backgroundColor,
+        actions:
+            actions ??
+            [
+              SizedBox(
+                height: 45,
+                width: double.infinity,
+                child: _buildButton(
+                  title1: titleButton1,
+                  title2: titleButton2,
+                  singleButton: singleButton,
+                  color1: color1,
+                  color2: color2,
+                  onPressed1: onPressed1,
+                  onPressed2: onPressed2,
+                ),
+              ),
+            ],
       ),
     );
   }

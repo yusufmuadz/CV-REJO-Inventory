@@ -479,7 +479,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckBox({required bool check, required int index}) {
+  Widget _buildCheckBox({required bool check, int? index}) {
     if ((controller.statusChecker2.value == 'completed' &&
             !controller.isSelect.value) ||
         (AppRole.isDriver && !controller.isSelect.value) ||
@@ -494,14 +494,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         visualDensity: VisualDensity(horizontal: -4, vertical: -4),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onChanged: (value) {
-          if (check) return;
-          // if (AppRole.isDriver) {
-          //   controller.dialogService.showErrorSnackbar(
-          //     title: 'Warning!',
-          //     'Coming Soon',
-          //   );
-          //   return;
-          // }
+          if (check || index == null) return;
           controller.selectedProduct(index);
         },
       ),
@@ -552,7 +545,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
         ),
         Visibility(
           visible: AppRole.isChecker2 || AppRole.isDriver,
-          child: const SizedBox(width: 30),
+          child: SizedBox(
+            width: 30,
+            child: _buildCheckBox(check: false, index: 0),
+          ),
         ),
       ],
     );
@@ -585,7 +581,6 @@ class ContentDetailOrderWidget extends StatelessWidget {
         child: Column(
           children: [
             const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
-            const SizedBox(height: 16),
             _buildBoxIconText(
               title: 'Kode Produk',
               value: idProduct,
@@ -598,10 +593,13 @@ class ContentDetailOrderWidget extends StatelessWidget {
               icon: Icons.inventory_2_outlined,
             ),
 
-            _buildBoxIconText(
-              title: 'Jumlah Produk',
-              value: qty,
-              icon: CupertinoIcons.cube_box,
+            Visibility(
+              visible: !AppRole.isChecker1,
+              child: _buildBoxIconText(
+                title: 'Jumlah Produk',
+                value: qty,
+                icon: CupertinoIcons.cube_box,
+              ),
             ),
 
             _buildBoxIconText(

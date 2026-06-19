@@ -1,14 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../../../../shared/custom/custom_button.dart';
-import '../../../../../utils/loading_custom.dart';
+import '../../../../detail_order/presentation/widgets/dialog/content_input_product_dialog.dart';
 import '../../controllers/scan_product_controller.dart';
 
 Future<void> openInputQtyDialog({
@@ -27,11 +24,19 @@ Future<void> openInputQtyDialog({
     titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
     actionsPadding: const EdgeInsets.fromLTRB(20, 0.5, 20, 10),
     contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
-    content: ContentInputDialog(
-      itemName: 'Halo',
-      barcodeValue: '12345',
-      controller: controller,
-      qtyController: qtyController,
+    content: PopScope(
+      canPop: false,
+      child: Obx(
+        () => ContentInputProductDialog(
+          isInputQty: true,
+          itemName: itemName,
+          barcodeValue: barcodeValue,
+          mediaFileList: controller.mediaFileList,
+          messageProduct: controller.messageProduct.value,
+          isLoadingProduct: controller.isLoadingProduct.value,
+          qtyController: qtyController,
+        ),
+      ),
     ),
     actions: [
       Obx(() {
@@ -40,9 +45,12 @@ Future<void> openInputQtyDialog({
         Color color1 = Colors.redAccent[100] ?? Colors.red;
         Color color2 = const Color(0xFF2ED471);
 
-        if (controller.messageProduct.isNotEmpty &&
-            !controller.statusPostProduct.value) {
-          text1 = 'Ulangi';
+        if (controller.messageProduct.isNotEmpty) {
+          if (!controller.statusPostProduct.value) {
+            text1 = 'Ulangi';
+          } else {
+            text1 = 'Kembali';
+          }
         }
 
         if (AppRole.isChecker1 && controller.isMaxFailureChecker.value) {
@@ -135,164 +143,4 @@ Widget _buildButton({
     visible2: visible,
     visibleSpace: visible,
   );
-}
-
-class ContentInputDialog extends StatelessWidget {
-  final ScanProductController controller;
-  final String itemName;
-  final String barcodeValue;
-  final TextEditingController qtyController;
-
-  const ContentInputDialog({
-    super.key,
-    required this.itemName,
-    required this.barcodeValue,
-    required this.controller,
-    required this.qtyController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Obx(() {
-        if (controller.isLoadingProduct.value) {
-          return SizedBox(height: 50, width: 50, child: const LoadingView());
-        }
-
-        if (controller.messageProduct.isNotEmpty) {
-          return SizedBox(
-            height: 70,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                controller.messageProduct.value,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-        }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: 'Nama Barang: ',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: itemName,
-                      style: const TextStyle(fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: qtyController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Jumlah',
-                  hintText: '0',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Unggah Foto barang',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                '*Upload minimal 1 foto untuk bukti',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 10,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildImageView(),
-            ],
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _buildImageView() {
-    return Obx(
-      () => GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        itemCount: controller.mediaFileList.length + 1,
-        itemBuilder: (context, index) {
-          if (index < controller.mediaFileList.length) {
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Image.file(
-                      File(controller.mediaFileList[index].path),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => controller.removeImage(index),
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else if (controller.mediaFileList.length < 2) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: InkWell(
-                onTap: () => controller.selectImage(ImageSource.camera),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
-                    color: Colors.grey[200],
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.camera_alt_outlined, color: Colors.grey),
-                  ),
-                ),
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-      ),
-    );
-  }
 }

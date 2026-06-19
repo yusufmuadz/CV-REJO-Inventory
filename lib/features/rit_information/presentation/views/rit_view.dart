@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_card_list.dart';
+import '../../../../utils/loading_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/box_rit.dart';
@@ -24,6 +25,13 @@ class RitView extends StatelessWidget {
             dateRit: controller.tanggalRit.value,
             onPressed: () {
               controller.registerListController();
+              if (controller.listOrderController.listRit.isEmpty) {
+                controller.listOrderController.getRit(
+                  isPashRit: controller.isRitToday.value,
+                  dateRIT: controller.tanggalRit.value,
+                );
+              }
+
               _openChangeRit();
             },
           ),
@@ -75,10 +83,15 @@ class RitView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async => controller.onRefreshTransaction(),
-      child: Obx(
-        () => ReorderableListView.builder(
-          itemCount: controller.orders.length,
+      child: Obx(() {
+        final isShowPlus =
+            controller.loadState.value != LoadState.initial &&
+            controller.loadState.value != LoadState.idle;
+
+        return ReorderableListView.builder(
+          itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
           physics: const AlwaysScrollableScrollPhysics(),
+          scrollController: controller.scrollController,
           padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
           buildDefaultDragHandles:
               controller.buttonRIT.value ==
@@ -86,6 +99,13 @@ class RitView extends StatelessWidget {
           itemBuilder: (context, index) {
             // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
             // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
+            if (index == controller.orders.length) {
+              return _buildBottomIndicator(
+                controller.loadState.value,
+                controller.retryFetch,
+              );
+            }
+
             return _buildOrder(
               index: index,
               margin: const EdgeInsets.only(bottom: 10),
@@ -117,8 +137,8 @@ class RitView extends StatelessWidget {
           onReorder: (int oldIndex, int newIndex) {
             controller.reorderOrders(oldIndex, newIndex);
           },
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -148,6 +168,47 @@ class RitView extends StatelessWidget {
         color: controller.colorRit.value.replaceAll('#', ''),
       ),
     );
+  }
+
+  Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {
+    final uniqueKey = ValueKey('state_$state');
+    
+    switch (state) {
+      case LoadState.loadingMore:
+        return Padding(
+          key: uniqueKey,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: LoadingView(),
+        );
+
+      case LoadState.noMore:
+        return Padding(
+          key: uniqueKey,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: Text(
+              '✨ Tidak ada data lagi',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        );
+
+      case LoadState.error:
+        return Padding(
+          key: uniqueKey,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Coba Lagi'),
+            ),
+          ),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   _openChangeRit() {

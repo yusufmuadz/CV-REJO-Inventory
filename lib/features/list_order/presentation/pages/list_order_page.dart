@@ -11,7 +11,7 @@ import '../../../detail_order/presentation/widgets/dialog/assistant_dialog.dart'
 import '../controllers/list_order_controller.dart';
 import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
-import 'list_order_view.dart';
+import '../views/list_order_view.dart';
 
 class ListOrderPage extends GetView<ListOrderController> {
   const ListOrderPage({super.key});
@@ -102,11 +102,18 @@ class ListOrderPage extends GetView<ListOrderController> {
     }
 
     if (controller.pageIndex.value == 0) {
+      if (controller.listRit.isEmpty) {
+        return const SizedBox.shrink();
+      }
       return _buildButtonSelectRIT();
     }
 
     if (controller.pageIndex.value == 1) {
-      return _buildButtonChangeRIT();
+      if (controller.orders.isEmpty) {
+        return _buildButtonChangeRIT();
+      } else {
+        return _buildButtonPendingRIT();
+      }
     }
     return const SizedBox.shrink();
   }
@@ -127,7 +134,7 @@ class ListOrderPage extends GetView<ListOrderController> {
     );
   }
 
-  Widget _buildButtonChangeRIT() {
+  Widget _buildButtonPendingRIT() {
     if (controller.loadState.value == LoadState.initial) {
       return const SizedBox.shrink();
     }
@@ -142,26 +149,30 @@ class ListOrderPage extends GetView<ListOrderController> {
     );
   }
 
+  Widget _buildButtonChangeRIT() {
+    if (controller.loadState.value == LoadState.initial) {
+      return const SizedBox.shrink();
+    }
+
+    return CustomButton.basicButton(
+      title: 'Ubah RIT',
+      color: const Color(0x954D7BF1),
+      onPressed: () {
+        debugPrint('Pending RIT');
+        controller.changeRIT();
+      },
+    );
+  }
+
   Widget _buildButtonSelectRIT() {
     if (controller.loadState.value == LoadState.initial) {
       return const SizedBox.shrink();
     }
 
-    return CustomButton.doubleButton(
-      title1: 'Batal',
-      title2: 'Pilih RIT',
-      color1: Colors.redAccent,
-      color2: const Color(0xFF2ED471),
-      visible1: controller.isSelection.value,
-      visibleSpace: controller.isSelection.value,
-      onPressed1: () {
-        debugPrint('Pilih RIT');
-        // if (controller.listRit.isEmpty) {
-        //   controller.getRit();
-        // }
-        controller.pageIndex.value = 1;
-      },
-      onPressed2: () =>
+    return CustomButton.basicButton(
+      title: 'Pilih RIT',
+      color: const Color(0xFF2ED471),
+      onPressed: () =>
           controller.isSelection.value = !controller.isSelection.value,
     );
   }

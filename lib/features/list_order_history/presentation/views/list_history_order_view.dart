@@ -151,6 +151,9 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
   //////======== SEBELUM DRAG & DROP ========//////
 
   Widget _buildContent() {
+    final isShowPlus =
+        controller.loadState.value != LoadState.initial &&
+        controller.loadState.value != LoadState.idle;
     return CustomScrollView(
       controller: controller.scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
@@ -160,13 +163,7 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         else
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              childCount:
-                  controller.orders.length +
-                  (controller.loadState.value == LoadState.loadingMore ||
-                          controller.loadState.value == LoadState.error ||
-                          controller.loadState.value == LoadState.noMore
-                      ? 1
-                      : 0),
+              childCount: controller.orders.length + (isShowPlus ? 1 : 0),
               (context, index) {
                 if (index == controller.orders.length) {
                   return _buildBottomIndicator(

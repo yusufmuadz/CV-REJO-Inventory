@@ -1,6 +1,5 @@
 import 'package:cv_rejo/core/result/result_custom.dart';
 import 'package:cv_rejo/features/ending_order/domain/params/post_ending_order_param.dart';
-import 'package:get_storage/get_storage.dart';
 import '../../../../core/error/failures.dart';
 import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
 import '../../domain/entities/ending_order_entity.dart';
@@ -21,12 +20,18 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       final response = await dataSource.postEndingOrder(params);
 
       if (response.error == null) {
-        final rit = GetStorage().read('city');
-        final responseRit = await listOrderDataSource.getRit(rit);
+        // final rit = GetStorage().read('city');
+        // final dateRIT = GetStorage().read('tanggalRit');
+        // final isRitToday = GetStorage().read('isRitToday') ?? false;
+
+        // final responseRit = await listOrderDataSource.getRit(
+        //   ParamGetRIT(search: rit, isPastRit: !isRitToday, date: dateRIT),
+        // );
 
         return Success(
           EndingOrderEntity(
-            totalPO: '0',  // totalPO: responseRit.data!.transaction!.first.poPendingDelivery,
+            totalPO:
+                '0', // totalPO: responseRit.data!.transaction!.first.poPendingDelivery,
             list: [],
           ),
           '',

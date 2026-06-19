@@ -66,10 +66,9 @@ class InputPendingDialog {
                         );
                         return;
                       }
-                      if (controller.listRit.isEmpty) {
-                        controller.getRit();
-                      }
-                      controller.pageIndex.value = 0;
+
+                      controller.changeRIT();
+
                       Get.back();
                     },
                   ),

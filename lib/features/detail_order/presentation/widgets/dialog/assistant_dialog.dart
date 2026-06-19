@@ -30,6 +30,8 @@ class AssistantDialog {
       } else {
         visible1 = false;
       }
+    } else if (AppRole.isChecker2) {
+      visible1 = false;
     }
     return CustomButton.doubleButton(
       title1: title1,
@@ -108,7 +110,7 @@ class AssistantDialog {
       titleButton1: 'Kembali',
       height: 0.30,
       singleButton: true,
-      padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
+      contentPadding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

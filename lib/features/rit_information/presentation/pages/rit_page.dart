@@ -10,9 +10,9 @@ import '../controllers/rit_controller.dart';
 import '../widgets/enum_rit.dart';
 import '../widgets/rit_dialog.dart';
 import '../widgets/rit_dialog_info_po.dart';
-import 'arrive_at_office.dart';
-import 'input_image_view.dart';
-import 'rit_view.dart';
+import '../views/arrive_at_office.dart';
+import '../views/input_image_view.dart';
+import '../views/rit_view.dart';
 
 class RitPage extends GetView<RitController> {
   const RitPage({super.key});

@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/rit_list_entity.dart';
 import '../controllers/list_order_controller.dart';
 
@@ -42,17 +41,22 @@ class ListRitView extends StatelessWidget {
 
   Widget _buildOrder({required int index}) {
     RitListEntity ritOrder = controller.listRit[index];
-    String finishPO = '0';
+    String totalOnProgressPO = '0';
+    String pendingPoRITCheck2 = ritOrder.poPendingCheck2;
     final colorRIT = int.parse('0xFF${ritOrder.color.replaceAll('#', '')}');
 
     if (AppRole.isPIC) {
-      finishPO = ritOrder.poDonePic;
+      totalOnProgressPO = ritOrder.poPendingPic;
     } else if (AppRole.isChecker1) {
-      finishPO = ritOrder.poDoneCheck1;
+      totalOnProgressPO = ritOrder.poPendingCheck1;
     } else if (AppRole.isChecker2) {
-      finishPO = ritOrder.poDoneCheck2;
+      if (pendingPoRITCheck2 != '0') {
+        totalOnProgressPO = ritOrder.poPendingCheck2;
+      } else {
+        totalOnProgressPO = ritOrder.poPendingLoader;
+      }
     } else if (AppRole.isDriver) {
-      finishPO = ritOrder.poDoneDelivery;
+      totalOnProgressPO = ritOrder.poPendingDelivery;
     }
 
     return Obx(() {
@@ -63,7 +67,8 @@ class ListRitView extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
         child: InkWell(
-          onTap: () => controller.onSelectedRit(index),
+          onTap: () =>
+              controller.onSelectedRit(index, pendingPoRIT: pendingPoRITCheck2),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -168,7 +173,7 @@ class ListRitView extends StatelessWidget {
                           const SizedBox(width: 5),
                           RichText(
                             text: TextSpan(
-                              text: '$finishPO ',
+                              text: '$totalOnProgressPO ',
                               style: TextStyles.basicTextStyle(
                                 fontSize: 16,
                                 fontFamily:
@@ -178,7 +183,7 @@ class ListRitView extends StatelessWidget {
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: 'PO Selesai',
+                                  text: 'PO Berjalan',
                                   style: TextStyles.basicTextStyle(
                                     fontSize: 16,
                                     fontFamily:

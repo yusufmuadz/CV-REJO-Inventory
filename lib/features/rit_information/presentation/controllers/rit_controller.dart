@@ -33,6 +33,7 @@ class RitController extends GetxController {
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final isRitToday = false.obs;
 
   final buttonRIT = ButtonSequenceState.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
@@ -82,6 +83,8 @@ class RitController extends GetxController {
 
   late final ListOrderController listOrderController;
 
+  final scrollController = ScrollController();
+
   @override
   void onInit() {
     super.onInit();
@@ -99,8 +102,11 @@ class RitController extends GetxController {
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
+      isRitToday.value = args['isRitToday'] ?? false;
       _getOrder();
     }
+
+    scrollController.addListener(_onScroll);
   }
 
   @override
@@ -119,6 +125,22 @@ class RitController extends GetxController {
     pageIndex.value = 0;
     pageController.dispose();
     isLoadingReason.value = false;
+    scrollController.dispose();
+    loadState.value = LoadState.idle;
+  }
+
+  void _onScroll() {
+    final canLoad = loadState.value == LoadState.idle;
+
+    if (canLoad &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200) {
+      // Panggil fungsi untuk memuat lebih banyak data
+      // if (hasmore.value && !isLoading.value) {
+      currentPage.value++;
+      _getOrder();
+      // }
+    }
   }
 
   void onRefreshTransaction() {
@@ -160,7 +182,7 @@ class RitController extends GetxController {
     if (isLoading.value) return;
 
     /////////// AWAL SEMENTARA ////////////
-    
+
     isSave.value = true;
     pageIndex.value = 0;
     pageController.animateToPage(
@@ -318,6 +340,7 @@ class RitController extends GetxController {
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
+      // loadState.value = LoadState.idle;
       // isLoading.value = false;
     }
   }
