@@ -36,7 +36,7 @@ class RitController extends GetxController {
   final isRitToday = false.obs;
   final isAcceptRIT = false.obs;
 
-  final buttonRIT = ButtonSequenceState.acceptRIT.obs;
+  final buttonRIT = EnumButtonRIT.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
 
   final isTakeOff = false.obs;
@@ -110,7 +110,7 @@ class RitController extends GetxController {
     final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
 
     if (isAccepted) {
-      buttonRIT.value = ButtonSequenceState.selectChange;
+      buttonRIT.value = EnumButtonRIT.buttonTakeOff;
     }
 
     scrollController.addListener(_onScroll);
@@ -164,7 +164,8 @@ class RitController extends GetxController {
     GetStorage().write('isAcceptRIT', true);
     isAcceptRIT.value = true;
 
-    buttonRIT.value = ButtonSequenceState.selectChange;
+    buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    // buttonRIT.value = EnumButtonRIT.buttonChangePO;
     // isAccept.value = !isAccept.value;
   }
 
@@ -197,7 +198,8 @@ class RitController extends GetxController {
 
     /////////// AWAL SEMENTARA ////////////
 
-    isSave.value = true;
+    // isSave.value = true;
+    buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
     pageIndex.value = 0;
     pageController.animateToPage(
       0,
@@ -264,7 +266,7 @@ class RitController extends GetxController {
 
   Future<void> pendingProduct() async {
     if (isLoading.value) return;
-    isAccept.value = !isAccept.value;
+    buttonRIT.value = EnumButtonRIT.cancelChangePO;
 
     //   if (mediaFileList.isEmpty) {
     //     dialogService.showErrorSnackbar(title: 'Gagal!', 'Coming Soon');

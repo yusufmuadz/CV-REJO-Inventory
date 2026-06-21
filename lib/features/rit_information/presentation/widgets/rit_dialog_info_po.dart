@@ -14,7 +14,7 @@ class RitDialogInfoPo {
       titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       contentPadding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
       onPressed2: () {
-        controller.buttonRIT.value = ButtonSequenceState.saveChange;
+        controller.buttonRIT.value = EnumButtonRIT.buttonTakeOff;
         Get.back();
         controller.dialogService.showSuccessSnackbar('Berhasil Mengubah PO');
       },

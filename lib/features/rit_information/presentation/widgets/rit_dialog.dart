@@ -62,8 +62,7 @@ class RitDialog {
                     color: const Color(0xFF2ED471),
                     onPressed: () {
                       Get.back();
-                      controller.buttonRIT.value =
-                          ButtonSequenceState.cancelRIT;
+                      controller.buttonRIT.value = EnumButtonRIT.cancelRIT;
                     },
                   ),
                 ),

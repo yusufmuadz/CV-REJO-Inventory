@@ -167,10 +167,13 @@ class ListOrderController extends GetxController {
     if (canLoad &&
         scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200) {
-      // Panggil fungsi untuk memuat lebih banyak data
-      // if (hasmore.value && !isLoading.value) {
       currentPage.value++;
-      _getOrder();
+      // if (pageIndex.value == 0) {
+      //   getRit(isPashRit: !isRitToday.value, dateRIT: tanggalRit.value);
+      // } else {
+      if (pageIndex.value == 1) {
+        _getOrder();
+      }
       // }
     }
   }

@@ -94,8 +94,7 @@ class RitView extends StatelessWidget {
           scrollController: controller.scrollController,
           padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
           buildDefaultDragHandles:
-              controller.buttonRIT.value ==
-              ButtonSequenceState.afterSelectChange,
+              controller.buttonRIT.value == EnumButtonRIT.buttonConfirmChangePO,
           itemBuilder: (context, index) {
             // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
             // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
@@ -143,8 +142,7 @@ class RitView extends StatelessWidget {
   }
 
   Widget _buildOrder({required int index, EdgeInsetsGeometry? margin}) {
-    final isAccepted =
-        controller.buttonRIT.value == ButtonSequenceState.acceptRIT;
+    final isAccepted = controller.buttonRIT.value == EnumButtonRIT.acceptRIT;
     OrderEntity transaction = controller.orders[index];
 
     return Container(
@@ -172,7 +170,7 @@ class RitView extends StatelessWidget {
 
   Widget _buildBottomIndicator(LoadState state, VoidCallback onRetry) {
     final uniqueKey = ValueKey('state_$state');
-    
+
     switch (state) {
       case LoadState.loadingMore:
         return Padding(

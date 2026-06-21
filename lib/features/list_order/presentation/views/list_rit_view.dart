@@ -16,15 +16,13 @@ class ListRitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPlusOne =
+        controller.loadState.value != LoadState.initial &&
+        controller.loadState.value != LoadState.idle;
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount:
-            controller.listRit.length +
-            (controller.loadState.value == LoadState.loadingMore ||
-                    controller.loadState.value == LoadState.error ||
-                    controller.loadState.value == LoadState.noMore
-                ? 1
-                : 0),
+        childCount: controller.listRit.length + (isPlusOne ? 1 : 0),
         (context, index) {
           if (index == controller.listRit.length) {
             return _buildBottomIndicator(
@@ -41,6 +39,7 @@ class ListRitView extends StatelessWidget {
 
   Widget _buildOrder({required int index}) {
     RitListEntity ritOrder = controller.listRit[index];
+    bool showBottom = index + 1 == controller.listRit.length;
     String totalOnProgressPO = '0';
     String pendingPoRITCheck2 = ritOrder.poPendingCheck2;
     final colorRIT = int.parse('0xFF${ritOrder.color.replaceAll('#', '')}');
@@ -65,8 +64,9 @@ class ListRitView extends StatelessWidget {
           controller.isSelected.value == ritOrder.city &&
           controller.tanggalRit.value == ritOrder.tanggalRit;
 
-      return Padding(
+      return Container(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
+        margin: showBottom ? const EdgeInsets.only(bottom: 16) : null,
         child: InkWell(
           onTap: () =>
               controller.onSelectedRit(index, pendingPoRIT: pendingPoRITCheck2),

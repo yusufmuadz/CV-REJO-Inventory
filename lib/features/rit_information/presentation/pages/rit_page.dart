@@ -50,8 +50,9 @@ class RitPage extends GetView<RitController> {
           if (controller.loadState.value == LoadState.initial ||
               controller.orders.isEmpty ||
               controller.isArrive.value ||
-              controller.buttonRIT.value == ButtonSequenceState.saveChange ||
-              controller.buttonRIT.value == ButtonSequenceState.cancelRIT) {
+              // controller.buttonRIT.value == EnumButtonRIT.saveChangePO ||
+              controller.buttonRIT.value == EnumButtonRIT.buttonSaveRitDoc ||
+              controller.buttonRIT.value == EnumButtonRIT.cancelRIT) {
             return const SizedBox.shrink();
           }
           return CustomButton.bottomBarStyle(child: _buildButton());
@@ -75,23 +76,24 @@ class RitPage extends GetView<RitController> {
   Widget _buildButton() {
     final buttonRIT = controller.buttonRIT.value;
 
-    if (buttonRIT == ButtonSequenceState.selectChange) {
-      return _buildButtonSequence();
-    }
+    // if (buttonRIT == EnumButtonRIT.buttonChangePO) {
+    //   return _buildButtonChangePO();
+    // }
 
-    if (buttonRIT == ButtonSequenceState.afterSelectChange) {
-      return _buildButtonChangePO();
-    }
+    // if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+    //   return _buildButtonConfirmChangePO();
+    // }
 
-    if (controller.isSave.value) {
-      return _buildAfterSave();
+    if (buttonRIT == EnumButtonRIT.buttonArriveRIT) {
+      return _buildShowButtonArrive();
     }
-    if (!controller.isAccept.value) {
+    if (buttonRIT == EnumButtonRIT.acceptRIT) {
       return _buildButtonSelect();
     }
-    if (controller.isArriveInput.value) {
-      return _buildButtonArrive();
+    if (buttonRIT == EnumButtonRIT.buttonSaveDoc) {
+      return _buildButtonArriveSafeDoc();
     }
+
     return CustomButton.basicButton(
       title: controller.pageIndex.value == 0 ? 'Keberangkatan' : 'Simpan',
       color: controller.pageIndex.value == 0
@@ -120,7 +122,7 @@ class RitPage extends GetView<RitController> {
     );
   }
 
-  Widget _buildAfterSave() {
+  Widget _buildShowButtonArrive() {
     return CustomButton.doubleButton(
       title1: 'Retur',
       title2: 'Sampai Kantor',
@@ -128,8 +130,9 @@ class RitPage extends GetView<RitController> {
       color2: const Color(0xFF2ED471),
       onPressed1: () => RitDialog().inputRetur(controller: controller),
       onPressed2: () {
-        controller.isSave.value = false;
-        controller.isArriveInput.value = true;
+        // controller.isSave.value = false;
+        // controller.isArriveInput.value = true;
+        controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
         controller.pageIndex.value = 2;
         controller.pageController.animateToPage(
           2,
@@ -140,24 +143,24 @@ class RitPage extends GetView<RitController> {
     );
   }
 
-  Widget _buildButtonSequence() {
+  Widget _buildButtonChangePO() {
     return CustomButton.basicButton(
       title: 'Ubah Urutan PO',
       color: const Color.fromARGB(255, 58, 175, 225),
       onPressed: () {
-        controller.buttonRIT.value = ButtonSequenceState.afterSelectChange;
+        controller.buttonRIT.value = EnumButtonRIT.buttonConfirmChangePO;
       },
     );
   }
 
-  Widget _buildButtonChangePO() {
+  Widget _buildButtonConfirmChangePO() {
     return CustomButton.doubleButton(
       title1: 'Batal',
       title2: 'Konfirmasi',
       color1: Colors.redAccent[200]!,
       color2: const Color(0xFF8B97F3),
       onPressed1: () {
-        controller.buttonRIT.value = ButtonSequenceState.selectChange;
+        controller.buttonRIT.value = EnumButtonRIT.buttonChangePO;
       },
       onPressed2: () {
         RitDialogInfoPo().confirmPO(controller: controller);
@@ -165,11 +168,12 @@ class RitPage extends GetView<RitController> {
     );
   }
 
-  Widget _buildButtonArrive() {
+  Widget _buildButtonArriveSafeDoc() {
     return CustomButton.basicButton(
       title: 'Simpan',
       color: const Color(0xFF2ED471),
       onPressed: () {
+        // debugPrint('Simpan Dokumen Sampai Kantor');
         if (controller.recipientName.text.isEmpty ||
             controller.mediaFileRecipientInvoice.isEmpty ||
             controller.mediaFileRecipientMoney.isEmpty ||
@@ -183,11 +187,11 @@ class RitPage extends GetView<RitController> {
         GetStorage().remove('noInvoice');
         GetStorage().remove('city');
         GetStorage().remove('colorRit');
-        controller.isArrive.value = true;
+        GetStorage().remove('isAcceptRIT');
 
         ///// ========== KE HALAMAN LIST RIT =========== /////
 
-        Get.toNamed(
+        Get.offNamed(
           Routes.LIST_ORDER,
           arguments: {
             'routeFrom': 'home',
@@ -196,9 +200,7 @@ class RitPage extends GetView<RitController> {
           },
         );
 
-        controller.dialogService.showSuccessSnackbar(
-          'Berhasil Menyimpan Pesanan',
-        );
+        controller.dialogService.showSuccessSnackbar('Berhasil Menyimpan RIT');
       },
     );
   }

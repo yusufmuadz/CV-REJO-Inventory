@@ -15,7 +15,7 @@ class ArriveAtOffice extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         Text(
-          'Masukkan Nama Penerima Berkas',
+          'Masukkan Nama Penerima Berkas*',
           style: TextStyle(
             color: Colors.black,
             fontSize: 15,
