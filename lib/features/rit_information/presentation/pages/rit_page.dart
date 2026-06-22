@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/enum_rit.dart';
 import '../widgets/rit_dialog.dart';
@@ -19,8 +20,8 @@ class RitPage extends GetView<RitController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         appBar: AppBar(
           title: Obx(
@@ -31,8 +32,10 @@ class RitPage extends GetView<RitController> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if (controller.routeFrom.value == 'listOrder' ||
-                  controller.isAccept.value) {
+              if ((controller.routeFrom.value == 'listOrder' &&
+                      controller.isAcceptRIT.value) ||
+                  controller.routeFrom.value == 'endingOrder') {
+                Get.delete<ListOrderController>(force: true);
                 Get.offNamed(Routes.HOME);
                 return;
               }

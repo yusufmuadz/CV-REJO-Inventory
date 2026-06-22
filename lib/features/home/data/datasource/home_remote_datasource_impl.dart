@@ -24,6 +24,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         if (params.limit != null) 'limit': '${params.limit}',
         if (params.page != null) 'page': '${params.page}',
         if (params.filter != null) 'filter': '${params.filter}',
+        if (params.district != null) 'district': '${params.district}',
         if (params.dateRit != null) 'date_rit': '${params.dateRit}',
       };
 

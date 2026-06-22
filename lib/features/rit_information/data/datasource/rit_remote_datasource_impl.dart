@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -108,6 +109,14 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   Future<ResponseModelGetTransactionAll> getOrders(
     ParamsGetTransaction params,
   ) async {
+    String? date = params.dateRit;
+
+    if (date != null) {
+      if (date.isNotEmpty) {
+        date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+      }
+    }
+
     try {
       Map<String, String> body = {
         if (params.limit != null) 'limit': '${params.limit}',
@@ -117,12 +126,12 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'date_rit': '${params.dateRit}',
+        if (params.dateRit != null) 'date_rit': '$date',
       };
 
       String queryString = Uri(queryParameters: body).query;
       final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll('all')}?$queryString',
+        '${ApiEndpoints.fetchTransactionAll('past')}?$queryString',
       );
 
       // debugPrint('Data Home Get Transaction Remote DataSource: ${response.data}');

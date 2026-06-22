@@ -59,8 +59,7 @@ class ListRitView extends StatelessWidget {
     }
 
     return Obx(() {
-      final bool isSelected =
-          AppRole.isDriver &&
+      bool isSelected =
           controller.isSelected.value == ritOrder.city &&
           controller.tanggalRit.value == ritOrder.tanggalRit;
 

@@ -108,11 +108,16 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
   @override
   Future<ResponseModelGetRit> getRit(ParamGetRIT params) async {
     try {
+      String url = 'getrit';
       String? date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
       if (params.isPastRit == true) {
+        url = 'pastrit';
+
         if (params.date != null) {
-          date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+          date = DateFormat(
+            'yyyy-MM-dd',
+          ).format(DateTime.parse(params.date ?? date));
         }
       }
 
@@ -121,13 +126,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.isPastRit) 'date': date,
       };
 
-      String url = 'getrit';
-
       String queryString = Uri(queryParameters: body).query;
-
-      if (params.isPastRit) {
-        url = 'pastrit';
-      }
 
       final response = await dioClient.get(
         '${ApiEndpoints.getRit(url)}?$queryString',

@@ -155,40 +155,102 @@ class ListOrderView extends StatelessWidget {
     );
   }
 
-  Widget _buildContent() {
-    return Obx(
-      () => CustomScrollView(
-        controller: controller.scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          if ((controller.orders.isEmpty && controller.pageIndex.value == 1) ||
-              (controller.listRit.isEmpty && controller.pageIndex.value == 0))
-            _buildEmptyOrder()
-          else if (controller.pageIndex.value == 0)
-            ListRitView(controller: controller)
-          else
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount:
-                    controller.orders.length +
-                    (controller.loadState.value == LoadState.loadingMore ||
-                            controller.loadState.value == LoadState.error ||
-                            controller.loadState.value == LoadState.noMore
-                        ? 1
-                        : 0),
-                (context, index) {
-                  if (index == controller.orders.length) {
-                    return _buildBottomIndicator(
-                      controller.loadState.value,
-                      controller.retryFetch,
-                    );
-                  }
+  // Widget _buildContent() {
+  //   return Obx(
+  //     () => CustomScrollView(
+  //       controller: controller.scrollController,
+  //       physics: const AlwaysScrollableScrollPhysics(),
+  //       slivers: [
+  //         if ((controller.orders.isEmpty && controller.pageIndex.value == 1) ||
+  //             (controller.listRit.isEmpty && controller.pageIndex.value == 0))
+  //           _buildEmptyOrder()
+  //         else if (controller.pageIndex.value == 0)
+  //           ListRitView(controller: controller)
+  //         else
+  //           SliverList(
+  //             delegate: SliverChildBuilderDelegate(
+  //               childCount:
+  //                   controller.orders.length +
+  //                   (controller.loadState.value == LoadState.loadingMore ||
+  //                           controller.loadState.value == LoadState.error ||
+  //                           controller.loadState.value == LoadState.noMore
+  //                       ? 1
+  //                       : 0),
+  //               (context, index) {
+  //                 if (index == controller.orders.length) {
+  //                   return _buildBottomIndicator(
+  //                     controller.loadState.value,
+  //                     controller.retryFetch,
+  //                   );
+  //                 }
 
-                  return _buildOrder(index: index);
-                },
-              ),
+  //                 return _buildOrder(index: index);
+  //               },
+  //             ),
+  //           ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildContent() {
+    // 1. Buat ScrollController lokal agar fresh setiap kali widget dibangun
+    final localScrollController = ScrollController();
+
+    return PrimaryScrollController(
+      controller: localScrollController,
+      child: Builder(
+        builder: (context) {
+          // 2. Pasang listener langsung ke localScrollController untuk mendeteksi scroll
+          localScrollController.removeListener(
+            () {},
+          ); // Bersihkan listener lama jika terjadi re-render
+          localScrollController.addListener(() {
+            // Kirim instance scroll aktif ke fungsi di GetX Controller Anda
+            controller.onWidgetScroll(localScrollController);
+          });
+
+          return Obx(
+            () => CustomScrollView(
+              // 3. Pasang localScrollController ke CustomScrollView Anda
+              controller: localScrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                if ((controller.orders.isEmpty &&
+                        controller.pageIndex.value == 1) ||
+                    (controller.listRit.isEmpty &&
+                        controller.pageIndex.value == 0))
+                  _buildEmptyOrder()
+                else if (controller.pageIndex.value == 0)
+                  ListRitView(controller: controller)
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      childCount:
+                          controller.orders.length +
+                          (controller.loadState.value ==
+                                      LoadState.loadingMore ||
+                                  controller.loadState.value ==
+                                      LoadState.error ||
+                                  controller.loadState.value == LoadState.noMore
+                              ? 1
+                              : 0),
+                      (context, index) {
+                        if (index == controller.orders.length) {
+                          return _buildBottomIndicator(
+                            controller.loadState.value,
+                            controller.retryFetch,
+                          );
+                        }
+
+                        return _buildOrder(index: index);
+                      },
+                    ),
+                  ),
+              ],
             ),
-        ],
+          );
+        },
       ),
     );
   }

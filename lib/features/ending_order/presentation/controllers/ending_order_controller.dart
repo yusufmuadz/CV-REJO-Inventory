@@ -7,6 +7,7 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../rit_information/presentation/controllers/rit_controller.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
 
@@ -114,21 +115,7 @@ class EndingOrderController extends GetxController {
                   Routes.LIST_ORDER,
                   arguments: {'routeFrom': 'endingOrder'},
                 );
-                // Get.offAllNamed(
-                //   Routes.DETAIL_ORDER,
-                //   arguments: {
-                //     'routeFrom': 'listOrder',
-                //     'take_it_order': true,
-                //     'status_checker2': 'completed',
-                //     'invoice': noInvoice.value,
-                //   },
-                // );
               } else {
-                // debugPrint('Data TOTAL PO: ${data.totalPO}');
-                // if (data.totalPO != null && data.totalPO == '0') {
-                //   GetStorage().remove('city');
-                // }
-
                 ///// ========== KE HALAMAN LIST PESANAN =========== /////
 
                 GetStorage().remove('noInvoice');

@@ -138,13 +138,18 @@ class CustomImage {
     bool isShadow = true,
     bool readOnly = false,
     bool isPreview = false,
+    bool isHistory = false,
     required String title,
     required RxList<XFile> mediaFileList,
   }) {
     return _buildBoxStyle(
       isShadow: isShadow,
-      child: Obx(
-        () => Column(
+      child: Obx(() {
+        if (isHistory && mediaFileList.isEmpty) {
+          return const Center(child: Text('Coming soon'));
+        }
+
+        return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Visibility(
@@ -209,8 +214,8 @@ class CustomImage {
               ),
             ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 

@@ -88,27 +88,22 @@ class ListOrderController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     if (args != null) {
-      debugPrint('Route From: ${args['routeFrom']}');
       isRouteFrom.value = args['routeFrom'] ?? '';
       isDistrictSelected.value = args['city'] ?? '';
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
-      final page = args['page'] ?? 0;
-
-      // if (tanggalRit.isEmpty) {
-      //   tanggalRit.value = DateTime.now().toString();
-      // }
+      // final page = args['page'] ?? 0;
 
       debugPrint('DATE RIT : ${tanggalRit.value}');
 
-      if (AppRole.isDriver) {
-        pageIndex.value = page;
-      } else {
-        if (isDistrictSelected.value.isNotEmpty) {
-          pageIndex.value = 1;
-        }
+      // if (AppRole.isDriver) {
+      //   pageIndex.value = page;
+      // } else {
+      if (isDistrictSelected.value.isNotEmpty) {
+        pageIndex.value = 1;
       }
+      // }
     }
     scrollController.addListener(_onScroll);
   }
@@ -175,6 +170,22 @@ class ListOrderController extends GetxController {
         _getOrder();
       }
       // }
+    }
+  }
+
+  void onWidgetScroll(ScrollController activeController) {
+    if (pageIndex.value == 0) return;
+    if (!activeController.hasClients) return;
+
+    final currentPixels = activeController.position.pixels;
+    final maxScroll = activeController.position.maxScrollExtent;
+
+    // Hanya trigger ambil data jika status sedang idle (tidak sedang loading)
+    final canLoad = loadState.value == LoadState.idle;
+
+    if (canLoad && currentPixels >= maxScroll - 200) {
+      currentPage.value++;
+      _getOrder(); // Fungsi ambil data pagination Anda
     }
   }
 
@@ -349,11 +360,16 @@ class ListOrderController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
+    String sendDate = pastRitDateSelected.value;
+
+    if (sendDate.isEmpty) {
+      sendDate = tanggalRit.value;
+    }
+
+    debugPrint('DATE RIT : $sendDate');
+
     final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(
-        isPastRit: isPashRit ?? !isRitToday.value,
-        date: dateRIT ?? pastRitDateSelected.value,
-      ),
+      ParamGetRIT(isPastRit: !isRitToday.value, date: sendDate),
     );
 
     try {

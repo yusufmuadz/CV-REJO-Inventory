@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/services/storage_service.dart';
 import '../../../../routes/app_pages.dart';
@@ -32,6 +33,7 @@ class SplashController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(seconds: 2));
+      _checkResetDate();
 
       final token = await _tokenStorage.getAccessToken();
       if (token != null) {
@@ -49,11 +51,25 @@ class SplashController extends GetxController {
     }
   }
 
-  void _removeStorage() {
+  void _removeStorage({bool removeUser = true}) {
     GetStorage().remove('noInvoice');
-    GetStorage().remove('user');
+    if (removeUser) GetStorage().remove('user');
     GetStorage().remove('city');
     GetStorage().remove('colorRit');
     GetStorage().remove('tanggalRit');
+  }
+
+  void _checkResetDate() {
+    final resetDate = GetStorage().read('resetDate');
+    final dateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    debugPrint('RESET DATE : $resetDate');
+    debugPrint('DATE NOW : $dateTime');
+
+    if (resetDate != dateTime) {
+      debugPrint('RESET DATE');
+      _removeStorage(removeUser: false);
+      GetStorage().write('resetDate', dateTime);
+    }
   }
 }

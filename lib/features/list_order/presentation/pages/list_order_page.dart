@@ -48,6 +48,7 @@ class ListOrderPage extends GetView<ListOrderController> {
             onPressed: () {
               if (controller.isRouteFrom.value == 'endingOrder') {
                 Get.offNamed(Routes.HOME);
+                return;
               }
               Get.back();
             },

@@ -21,10 +21,12 @@ class TakeItOrderView extends StatelessWidget {
       children: [
         AppBarWidget().content(
           title: 'Ambil Pesanan',
-          onTap: () => HomeDialog.popupInputTakeIt(
-            isPreviewMode: false,
-            controller: controller,
-          ),
+          onTap: () =>
+              controller.dialogService.showErrorSnackbar('Coming soon'),
+          // HomeDialog.popupInputTakeIt(
+          //   isPreviewMode: false,
+          //   controller: controller,
+          // ),
         ),
         const SizedBox(height: 10),
         Container(
@@ -84,8 +86,7 @@ class TakeItOrderView extends StatelessWidget {
                         Text(
                           item.title ?? '',
                           style: TextStyles.basicTextStyle(
-                            fontFamily:
-                                GoogleFonts.hankenGrotesk().fontFamily,
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF151C27),

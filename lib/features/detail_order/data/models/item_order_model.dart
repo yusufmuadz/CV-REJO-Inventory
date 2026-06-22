@@ -44,7 +44,7 @@ class ItemOrderModel {
       checker2: StatusOrder.fromJson(json['checker2']),
       driver: StatusOrder.fromJson(json['driver']),
       statusChecker2: json['status_checker2'] ?? false,
-      statusDriver: json['status_driver'] ?? false,
+      statusDriver: json['status_deliveryscan'] ?? false,
       locationRack: json['lokasi'] ?? '-',
       color: json['warna'] ?? '-',
     );

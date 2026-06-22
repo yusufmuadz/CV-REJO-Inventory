@@ -93,7 +93,10 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
   }
 
   Widget _buildEmptyOrder() {
-    return const Center(child: Text('Tidak ada pesanan'));
+    return SliverFillRemaining(
+      hasScrollBody: false, // Mencegah stretching konten
+      child: const Center(child: Text('Tidak ada pesanan')),
+    );
   }
 
   //////======== AFTER DRAG & DROP ========//////

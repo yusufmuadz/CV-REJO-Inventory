@@ -111,7 +111,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
           controller.takeItTransactionDriver();
           return;
         }
-        
+
         controller.startingPO();
       },
     );
@@ -122,7 +122,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
   }
 
   Widget _buildButton() {
-    if (AppRole.isDriver || controller.statusPO.value == 'available') {
+    if (controller.statusPO.value == 'available') {
       return _buildButtonStart();
     }
     return _buildDoubleButton();

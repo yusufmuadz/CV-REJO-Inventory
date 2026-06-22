@@ -26,6 +26,7 @@ class RitController extends GetxController {
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
+  final isFirstOpen = true.obs;
 
   final currentPage = 1.obs;
   final orders = <OrderEntity>[].obs;
@@ -80,22 +81,16 @@ class RitController extends GetxController {
   final recipientName = TextEditingController();
 
   final pageIndex = 0.obs;
-  final pageController = PageController(initialPage: 0);
+  late PageController pageController;
 
   late final ListOrderController listOrderController;
 
-  final scrollController = ScrollController();
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  // late ScrollController scrollController;
 
   @override
   void onReady() {
     super.onReady();
-    registerListController();
-
+    pageController = PageController(initialPage: pageIndex.value);
     final args = Get.arguments;
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
@@ -104,7 +99,6 @@ class RitController extends GetxController {
       tanggalRit.value = args['tanggalRit'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
-      _getOrder();
     }
 
     final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
@@ -113,42 +107,85 @@ class RitController extends GetxController {
       buttonRIT.value = EnumButtonRIT.buttonTakeOff;
     }
 
-    scrollController.addListener(_onScroll);
+    _getOrder();
+    // _initScrollController();
   }
+
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  //   // registerListController();
+  //   _getOrder();
+  //   debugPrint('On Ready');
+  // }
 
   @override
   void onClose() {
-    super.onClose();
-    isLoading.value = false;
-    kmController.dispose();
-    mediaFileList.clear();
-    noInvoice.value = '';
-    routeFrom.value = '';
-    colorRit.value = '';
-    tanggalRit.value = '';
-    mediaFileListKM.clear();
-    mediaFileListTangki.clear();
-    mediaFileListSJ.clear();
-    pageIndex.value = 0;
+    // kmController.dispose();
+    // mediaFileList.clear();
+    // noInvoice.value = '';
+    // mediaFileListKM.clear();
+    // mediaFileListTangki.clear();
+    // mediaFileListSJ.clear();
+    // if (scrollController.hasClients) {
+    //   scrollController.removeListener(_onScroll);
+    //   scrollController.dispose();
+    // }
     pageController.dispose();
+    isLoading.value = false;
     isLoadingReason.value = false;
-    scrollController.dispose();
     loadState.value = LoadState.idle;
+
+    // registerScroll();
+    debugPrint('On Close');
+    super.onClose();
   }
 
-  void _onScroll() {
-    final canLoad = loadState.value == LoadState.idle;
+  // void _initScrollController() {
+  //   scrollController = ScrollController();
+  //   scrollController.addListener(_onScroll);
+  // }
 
-    if (canLoad &&
-        scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 200) {
-      // Panggil fungsi untuk memuat lebih banyak data
-      // if (hasmore.value && !isLoading.value) {
-      currentPage.value++;
-      _getOrder();
-      // }
-    }
-  }
+  // void resetControllerBeforeNav() {
+  //   if (scrollController.hasClients) {
+  //     scrollController.removeListener(_onScroll);
+  //     scrollController.dispose();
+  //   }
+  //   _initScrollController();
+  // }
+
+  // void registerScroll() {
+  //   if (routeFrom.value == 'endingOrder' && isFirstOpen.value) {
+  //     debugPrint('Register Scroll');
+  //     scrollController = ScrollController();
+  //     scrollController.addListener(_onScroll);
+  //   }
+  //   debugPrint('Is First Open : ${isFirstOpen.value}');
+  //   isFirstOpen.value = false;
+  // }
+
+  // void _onScroll() {
+  //   if (!scrollController.hasClients) return;
+
+  //   final currentPosition = scrollController.positions.length == 1
+  //       ? scrollController.position
+  //       : scrollController.positions.first;
+
+  //   final canLoad = loadState.value == LoadState.idle;
+
+  //   if (canLoad &&
+  //       currentPosition.pixels >= currentPosition.maxScrollExtent - 200) {
+  //     currentPage.value++;
+  //     _getOrder(); // atau fungsi ambil data Rit Anda
+  //   }
+
+  //   // if (canLoad &&
+  //   //     scrollController.position.pixels >=
+  //   //         scrollController.position.maxScrollExtent - 200) {
+  //   //   currentPage.value++;
+  //   //   _getOrder();
+  //   // }
+  // }
 
   void onRefreshTransaction() {
     _getOrder(isRefresh: true);
@@ -529,5 +566,25 @@ class RitController extends GetxController {
         isChecked: false,
       ),
     );
+  }
+
+  void onWidgetScroll(ScrollController activeController) {
+    if (!activeController.hasClients) return;
+
+    final currentPixels = activeController.position.pixels;
+    final maxScroll = activeController.position.maxScrollExtent;
+
+    // DEBUG: Pantau angka ini di console saat Anda melakukan scroll
+    // debugPrint('Pixels: $currentPixels / Max: $maxScroll');
+
+    final canLoad = loadState.value == LoadState.idle;
+
+    // Jika canLoad bernilai false, pagination tidak akan berjalan.
+    // Pastikan setelah _getOrder() selesai, loadState.value dikembalikan ke LoadState.idle
+    if (canLoad && currentPixels >= maxScroll - 200) {
+      debugPrint('=== MEMANGGIL HALAMAN BERIKUTNYA ===');
+      currentPage.value++;
+      _getOrder();
+    }
   }
 }

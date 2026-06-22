@@ -45,7 +45,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final totalOrder = 0.obs;
   final totalOrderHistory = 0.obs;
   final versionApp = '4.0.0'.obs;
-  final updateVersionApp = '19 Juni 2026'.obs;
+  final updateVersionApp = '22 Juni 2026'.obs;
 
   final searchController = TextEditingController();
   final tabIndex = 0.obs;
@@ -57,13 +57,6 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final ritConstraints = <RitConstraintEntity>[].obs;
   final listTakeItTransaction = <RitConstraintEntity>[].obs;
 
-  // final List<Widget> pages = [
-  //   HomeViewNewSample(),
-  //   Container(),
-  //   Container(),
-  //   Container(),
-  // ];
-
   @override
   void onReady() {
     super.onReady();
@@ -72,7 +65,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
     if (!isLoading.value) {
       _getHomeData();
-      _getOrder();
+      // _getOrder();
     }
     WidgetsBinding.instance.addObserver(this);
   }
@@ -102,29 +95,37 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void onRefreshTransaction() {
     if (isLoading.value) return;
     _getHomeData();
-    _getOrder(isRefresh: true);
+    // _getOrder(isRefresh: true);
   }
 
   void routeTo({bool ritToday = true}) {
     final invoice = GetStorage().read('noInvoice') ?? '';
     _getLocalRit();
-    
-    if (ritToday != isRitToday.value) {
+
+    debugPrint('IS RIT TODAY : ${isRitToday.value}');
+    debugPrint('RIT TODAY : $ritToday');
+    debugPrint('RIT : ${rit.value}');
+
+    if ((ritToday != isRitToday.value) || rit.value.isEmpty) {
       // GetStorage().remove('noInvoice');
       GetStorage().remove('city');
       GetStorage().remove('colorRit');
       GetStorage().remove('tanggalRit');
-      GetStorage().remove('isRitToday');
+      GetStorage().remove('isAcceptRIT');
+
+      GetStorage().write('isRitToday', ritToday);
 
       rit.value = '';
       colorRit.value = '';
       tanggalRit.value = '';
       isRitToday.value = ritToday;
+
+      debugPrint('CHANGE IS RIT TODAY : ${isRitToday.value}');
     }
 
     GetStorage().remove('noInvoice');
 
-    if (AppRole.isDriver && rit.isNotEmpty) {
+    if (AppRole.isDriver && rit.value.isNotEmpty) {
       debugPrint('Tanggal RIT HOME : ${tanggalRit}');
       Get.toNamed(
         Routes.RIT_INFORMATION,
@@ -133,6 +134,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
+          'routeFrom': 'home',
+          'isRitToday': ritToday,
         },
       );
     } else {
@@ -175,12 +178,19 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      // isLoading.value = false;
+      isLoading.value = false;
     }
   }
 
   Future<void> _getOrder({bool isRefresh = false}) async {
     _getLocalRit();
+
+    if (rit.isEmpty) {
+      isLoading.value = false;
+      loadState.value = LoadState.idle;
+      return;
+    }
+
     try {
       loadState.value = isRefresh || currentPage.value == 1
           ? LoadState.initial

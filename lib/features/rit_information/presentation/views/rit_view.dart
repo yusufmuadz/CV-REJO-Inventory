@@ -77,69 +77,152 @@ class RitView extends StatelessWidget {
   // }
 
   Widget _buildContent() {
-    if (controller.orders.isEmpty) {
-      return _buildEmptyOrder();
-    }
+    // 1. Buat ScrollController lokal di dalam fungsi buildContent
+    final localScrollController = ScrollController();
 
-    return RefreshIndicator(
-      onRefresh: () async => controller.onRefreshTransaction(),
-      child: Obx(() {
-        final isShowPlus =
-            controller.loadState.value != LoadState.initial &&
-            controller.loadState.value != LoadState.idle;
+    return PrimaryScrollController(
+      controller: localScrollController,
+      child: Builder(
+        builder: (context) {
+          // 2. Pasang listener DI DALAM Builder menggunakan context lokal yang sudah valid
+          localScrollController.removeListener(
+            () {},
+          ); // bersihkan listener lama jika ada rereder
+          localScrollController.addListener(() {
+            // Kirim langsung localScrollController yang sedang aktif ke GetX
+            controller.onWidgetScroll(localScrollController);
+          });
 
-        return ReorderableListView.builder(
-          itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
-          physics: const AlwaysScrollableScrollPhysics(),
-          scrollController: controller.scrollController,
-          padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
-          buildDefaultDragHandles:
-              controller.buttonRIT.value == EnumButtonRIT.buttonConfirmChangePO,
-          itemBuilder: (context, index) {
-            // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
-            // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
-            if (index == controller.orders.length) {
-              return _buildBottomIndicator(
-                controller.loadState.value,
-                controller.retryFetch,
-              );
-            }
+          return RefreshIndicator(
+            onRefresh: () async => controller.onRefreshTransaction(),
+            child: Obx(() {
+              final isShowPlus =
+                  controller.loadState.value != LoadState.initial &&
+                  controller.loadState.value != LoadState.idle;
 
-            return _buildOrder(
-              index: index,
-              margin: const EdgeInsets.only(bottom: 10),
-            );
-          },
-          footer: const SizedBox.shrink(),
-          proxyDecorator:
-              (Widget child, int index, Animation<double> animation) {
-                return AnimatedBuilder(
-                  animation: animation,
-                  builder: (BuildContext context, Widget? child) {
-                    // Animasi elevasi (shadow) saat diangkat
-                    final double elevation = Tween<double>(
-                      begin: 0.0,
-                      end: 8.0,
-                    ).evaluate(animation);
+              if (controller.orders.isEmpty &&
+                  controller.loadState.value != LoadState.initial) {
+                return _buildEmptyOrder();
+              }
 
-                    return Material(
-                      borderRadius: BorderRadius.circular(10.0),
-                      elevation: elevation,
-
-                      // PANGGIL FUNGSI YANG SAMA, TAPI TANPA PADDING PEMBUNGKUS!
-                      // Sehingga yang di-drag HANYA kotak visualnya saja.
-                      child: _buildOrder(index: index),
+              return ReorderableListView.builder(
+                itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
+                physics: const AlwaysScrollableScrollPhysics(),
+                // 3. Pasang localScrollController ke ReorderableListView
+                scrollController: localScrollController,
+                padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+                buildDefaultDragHandles:
+                    controller.buttonRIT.value ==
+                    EnumButtonRIT.buttonConfirmChangePO,
+                itemBuilder: (context, index) {
+                  if (index == controller.orders.length) {
+                    return _buildBottomIndicator(
+                      // key: const ValueKey('bottom_indicator_key'),
+                      controller.loadState.value,
+                      controller.retryFetch,
                     );
-                  },
-                );
-              },
-          onReorder: (int oldIndex, int newIndex) {
-            controller.reorderOrders(oldIndex, newIndex);
-          },
-        );
-      }),
+                  }
+
+                  return _buildOrder(
+                    index: index,
+                    margin: const EdgeInsets.only(bottom: 10),
+                  );
+                },
+                footer: const SizedBox.shrink(),
+                proxyDecorator:
+                    (Widget child, int index, Animation<double> animation) {
+                      return AnimatedBuilder(
+                        animation: animation,
+                        builder: (BuildContext context, Widget? child) {
+                          final double elevation = Tween<double>(
+                            begin: 0.0,
+                            end: 8.0,
+                          ).evaluate(animation);
+
+                          return Material(
+                            borderRadius: BorderRadius.circular(10.0),
+                            elevation: elevation,
+                            child: _buildOrder(index: index),
+                          );
+                        },
+                      );
+                    },
+                onReorder: (int oldIndex, int newIndex) {
+                  controller.reorderOrders(oldIndex, newIndex);
+                },
+              );
+            }),
+          );
+        },
+      ),
     );
   }
+
+  // Widget _buildContent() {
+  //   return RefreshIndicator(
+  //     onRefresh: () async => controller.onRefreshTransaction(),
+  //     child: Obx(() {
+  //       final isShowPlus =
+  //           controller.loadState.value != LoadState.initial &&
+  //           controller.loadState.value != LoadState.idle;
+
+  //       if (controller.orders.isEmpty &&
+  //           controller.loadState.value != LoadState.initial) {
+  //         return _buildEmptyOrder();
+  //       }
+
+  //       return ReorderableListView.builder(
+  //         itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
+  //         physics: const AlwaysScrollableScrollPhysics(),
+  //         scrollController: controller.scrollController,
+  //         padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+  //         buildDefaultDragHandles:
+  //             controller.buttonRIT.value == EnumButtonRIT.buttonConfirmChangePO,
+  //         itemBuilder: (context, index) {
+  //           // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
+  //           // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
+  //           if (index == controller.orders.length) {
+  //             return _buildBottomIndicator(
+  //               controller.loadState.value,
+  //               controller.retryFetch,
+  //             );
+  //           }
+
+  //           return _buildOrder(
+  //             index: index,
+  //             margin: const EdgeInsets.only(bottom: 10),
+  //           );
+  //         },
+  //         footer: const SizedBox.shrink(),
+  //         proxyDecorator:
+  //             (Widget child, int index, Animation<double> animation) {
+  //               return AnimatedBuilder(
+  //                 animation: animation,
+  //                 builder: (BuildContext context, Widget? child) {
+  //                   // Animasi elevasi (shadow) saat diangkat
+  //                   final double elevation = Tween<double>(
+  //                     begin: 0.0,
+  //                     end: 8.0,
+  //                   ).evaluate(animation);
+
+  //                   return Material(
+  //                     borderRadius: BorderRadius.circular(10.0),
+  //                     elevation: elevation,
+
+  //                     // PANGGIL FUNGSI YANG SAMA, TAPI TANPA PADDING PEMBUNGKUS!
+  //                     // Sehingga yang di-drag HANYA kotak visualnya saja.
+  //                     child: _buildOrder(index: index),
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //         onReorder: (int oldIndex, int newIndex) {
+  //           controller.reorderOrders(oldIndex, newIndex);
+  //         },
+  //       );
+  //     }),
+  //   );
+  // }
 
   Widget _buildOrder({required int index, EdgeInsetsGeometry? margin}) {
     final isAccepted = controller.buttonRIT.value == EnumButtonRIT.acceptRIT;

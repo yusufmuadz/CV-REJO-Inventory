@@ -682,16 +682,16 @@ class ContentDetailOrderWidget extends StatelessWidget {
   }
 
   Widget _buildPreviewImage() {
-    final path =
-        '/data/user/0/com.example.cv_rejo/cache/scaled_3bc63cbc-36ea-48ea-8f5a-3f626ecb249e4335120780293089847.jpg';
-    final path2 =
-        '/data/user/0/com.example.cv_rejo/cache/scaled_d3f88841-c36d-4287-9dff-51bc574d80b2295637012260647764.jpg';
-    final path3 =
-        '/data/user/0/com.example.cv_rejo/cache/scaled_2c0f5da0-bafe-4356-bd48-ed3025c0f89f7908266508335097410.jpg';
+    // final path =
+    //     '/data/user/0/com.example.cv_rejo/cache/scaled_3bc63cbc-36ea-48ea-8f5a-3f626ecb249e4335120780293089847.jpg';
+    // final path2 =
+    //     '/data/user/0/com.example.cv_rejo/cache/scaled_d3f88841-c36d-4287-9dff-51bc574d80b2295637012260647764.jpg';
+    // final path3 =
+    //     '/data/user/0/com.example.cv_rejo/cache/scaled_2c0f5da0-bafe-4356-bd48-ed3025c0f89f7908266508335097410.jpg';
     RxList<XFile> mediaFileList = <XFile>[
-      XFile(path),
-      XFile(path2),
-      XFile(path3),
+      // XFile(path),
+      // XFile(path2),
+      // XFile(path3),
     ].obs;
 
     return _buildBoxStyle(
@@ -706,6 +706,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           CustomImage().buildContentImage(
             readOnly: true,
             isPreview: true,
+            isHistory: true,
             maxImage: mediaFileList.length,
             title: 'Semuanya',
             mediaFileList: mediaFileList,
