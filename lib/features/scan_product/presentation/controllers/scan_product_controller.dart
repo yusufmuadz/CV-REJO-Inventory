@@ -204,34 +204,6 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
         : debugPrint("Can't open WhatsApp");
   }
 
-  void selectImage(ImageSource source) async {
-    try {
-      final pickedFile = await picker.pickImage(
-        source: source, // Atau ImageSource.gallery untuk galeri
-        imageQuality: 70,
-      );
-
-      if (pickedFile != null) {
-        mediaFileList.add(pickedFile);
-        update(); // Memperbarui state untuk menampilkan gambar yang dipilih
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  void removeImage(int index) {
-    if (index >= 0 && index < mediaFileList.length) {
-      mediaFileList.removeAt(index);
-      update(); // Memperbarui state setelah gambar dihapus
-    }
-  }
-
-  void clearAllImages() {
-    mediaFileList.clear();
-    update(); // Memperbarui state setelah semua gambar dan teks dihapus
-  }
-
   //////// ====== BARCODE SCANNER ====== ////////
 
   Future<void> _checkAndStartScanner() async {

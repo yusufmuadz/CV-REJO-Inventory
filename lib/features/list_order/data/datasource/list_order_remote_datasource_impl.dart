@@ -234,10 +234,12 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
   @override
   Future<ResponseModelBasic> addAssistant(ParamsAddAssistant params) async {
     try {
+      String urlRole = AppRole.current?.name.toLowerCase() ?? 'picking';
+
+      if (params.isChecker2 == true) urlRole = 'check2';
+
       final response = await dioClient.put(
-        ApiEndpoints.takeItRIT(
-          AppRole.current?.name.toLowerCase() ?? 'picking',
-        ),
+        ApiEndpoints.takeItRIT(urlRole),
         data: {
           "district": params.district,
           "id_driver": params.idDriver,

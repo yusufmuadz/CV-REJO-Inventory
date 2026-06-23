@@ -18,10 +18,8 @@ import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
 import '../../domain/entities/rit_list_entity.dart';
-import '../../domain/params/get_rit_param.dart';
-import '../../domain/params/get_transaction_param.dart';
-import '../../domain/params/take_it_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
+import 'get_data_list_controller.dart';
 
 class ListOrderController extends GetxController {
   final ListOrderUseCase listOrderUseCase;
@@ -39,7 +37,6 @@ class ListOrderController extends GetxController {
   final currentPage = 1.obs;
   final pageIndex = 0.obs;
   final hasmore = true.obs;
-  final scrollController = ScrollController();
   final searchController = TextEditingController();
   final pageController = PageController(initialPage: 0);
 
@@ -83,9 +80,13 @@ class ListOrderController extends GetxController {
     {'id': '2', 'name': 'Ongoing', 'isSelected': false},
   ].obs;
 
+  late final GetDataListController getDataListController;
+
   @override
   void onInit() {
     super.onInit();
+    getDataListController = Get.find<GetDataListController>();
+
     final args = Get.arguments;
     if (args != null) {
       isRouteFrom.value = args['routeFrom'] ?? '';
@@ -93,19 +94,13 @@ class ListOrderController extends GetxController {
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
-      // final page = args['page'] ?? 0;
 
       debugPrint('DATE RIT : ${tanggalRit.value}');
 
-      // if (AppRole.isDriver) {
-      //   pageIndex.value = page;
-      // } else {
       if (isDistrictSelected.value.isNotEmpty) {
         pageIndex.value = 1;
       }
-      // }
     }
-    scrollController.addListener(_onScroll);
   }
 
   @override
@@ -113,17 +108,16 @@ class ListOrderController extends GetxController {
     super.onReady();
     if (pageIndex.value == 0) {
       debugPrint('List RIT');
-      getRit();
+      getDataListController.getRit();
     } else {
       debugPrint('List Order');
-      _getOrder();
+      getDataListController.getOrder();
     }
   }
 
   @override
   void onClose() {
     super.onClose();
-    scrollController.dispose();
     isLoading.value = false;
     loadState.value = LoadState.idle;
   }
@@ -133,18 +127,18 @@ class ListOrderController extends GetxController {
 
     if (pageIndex.value == 0) {
       listRit.clear();
-      getRit();
+      getDataListController.getRit();
     } else {
       orders.clear();
-      _getOrder(isRefresh: true);
+      getDataListController.getOrder(isRefresh: true);
     }
   }
 
   void onRefreshAssistant() {
-    getAssisten();
+    getDataListController.getAssisten();
   }
 
-  void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
+  void retryFetch() => getDataListController.getOrder(isRefresh: loadState.value == LoadState.error);
 
   void onResetSort() {
     currentPage.value = 1;
@@ -153,24 +147,7 @@ class ListOrderController extends GetxController {
     sortByNew.value = true;
     isStatusSelected.value = '';
     isDistrictSelected.value = '';
-    _getOrder();
-  }
-
-  void _onScroll() {
-    final canLoad = loadState.value == LoadState.idle;
-
-    if (canLoad &&
-        scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 200) {
-      currentPage.value++;
-      // if (pageIndex.value == 0) {
-      //   getRit(isPashRit: !isRitToday.value, dateRIT: tanggalRit.value);
-      // } else {
-      if (pageIndex.value == 1) {
-        _getOrder();
-      }
-      // }
-    }
+    getDataListController.getOrder();
   }
 
   void onWidgetScroll(ScrollController activeController) {
@@ -185,11 +162,11 @@ class ListOrderController extends GetxController {
 
     if (canLoad && currentPixels >= maxScroll - 200) {
       currentPage.value++;
-      _getOrder(); // Fungsi ambil data pagination Anda
+      getDataListController.getOrder(); // Fungsi ambil data pagination Anda
     }
   }
 
-  void onSelected(String id) {
+  void onSelectedPO(String id) {
     final index = orders.indexWhere((order) => order.invoice == id);
     if (index != -1) {
       isSelected.value = id;
@@ -238,11 +215,6 @@ class ListOrderController extends GetxController {
           'isRitToday': isRitToday.value,
         },
       );
-      pageIndex.value = 0;
-      // isSelection.value = true;
-      // isDistrictSelected.value = '';
-      // colorRit.value = '';
-      // tanggalRit.value = '';
     } else {
       GetStorage().write('city', rit);
       GetStorage().write('colorRit', clrRit);
@@ -254,7 +226,7 @@ class ListOrderController extends GetxController {
       isDistrictSelected.value = rit;
       tanggalRit.value = tglRit;
       orders.clear();
-      _getOrder();
+      getDataListController.getOrder();
     }
     isSelected.value = '';
     // listRit.clear();
@@ -277,7 +249,7 @@ class ListOrderController extends GetxController {
       if (AppRole.isPIC ||
           (AppRole.isChecker2 && totalPendingPoRITCheck2.value == '0')) {
         if (listUser.isEmpty) {
-          getAssisten();
+          getDataListController.getAssisten();
         }
 
         final resultAddAssistant = await AssistantDialog.inputAsisten(this);
@@ -299,153 +271,6 @@ class ListOrderController extends GetxController {
     }
   }
 
-  Future<void> _getOrder({bool isRefresh = false}) async {
-    try {
-      loadState.value = (isRefresh || currentPage.value == 1)
-          ? LoadState.initial
-          : LoadState.loadingMore;
-
-      if (isRefresh) {
-        if (pageIndex.value == 0) {
-          listRit.clear();
-        } else {
-          orders.clear();
-        }
-
-        currentPage.value = 1;
-      }
-
-      final result = await listOrderUseCase.call(
-        ParamsGetTransaction(
-          limit: '10',
-          page: '$currentPage',
-          q: searchController.text,
-          sort: sortByNew.value ? 'newest' : 'oldest',
-          filter: isStatusSelected.value.toLowerCase(),
-          district: isDistrictSelected.value.toLowerCase(),
-          dateRit: tanggalRit.value,
-          pastRit: !isRitToday.value,
-        ),
-      );
-
-      switch (result) {
-        case Success(:final data):
-          debugPrint('Data Order: ${data.length}');
-          if (data.isEmpty) {
-            if (isRefresh && currentPage.value == 1) {
-              loadState.value = LoadState.idle;
-            } else {
-              loadState.value = LoadState.noMore;
-            }
-            return;
-          }
-          orders.addAll(data);
-          loadState.value = LoadState.idle;
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-    } catch (e) {
-      loadState.value = LoadState.error;
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> getRit({bool? isPashRit, String? dateRIT}) async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-
-    String sendDate = pastRitDateSelected.value;
-
-    if (sendDate.isEmpty) {
-      sendDate = tanggalRit.value;
-    }
-
-    debugPrint('DATE RIT : $sendDate');
-
-    final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(isPastRit: !isRitToday.value, date: sendDate),
-    );
-
-    try {
-      switch (result) {
-        case Success(:final data):
-          listRit.value = data;
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-    } catch (e) {
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', 'Error Get Data');
-    } finally {
-      isLoading.value = false;
-      loadState.value = LoadState.idle;
-    }
-
-    debugPrint('List RIT: ${isLoading.value}');
-    debugPrint('List RIT: ${loadState.value}');
-  }
-
-  Future<void> getAssisten() async {
-    if (isLoadingAssistant.value) return;
-    isLoadingAssistant.value = true;
-
-    try {
-      final result = await Future.wait([
-        listOrderUseCase.callUsers(),
-        if (!AppRole.isChecker2) listOrderUseCase.callTransportations(),
-        if (AppRole.isChecker2) listOrderUseCase.callLoaderTransportations(),
-      ]);
-
-      final usersResult = result[0];
-      final transportationsResult = result[1];
-
-      switch (usersResult) {
-        case Success(:final data):
-          // debugPrint('Data Detail Order Users: $data');
-          listUser.value = data as List<UserEntity>;
-          driverSelected.value = data.first.nama;
-          assistantSelected.value = data.first.nama;
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-
-      switch (transportationsResult) {
-        case Success(:final data):
-          // debugPrint('Data Detail Order Transportations: $data');
-          transportations.value = data as List<TransportationEntity>;
-
-          if (data.first.namaKendaraan != null &&
-              data.first.namaKendaraan != '-') {
-            selectTransportation.value = data.first.namaKendaraan!;
-          } else if (data.first.jenisKendaraan != null &&
-              data.first.jenisKendaraan != '-') {
-            selectTransportation.value = data.first.jenisKendaraan!;
-          }
-
-          nopolTransportation.value = data.first.idDeliveryMobil ?? '-';
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-    } finally {
-      isLoadingAssistant.value = false;
-    }
-  }
-
   Future<bool> takeRIT({
     String rit = '',
     String clrRit = '',
@@ -460,8 +285,15 @@ class ListOrderController extends GetxController {
         'yyyy-MM-dd',
       ).format(DateTime.parse(tanggalRit.value));
 
+      bool isCheck2 =
+          AppRole.isChecker2 && totalPendingPoRITCheck2.value != '0';
+
       final result = await listOrderUseCase.callPostAssistant(
-        ParamsAddAssistant(district: isSelected.value, dateRIT: dateRIT),
+        ParamsAddAssistant(
+          district: isSelected.value,
+          dateRIT: dateRIT,
+          isChecker2: isCheck2,
+        ),
       );
 
       switch (result) {
@@ -588,7 +420,7 @@ class ListOrderController extends GetxController {
 
   void changeRIT() {
     if (listRit.isEmpty) {
-      getRit();
+      getDataListController.getRit();
     }
     pageIndex.value = 0;
   }

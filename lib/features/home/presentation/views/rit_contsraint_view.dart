@@ -20,6 +20,8 @@ class RitConstraint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ritController = controller.homeRITController;
+
     return Column(
       children: [
         AppBarWidget().content(
@@ -52,7 +54,7 @@ class RitConstraint extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Obx(() {
-          if (controller.ritConstraints.isEmpty) {
+          if (ritController.ritConstraints.isEmpty) {
             return Expanded(
               child: const Center(child: Text('Belum ada kendala')),
             );
@@ -60,7 +62,7 @@ class RitConstraint extends StatelessWidget {
           return Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
-                final item = controller.ritConstraints[index];
+                final item = ritController.ritConstraints[index];
 
                 return InkWell(
                   onTap: () => _popupAddConstraint(
@@ -157,7 +159,7 @@ class RitConstraint extends StatelessWidget {
               },
               separatorBuilder: (context, index) => const SizedBox(height: 10),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: controller.ritConstraints.length,
+              itemCount: ritController.ritConstraints.length,
             ),
           );
         }),
@@ -173,6 +175,7 @@ class RitConstraint extends StatelessWidget {
     List<XFile>? files,
     required isPreviewMode,
   }) {
+    final ritController = controller.homeRITController;
     final titleProductController = TextEditingController(text: title);
     final nominalProductController = TextEditingController(text: nominal);
     final descProductController = TextEditingController(text: desc);
@@ -300,7 +303,7 @@ class RitConstraint extends StatelessWidget {
                             minimumSize: Size.fromHeight(48),
                             color: const Color(0xFF0056D2),
                             onPressed: () {
-                              controller.addConstraint(
+                              ritController.addConstraint(
                                 title: titleProductController.text,
                                 nominal: nominalProductController.text,
                                 date: DateTime.now(),

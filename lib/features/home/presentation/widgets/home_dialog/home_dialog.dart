@@ -17,6 +17,8 @@ class HomeDialog {
     required isPreviewMode,
     required HomeController controller,
   }) {
+    final ritController = controller.homeRITController;
+
     final titleProductController = TextEditingController(text: title);
     final nominalProductController = TextEditingController(text: nominal);
     final descProductController = TextEditingController(text: desc);
@@ -37,7 +39,7 @@ class HomeDialog {
         nominalProductController: nominalProductController,
         descProductController: descProductController,
         onPressedSave: () {
-          controller.addConstraint(
+          ritController.addConstraint(
             title: titleProductController.text,
             nominal: nominalProductController.text,
             date: DateTime.now(),
@@ -64,6 +66,8 @@ class HomeDialog {
     required isPreviewMode,
     required HomeController controller,
   }) {
+    final ritController = controller.homeRITController;
+
     final descProductController = TextEditingController(text: desc);
     final mediaFileList = <XFile>[].obs;
 
@@ -82,7 +86,7 @@ class HomeDialog {
         descProductController: descProductController,
         onPressedSave: () {
           debugPrint('ADD TAKE IT');
-          controller.addTakeIt(
+          ritController.addTakeIt(
             date: DateTime.now(),
             status: 'SELESAI',
             description: descProductController.text,

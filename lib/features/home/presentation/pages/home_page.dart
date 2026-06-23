@@ -35,7 +35,7 @@ class HomePage extends GetView<HomeController> {
 
   Widget _buildPage() {
     return PageView(
-      controller: controller.pageControllerSample,
+      controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
       children: [
         HomeView(controller: controller),

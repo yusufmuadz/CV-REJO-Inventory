@@ -262,6 +262,8 @@ class CustomImage {
     try {
       final pickedFile = await picker.pickImage(
         source: source, // Atau ImageSource.gallery untuk galeri
+        maxWidth: 1080, // Batasi lebar maksimal Full HD
+        maxHeight: 1920, // Batasi tinggi maksimal Full HD
         imageQuality: 70,
       );
 

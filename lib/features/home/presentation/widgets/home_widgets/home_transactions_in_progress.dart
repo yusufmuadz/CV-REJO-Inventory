@@ -52,6 +52,8 @@ class HomeTransactionsInProgress extends StatelessWidget {
   }
 
   Widget _buildOrdersSection() {
+    final transController = controller.homeTransactionsController;
+
     return Container(
       height: 250,
       padding: const EdgeInsets.all(15),
@@ -79,26 +81,26 @@ class HomeTransactionsInProgress extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Visibility(
-            visible: controller.orders.isEmpty,
+            visible: transController.orders.isEmpty,
             child: Expanded(
               child: const Center(child: Text('Tidak ada pesanan')),
             ),
           ),
           Visibility(
-            visible: controller.orders.isNotEmpty,
+            visible: transController.orders.isNotEmpty,
             child: Expanded(
               child: ListView.builder(
-                itemCount: controller.orders.length,
+                itemCount: transController.orders.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
-                  OrderEntity transaction = controller.orders[index];
+                  OrderEntity transaction = transController.orders[index];
 
                   return OrderItem(
                     index: index,
                     showStatus: true,
                     order: transaction,
-                    length: controller.orders.length,
+                    length: transController.orders.length,
                     onTap: () => controller.dialogService.showErrorSnackbar(
                       'Coming Soon',
                     ),

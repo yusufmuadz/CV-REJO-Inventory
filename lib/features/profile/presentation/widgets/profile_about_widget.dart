@@ -9,6 +9,8 @@ class ProfileAboutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = controller.homeProfileController;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -28,7 +30,7 @@ class ProfileAboutWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.black),
               ),
               Text(
-                controller.versionApp.value,
+                profileController.versionApp.value,
                 style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],
@@ -42,14 +44,14 @@ class ProfileAboutWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.black),
               ),
               Text(
-                controller.updateVersionApp.value,
+                profileController.updateVersionApp.value,
                 style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => controller.onTapTermsAndCondition(),
+            onTap: () => profileController.onTapTermsAndCondition(),
             child: const Text(
               'Syarat & Ketentuan',
               style: TextStyle(
@@ -61,7 +63,7 @@ class ProfileAboutWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => controller.onTapPrivacyPolicy(),
+            onTap: () => profileController.onTapPrivacyPolicy(),
             child: const Text(
               'Kebijakan Privasi',
               style: TextStyle(

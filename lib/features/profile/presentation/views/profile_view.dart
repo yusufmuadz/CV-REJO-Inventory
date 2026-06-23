@@ -16,6 +16,8 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = controller.homeProfileController;
+
     return Obx(() {
       if (controller.isLoading.value) {
         return const LoadingView();
@@ -48,7 +50,7 @@ class ProfileView extends StatelessWidget {
                     _buildBoxItem(
                       title: 'Hubungi Admin',
                       icon: Assets.icons.hubungiadmin.path,
-                      onTap: () => controller.onTapHubungiAdmin(),
+                      onTap: () => profileController.onTapHubungiAdmin(),
                     ),
                     const SizedBox(height: 20),
 
@@ -84,25 +86,6 @@ class ProfileView extends StatelessWidget {
           fontWeight: FontWeight.w600,
           height: 0,
           letterSpacing: 0.45,
-        ),
-      ),
-    );
-  }
-
-  Widget _iconBack() {
-    return Positioned(
-      top: 50,
-      left: 20,
-      child: InkWell(
-        onTap: () => controller.changePage(0),
-        child: Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white30,
-          ),
-          child: Icon(Icons.arrow_back, size: 24, color: Colors.white),
         ),
       ),
     );

@@ -12,6 +12,8 @@ class HomeBoxWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final transController = controller.homeTransactionsController;
+
     return Obx(
       () => Row(
         children: [
@@ -20,7 +22,7 @@ class HomeBoxWidget extends StatelessWidget {
               icon: Icons.inventory_2_outlined,
               title: 'Total\nPesanan',
               subtitle: 'Sedang Berjalan',
-              value: controller.totalOrder.value,
+              value: transController.totalOrder.value,
               iconColor: const Color(0xFF15803D),
               bgIconColor: const Color(0xFFDCFCE7),
               onTap: () {
@@ -49,7 +51,7 @@ class HomeBoxWidget extends StatelessWidget {
               icon: Icons.history_rounded,
               title: 'History\nPesanan',
               subtitle: 'Telah dikerjakan',
-              value: controller.totalOrderHistory.value,
+              value: transController.totalOrderHistory.value,
               iconColor: const Color(0xFF1D4ED8),
               bgIconColor: const Color(0xFFDBEAFE),
               onTap: () {

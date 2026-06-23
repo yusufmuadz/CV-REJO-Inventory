@@ -133,6 +133,8 @@ class CustomButton {
   }
 
   static Widget bottomBarIcon({required HomeController controller}) {
+    final pageController = controller.homePageController;
+
     final List<BottomNavigationBarItem> items = [
       BottomNavigationBarItem(
         icon: Icon(Ionicons.home_outline, color: Color(0xFF8890a0)),
@@ -185,7 +187,7 @@ class CustomButton {
         type: BottomNavigationBarType.fixed,
         elevation: 1,
         onTap: (index) {
-          controller.changePage(index);
+          pageController.changePage(index);
         },
         items: items,
       ),

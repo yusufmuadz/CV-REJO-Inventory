@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/custom/custom_search_field.dart';
-import '../../../../utils/thousand_formatter.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/app_bar_widget.dart';
 import '../widgets/home_dialog/home_dialog.dart';
@@ -17,6 +16,8 @@ class TakeItOrderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ritController = controller.homeRITController;
+
     return Column(
       children: [
         AppBarWidget().content(
@@ -51,7 +52,7 @@ class TakeItOrderView extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Obx(() {
-          if (controller.listTakeItTransaction.isEmpty) {
+          if (ritController.listTakeItTransaction.isEmpty) {
             return Expanded(
               child: const Center(child: Text('Belum ada data ambil RIT')),
             );
@@ -60,7 +61,7 @@ class TakeItOrderView extends StatelessWidget {
           return Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
-                final item = controller.listTakeItTransaction[index];
+                final item = ritController.listTakeItTransaction[index];
 
                 return InkWell(
                   onTap: () => HomeDialog.popupInputTakeIt(
@@ -139,7 +140,7 @@ class TakeItOrderView extends StatelessWidget {
               },
               separatorBuilder: (context, index) => const SizedBox(height: 10),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: controller.listTakeItTransaction.length,
+              itemCount: ritController.listTakeItTransaction.length,
             ),
           );
         }),

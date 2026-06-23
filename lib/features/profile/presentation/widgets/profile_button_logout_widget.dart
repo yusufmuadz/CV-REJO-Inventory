@@ -10,6 +10,8 @@ class ProfileButtonLogoutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = controller.homeProfileController;
+
     return Padding(
       padding: EdgeInsets.only(left: 16, right: Get.size.width / 1.62),
       child: SizedBox(
@@ -21,7 +23,7 @@ class ProfileButtonLogoutWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          onPressed: () => controller.onTapLogout(),
+          onPressed: () => profileController.onTapLogout(),
           child: const Row(
             children: [
               Icon(Icons.logout, size: 24.0, color: Colors.white),
