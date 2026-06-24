@@ -7,6 +7,7 @@ import '../../domain/repositories/list_order_repository.dart';
 import '../../domain/usecases/list_order_usecase.dart';
 import '../controllers/get_data_list_controller.dart';
 import '../controllers/list_order_controller.dart';
+import '../controllers/post_data_list_controller.dart';
 
 class ListOrderBinding extends Bindings {
   @override
@@ -28,6 +29,10 @@ class ListOrderBinding extends Bindings {
 
     Get.lazyPut<GetDataListController>(
       () => GetDataListController(listOrderUseCase: Get.find()),
+    );
+
+    Get.lazyPut<PostDataListController>(
+      () => PostDataListController(listOrderUseCase: Get.find()),
     );
   }
 }

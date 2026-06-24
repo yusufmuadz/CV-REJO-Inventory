@@ -6,6 +6,7 @@ import '../core/middlewares/session_manager.dart';
 // import '../core/network/connectivity_network.dart';
 import '../core/network/dio_client.dart';
 import '../core/network/koneksi_check.dart';
+import '../core/services/contact_service.dart';
 import '../core/services/dialog_service.dart';
 import '../core/services/storage_service.dart';
 
@@ -36,6 +37,7 @@ class InitialBinding extends Bindings {
 
     // Register DialogService
     Get.lazyPut<DialogService>(() => DialogService(), fenix: true);
+    Get.lazyPut<ContactService>(() => ContactService(), fenix: true);
     Get.lazyPut<SessionManager>(() => SessionManager(), fenix: true);
   }
 }

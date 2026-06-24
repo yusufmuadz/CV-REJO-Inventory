@@ -16,7 +16,7 @@ class HomeTransactionsController extends GetxController {
 
   final loadState = LoadState.initial.obs;
 
-  final masterController = Get.find<HomeController>();
+  HomeController get masterController => Get.find<HomeController>();
   final dialogService = Get.find<DialogService>();
 
   final currentPage = 1.obs;

@@ -82,7 +82,7 @@ class AssistantDialog {
           onPressed2: () async {
             if (controller.isLoadingAssistant.value) return;
 
-            final resultAdd = await controller.addAssistant();
+            final resultAdd = await controller.postDataListController.addAssistant();
 
             debugPrint('resultAdd: $resultAdd');
 

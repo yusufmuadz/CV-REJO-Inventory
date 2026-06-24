@@ -12,8 +12,8 @@ import '../../../../routes/app_pages.dart';
 import 'home_controller.dart';
 
 class HomeProfileController extends GetxController {
-
-  final masterController = Get.find<HomeController>();
+  
+  HomeController get masterController => Get.find<HomeController>();
   final TokenStorage _tokenStorage = Get.find<TokenStorage>();
 
   final versionApp = '4.0.0'.obs;
@@ -22,15 +22,6 @@ class HomeProfileController extends GetxController {
   Future<void> versionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     versionApp.value = packageInfo.version;
-  }
-
-  void onTapHubungiAdmin() async {
-    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
-        ? launchUrl(
-            Uri.parse(ApiEndpoints.hubungiAdmin),
-            mode: LaunchMode.externalApplication,
-          )
-        : debugPrint("Can't open WhatsApp");
   }
 
   void onTapPrivacyPolicy() async {

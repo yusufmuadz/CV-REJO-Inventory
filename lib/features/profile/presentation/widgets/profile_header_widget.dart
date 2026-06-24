@@ -16,38 +16,27 @@ class ProfileHeaderView extends StatelessWidget {
       height: 300,
       child: Stack(
         children: [
-          Container(
-            height: 160,
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 15),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment(-0.00, 1.00),
-                end: Alignment(0, -1),
-                colors: [Color(0xFFE0048C), Color(0xFF750149)],
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(0),
-                bottomRight: Radius.circular(0),
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: 0.51,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 160,
+          //   padding: const EdgeInsets.only(left: 16, right: 16, top: 15),
+          //   child: const Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: [
+          //       Text(
+          //         'Profile',
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 18,
+          //           fontFamily: 'Inter',
+          //           fontWeight: FontWeight.w700,
+          //           height: 0,
+          //           letterSpacing: 0.51,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Column(
@@ -59,24 +48,27 @@ class ProfileHeaderView extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 2,
-                      color: const Color(0xFFE0048C),
-                    ),
                     color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 5,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   child: ClipOval(child: Image.asset(Assets.logo.logo.path)),
                 ),
-                const SizedBox(height: 1),
-                Text(
-                  AppRole.name?.capitalize ?? '-',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  AppRole.current?.name.capitalizeFirst ?? '-',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                ),
+                // const SizedBox(height: 1),
+                // Text(
+                //   AppRole.name?.capitalize ?? '-',
+                //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                // ),
+                // const SizedBox(height: 1),
+                // Text(
+                //   AppRole.current?.name.capitalizeFirst ?? '-',
+                //   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                // ),
               ],
             ),
           ),

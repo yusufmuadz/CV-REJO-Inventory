@@ -13,7 +13,7 @@ import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../domain/usecases/rit_usecase.dart';
-import '../widgets/enum_rit.dart';
+import 'enums/enum_rit.dart';
 
 class RitController extends GetxController {
   final RitUseCase ritUseCase;

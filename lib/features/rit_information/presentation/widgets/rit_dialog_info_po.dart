@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/text_styles.dart';
 import '../controllers/rit_controller.dart';
-import 'enum_rit.dart';
+import '../controllers/enums/enum_rit.dart';
 
 class RitDialogInfoPo {
   // ignore: non_constant_identifier_names

@@ -37,6 +37,7 @@ class HomePage extends GetView<HomeController> {
     return PageView(
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
+      onPageChanged: (value) => controller.tabIndex.value = value,
       children: [
         HomeView(controller: controller),
         // ListOrderPage(),

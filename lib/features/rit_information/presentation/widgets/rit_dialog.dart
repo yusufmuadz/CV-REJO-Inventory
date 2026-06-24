@@ -10,7 +10,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../controllers/rit_controller.dart';
 import 'custom_image.dart';
-import 'enum_rit.dart';
+import '../controllers/enums/enum_rit.dart';
 
 class RitDialog {
   void inputReason({int? maxImage, required RitController controller}) {

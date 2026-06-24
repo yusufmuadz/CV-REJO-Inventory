@@ -8,7 +8,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../controllers/rit_controller.dart';
-import '../widgets/enum_rit.dart';
+import '../controllers/enums/enum_rit.dart';
 import '../widgets/rit_dialog.dart';
 import '../widgets/rit_dialog_info_po.dart';
 import '../views/arrive_at_office.dart';

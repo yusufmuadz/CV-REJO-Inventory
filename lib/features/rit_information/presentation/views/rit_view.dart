@@ -8,7 +8,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../controllers/rit_controller.dart';
 import '../widgets/box_rit.dart';
-import '../widgets/enum_rit.dart';
+import '../controllers/enums/enum_rit.dart';
 
 class RitView extends StatelessWidget {
   final RitController controller;

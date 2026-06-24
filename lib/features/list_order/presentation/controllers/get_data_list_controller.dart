@@ -16,35 +16,35 @@ class GetDataListController extends GetxController {
 
   GetDataListController({required this.listOrderUseCase});
 
-  final masterCtrl = Get.find<ListOrderController>();
+  ListOrderController get listCtrl => Get.find<ListOrderController>();
 
   Future<void> getOrder({bool isRefresh = false}) async {
     try {
-      masterCtrl.loadState.value =
-          (isRefresh || masterCtrl.currentPage.value == 1)
+      listCtrl.loadState.value =
+          (isRefresh || listCtrl.currentPage.value == 1)
           ? LoadState.initial
           : LoadState.loadingMore;
 
       if (isRefresh) {
-        if (masterCtrl.pageIndex.value == 0) {
-          masterCtrl.listRit.clear();
+        if (listCtrl.pageIndex.value == 0) {
+          listCtrl.listRit.clear();
         } else {
-          masterCtrl.orders.clear();
+          listCtrl.orders.clear();
         }
 
-        masterCtrl.currentPage.value = 1;
+        listCtrl.currentPage.value = 1;
       }
 
       final result = await listOrderUseCase.call(
         ParamsGetTransaction(
           limit: '10',
-          page: '${masterCtrl.currentPage.value}',
-          q: masterCtrl.searchController.text,
-          sort: masterCtrl.sortByNew.value ? 'newest' : 'oldest',
-          filter: masterCtrl.isStatusSelected.value.toLowerCase(),
-          district: masterCtrl.isDistrictSelected.value.toLowerCase(),
-          dateRit: masterCtrl.tanggalRit.value,
-          pastRit: !masterCtrl.isRitToday.value,
+          page: '${listCtrl.currentPage.value}',
+          q: listCtrl.searchController.text,
+          sort: listCtrl.sortByNew.value ? 'newest' : 'oldest',
+          filter: listCtrl.isStatusSelected.value.toLowerCase(),
+          district: listCtrl.isDistrictSelected.value.toLowerCase(),
+          dateRit: listCtrl.tanggalRit.value,
+          pastRit: !listCtrl.isRitToday.value,
         ),
       );
 
@@ -52,68 +52,68 @@ class GetDataListController extends GetxController {
         case Success(:final data):
           debugPrint('Data Order: ${data.length}');
           if (data.isEmpty) {
-            if (isRefresh && masterCtrl.currentPage.value == 1) {
-              masterCtrl.loadState.value = LoadState.idle;
+            if (isRefresh && listCtrl.currentPage.value == 1) {
+              listCtrl.loadState.value = LoadState.idle;
             } else {
-              masterCtrl.loadState.value = LoadState.noMore;
+              listCtrl.loadState.value = LoadState.noMore;
             }
             return;
           }
-          masterCtrl.orders.addAll(data);
-          masterCtrl.loadState.value = LoadState.idle;
+          listCtrl.orders.addAll(data);
+          listCtrl.loadState.value = LoadState.idle;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          masterCtrl.loadState.value = LoadState.error;
-          masterCtrl.dialogService.showError('Failed', message);
+          listCtrl.loadState.value = LoadState.error;
+          listCtrl.dialogService.showError('Failed', message);
       }
     } catch (e) {
-      masterCtrl.loadState.value = LoadState.error;
+      listCtrl.loadState.value = LoadState.error;
       if (Get.isDialogOpen == true) Get.back();
-      masterCtrl.dialogService.showError('Failed', 'Error Get Data');
+      listCtrl.dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      masterCtrl.isLoading.value = false;
+      listCtrl.isLoading.value = false;
     }
   }
 
   Future<void> getRit({bool? isPashRit, String? dateRIT}) async {
-    if (masterCtrl.isLoading.value) return;
-    masterCtrl.isLoading.value = true;
+    if (listCtrl.isLoading.value) return;
+    listCtrl.isLoading.value = true;
 
-    String sendDate = masterCtrl.pastRitDateSelected.value;
+    String sendDate = listCtrl.pastRitDateSelected.value;
 
     if (sendDate.isEmpty) {
-      sendDate = masterCtrl.tanggalRit.value;
+      sendDate = listCtrl.tanggalRit.value;
     }
 
     debugPrint('DATE RIT : $sendDate');
 
     final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(isPastRit: !masterCtrl.isRitToday.value, date: sendDate),
+      ParamGetRIT(isPastRit: !listCtrl.isRitToday.value, date: sendDate),
     );
 
     try {
       switch (result) {
         case Success(:final data):
-          masterCtrl.listRit.value = data;
+          listCtrl.listRit.value = data;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          masterCtrl.loadState.value = LoadState.error;
-          masterCtrl.dialogService.showError('Failed', message);
+          listCtrl.loadState.value = LoadState.error;
+          listCtrl.dialogService.showError('Failed', message);
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
-      masterCtrl.dialogService.showError('Failed', 'Error Get Data');
+      listCtrl.dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      masterCtrl.isLoading.value = false;
-      masterCtrl.loadState.value = LoadState.idle;
+      listCtrl.isLoading.value = false;
+      listCtrl.loadState.value = LoadState.idle;
     }
   }
 
   Future<void> getAssisten() async {
-    if (masterCtrl.isLoadingAssistant.value) return;
-    masterCtrl.isLoadingAssistant.value = true;
+    if (listCtrl.isLoadingAssistant.value) return;
+    listCtrl.isLoadingAssistant.value = true;
 
     try {
       final result = await Future.wait([
@@ -127,38 +127,38 @@ class GetDataListController extends GetxController {
 
       switch (usersResult) {
         case Success(:final data):
-          masterCtrl.listUser.value = data as List<UserEntity>;
-          masterCtrl.driverSelected.value = data.first.nama;
-          masterCtrl.assistantSelected.value = data.first.nama;
+          listCtrl.listUser.value = data as List<UserEntity>;
+          listCtrl.driverSelected.value = data.first.nama;
+          listCtrl.assistantSelected.value = data.first.nama;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
           // loadState.value = LoadState.error;
-          masterCtrl.dialogService.showError('Failed', message);
+          listCtrl.dialogService.showError('Failed', message);
       }
 
       switch (transportationsResult) {
         case Success(:final data):
-          masterCtrl.transportations.value = data as List<TransportationEntity>;
+          listCtrl.transportations.value = data as List<TransportationEntity>;
 
           if (data.first.namaKendaraan != null &&
               data.first.namaKendaraan != '-') {
-            masterCtrl.selectTransportation.value = data.first.namaKendaraan!;
+            listCtrl.selectTransportation.value = data.first.namaKendaraan!;
           } else if (data.first.jenisKendaraan != null &&
               data.first.jenisKendaraan != '-') {
-            masterCtrl.selectTransportation.value = data.first.jenisKendaraan!;
+            listCtrl.selectTransportation.value = data.first.jenisKendaraan!;
           }
 
-          masterCtrl.nopolTransportation.value =
+          listCtrl.nopolTransportation.value =
               data.first.idDeliveryMobil ?? '-';
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
           // loadState.value = LoadState.error;
-          masterCtrl.dialogService.showError('Failed', message);
+          listCtrl.dialogService.showError('Failed', message);
       }
     } finally {
-      masterCtrl.isLoadingAssistant.value = false;
+      listCtrl.isLoadingAssistant.value = false;
     }
   }
 }

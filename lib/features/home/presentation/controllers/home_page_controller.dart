@@ -6,21 +6,10 @@ import '../../../../core/middlewares/app_role.dart';
 import 'home_controller.dart';
 
 class HomePageController extends GetxController {
-  final masterController = Get.find<HomeController>();
+  HomeController get masterController => Get.find<HomeController>();
 
   void changePage(int index) {
-    // indexPage.value = index;
     // pageController.jumpToPage(index);
-    masterController.tabIndex.value = index;
-    _changeStatusBar(index);
-    masterController.pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void changePageSample(int index) {
     // _changeStatusBar(index);
     masterController.pageController.animateToPage(
       index,

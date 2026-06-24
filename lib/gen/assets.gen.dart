@@ -92,6 +92,10 @@ class $AssetsImagesGen {
   AssetGenImage get bgPickingMan =>
       const AssetGenImage('assets/images/bg_picking_man.png');
 
+  /// File path: assets/images/bg_profile.png
+  AssetGenImage get bgProfile =>
+      const AssetGenImage('assets/images/bg_profile.png');
+
   /// File path: assets/images/picking_man.png
   AssetGenImage get pickingMan =>
       const AssetGenImage('assets/images/picking_man.png');
@@ -101,6 +105,7 @@ class $AssetsImagesGen {
     bgDriver,
     bgPackingMan,
     bgPickingMan,
+    bgProfile,
     pickingMan,
   ];
 }

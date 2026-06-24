@@ -42,13 +42,17 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   late final HomeProfileController homeProfileController;
 
   @override
-  void onReady() {
-    super.onReady();
+  void onInit() {
+    super.onInit();
     homeTransactionsController = Get.find<HomeTransactionsController>();
     homeRITController = Get.find<HomeRITController>();
     homePageController = Get.find<HomePageController>();
     homeProfileController = Get.find<HomeProfileController>();
+  }
 
+  @override
+  void onReady() {
+    super.onReady();
     if (!isLoading.value) _initializeAllData();
 
     WidgetsBinding.instance.addObserver(this);
