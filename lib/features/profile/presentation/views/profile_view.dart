@@ -1,4 +1,5 @@
 import 'package:cv_rejo/features/profile/presentation/widgets/profile_about_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -21,7 +22,7 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final profileController = controller.homeProfileController;
+    final profileController = controller.homeProfileController;
 
     return Obx(() {
       if (controller.isLoading.value) {
@@ -41,28 +42,8 @@ class ProfileView extends StatelessWidget {
             ),
             ListView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
+              padding: const EdgeInsets.fromLTRB(13, 38, 13, 16),
               children: [
-                Text(
-                  'Profile',
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1D2130),
-                    fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Kelola informasi akun Anda',
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF64748B),
-                    fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Container(
                   height: 134,
                   width: 134,
@@ -80,19 +61,18 @@ class ProfileView extends StatelessWidget {
                   ),
                   child: ClipOval(child: Image.asset(Assets.logo.logo.path)),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Center(
                   child: Text(
                     AppRole.name?.capitalize ?? '-',
                     style: TextStyles.basicTextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
                       color: const Color(0xFF1D2130),
-                      fontFamily: GoogleFonts.nunitoSans().fontFamily,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 5),
                 Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -107,8 +87,8 @@ class ProfileView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          height: 8,
-                          width: 8,
+                          height: 10,
+                          width: 10,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: const Color(0xFF35bd64),
@@ -118,184 +98,288 @@ class ProfileView extends StatelessWidget {
                         Text(
                           AppRole.current?.name.capitalizeFirst ?? '-',
                           style: TextStyles.basicTextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF07ab43),
-                            fontFamily: GoogleFonts.nunitoSans().fontFamily,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildBoxItem(
-                  title: 'Hubungi Admin',
-                  icon: Ionicons.call_outline,
-                  onTap: () {},
-                ),
-                const Divider(
-                  thickness: 1,
-                  height: 20,
-                  color: Color(0xFFebecf2),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Icon(
-                      Ionicons.information_circle_outline,
-                      size: 20,
-                      color: const Color(0xFFBA832B),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Tentang Aplikasi',
-                      style: TextStyles.basicTextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1E293B),
-                        fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                const SizedBox(height: 18),
+                _buildBoxStyle(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      _buildVersionStyle(
+                        title: 'VERSION',
+                        icon: Icons.inventory_2_outlined,
+                        colorBgIcon: const Color(0xFFE8F7F0),
+                        colorIcon: const Color(0xFF28A745),
+                        value: profileController.versionApp.value,
                       ),
-                    ),
-                  ],
+                      Container(
+                        height: 32,
+                        width: 1,
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        color: const Color(0xFFF3F4F6),
+                      ),
+                      _buildVersionStyle(
+                        title: 'UPDATED',
+                        isIconRight: true,
+                        icon: Icons.calendar_today_outlined,
+                        colorBgIcon: const Color(0xFFEFF6FF),
+                        colorIcon: const Color(0xFF2563EB),
+                        value: profileController.updateVersionApp.value,
+                      ),
+                    ],
+                  ),
                 ),
-                // const SizedBox(height: 10),
-                _buildBoxItem(
-                  title: 'App Version',
-                  height: 40,
-                  width: 40,
-                  icon: Ionicons.cube_outline,
-                  onTap: () {},
+                const SizedBox(height: 16),
+                _buildBoxStyle(
+                  child: Column(
+                    children: [
+                      _buildContentStyle(
+                        title: 'Hubungi Admin',
+                        icon: Icons.headset_mic_outlined,
+                        colorBgIcon: const Color(0xFFEFF6FF),
+                        colorIcon: const Color(0xFF2563EB),
+                        value: 'Butuh bantuan? Hubungi admin',
+                        onTap: () => ContactService.onTapHubungiAdmin(),
+                      ),
+                      _buildContentStyle(
+                        title: 'Syarat & Ketentuan',
+                        isBorderTop: true,
+                        isBorderBottom: true,
+                        icon: Icons.description_outlined,
+                        colorBgIcon: const Color(0xFFE8F7F0),
+                        colorIcon: const Color(0xFF28A745),
+                        value: 'Baca syarat & ketentuan',
+                        onTap: () => profileController.onTapTermsAndCondition(),
+                      ),
+                      _buildContentStyle(
+                        title: 'Kebijakan Privasi',
+                        isBorderTop: true,
+                        isBorderBottom: true,
+                        icon: Icons.shield_outlined,
+                        colorBgIcon: const Color(0xFFFFF7ED),
+                        colorIcon: const Color(0xFFEA580C),
+                        value: 'Pelajari kebijakan privasi kami',
+                        onTap: () => profileController.onTapPrivacyPolicy(),
+                      ),
+                      _buildContentStyle(
+                        title: 'Logout',
+                        isRadius: true,
+                        bgColor: const Color(0xFFFEF2F2),
+                        colorText: const Color(0xFFEF4444),
+                        colorValue: const Color(0xFFEF4444),
+                        icon: Icons.logout_outlined,
+                        colorBgIcon: const Color(0xFFFEE2E2),
+                        colorIcon: const Color(0xFFEF4444),
+                        colorIconArrow: const Color(0xFFEF4444),
+                        value: 'Keluar dari akun',
+                        onTap: () => profileController.onTapLogout(),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            // Background
-            // Positioned(
-            //   top: 200,
-            //   left: 0,
-            //   right: 0,
-            //   child: Container(
-            //     height: Get.height, // Adjust height as needed
-            //     width: double.infinity,
-            //     padding: EdgeInsets.only(top: 80),
-            //     // Adding border radius to the top corners
-            //     decoration: const BoxDecoration(
-            //       color: Colors.white,
-            //       borderRadius: BorderRadius.only(
-            //         topLeft: Radius.circular(30),
-            //         topRight: Radius.circular(30),
-            //       ),
-            //     ),
-            //     child: ListView(
-            //       physics: const BouncingScrollPhysics(),
-            //       children: [
-            //         _buildTitleBox(title: 'Setting'),
-            //         const SizedBox(height: 10),
-            //         _buildBoxItem(
-            //           title: 'Hubungi Admin',
-            //           icon: Assets.icons.hubungiadmin.path,
-            //           onTap: () => ContactService.onTapHubungiAdmin(),
-            //         ),
-            //         const SizedBox(height: 20),
-
-            //         // Tentang Aplikasi
-            //         _buildTitleBox(title: 'Tentang Aplikasi'),
-            //         ProfileAboutWidget(controller: controller),
-            //         const SizedBox(height: 25),
-
-            //         // Keluar
-            //         ProfileButtonLogoutWidget(controller: controller),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // ProfileHeaderView(controller: controller),
-            // // _iconBack(),
           ],
         );
       }
     });
   }
 
-  Widget _buildTitleBox({required String title}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        title,
-        textAlign: TextAlign.start,
-        style: TextStyle(
-          color: Color(0xFF171717),
-          fontSize: 15,
-          fontFamily: 'Inter',
-          fontWeight: FontWeight.w600,
-          height: 0,
-          letterSpacing: 0.45,
+  Widget _buildBoxStyle({EdgeInsetsGeometry? padding, required Widget child}) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(width: 1, color: const Color(0xFFF9FAFB)),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 1,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildVersionStyle({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color colorBgIcon,
+    required Color colorIcon,
+    bool isIconRight = false,
+  }) {
+    return Expanded(
+      child: Row(
+        children: [
+          Visibility(
+            visible: !isIconRight,
+            child: _buildIconStyle(
+              icon: icon,
+              colorBgIcon: colorBgIcon,
+              colorIcon: colorIcon,
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyles.basicTextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyles.basicTextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1D2D44),
+                ),
+              ),
+            ],
+          ),
+          Visibility(
+            visible: isIconRight,
+            child: _buildIconStyle(
+              icon: icon,
+              colorBgIcon: colorBgIcon,
+              colorIcon: colorIcon,
+              margin: const EdgeInsets.only(left: 10),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentStyle({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color colorBgIcon,
+    required Color colorIcon,
+    bool isRadius = false,
+    bool isBorderTop = false,
+    bool isBorderBottom = false,
+    Color? bgColor,
+    Color colorIconArrow = const Color(0xFF9CA3AF),
+    Color colorText = const Color(0xFF1D2D44),
+    Color colorValue = const Color(0xFF9CA3AF),
+    Function()? onTap,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: isRadius
+            ? const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              )
+            : null,
+        border: Border(
+          top: isBorderTop
+              ? BorderSide(color: const Color(0xFFF9FAFB), width: 1)
+              : BorderSide.none,
+          bottom: isBorderBottom
+              ? BorderSide(color: const Color(0xFFF9FAFB), width: 1)
+              : BorderSide.none,
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            _buildIconStyle(
+              height: 48,
+              width: 48,
+              size: 23,
+              icon: icon,
+              colorBgIcon: colorBgIcon,
+              colorIcon: colorIcon,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: colorText,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: colorValue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Ionicons.chevron_forward_outline,
+              size: 20,
+              color: colorIconArrow,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildBoxItem({
-    required String title,
+  Widget _buildIconStyle({
     required IconData icon,
-    required Function onTap,
-    double height = 45,
-    double width = 45,
+    required Color colorBgIcon,
+    required Color colorIcon,
+    double? height,
+    double? width,
+    double? size,
+    EdgeInsetsGeometry? margin,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 5),
-      visualDensity: const VisualDensity(vertical: -3, horizontal: -4),
-      leading: Container(
-        height: height,
-        width: width,
-        // padding: const EdgeInsets.all(12),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xFFf5ede4),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 1,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Icon(icon, size: 20, color: const Color(0xFF857467)),
-      ),
-      title: Transform.translate(
-        offset: const Offset(5, 0),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 3.0),
-          child: Text(
-            title,
-            style: TextStyles.basicTextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF1E293B),
-              fontFamily: GoogleFonts.nunitoSans().fontFamily,
-            ),
-          ),
-        ),
-      ),
-      subtitle: Transform.translate(
-        offset: const Offset(5, 0),
-        child: Text(
-          'Butuh bantuan? Hubungi admin',
-          style: TextStyles.basicTextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFF64748B),
-            fontFamily: GoogleFonts.nunitoSans().fontFamily,
-          ),
-        ),
-      ),
-      trailing: Icon(
+    return Container(
+      height: height ?? 40,
+      width: width ?? 40,
+      margin: margin ?? const EdgeInsets.only(right: 10),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: colorBgIcon),
+      child: Icon(icon, size: size ?? 14, color: colorIcon),
+    );
+  }
+
+  Widget _showTrailing({bool isTrailingIcon = true, String value = ''}) {
+    if (isTrailingIcon) {
+      return Icon(
         Ionicons.chevron_forward_outline,
         size: 20,
         color: const Color(0xFF1E293B),
+      );
+    }
+
+    return Text(
+      value,
+      style: TextStyles.basicTextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        color: const Color(0xFF64748B),
+        fontFamily: GoogleFonts.nunitoSans().fontFamily,
       ),
-      onTap: () {},
     );
   }
 }

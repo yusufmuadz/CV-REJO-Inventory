@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Centralized text styles for consistent typography
 /// Follows DRY principle for maintainability
@@ -128,7 +129,7 @@ class TextStyles {
     return TextStyle(
       color: color,
       fontSize: fontSize,
-      fontFamily: fontFamily ?? 'Inter',
+      fontFamily: fontFamily ?? GoogleFonts.inter().fontFamily,
       fontWeight: fontWeight,
       height: height,
       letterSpacing: letterSpacing,
