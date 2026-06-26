@@ -488,7 +488,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           if (check) return;
 
           if (index < 0) {
-            // controller.selectedProduct(-1);
+            // controller.selectedProduct(index);
             return;
           }
 

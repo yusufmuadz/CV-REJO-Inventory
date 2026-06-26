@@ -16,30 +16,7 @@ class RitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(16, 16, 16, 15),
-        //   child: BoxRit(
-        //     rit: controller.isDistrictSelected.value,
-        //     dateRit: controller.tanggalRit.value,
-        //     onPressed: () {
-        //       controller.registerListController();
-        //       if (controller.listOrderController.listRit.isEmpty) {
-        //         controller.listOrderController.getRit(
-        //           isPashRit: controller.isRitToday.value,
-        //           dateRIT: controller.tanggalRit.value,
-        //         );
-        //       }
-
-        //       _openChangeRit();
-        //     },
-        //   ),
-        // ),
-        // Divider(thickness: 1, height: 1, color: Colors.grey.shade100),
-        Expanded(child: _buildContent()),
-      ],
-    );
+    return _buildContent();
   }
 
   Widget _buildEmptyOrder() {
@@ -58,23 +35,6 @@ class RitView extends StatelessWidget {
       ],
     );
   }
-
-  // Widget _buildContent() {
-  //   if (controller.orders.isEmpty) {
-  //     return _buildEmptyOrder();
-  //   }
-
-  //   return RefreshIndicator(
-  //     onRefresh: () async => controller.onRefreshTransaction(),
-  //     child: ListView.separated(
-  //       itemCount: controller.orders.length,
-  //       shrinkWrap: true,
-  //       padding: EdgeInsets.fromLTRB(16, 15, 16, 16),
-  //       separatorBuilder: (context, index) => const SizedBox(height: 10),
-  //       itemBuilder: (context, index) => _buildOrder(index: index),
-  //     ),
-  //   );
-  // }
 
   Widget _buildContent() {
     // 1. Buat ScrollController lokal di dalam fungsi buildContent
@@ -157,72 +117,6 @@ class RitView extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildContent() {
-  //   return RefreshIndicator(
-  //     onRefresh: () async => controller.onRefreshTransaction(),
-  //     child: Obx(() {
-  //       final isShowPlus =
-  //           controller.loadState.value != LoadState.initial &&
-  //           controller.loadState.value != LoadState.idle;
-
-  //       if (controller.orders.isEmpty &&
-  //           controller.loadState.value != LoadState.initial) {
-  //         return _buildEmptyOrder();
-  //       }
-
-  //       return ReorderableListView.builder(
-  //         itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
-  //         physics: const AlwaysScrollableScrollPhysics(),
-  //         scrollController: controller.scrollController,
-  //         padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
-  //         buildDefaultDragHandles:
-  //             controller.buttonRIT.value == EnumButtonRIT.buttonConfirmChangePO,
-  //         itemBuilder: (context, index) {
-  //           // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
-  //           // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
-  //           if (index == controller.orders.length) {
-  //             return _buildBottomIndicator(
-  //               controller.loadState.value,
-  //               controller.retryFetch,
-  //             );
-  //           }
-
-  //           return _buildOrder(
-  //             index: index,
-  //             margin: const EdgeInsets.only(bottom: 10),
-  //           );
-  //         },
-  //         footer: const SizedBox.shrink(),
-  //         proxyDecorator:
-  //             (Widget child, int index, Animation<double> animation) {
-  //               return AnimatedBuilder(
-  //                 animation: animation,
-  //                 builder: (BuildContext context, Widget? child) {
-  //                   // Animasi elevasi (shadow) saat diangkat
-  //                   final double elevation = Tween<double>(
-  //                     begin: 0.0,
-  //                     end: 8.0,
-  //                   ).evaluate(animation);
-
-  //                   return Material(
-  //                     borderRadius: BorderRadius.circular(10.0),
-  //                     elevation: elevation,
-
-  //                     // PANGGIL FUNGSI YANG SAMA, TAPI TANPA PADDING PEMBUNGKUS!
-  //                     // Sehingga yang di-drag HANYA kotak visualnya saja.
-  //                     child: _buildOrder(index: index),
-  //                   );
-  //                 },
-  //               );
-  //             },
-  //         onReorder: (int oldIndex, int newIndex) {
-  //           controller.reorderOrders(oldIndex, newIndex);
-  //         },
-  //       );
-  //     }),
-  //   );
-  // }
 
   Widget _buildOrder({required int index, EdgeInsetsGeometry? margin}) {
     final isAccepted = controller.buttonRIT.value == EnumButtonRIT.acceptRIT;

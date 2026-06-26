@@ -245,6 +245,8 @@ class ListOrderController extends GetxController {
       return;
     }
 
+    debugPrint('totalPendingPoRITCheck2 : ${totalPendingPoRITCheck2.value}');
+
     if (pageIndex.value == 0) {
       if (AppRole.isPIC ||
           (AppRole.isChecker2 && totalPendingPoRITCheck2.value == '0')) {

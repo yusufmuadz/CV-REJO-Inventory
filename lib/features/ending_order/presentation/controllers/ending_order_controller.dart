@@ -99,8 +99,8 @@ class EndingOrderController extends GetxController {
             barrierDismissible: false,
             onPressed: () {
               if (AppRole.isChecker2 &&
-                  (statusChecker2.value == 'available' ||
-                      statusChecker2.value == 'ongoing')) {
+                  statusChecker2.value != 'completed' &&
+                  data.totalPO == '0') {
                 GetStorage().write('status_checker2', 'completed');
 
                 ///// ========== KE HALAMAN LIST PESANAN =========== /////
@@ -113,7 +113,10 @@ class EndingOrderController extends GetxController {
 
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
-                  arguments: {'routeFrom': 'endingOrder'},
+                  arguments: {
+                    'routeFrom': 'endingOrder',
+                    'isRitToday': isRitToday.value,
+                  },
                 );
               } else {
                 ///// ========== KE HALAMAN LIST PESANAN =========== /////

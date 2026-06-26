@@ -17,7 +17,7 @@ class HomeProfileController extends GetxController {
   final TokenStorage _tokenStorage = Get.find<TokenStorage>();
 
   final versionApp = '4.0.0'.obs;
-  final updateVersionApp = '22 Jun 2026'.obs;
+  final updateVersionApp = '26 Jun 2026'.obs;
 
   Future<void> versionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
