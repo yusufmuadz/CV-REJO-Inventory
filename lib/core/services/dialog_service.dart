@@ -165,6 +165,8 @@ class DialogService {
     bool singleButton = true,
     String titleButton1 = 'Kembali',
     String titleButton2 = 'Hubungi Admin',
+    Color color1 = Colors.red,
+    Color color2 = const Color(0xFF0c8ce8),
     VoidCallback? onPressed1,
     VoidCallback? onPressed2,
   }) {
@@ -177,8 +179,8 @@ class DialogService {
       titleButton1: titleButton1,
       titleButton2: titleButton2,
       barrierDismissible: false,
-      color1: Colors.red,
-      color2: const Color(0xFF0c8ce8),
+      color1: color1,
+      color2: color2,
       actionsPadding: const EdgeInsets.all(16),
       content: PopScope(
         canPop: false,

@@ -12,7 +12,6 @@ import '../../../../routes/app_pages.dart';
 import 'home_controller.dart';
 
 class HomeProfileController extends GetxController {
-  
   HomeController get masterController => Get.find<HomeController>();
   final TokenStorage _tokenStorage = Get.find<TokenStorage>();
 
@@ -37,16 +36,26 @@ class HomeProfileController extends GetxController {
   }
 
   void onTapLogout() {
-    GetStorage().remove('noInvoice');
-    GetStorage().remove('user');
-    GetStorage().remove('city');
-    GetStorage().remove('colorRit');
-    GetStorage().remove('tanggalRit');
-    GetStorage().remove('isRitToday');
-    GetStorage().remove('isAcceptRIT');
-    AppRole.logout();
-    _tokenStorage.clear();
-    masterController.tabIndex.value = 0;
-    Get.offAllNamed(Routes.LOGIN);
+    masterController.dialogService.showError(
+      'LOGOUT',
+      'Apakah anda yakin ingin keluar dari akun ini?',
+      singleButton: false,
+      titleButton2: 'Ya',
+      titleButton1: 'Tidak',
+      onPressed1: () => Get.back(),
+      onPressed2: () {
+        GetStorage().remove('noInvoice');
+        GetStorage().remove('user');
+        GetStorage().remove('city');
+        GetStorage().remove('colorRit');
+        GetStorage().remove('tanggalRit');
+        GetStorage().remove('isRitToday');
+        GetStorage().remove('isAcceptRIT');
+        AppRole.logout();
+        _tokenStorage.clear();
+        masterController.tabIndex.value = 0;
+        Get.offAllNamed(Routes.LOGIN);
+      },
+    );
   }
 }

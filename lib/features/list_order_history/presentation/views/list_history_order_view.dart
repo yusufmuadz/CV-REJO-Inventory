@@ -20,7 +20,7 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List History Pesanan'),
+        title: const Text('History Pesanan'),
         elevation: 1,
         centerTitle: false,
         systemOverlayStyle: SystemUiOverlayStyle(

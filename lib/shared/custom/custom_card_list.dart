@@ -248,7 +248,7 @@ class CustomCardList extends StatelessWidget {
         const SizedBox(width: 15),
         Expanded(
           child: Text(
-            value,
+            value.isEmpty ? '-' : value,
             style: _textStyle(fontSize: 14, fontWeight: FontWeight.w400),
           ),
         ),

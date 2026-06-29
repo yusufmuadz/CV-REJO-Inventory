@@ -23,11 +23,11 @@ class ListOrderPage extends GetView<ListOrderController> {
       child: Scaffold(
         appBar: AppBar(
           title: Obx(() {
-            String title = 'List Pesanan';
+            String title = 'Pesanan';
             String dateName = 'Hari Ini';
 
             if (controller.pageIndex.value == 0) {
-              title = 'List RIT';
+              title = 'RIT';
             }
 
             if (!controller.isRitToday.value) {

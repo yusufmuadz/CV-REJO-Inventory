@@ -9,6 +9,6 @@ class ResponseModelBasic {
       ResponseModelBasic(
         status: json["status"],
         message: json["message"],
-        error: json["error"]["details"],
+        error: json["error"] != null ? json["error"]["details"] : null,
       );
 }
