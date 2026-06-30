@@ -20,19 +20,21 @@ class RitView extends StatelessWidget {
   }
 
   Widget _buildEmptyOrder() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('Tidak ada pesanan'),
-        const SizedBox(height: 10),
-        SizedBox(
-          child: CustomButton.basicButton(
-            title: 'Muat Ulang',
-            color: const Color(0x954D7BF1),
-            onPressed: () => controller.onRefreshTransaction(),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Tidak ada pesanan'),
+          const SizedBox(height: 10),
+          SizedBox(
+            child: CustomButton.basicButton(
+              title: 'Muat Ulang',
+              color: const Color(0x954D7BF1),
+              onPressed: () => controller.onRefreshTransaction(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

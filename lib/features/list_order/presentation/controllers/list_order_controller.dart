@@ -138,7 +138,9 @@ class ListOrderController extends GetxController {
     getDataListController.getAssisten();
   }
 
-  void retryFetch() => getDataListController.getOrder(isRefresh: loadState.value == LoadState.error);
+  void retryFetch() => getDataListController.getOrder(
+    isRefresh: loadState.value == LoadState.error,
+  );
 
   void onResetSort() {
     currentPage.value = 1;
@@ -215,6 +217,7 @@ class ListOrderController extends GetxController {
           'isRitToday': isRitToday.value,
         },
       );
+      pageIndex.value = 0;
     } else {
       GetStorage().write('city', rit);
       GetStorage().write('colorRit', clrRit);

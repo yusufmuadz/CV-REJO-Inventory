@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -20,9 +21,11 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
     try {
       String nameFile = 'file';
 
-      if (params.role == 'deliver') {
-        nameFile = 'foto';
-      }
+      debugPrint(params.invoice);
+
+      // if (params.role == 'deliver') {
+      //   nameFile = 'foto';
+      // }
 
       final formData = FormData.fromMap({
         'invoice': params.invoice,
@@ -41,17 +44,16 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       });
 
       String role = params.role!;
+      String apiUrl = ApiEndpoints.completeOrder(role);
 
       if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
       } else if (params.role == 'deliver') {
         role = 'delivery';
+        apiUrl = ApiEndpoints.finishScanOrder;
       }
 
-      final response = await dioClient.post(
-        ApiEndpoints.completeOrder(role),
-        data: formData,
-      );
+      final response = await dioClient.post(apiUrl, data: formData);
 
       // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
 

@@ -20,8 +20,7 @@ class GetDataListController extends GetxController {
 
   Future<void> getOrder({bool isRefresh = false}) async {
     try {
-      listCtrl.loadState.value =
-          (isRefresh || listCtrl.currentPage.value == 1)
+      listCtrl.loadState.value = (isRefresh || listCtrl.currentPage.value == 1)
           ? LoadState.initial
           : LoadState.loadingMore;
 
@@ -59,7 +58,20 @@ class GetDataListController extends GetxController {
             }
             return;
           }
-          listCtrl.orders.addAll(data);
+
+          final filterData = data.where((element) {
+            bool result = true;
+
+            if (AppRole.isChecker2 &&
+                element.checker2?.status == 'completed' &&
+                element.loader?.status == 'available') {
+              result = false;
+            }
+
+            return result;
+          }).toList();
+
+          listCtrl.orders.addAll(filterData);
           listCtrl.loadState.value = LoadState.idle;
 
         case ErrorResult(:final message):

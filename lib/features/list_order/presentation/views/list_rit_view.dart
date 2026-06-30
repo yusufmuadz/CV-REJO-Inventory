@@ -68,7 +68,7 @@ class ListRitView extends StatelessWidget {
         margin: showBottom ? const EdgeInsets.only(bottom: 16) : null,
         child: InkWell(
           onTap: () =>
-              controller.onSelectedRit(index, pendingPoRIT: totalOnProgressPO),
+              controller.onSelectedRit(index, pendingPoRIT: pendingPoRITCheck2),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -109,7 +109,6 @@ class EndingOrderController extends GetxController {
                 GetStorage().remove('tanggalRit');
 
                 GetStorage().remove('noInvoice');
-                GetStorage().remove('status_checker2');
 
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
@@ -119,10 +118,27 @@ class EndingOrderController extends GetxController {
                   },
                 );
               } else {
+                GetStorage().remove('noInvoice');
+                // GetStorage().remove('status_checker2');
+
+                if (AppRole.isDriver) {
+                  Get.offAllNamed(
+                    Routes.RIT_INFORMATION,
+                    arguments: {
+                      'invoice': '',
+                      'city': rit.value,
+                      'colorRit': colorRit.value,
+                      'tanggalRit': dateRit.value,
+                      'routeFrom': 'endingOrder',
+                      'isRitToday': isRitToday.value,
+                    },
+                  );
+
+                  return;
+                }
+
                 ///// ========== KE HALAMAN LIST PESANAN =========== /////
 
-                GetStorage().remove('noInvoice');
-                GetStorage().remove('status_checker2');
                 Get.offAllNamed(
                   Routes.LIST_ORDER,
                   arguments: {

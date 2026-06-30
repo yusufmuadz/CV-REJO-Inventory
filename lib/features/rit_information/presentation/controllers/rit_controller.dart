@@ -108,29 +108,10 @@ class RitController extends GetxController {
     }
 
     _getOrder();
-    // _initScrollController();
   }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  //   // registerListController();
-  //   _getOrder();
-  //   debugPrint('On Ready');
-  // }
 
   @override
   void onClose() {
-    // kmController.dispose();
-    // mediaFileList.clear();
-    // noInvoice.value = '';
-    // mediaFileListKM.clear();
-    // mediaFileListTangki.clear();
-    // mediaFileListSJ.clear();
-    // if (scrollController.hasClients) {
-    //   scrollController.removeListener(_onScroll);
-    //   scrollController.dispose();
-    // }
     pageController.dispose();
     isLoading.value = false;
     isLoadingReason.value = false;
@@ -140,52 +121,6 @@ class RitController extends GetxController {
     debugPrint('On Close');
     super.onClose();
   }
-
-  // void _initScrollController() {
-  //   scrollController = ScrollController();
-  //   scrollController.addListener(_onScroll);
-  // }
-
-  // void resetControllerBeforeNav() {
-  //   if (scrollController.hasClients) {
-  //     scrollController.removeListener(_onScroll);
-  //     scrollController.dispose();
-  //   }
-  //   _initScrollController();
-  // }
-
-  // void registerScroll() {
-  //   if (routeFrom.value == 'endingOrder' && isFirstOpen.value) {
-  //     debugPrint('Register Scroll');
-  //     scrollController = ScrollController();
-  //     scrollController.addListener(_onScroll);
-  //   }
-  //   debugPrint('Is First Open : ${isFirstOpen.value}');
-  //   isFirstOpen.value = false;
-  // }
-
-  // void _onScroll() {
-  //   if (!scrollController.hasClients) return;
-
-  //   final currentPosition = scrollController.positions.length == 1
-  //       ? scrollController.position
-  //       : scrollController.positions.first;
-
-  //   final canLoad = loadState.value == LoadState.idle;
-
-  //   if (canLoad &&
-  //       currentPosition.pixels >= currentPosition.maxScrollExtent - 200) {
-  //     currentPage.value++;
-  //     _getOrder(); // atau fungsi ambil data Rit Anda
-  //   }
-
-  //   // if (canLoad &&
-  //   //     scrollController.position.pixels >=
-  //   //         scrollController.position.maxScrollExtent - 200) {
-  //   //   currentPage.value++;
-  //   //   _getOrder();
-  //   // }
-  // }
 
   void onRefreshTransaction() {
     _getOrder(isRefresh: true);

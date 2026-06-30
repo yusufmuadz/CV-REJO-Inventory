@@ -32,9 +32,10 @@ class RitPage extends GetView<RitController> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if ((controller.routeFrom.value == 'listOrder' &&
-                      controller.isAcceptRIT.value) ||
-                  controller.routeFrom.value == 'endingOrder') {
+              final route = controller.routeFrom.value;
+
+              if ((controller.isAcceptRIT.value && route == 'listOrder') ||
+                  route == 'endingOrder') {
                 Get.delete<ListOrderController>(force: true);
                 Get.offNamed(Routes.HOME);
                 return;
