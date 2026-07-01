@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
+import '../../../../core/images/camera_screen.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
-import '../../../rit_information/presentation/controllers/rit_controller.dart';
+import '../../../detail_order/data/models/item_order_model.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
 
@@ -18,6 +19,7 @@ class EndingOrderController extends GetxController {
 
   final isLoading = false.obs;
   final dialogService = Get.find<DialogService>();
+  // final cameraService = Get.find<CameraControllerService>();
   final noInvoice = ''.obs;
   final rit = ''.obs;
   final dateRit = ''.obs;
@@ -29,8 +31,8 @@ class EndingOrderController extends GetxController {
 
   final fieldController = TextEditingController();
 
-  final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
+  final mediaFileListAllItem = <XFile>[].obs;
   final mediaFileFrontMerchant = <XFile>[].obs;
   final mediaFileListInfoInvoice = <XFile>[].obs;
   final mediaFileListPaymentType = <XFile>[].obs;
@@ -41,9 +43,13 @@ class EndingOrderController extends GetxController {
   final selectedPaymentType = 'Tunai'.obs;
   final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek', 'Debit'];
 
+  final itemPO = <ItemOrderModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
+    // cameraService.initCamera();
+
     final args = Get.arguments;
     rit.value = GetStorage().read('city') ?? '';
     dateRit.value = GetStorage().read('tanggalRit') ?? '';
@@ -54,6 +60,9 @@ class EndingOrderController extends GetxController {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
       statatusDriver.value = args['status_driver'] ?? '';
+      if (AppRole.isDriver) {
+        itemPO.value = args['items'] ?? [];
+      }
     }
   }
 
@@ -225,14 +234,9 @@ class EndingOrderController extends GetxController {
     }
   }
 
-  void selectImage(ImageSource source, RxList<XFile> files) async {
+  void selectImage(RxList<XFile> files) async {
     try {
-      final pickedFile = await picker.pickImage(
-        source: source, // Atau ImageSource.gallery untuk galeri
-        maxWidth: 1080, // Batasi lebar maksimal Full HD
-        maxHeight: 1920, // Batasi tinggi maksimal Full HD
-        imageQuality: 70,
-      );
+      final pickedFile = await Get.to(() => const CameraScreen());
 
       if (pickedFile != null) {
         files.add(pickedFile);

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 import '../controllers/ending_order_controller.dart';
 
@@ -129,10 +129,8 @@ class ImageInputWidget extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(
-                      onTap: () => controller.selectImage(
-                        ImageSource.camera,
-                        controller.mediaFileList,
-                      ),
+                      onTap: () =>
+                          controller.selectImage(controller.mediaFileList),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(7),

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 import '../../domain/entities/rit_constraint_entity.dart';
 import '../../domain/usecases/get_home_usecase.dart';

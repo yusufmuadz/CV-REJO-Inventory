@@ -124,6 +124,9 @@ class TextStyles {
     FontWeight fontWeight = FontWeight.w400,
     double? height,
     double? letterSpacing,
+    FontStyle? fontStyle,
+    TextDecoration? decoration,
+    Color? decorationColor,
     Color color = const Color(0xFF171717),
   }) {
     return TextStyle(
@@ -133,6 +136,9 @@ class TextStyles {
       fontWeight: fontWeight,
       height: height,
       letterSpacing: letterSpacing,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      fontStyle: fontStyle,
     );
   }
 }

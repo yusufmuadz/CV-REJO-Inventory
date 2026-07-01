@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
-import '../../../list_order/data/models/response_model_get_rit.dart';
 import '../../../list_order/domain/params/get_rit_param.dart';
 import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/repositories/ending_order_repository.dart';

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,7 +40,6 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
   final searchController = TextEditingController();
 
   final mediaFileList = <XFile>[].obs;
-  final ImagePicker picker = ImagePicker();
 
   StreamSubscription<Object?>? _subscription;
   final isScanner = false.obs;

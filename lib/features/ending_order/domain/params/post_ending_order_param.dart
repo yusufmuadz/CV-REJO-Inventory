@@ -1,4 +1,4 @@
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 class ParamsEndingOrder {
   final String? role;
@@ -7,5 +7,11 @@ class ParamsEndingOrder {
   final String statusChecker2;
   final List<XFile>? images;
 
-  ParamsEndingOrder({this.role, this.invoice, this.desc, required this.statusChecker2, this.images});
+  ParamsEndingOrder({
+    this.role,
+    this.invoice,
+    this.desc,
+    required this.statusChecker2,
+    this.images,
+  });
 }

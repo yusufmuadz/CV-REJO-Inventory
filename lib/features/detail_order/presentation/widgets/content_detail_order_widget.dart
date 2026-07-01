@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
@@ -187,7 +187,16 @@ class ContentDetailOrderWidget extends StatelessWidget {
                           style: TextStyles.basicTextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF151C27),
+                            decoration: isAddress
+                                ? TextDecoration.underline
+                                : TextDecoration.none,
+                            fontStyle: isAddress ? FontStyle.italic : null,
+                            decorationColor: isAddress
+                                ? Colors.blueAccent
+                                : null,
+                            color: isAddress
+                                ? Colors.blueAccent
+                                : const Color(0xFF151C27),
                           ),
                         ),
                       ],
@@ -207,9 +216,9 @@ class ContentDetailOrderWidget extends StatelessWidget {
                   Visibility(
                     visible: isAddress,
                     child: Icon(
-                      Icons.keyboard_arrow_right_rounded,
+                      Icons.map_outlined,
                       size: 20,
-                      color: const Color(0xFFd5914d),
+                      color: Colors.blueAccent,
                     ),
                   ),
                 ],

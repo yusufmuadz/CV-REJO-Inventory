@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
+import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
-import '../../../rit_information/presentation/widgets/custom_grid_image.dart';
 import '../../../rit_information/presentation/widgets/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
+import '../widgets/info_item_widget.dart';
 
 class DriverArrive extends StatelessWidget {
   final EndingOrderController controller;
@@ -18,15 +19,17 @@ class DriverArrive extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _buildContentImage(
-          title: 'All Item',
-          mediaFileList: controller.mediaFileList,
-        ),
-        const SizedBox(height: 10),
-        _buildContentImage(
-          title: 'Depan Toko',
-          mediaFileList: controller.mediaFileFrontMerchant,
-        ),
+        // _buildContentImage(
+        //   title: 'Armada Sampai',
+        //   mediaFileList: controller.mediaFileList,
+        // ),
+        // const SizedBox(height: 10),
+        // _buildContentImage(
+        //   title: 'Toko',
+        //   mediaFileList: controller.mediaFileFrontMerchant,
+        // ),
+        // const SizedBox(height: 10),
+        _buildSelectInfoItem(mediaFileList: controller.mediaFileListAllItem),
         const SizedBox(height: 10),
         _buildSelectInfoInvoice(
           mediaFileList: controller.mediaFileListInfoInvoice,
@@ -34,6 +37,59 @@ class DriverArrive extends StatelessWidget {
         const SizedBox(height: 10),
         _buildPaymentType(mediaFileList: controller.mediaFileListPaymentType),
       ],
+    );
+  }
+
+  Widget _buildSelectInfoItem({required RxList<XFile> mediaFileList}) {
+    return _buildBoxStyle(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Informasi Item',
+                style: TextStyles.basicTextStyle(
+                  fontSize: 15,
+                  letterSpacing: 0.48,
+                  color: Colors.black,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                ),
+              ),
+              InkWell(
+                onTap: () => InfoItemWidget().allItem(controller: controller),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: const Color(0xFFd5914d),
+                  ),
+                  child: Text(
+                    'Lihat Semua',
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 12,
+                      letterSpacing: 0.48,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          CustomImage().buildContentImage(
+            title: 'All Item',
+            isShadow: false,
+            mediaFileList: mediaFileList,
+          ),
+        ],
+      ),
     );
   }
 
@@ -88,11 +144,19 @@ class DriverArrive extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _buildContentImage(
-            title: 'Serah Terima',
-            isShadow: false,
-            mediaFileList: mediaFileList,
-          ),
+          Obx(() {
+            String title = 'Invoice';
+
+            if (controller.selectedInfoInvoice.value != 'Lunas') {
+              title = 'Surat Jalan';
+            }
+
+            return CustomImage().buildContentImage(
+              title: title,
+              isShadow: false,
+              mediaFileList: mediaFileList,
+            );
+          }),
         ],
       ),
     );
@@ -165,83 +229,12 @@ class DriverArrive extends StatelessWidget {
             },
           ),
           const SizedBox(height: 8),
-          _buildContentImage(
+          CustomImage().buildContentImage(
             title: 'Bukti Pembayaran',
             isShadow: false,
             mediaFileList: mediaFileList,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildContentImage({
-    int? maxImage,
-    bool isShadow = true,
-    required String title,
-    required RxList<XFile> mediaFileList,
-  }) {
-    return _buildBoxStyle(
-      isShadow: isShadow,
-      child: Obx(
-        () => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(
-              visible: mediaFileList.isNotEmpty,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  children: [
-                    Expanded(child: CustomImage().buildTitle(title: title)),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      margin: const EdgeInsets.only(top: 10),
-                      child: InkWell(
-                        onTap: () => controller.clearAllImages(mediaFileList),
-                        child: const Text(
-                          'Hapus Semua',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Visibility(
-              visible: mediaFileList.isNotEmpty,
-              child: CustomGridImage(
-                maxImage: maxImage ?? 2,
-                mediaFileList: mediaFileList,
-                onAdd: () =>
-                    controller.selectImage(ImageSource.camera, mediaFileList),
-                onRemove: (int index) =>
-                    controller.removeImage(index, mediaFileList),
-              ),
-            ),
-            Visibility(
-              visible: mediaFileList.isEmpty,
-              child: Row(
-                children: [
-                  CustomImage().addImage(
-                    onTap: () => controller.selectImage(
-                      ImageSource.camera,
-                      mediaFileList,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(child: CustomImage().buildTitle(title: title)),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

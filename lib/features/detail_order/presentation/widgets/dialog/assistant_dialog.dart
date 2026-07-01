@@ -12,6 +12,7 @@ import '../input_assisten_widget.dart';
 class AssistantDialog {
   static Widget buildButtonSelect(DetailOrderController controller) {
     bool visible1 = true;
+    bool visible2 = true;
     String title1 = 'Scan ${AppRole.isChecker2 ? 'PO' : 'Produk'}';
     String title2 = 'Lanjut';
     Color color1 = const Color(0xFFFF51BD);
@@ -20,13 +21,11 @@ class AssistantDialog {
     if (AppRole.isDriver) {
       if (controller.statusDriver.value == 'completed') {
         title1 = 'Berangkat';
-        title2 = 'Simpan';
+        title2 = 'Sampai';
         color1 = const Color(0xFFd5914d);
         color2 = const Color(0xFF2ED471);
-        visible1 =
-            AppRole.isDriver &&
-            controller.statusDriver.value == 'completed' &&
-            !controller.isTakeToTheRoad.value;
+        visible1 = !controller.isTakeToTheRoad.value;
+        visible2 = controller.isTakeToTheRoad.value;
       } else {
         visible1 = false;
       }
@@ -39,7 +38,8 @@ class AssistantDialog {
       color1: color1,
       color2: color2,
       visible1: visible1,
-      visibleSpace: visible1,
+      visible2: visible2,
+      visibleSpace: visible1 && visible2,
       onPressed1: () {
         if (AppRole.isDriver) {
           controller.isTakeToTheRoad.value = true;
@@ -68,6 +68,7 @@ class AssistantDialog {
             'invoice': controller.noInvoice.value,
             'status_checker2': controller.statusChecker2.value,
             'status_driver': controller.statusDriver.value,
+            'items': controller.orderDetail.value.orderDetails,
           },
         );
       },
@@ -82,7 +83,8 @@ class AssistantDialog {
           onPressed2: () async {
             if (controller.isLoadingAssistant.value) return;
 
-            final resultAdd = await controller.postDataListController.addAssistant();
+            final resultAdd = await controller.postDataListController
+                .addAssistant();
 
             debugPrint('resultAdd: $resultAdd');
 

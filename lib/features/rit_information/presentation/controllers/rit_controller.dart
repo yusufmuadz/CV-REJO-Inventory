@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
+import '../../../../core/images/camera_screen.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../utils/loading_custom.dart';
@@ -49,7 +50,6 @@ class RitController extends GetxController {
   final kmController = TextEditingController();
   final reasonController = TextEditingController();
 
-  final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
   final mediaFileListKM = <XFile>[].obs;
   final mediaFileListTangki = <XFile>[].obs;
@@ -416,18 +416,9 @@ class RitController extends GetxController {
     }
   }
 
-  void selectImage(
-    ImageSource source,
-    Rx<XFile>? file,
-    RxList<XFile> files,
-  ) async {
+  void selectImage(Rx<XFile>? file, RxList<XFile> files) async {
     try {
-      final pickedFile = await picker.pickImage(
-        source: source, // Atau ImageSource.gallery untuk galeri
-        maxWidth: 1080, // Batasi lebar maksimal Full HD
-        maxHeight: 1920, // Batasi tinggi maksimal Full HD
-        imageQuality: 70,
-      );
+      final pickedFile = await Get.to(() => const CameraScreen());
 
       if (pickedFile != null) {
         if (file != null) {

@@ -1,5 +1,5 @@
+import 'package:camera/camera.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ItemOrderModel {
   final String item;

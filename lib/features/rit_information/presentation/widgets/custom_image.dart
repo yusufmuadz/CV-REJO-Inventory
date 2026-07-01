@@ -5,8 +5,9 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
+import '../../../../core/images/camera_screen.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../controllers/rit_controller.dart';
 
@@ -82,8 +83,7 @@ class CustomImage {
       plusLength: (isTransportation && mediaFileList.length == 4 ? 0 : 1),
       onAdd: isTransportation
           ? onTap
-          : () =>
-                controller.selectImage(ImageSource.camera, null, mediaFileList),
+          : () => controller.selectImage(null, mediaFileList),
       onRemove: (int index) =>
           controller.removeImage(index, null, mediaFileList, isTransportation),
     );
@@ -187,7 +187,7 @@ class CustomImage {
                 mediaFileList: mediaFileList,
                 onAdd: () {
                   if (readOnly) return;
-                  selectImage(ImageSource.camera, null, mediaFileList);
+                  selectImage(null, mediaFileList);
                 },
                 onRemove: (int index) {
                   if (readOnly) return;
@@ -199,14 +199,13 @@ class CustomImage {
               visible: mediaFileList.isEmpty,
               child: Row(
                 children: [
-                  CustomImage().addImage(
+                  addImage(
                     onTap: readOnly
                         ? null
-                        : () => selectImage(
-                            ImageSource.camera,
-                            null,
-                            mediaFileList,
-                          ),
+                        : () {
+                            debugPrint('onAdd');
+                            selectImage(null, mediaFileList);
+                          },
                   ),
                   const SizedBox(width: 10),
                   Expanded(child: CustomImage().buildTitle(title: title)),
@@ -252,29 +251,34 @@ class CustomImage {
     );
   }
 
-  void selectImage(
-    ImageSource source,
-    Rx<XFile>? file,
-    RxList<XFile> files,
-  ) async {
-    final picker = ImagePicker();
+  void selectImage(Rx<XFile>? file, RxList<XFile> files) async {
+    // final picker = ImagePicker();
 
     try {
-      final pickedFile = await picker.pickImage(
-        source: source, // Atau ImageSource.gallery untuk galeri
-        maxWidth: 1080, // Batasi lebar maksimal Full HD
-        maxHeight: 1920, // Batasi tinggi maksimal Full HD
-        imageQuality: 70,
-      );
+      // String? path = await cameraService.takePicture();
+      final String? path = await Get.to(() => const CameraScreen());
 
-      if (pickedFile != null) {
+      if (path != null) {
+        // Get.back(); // Kembali ke halaman sebelumnya setelah berhasil foto
         if (file != null) {
-          file.value = pickedFile;
+          file.value = XFile(path);
         } else {
-          files.add(pickedFile);
+          files.add(XFile(path));
         }
-        // debugPrint('Image path: ${pickedFile.path}');
       }
+      // final pickedFile = await picker.pickImage(
+      //   source: source, // Atau ImageSource.gallery untuk galeri
+      //   imageQuality: 70,
+      // );
+
+      // if (pickedFile != null) {
+      //   if (file != null) {
+      //     file.value = pickedFile;
+      //   } else {
+      //     files.add(pickedFile);
+      //   }
+      //   // debugPrint('Image path: ${pickedFile.path}');
+      // }
     } catch (e) {
       debugPrint('Error picking image: $e');
     }

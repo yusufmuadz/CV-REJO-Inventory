@@ -3,7 +3,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
@@ -114,9 +114,8 @@ class InputImageView extends StatelessWidget {
     bool isTransportation = false,
   }) {
     return InkWell(
-      onTap: () => isTransportation
-          ? null
-          : controller.selectImage(ImageSource.camera, file, mediaFileList),
+      onTap: () =>
+          isTransportation ? null : controller.selectImage(file, mediaFileList),
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(
           color: const Color(0xFFffd8ab),

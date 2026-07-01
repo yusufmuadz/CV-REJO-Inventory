@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../rit_information/presentation/widgets/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
 import '../widgets/field_input_widget.dart';
 import '../widgets/image_input_widget.dart';
@@ -42,7 +43,11 @@ class EndingOrderView extends GetView<EndingOrderController> {
             children: [
               FieldInputWidget(controller: controller),
               const SizedBox(height: 16),
-              ImageInputWidget(controller: controller),
+              CustomImage().buildContentImage(
+                title: 'Barang',
+                mediaFileList: controller.mediaFileList,
+              ),
+              // ImageInputWidget(controller: controller),
             ],
           );
         }),

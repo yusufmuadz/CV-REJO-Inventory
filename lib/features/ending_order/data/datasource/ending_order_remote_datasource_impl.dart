@@ -44,11 +44,14 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       });
 
       String role = params.role!;
-      String apiUrl = ApiEndpoints.completeOrder(role);
 
       if (params.role == 'loader' && params.statusChecker2 != 'completed') {
         role = 'check2';
-      } else if (params.role == 'deliver') {
+      }
+
+      String apiUrl = ApiEndpoints.completeOrder(role);
+
+      if (params.role == 'deliver') {
         role = 'delivery';
         apiUrl = ApiEndpoints.finishScanOrder;
       }

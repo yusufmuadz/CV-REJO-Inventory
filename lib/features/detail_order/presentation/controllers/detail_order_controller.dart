@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -52,7 +52,6 @@ class DetailOrderController extends GetxController {
 
   final reasonController = TextEditingController();
 
-  final picker = ImagePicker();
   final mediaFileList = <XFile>[].obs;
 
   final driverSelected = ''.obs;
@@ -397,37 +396,5 @@ class DetailOrderController extends GetxController {
             mode: LaunchMode.externalApplication,
           )
         : debugPrint("Can't open WhatsApp");
-  }
-
-  //////// ====== PICK IMAGE ====== ////////
-
-  void selectImage(ImageSource source) async {
-    try {
-      final pickedFile = await picker.pickImage(
-        source: source, // Atau ImageSource.gallery untuk galeri
-        maxWidth: 1080, // Batasi lebar maksimal Full HD
-        maxHeight: 1920, // Batasi tinggi maksimal Full HD
-        imageQuality: 70,
-      );
-
-      if (pickedFile != null) {
-        mediaFileList.add(pickedFile);
-        update(); // Memperbarui state untuk menampilkan gambar yang dipilih
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  void removeImage(int index) {
-    if (index >= 0 && index < mediaFileList.length) {
-      mediaFileList.removeAt(index);
-      update(); // Memperbarui state setelah gambar dihapus
-    }
-  }
-
-  void clearAllImages() {
-    mediaFileList.clear();
-    update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }
 }

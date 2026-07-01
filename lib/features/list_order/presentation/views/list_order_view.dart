@@ -155,44 +155,6 @@ class ListOrderView extends StatelessWidget {
     );
   }
 
-  // Widget _buildContent() {
-  //   return Obx(
-  //     () => CustomScrollView(
-  //       controller: controller.scrollController,
-  //       physics: const AlwaysScrollableScrollPhysics(),
-  //       slivers: [
-  //         if ((controller.orders.isEmpty && controller.pageIndex.value == 1) ||
-  //             (controller.listRit.isEmpty && controller.pageIndex.value == 0))
-  //           _buildEmptyOrder()
-  //         else if (controller.pageIndex.value == 0)
-  //           ListRitView(controller: controller)
-  //         else
-  //           SliverList(
-  //             delegate: SliverChildBuilderDelegate(
-  //               childCount:
-  //                   controller.orders.length +
-  //                   (controller.loadState.value == LoadState.loadingMore ||
-  //                           controller.loadState.value == LoadState.error ||
-  //                           controller.loadState.value == LoadState.noMore
-  //                       ? 1
-  //                       : 0),
-  //               (context, index) {
-  //                 if (index == controller.orders.length) {
-  //                   return _buildBottomIndicator(
-  //                     controller.loadState.value,
-  //                     controller.retryFetch,
-  //                   );
-  //                 }
-
-  //                 return _buildOrder(index: index);
-  //               },
-  //             ),
-  //           ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildContent() {
     // 1. Buat ScrollController lokal agar fresh setiap kali widget dibangun
     final localScrollController = ScrollController();
