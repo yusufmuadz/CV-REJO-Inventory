@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
-import '../../../../core/images/camera_screen.dart';
+import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -19,7 +19,6 @@ class EndingOrderController extends GetxController {
 
   final isLoading = false.obs;
   final dialogService = Get.find<DialogService>();
-  // final cameraService = Get.find<CameraControllerService>();
   final noInvoice = ''.obs;
   final rit = ''.obs;
   final dateRit = ''.obs;
@@ -48,9 +47,8 @@ class EndingOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // cameraService.initCamera();
-
     final args = Get.arguments;
+
     rit.value = GetStorage().read('city') ?? '';
     dateRit.value = GetStorage().read('tanggalRit') ?? '';
     colorRit.value = GetStorage().read('colorRit') ?? '';
@@ -101,7 +99,6 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
-          // debugPrint('Status: ${statusChecker2.value}');
           dialogService.showDialogBox(
             title: 'Success',
             description: 'Berhasil Menyimpan Pesanan',
@@ -134,7 +131,6 @@ class EndingOrderController extends GetxController {
                   Get.offAllNamed(
                     Routes.RIT_INFORMATION,
                     arguments: {
-                      'invoice': '',
                       'city': rit.value,
                       'colorRit': colorRit.value,
                       'tanggalRit': dateRit.value,
@@ -232,30 +228,5 @@ class EndingOrderController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void selectImage(RxList<XFile> files) async {
-    try {
-      final pickedFile = await Get.to(() => const CameraScreen());
-
-      if (pickedFile != null) {
-        files.add(pickedFile);
-        update(); // Memperbarui state untuk menampilkan gambar yang dipilih
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  void removeImage(int index, RxList<XFile> files) {
-    if (index >= 0 && index < files.length) {
-      files.removeAt(index);
-      update(); // Memperbarui state setelah gambar dihapus
-    }
-  }
-
-  void clearAllImages(RxList<XFile> files) {
-    files.clear();
-    update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }
 }

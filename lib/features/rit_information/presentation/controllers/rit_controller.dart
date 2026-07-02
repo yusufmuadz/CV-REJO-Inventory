@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
-import '../../../../core/images/camera_screen.dart';
+import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../utils/loading_custom.dart';

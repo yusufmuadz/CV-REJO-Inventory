@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:cv_rejo/features/rit_information/presentation/widgets/custom_grid_image.dart';
+import 'package:cv_rejo/shared/images/custom_grid_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 
-import '../../../../core/images/camera_screen.dart';
-import '../../../../core/services/dialog_service.dart';
-import '../controllers/rit_controller.dart';
+import '../../core/services/dialog_service.dart';
+import 'camera_screen.dart';
+import '../../features/rit_information/presentation/controllers/rit_controller.dart';
 
 class CustomImage {
   Widget buildTitle({required String title, bool isNotOptional = true}) {
@@ -203,7 +203,6 @@ class CustomImage {
                     onTap: readOnly
                         ? null
                         : () {
-                            debugPrint('onAdd');
                             selectImage(null, mediaFileList);
                           },
                   ),

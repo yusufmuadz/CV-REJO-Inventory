@@ -6,7 +6,7 @@ import 'package:camera/camera.dart';
 
 import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
-import '../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
 import '../widgets/info_item_widget.dart';
 

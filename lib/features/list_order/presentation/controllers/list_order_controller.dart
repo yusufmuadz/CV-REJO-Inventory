@@ -16,6 +16,7 @@ import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
 import '../../domain/entities/rit_list_entity.dart';
 import '../../domain/usecases/list_order_usecase.dart';
+import '../widgets/dialog_list_order/input_assistant_dialog.dart';
 import 'get_data_list_controller.dart';
 import 'post_data_list_controller.dart';
 
@@ -257,7 +258,7 @@ class ListOrderController extends GetxController {
           getDataListController.getAssisten();
         }
 
-        final resultAddAssistant = await AssistantDialog.inputAsisten(this);
+        final resultAddAssistant = await InputAssistantDialog.inputAsisten(this);
 
         if (!resultAddAssistant) return;
       } else if (!AppRole.isDriver) {

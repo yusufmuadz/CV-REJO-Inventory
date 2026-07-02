@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../../shared/custom/custom_button.dart';
 import '../../../../../shared/text_field/textfield_shared.dart';
 import '../../../../../utils/loading_custom.dart';
-import '../../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../../../../shared/images/custom_image.dart';
 import '../../controllers/list_order_controller.dart';
 
 class InputPendingDialog {

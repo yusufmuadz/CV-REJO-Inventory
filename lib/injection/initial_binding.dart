@@ -10,10 +10,20 @@ import '../core/services/camera_service.dart';
 import '../core/services/contact_service.dart';
 import '../core/services/dialog_service.dart';
 import '../core/services/storage_service.dart';
+import 'injection_datasource.dart';
+import 'injection_repository.dart';
+import 'injection_usecase.dart';
 
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
+    _injectioDefault();
+    injectionUsecase();
+    injectionDataSource();
+    injectionRepository();
+  }
+
+  void _injectioDefault() {
     Get.put<KoneksiCheck>(KoneksiCheck(), permanent: true);
     Get.lazyPut<FlutterSecureStorage>(() {
       debugPrint('✅ FlutterSecureStorage created');
@@ -29,12 +39,6 @@ class InitialBinding extends Bindings {
       () => DioClient(Get.find<TokenStorage>()),
       fenix: true,
     );
-
-    // // Register NavigationService (permanent agar navigatorKey tetap hidup)
-    // Get.lazyPut<NavigationService>(
-    //   () => NavigationService(),
-    //   fenix: true, // ✅ Agar tidak terhapus saat rebuild
-    // );
 
     // Register DialogService
     Get.lazyPut<DialogService>(() => DialogService(), fenix: true);

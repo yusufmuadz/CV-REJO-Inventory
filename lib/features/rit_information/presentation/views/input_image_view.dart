@@ -7,7 +7,7 @@ import 'package:camera/camera.dart';
 
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
-import '../widgets/custom_image.dart';
+import '../../../../shared/images/custom_image.dart';
 
 class InputImageView extends StatelessWidget {
   final RitController controller;

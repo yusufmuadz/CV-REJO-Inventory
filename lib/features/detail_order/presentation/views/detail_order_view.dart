@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/middlewares/app_role.dart';
-import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/detail_order_controller.dart';
-import '../widgets/content_detail_order_widget.dart';
+import '../widgets/buttons/button_detail_order_widget.dart';
+import '../widgets/content/content_detail_order_widget.dart';
 import '../widgets/dialog/assistant_dialog.dart';
 
 class DetailOrderView extends GetView<DetailOrderController> {
@@ -103,22 +103,11 @@ class DetailOrderView extends GetView<DetailOrderController> {
   }
 
   Widget _buildButtonStart() {
-    return CustomButton.basicButton(
-      title: AppRole.isDriver ? 'Ambil' : 'Mulai',
-      color: const Color(0xFF2ED471),
-      onPressed: () {
-        if (AppRole.isDriver) {
-          controller.takeItTransactionDriver();
-          return;
-        }
-
-        controller.startingPO();
-      },
-    );
+    return ButtonDetailOrderWidget.buildButtonStart(controller);
   }
 
   Widget _buildDoubleButton() {
-    return AssistantDialog.buildButtonSelect(controller);
+    return ButtonDetailOrderWidget.buildButtonSelect(controller);
   }
 
   Widget _buildButton() {

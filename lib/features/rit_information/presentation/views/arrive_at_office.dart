@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
-import '../widgets/custom_image.dart';
+import '../../../../shared/images/custom_image.dart';
 
 class ArriveAtOffice extends StatelessWidget {
   final RitController controller;

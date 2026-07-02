@@ -11,6 +11,7 @@ class HomePageController extends GetxController {
   void changePage(int index) {
     // pageController.jumpToPage(index);
     // _changeStatusBar(index);
+    masterController.getCacheSize(index);
     masterController.pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),

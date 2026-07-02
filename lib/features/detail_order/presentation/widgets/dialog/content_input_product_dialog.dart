@@ -6,7 +6,7 @@ import 'package:camera/camera.dart';
 import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/text_field/textfield_shared.dart';
 import '../../../../../utils/loading_custom.dart';
-import '../../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../../../../shared/images/custom_image.dart';
 
 class ContentInputProductDialog extends StatelessWidget {
   final String itemName;

@@ -10,7 +10,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/thousand_formatter.dart';
-import '../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../../../shared/images/custom_image.dart';
 import '../widgets/app_bar_widget.dart';
 
 class RitConstraint extends StatelessWidget {

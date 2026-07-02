@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
 import 'home_page_controller.dart';
 import 'home_profile_controller.dart';
@@ -20,6 +21,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final isLoading = false.obs;
 
   final dialogService = Get.find<DialogService>();
+  final cacheService = Get.find<CacheService>();
   final pageController = PageController(initialPage: 0);
   final indexPage = 0.obs;
 
@@ -31,6 +33,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final isRitToday = false.obs;
 
   final tabIndex = 0.obs;
+
+  final cacheSize = '0 MB'.obs;
 
   late final ListOrderController listOrderController;
 
@@ -94,6 +98,25 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     colorRit.value = GetStorage().read('colorRit') ?? '';
     tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
+  }
+
+  void getCacheSize(int index) async {
+    if ((AppRole.isDriver && index > 2) || (!AppRole.isDriver && index == 1)) {
+      return;
+    }
+    // Di dalam State management (misal: GetX atau Provider)
+    int currentSize = await cacheService.getCacheSize();
+    cacheSize.value = cacheService.formatSize(currentSize);
+  }
+
+  void clearCache() async {
+    await cacheService.clearAllCache();
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    ); // Beri jeda 0.5 detik
+    getCacheSize(tabIndex.value);
+    Get.back();
+    dialogService.showSuccessSnackbar('Berhasil Menghapus Cache');
   }
 
   void routeTo({bool ritToday = true}) {

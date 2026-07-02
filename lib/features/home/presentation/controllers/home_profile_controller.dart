@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../core/middlewares/app_role.dart';
@@ -35,13 +34,25 @@ class HomeProfileController extends GetxController {
         : debugPrint("Can't open Terms and Conditions");
   }
 
+  void onTapClearCache() {
+    masterController.dialogService.showError(
+      'Hapus Cache',
+      'Apakah anda yakin ingin menghapus cache?',
+      singleButton: false,
+      titleButton1: 'Tidak',
+      titleButton2: 'Ya',
+      onPressed1: () => Get.back(),
+      onPressed2: () => masterController.clearCache(),
+    );
+  }
+
   void onTapLogout() {
     masterController.dialogService.showError(
       'LOGOUT',
       'Apakah anda yakin ingin keluar dari akun ini?',
       singleButton: false,
-      titleButton2: 'Ya',
       titleButton1: 'Tidak',
+      titleButton2: 'Ya',
       onPressed1: () => Get.back(),
       onPressed2: () {
         GetStorage().remove('noInvoice');

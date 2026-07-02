@@ -150,16 +150,16 @@ class DetailOrderController extends GetxController {
 
       orderDetail.value = orderDetail.value.copyWith(orderDetails: updateList);
     } else {
-      if (orderDetail.value.orderDetails == null) return;
+      // if (orderDetail.value.orderDetails == null) return;
 
-      final result =
-          await openInputListProductDialog(
-            itemName: '',
-            qty: '',
-            controller: this,
-            barcodeValue: '',
-          ) ??
-          false;
+      // final result =
+      //     await openInputListProductDialog(
+      //       itemName: '',
+      //       qty: '',
+      //       controller: this,
+      //       barcodeValue: '',
+      //     ) ??
+      //     false;
 
       // for (var element in orderDetail.value.orderDetails!) {
       //   element.isChecked = result;

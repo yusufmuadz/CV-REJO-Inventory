@@ -160,13 +160,24 @@ class ProfileView extends StatelessWidget {
                       ),
                       _buildContentStyle(
                         title: 'Kebijakan Privasi',
-                        isBorderTop: true,
                         isBorderBottom: true,
                         icon: Icons.shield_outlined,
                         colorBgIcon: const Color(0xFFFFF7ED),
                         colorIcon: const Color(0xFFEA580C),
                         value: 'Pelajari kebijakan privasi kami',
                         onTap: () => profileController.onTapPrivacyPolicy(),
+                      ),
+                      Obx(
+                        () => _buildContentStyle(
+                          title: 'Hapus Cache',
+                          isBorderBottom: true,
+                          icon: Icons.delete_sweep_outlined,
+                          colorBgIcon: const Color(0xFFf0f6ff),
+                          colorIcon: const Color(0xFF2664eb),
+                          value:
+                              'Bersihkan penyimpanan aplikasi(${controller.cacheSize.value})',
+                          onTap: () => profileController.onTapClearCache(),
+                        ),
                       ),
                       _buildContentStyle(
                         title: 'Logout',

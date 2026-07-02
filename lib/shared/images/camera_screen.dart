@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
-import '../services/camera_service.dart';
+import '../../core/services/camera_service.dart';
 
 class CameraScreen extends GetView<CameraControllerService> {
   const CameraScreen({super.key});

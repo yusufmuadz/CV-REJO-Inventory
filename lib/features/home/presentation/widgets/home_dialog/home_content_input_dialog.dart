@@ -9,7 +9,7 @@ import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/custom/custom_button.dart';
 import '../../../../../shared/text_field/textfield_shared.dart';
 import '../../../../../utils/thousand_formatter.dart';
-import '../../../../rit_information/presentation/widgets/custom_image.dart';
+import '../../../../../shared/images/custom_image.dart';
 import '../../../domain/entities/take_it_transaction_entity.dart';
 
 class HomeContentInputDialog extends StatelessWidget {
