@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,10 +7,10 @@ import '../../../../../core/theme/text_styles.dart';
 import '../../controllers/detail_order_controller.dart';
 import '../dialog/detail_product_dialog.dart';
 
-class ContentInfoItemWidget extends StatelessWidget {
+class ContentInfoOrderWidget extends StatelessWidget {
   final DetailOrderController controller;
 
-  const ContentInfoItemWidget({super.key, required this.controller});
+  const ContentInfoOrderWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../shared/custom/custom_button.dart';
+import '../../../data/models/item_order_model.dart';
 import '../../controllers/detail_order_controller.dart';
+import 'content_input_all_product_dialog.dart';
 import 'content_input_product_dialog.dart';
 
 Future<bool?> openInputFieldDialog({
@@ -74,31 +76,25 @@ Future<bool?> openInputFieldDialog({
 }
 
 Future<bool?> openInputListProductDialog({
-  required String itemName,
-  required String qty,
-  required String barcodeValue,
+  required List<ItemOrderModel> orderDetails,
   required DetailOrderController controller,
 }) async {
   await Future.delayed(const Duration(milliseconds: 300));
 
   final result = await controller.dialogService.inputDialogWithAlertDialog(
-    height: 0.5,
+    height: 0.7,
     barrierDismissible: false,
-    title: 'Informasi Barang',
+    title: 'Informasi Semua Barang',
     titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
     actionsPadding: const EdgeInsets.fromLTRB(20, 0.5, 20, 10),
-    contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
+    contentPadding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 5.0),
     insetPadding: const EdgeInsets.symmetric(horizontal: 16),
     content: PopScope(
       canPop: false,
       child: Obx(
-        () => ContentInputProductDialog(
-          itemName: itemName,
-          barcodeValue: barcodeValue,
-          mediaFileList: controller.mediaFileList,
-          messageProduct: controller.messageProduct.value,
+        () => ContentInputAllProductDialog(
+          orderDetails: orderDetails,
           isLoadingProduct: controller.isLoadingProduct.value,
-          qtyController: TextEditingController(text: qty),
         ),
       ),
     ),
@@ -131,7 +127,7 @@ Future<bool?> openInputListProductDialog({
             Get.back(result: false);
           },
           onPressed2: () {
-            controller.addProduct(barcode: barcodeValue, quantity: qty);
+            // controller.addProduct(barcode: barcodeValue, quantity: qty);
           },
         );
       }),

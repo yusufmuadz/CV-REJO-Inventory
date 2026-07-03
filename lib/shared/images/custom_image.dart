@@ -258,7 +258,6 @@ class CustomImage {
       final String? path = await Get.to(() => const CameraScreen());
 
       if (path != null) {
-        // Get.back(); // Kembali ke halaman sebelumnya setelah berhasil foto
         if (file != null) {
           file.value = XFile(path);
         } else {

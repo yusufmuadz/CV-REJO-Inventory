@@ -34,7 +34,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   final tabIndex = 0.obs;
 
-  final cacheSize = '0 MB'.obs;
+  final cacheSize = '0 B'.obs;
 
   late final ListOrderController listOrderController;
 
@@ -101,7 +101,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   }
 
   void getCacheSize(int index) async {
-    if ((AppRole.isDriver && index > 2) || (!AppRole.isDriver && index == 1)) {
+    if ((AppRole.isDriver && index < 2) || (!AppRole.isDriver && index != 1)) {
       return;
     }
     // Di dalam State management (misal: GetX atau Provider)

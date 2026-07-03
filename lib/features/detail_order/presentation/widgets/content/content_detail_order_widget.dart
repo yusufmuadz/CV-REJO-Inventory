@@ -8,7 +8,7 @@ import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/images/custom_image.dart';
 import '../../controllers/detail_order_controller.dart';
-import 'content_info_item_widget.dart';
+import 'content_info_order_widget.dart';
 
 class ContentDetailOrderWidget extends StatelessWidget {
   final DetailOrderController controller;
@@ -40,7 +40,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
           vertical: 15,
           child: ContentInfoCustomerWidget(controller: controller),
         ),
-        _buildBoxStyle(child: ContentInfoItemWidget(controller: controller)),
+        _buildBoxStyle(child: ContentInfoOrderWidget(controller: controller)),
         Visibility(
           visible: controller.isFromHistory.value,
           child: _buildPreviewImage(),
