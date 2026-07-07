@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../shared/custom/custom_button.dart';
-import 'navigation_service.dart';
 
 class DialogService {
   DialogService();

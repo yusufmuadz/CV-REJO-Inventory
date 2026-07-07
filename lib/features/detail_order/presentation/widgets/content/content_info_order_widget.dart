@@ -207,7 +207,7 @@ class ContentInfoOrderWidget extends StatelessWidget {
           if (check) return;
 
           if (index < 0) {
-            // controller.selectedProduct(index);
+            controller.selectedProduct(index);
             return;
           }
 
@@ -276,7 +276,7 @@ class ContentInfoOrderWidget extends StatelessWidget {
             visible: AppRole.isChecker2 || AppRole.isDriver,
             child: SizedBox(
               width: 30,
-              // child: _buildCheckBox(check: false, index: -1),
+              child: _buildCheckBox(check: false, index: -1),
             ),
           ),
         ],

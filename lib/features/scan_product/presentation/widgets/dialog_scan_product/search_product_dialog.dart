@@ -1,6 +1,5 @@
 import 'package:cv_rejo/features/scan_product/presentation/controllers/scan_product_controller.dart';
 import 'package:cv_rejo/shared/custom/custom_search_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -154,11 +153,6 @@ class SearchProduct extends StatelessWidget {
               // Text('BARCODE: ${item.barcode}'),
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               onTap: () {
-                // openInputQtyDialog(
-                //   itemName: item.nama,
-                //   barcodeValue: item.barcode,
-                //   controller: controller,
-                // );
                 controller.getProduct(item.barcode, isSearch: true);
               },
             ),

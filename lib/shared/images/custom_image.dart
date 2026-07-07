@@ -92,6 +92,7 @@ class CustomImage {
   Widget displayImage({
     required String path,
     bool isPreview = false,
+    bool isPadding = true,
     Function()? onTapRemove,
   }) {
     return Stack(
@@ -99,7 +100,9 @@ class CustomImage {
         InkWell(
           onTap: isPreview ? () => previewImage(path: path) : null,
           child: Padding(
-            padding: !isPreview ? const EdgeInsets.all(5.0) : EdgeInsets.zero,
+            padding: !isPreview && isPadding
+                ? const EdgeInsets.all(5.0)
+                : EdgeInsets.zero,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(7),
               child: Image.file(

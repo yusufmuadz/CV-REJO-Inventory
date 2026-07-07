@@ -16,6 +16,8 @@ class ItemOrderModel {
   String? note;
   final String? locationRack;
   RxList<XFile>? mediaFileList;
+  bool isLoading;
+  bool hasError;
 
   ItemOrderModel({
     required this.item,
@@ -32,6 +34,8 @@ class ItemOrderModel {
     this.note = '',
     this.locationRack,
     this.mediaFileList,
+    this.isLoading = false,
+    this.hasError = false,
   });
 
   factory ItemOrderModel.fromJson(Map<String, dynamic> json) {
