@@ -11,6 +11,10 @@ class ItemOrderModel {
   final StatusOrder driver;
   final bool statusChecker2;
   final bool statusDriver;
+  final bool statusFinishScan;
+  final bool statusArrive;
+  final bool statusUnload;
+  final bool statusConfirmDelivery;
   final String? color;
   bool isChecked;
   String? note;
@@ -27,6 +31,10 @@ class ItemOrderModel {
     required this.checker1,
     required this.checker2,
     required this.driver,
+    required this.statusFinishScan,
+    required this.statusArrive,
+    required this.statusUnload,
+    required this.statusConfirmDelivery,
     this.color = '-',
     this.statusChecker2 = false,
     this.statusDriver = false,
@@ -49,6 +57,10 @@ class ItemOrderModel {
       driver: StatusOrder.fromJson(json['driver']),
       statusChecker2: json['status_checker2'] ?? false,
       statusDriver: json['status_deliveryscan'] ?? false,
+      statusFinishScan: json['status_finishscan'] ?? false,
+      statusArrive: json['status_arrive'] ?? false,
+      statusUnload: json['status_unload'] ?? false,
+      statusConfirmDelivery: json['status_confirmdelivery'] ?? false,
       locationRack: json['lokasi'] ?? '-',
       color: json['warna'] ?? '-',
     );
@@ -64,6 +76,10 @@ class ItemOrderModel {
     StatusOrder? driver,
     bool? statusChecker2,
     bool? statusDriver,
+    bool? statusFinishScan,
+    bool? statusArrive,
+    bool? statusUnload,
+    bool? statusConfirmDelivery,
     bool? isChecked,
     String? note,
     String? locationRack,
@@ -80,6 +96,10 @@ class ItemOrderModel {
       driver: driver ?? this.driver,
       statusChecker2: statusChecker2 ?? this.statusChecker2,
       statusDriver: statusDriver ?? this.statusDriver,
+      statusFinishScan: statusFinishScan ?? this.statusFinishScan,
+      statusArrive: statusArrive ?? this.statusArrive,
+      statusUnload: statusUnload ?? this.statusUnload,
+      statusConfirmDelivery: statusConfirmDelivery ?? this.statusConfirmDelivery,
       isChecked: isChecked ?? this.isChecked,
       note: note ?? this.note,
       color: color ?? this.color,

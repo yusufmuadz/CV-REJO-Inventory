@@ -8,6 +8,7 @@ import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
 import '../widgets/field_input_widget.dart';
 import '../widgets/image_input_widget.dart';
+import '../widgets/input_pending_widget.dart';
 import 'driver_arrive.dart';
 
 class EndingOrderView extends GetView<EndingOrderController> {
@@ -55,10 +56,10 @@ class EndingOrderView extends GetView<EndingOrderController> {
           if (controller.isLoading.value) {
             return const SizedBox.shrink();
           }
-          if (AppRole.isDriver &&
-              controller.statatusDriver.value == 'completed') {
-            return CustomButton.bottomBarStyle(child: _buildButtonSave());
-          }
+          // if (AppRole.isDriver &&
+          //     controller.statatusDriver.value == 'completed') {
+          //   return CustomButton.bottomBarStyle(child: _buildButtonSave());
+          // }
           return CustomButton.bottomBarStyle(child: _buildButtonSelect());
         }),
       ),
@@ -71,7 +72,14 @@ class EndingOrderView extends GetView<EndingOrderController> {
       title2: 'Simpan PO',
       color1: Colors.redAccent,
       color2: const Color(0xFF2ED471),
-      onPressed1: () => controller.pendingProduct(),
+      onPressed1: () {
+        if (AppRole.isDriver) {
+          InputPendingWidget.inputReason(controller: controller);
+          return;
+        }
+
+        controller.pendingProduct();
+      },
       onPressed2: () => controller.saveOrder(),
     );
   }

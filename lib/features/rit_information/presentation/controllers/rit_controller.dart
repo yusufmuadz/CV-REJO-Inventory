@@ -491,6 +491,10 @@ class RitController extends GetxController {
         checker1: StatusItem(),
         checker2: StatusOrder(),
         driver: StatusOrder(),
+        statusFinishScan: false,
+        statusArrive: false,
+        statusUnload: false,
+        statusConfirmDelivery: false,
         isChecked: false,
       ),
     );

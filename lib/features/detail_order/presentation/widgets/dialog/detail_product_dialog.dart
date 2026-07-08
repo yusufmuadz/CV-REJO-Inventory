@@ -40,10 +40,13 @@ class DetailProductDialog {
         child: Column(
           children: [
             const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
-            _buildBoxIconText(
-              title: 'Kode Produk',
-              value: idProduct,
-              icon: Icons.fingerprint_outlined,
+            Visibility(
+              visible: !AppRole.isDriver,
+              child: _buildBoxIconText(
+                title: 'Kode Produk',
+                value: idProduct,
+                icon: Icons.fingerprint_outlined,
+              ),
             ),
 
             _buildBoxIconText(
@@ -61,11 +64,14 @@ class DetailProductDialog {
               ),
             ),
 
-            _buildBoxIconText(
-              title: 'Lokasi Simpan (Rak)',
-              value: location,
-              icon: Icons.shelves,
-              isBox: AppRole.isPIC,
+            Visibility(
+              visible: !AppRole.isDriver,
+              child: _buildBoxIconText(
+                title: 'Lokasi Simpan (Rak)',
+                value: location,
+                icon: Icons.shelves,
+                isBox: AppRole.isPIC,
+              ),
             ),
 
             _buildBoxIconText(

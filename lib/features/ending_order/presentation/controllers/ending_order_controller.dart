@@ -18,6 +18,7 @@ class EndingOrderController extends GetxController {
   EndingOrderController({required this.endingOrderUseCase});
 
   final isLoading = false.obs;
+  final isLoadingReason = false.obs;
   final dialogService = Get.find<DialogService>();
   final noInvoice = ''.obs;
   final rit = ''.obs;

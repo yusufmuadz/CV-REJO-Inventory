@@ -15,6 +15,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
     final namePenerima = controller.orderDetail.value.customer.name;
     final tanggalBatas = controller.orderDetail.value.date.delivery;
     final district = controller.orderDetail.value.customer.district;
+    final address = controller.orderDetail.value.customer.address;
     final isStatusDriver = controller.statusDriver.value == 'completed';
 
     final isDriver = AppRole.isDriver && isStatusDriver;
@@ -60,7 +61,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           child: _buildInfoContent(
             isAddress: true,
             title: 'Alamat Pengiriman',
-            value: 'Jl. Jend. Sudirman No. 1, Jakarta Selatan',
+            value: address,
             icon: Icons.apartment,
             mgBottom: 16,
           ),

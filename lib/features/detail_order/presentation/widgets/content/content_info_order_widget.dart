@@ -276,7 +276,26 @@ class ContentInfoOrderWidget extends StatelessWidget {
             visible: AppRole.isChecker2 || AppRole.isDriver,
             child: SizedBox(
               width: 30,
-              child: _buildCheckBox(check: false, index: -1),
+              child: Obx(() {
+                final list = controller.orderDetail.value.orderDetails ?? [];
+                final allChecked =
+                    list.isNotEmpty &&
+                    list.every((element) {
+                      bool isChecked = element.isChecked;
+
+                      if (!isChecked) {
+                        if (AppRole.isChecker2) {
+                          isChecked = element.statusChecker2;
+                        } else if (AppRole.isDriver) {
+                          isChecked = element.statusDriver;
+                        }
+                      }
+
+                      return isChecked;
+                    });
+
+                return _buildCheckBox(check: allChecked, index: -1);
+              }),
             ),
           ),
         ],

@@ -52,6 +52,6 @@ class ApiEndpoints {
   static const String termsAndCondition =
       "https://lite2.indopustakaplus.com/admin/terms_and_condition.html";
 
-  static String maps(String latitude, String longitude) =>
-      "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+  static String maps(String query) =>
+      "https://www.google.com/maps/search/?api=1&query=$query";
 }

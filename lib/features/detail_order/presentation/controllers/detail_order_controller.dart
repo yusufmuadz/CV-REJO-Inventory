@@ -49,11 +49,9 @@ class DetailOrderController extends GetxController {
   final messageProduct = ''.obs;
   final statusPostProduct = false.obs;
 
-  final isChecked = false.obs;
+  final isCheckedAll = false.obs;
 
   final reasonController = TextEditingController();
-
-  final mediaFileList = <XFile>[].obs;
 
   final driverSelected = ''.obs;
   final assistantSelected = ''.obs;
@@ -71,6 +69,7 @@ class DetailOrderController extends GetxController {
       district: '',
       latitude: '',
       longitude: '',
+      address: '',
     ),
     date: DateModel(transaction: '', delivery: ''),
   ).obs;
@@ -127,7 +126,7 @@ class DetailOrderController extends GetxController {
 
       if (order.isChecked) return;
 
-      mediaFileList.clear();
+      // mediaFileList.clear();
 
       bool result = false;
 
@@ -156,16 +155,10 @@ class DetailOrderController extends GetxController {
         return;
       }
 
-      final result =
-          await openInputListProductDialog(
-            controller: this,
-            orderDetails: orderDetail.value.orderDetails!,
-          ) ??
-          false;
-
-      // for (var element in orderDetail.value.orderDetails!) {
-      //   element.isChecked = result;
-      // }
+      await openInputListProductDialog(
+        controller: this,
+        orderDetails: orderDetail.value.orderDetails!,
+      );
     }
   }
 
@@ -224,8 +217,17 @@ class DetailOrderController extends GetxController {
 
       switch (result) {
         case Success(:final data):
-          debugPrint('Data Detail Order: $data');
           orderDetail.value = data;
+
+          final list = data.orderDetails ?? [];
+
+          if (AppRole.isDriver && list.isNotEmpty) {
+            final finishCheckFirstItem =
+                list.firstOrNull?.statusFinishScan ?? false;
+            if (finishCheckFirstItem) {
+              statusDriver.value = 'completed';
+            }
+          }
 
           driverSelected.value = data.assistant?.namaDriver ?? '';
           assistantSelected.value = data.assistant?.namaKenek ?? '';
@@ -334,6 +336,7 @@ class DetailOrderController extends GetxController {
   Future<void> addProduct({
     required String barcode,
     required String quantity,
+    required RxList<XFile> mediaFileList,
   }) async {
     if (isLoadingProduct.value) return;
 
@@ -492,18 +495,33 @@ class DetailOrderController extends GetxController {
   //////// ====== LAUNCH MAPS ====== ////////
 
   void onTapMaps() async {
-    final latitude = orderDetail.value.customer.latitude;
-    final longitude = orderDetail.value.customer.longitude;
+    final customer = orderDetail.value.customer;
 
-    if (latitude.isNotEmpty && longitude.isNotEmpty) {
-      dialogService.showErrorSnackbar(title: 'Gagal!', 'Koordinat Kosong');
+    final latitude = customer.latitude;
+    final longitude = customer.longitude;
+    final address = customer.address;
+
+    debugPrint('Latitude: $latitude, Longitude: $longitude');
+    debugPrint('Alamat: $address');
+
+    if ((latitude == '-' || longitude == '-') && address.isEmpty) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Koordinat/Alamat Kosong',
+      );
       return;
     }
-    final url = ApiEndpoints.maps(latitude.toString(), longitude.toString());
+
+    String url = ApiEndpoints.maps('$latitude, $longitude');
+
+    if (latitude == '-' || longitude == '-') {
+      String encodedQuery = Uri.encodeComponent(address);
+      url = ApiEndpoints.maps(encodedQuery);
+    }
 
     await canLaunchUrlString(url)
         ? launchUrlString(url)
-        : debugPrint("Can't open Terms and Conditions");
+        : debugPrint("Can't open Maps");
   }
 
   //////// ====== LAUNCH WHATSAPP ====== ////////

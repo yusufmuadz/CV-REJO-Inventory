@@ -43,6 +43,7 @@ class Data {
               district: '',
               latitude: '',
               longitude: '',
+              address: '',
             ),
             date: DateModel(transaction: '', delivery: ''),
           )
@@ -62,6 +63,7 @@ class Data {
           district: '',
           latitude: '',
           longitude: '',
+          address: '',
         ),
         date: DateModel(transaction: '', delivery: ''),
       );

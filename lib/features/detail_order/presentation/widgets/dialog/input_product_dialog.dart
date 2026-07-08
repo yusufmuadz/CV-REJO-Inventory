@@ -72,7 +72,11 @@ Future<bool?> openInputFieldDialog({
             Get.back(result: false);
           },
           onPressed2: () {
-            controller.addProduct(barcode: barcodeValue, quantity: qty);
+            controller.addProduct(
+              barcode: barcodeValue,
+              quantity: qty,
+              mediaFileList: mediaFileList,
+            );
           },
         );
       }),
