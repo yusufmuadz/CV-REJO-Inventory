@@ -7,6 +7,7 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../models/response_model_rit.dart';
 import 'rit_remote_datasource.dart';
@@ -56,34 +57,30 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelRit> pendingOrder(ParamsRit params) async {
+  Future<ResponseModelRit> postCancelRIT(ParamsTroubleRIT params) async {
     try {
-      // final formData = FormData.fromMap({
-      //   'invoice': params.invoice,
-      //   'desc': params.desc,
-      //   'foto1': await MultipartFile.fromFile(
-      //     params.images![0].path,
-      //     filename: 'foto1.jpg', // ⬅️ selalu tambahkan filename
-      //   ),
-      //   // Collection if: hanya masuk ke map kalau kondisi true
-      //   if (params.images!.length > 1)
-      //     'foto2': await MultipartFile.fromFile(
-      //       params.images![1].path,
-      //       filename: 'foto2.jpg',
-      //     ),
-      // });
-
-      // String role = params.role!;
-
-      // if (params.role == 'loader' && params.statusChecker2 != 'completed') {
-      //   role = 'check2';
-      // } else if (params.role == 'deliver') {
-      //   role = 'delivery';
-      // }
+      final formData = FormData.fromMap({
+        'no_rit': params.noRIT,
+        'tanggal_rit': params.tanggalRIT,
+        'desc': params.desc,
+        'jenis_trouble': params.troubleRIT,
+        'lat': params.lat,
+        'long': params.long,
+        'file1': await MultipartFile.fromFile(
+          params.images[0].path,
+          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+        ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (params.images.length > 1)
+          'file2': await MultipartFile.fromFile(
+            params.images[1].path,
+            filename: 'file2.jpg',
+          ),
+      });
 
       final response = await dioClient.post(
-        ApiEndpoints.saveDataDriver,
-        // data: formData,
+        ApiEndpoints.trouble,
+        data: formData,
       );
 
       // debugPrint('Data Pending Order Remote DataSource: ${response.data}');

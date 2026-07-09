@@ -81,9 +81,7 @@ class CustomImage {
       maxImage: maxImage ?? 2,
       mediaFileList: mediaFileList,
       plusLength: (isTransportation && mediaFileList.length == 4 ? 0 : 1),
-      onAdd: isTransportation
-          ? onTap
-          : () => controller.selectImage(null, mediaFileList),
+      onAdd: isTransportation ? onTap : () => selectImage(null, mediaFileList),
       onRemove: (int index) =>
           controller.removeImage(index, null, mediaFileList, isTransportation),
     );

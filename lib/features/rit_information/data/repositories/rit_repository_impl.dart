@@ -3,6 +3,7 @@ import '../../../../core/result/result_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/entities/rit_entity.dart';
+import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../domain/repositories/rit_repository.dart';
 import '../datasource/rit_remote_datasource.dart';
@@ -29,11 +30,11 @@ class RitRepositoryImpl implements RitRepository {
   }
 
   @override
-  Future<ResultCustom<Failure, RitEntity>> pendingOrder(
-    ParamsRit params,
+  Future<ResultCustom<Failure, RitEntity>> postCancelRIT(
+    ParamsTroubleRIT params,
   ) async {
     try {
-      final response = await dataSource.pendingOrder(params);
+      final response = await dataSource.postCancelRIT(params);
 
       if (response.error == null) {
         return Success(RitEntity(list: []), '');

@@ -60,10 +60,7 @@ class RitDialog {
                   child: CustomButton.basicButton(
                     title: 'Kirim',
                     color: const Color(0xFF2ED471),
-                    onPressed: () {
-                      Get.back();
-                      controller.buttonRIT.value = EnumButtonRIT.cancelRIT;
-                    },
+                    onPressed: () => controller.cancelRIT(),
                   ),
                 ),
               ],

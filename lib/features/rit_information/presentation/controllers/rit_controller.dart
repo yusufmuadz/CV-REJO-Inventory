@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
+import '../../../../core/services/location_service.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -13,8 +15,10 @@ import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
+import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 import 'enums/enum_rit.dart';
+import 'enums/enum_trouble.dart';
 
 class RitController extends GetxController {
   final RitUseCase ritUseCase;
@@ -25,6 +29,7 @@ class RitController extends GetxController {
   final isLoadingReason = false.obs;
   final loadState = LoadState.initial.obs;
   final dialogService = Get.find<DialogService>();
+  final locationService = LocationService();
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
   final isFirstOpen = true.obs;
@@ -236,50 +241,53 @@ class RitController extends GetxController {
     }
   }
 
-  Future<void> pendingProduct() async {
+  Future<void> cancelRIT() async {
     if (isLoading.value) return;
-    buttonRIT.value = EnumButtonRIT.cancelChangePO;
 
-    //   if (mediaFileList.isEmpty) {
-    //     dialogService.showErrorSnackbar(title: 'Gagal!', 'Coming Soon');
-    //     return;
-    //   }
-    //   isLoading.value = true;
+    if (mediaFileReason.isEmpty) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Masukkan foto terlebih dahulu!',
+      );
+      return;
+    }
+    isLoading.value = true;
 
-    //   try {
-    //     final result = await ritUseCase.callPendingOrder(
-    //       ParamsRit(
-    //         role: AppRole.current!.name.toLowerCase(),
-    //         statusChecker2: statusChecker2.value,
-    //         invoice: noInvoice.value,
-    //         desc: fieldController.text,
-    //         images: mediaFileList,
-    //       ),
-    //     );
+    try {
+      final position = await locationService.getLatestLocationLightweight();
 
-    //     switch (result) {
-    //       case Success(:final data):
-    //         debugPrint('Data Item Product: $data');
-    //         dialogService.showDialogBox(
-    //           title: 'Success',
-    //           description: 'Berhasil Menunda Pesanan',
-    //           barrierDismissible: false,
-    //           onPressed: () {
-    //             GetStorage().remove('noInvoice');
-    //             Get.offAllNamed(
-    //               Routes.LIST_ORDER,
-    //               arguments: {'routeFrom': 'endingOrder'},
-    //             );
-    //           },
-    //         );
+      final lat = position.latitude.toString();
+      final long = position.longitude.toString();
 
-    //       case ErrorResult(:final message):
-    //         if (Get.isDialogOpen == true) Get.back();
-    //         dialogService.showError('Failed', message);
-    //     }
-    //   } finally {
-    //     isLoading.value = false;
-    //   }
+      final result = await ritUseCase.postCancelRIT(
+        ParamsTroubleRIT(
+          noRIT: isDistrictSelected.value,
+          tanggalRIT: tanggalRit.value,
+          troubleRIT: EnumTroubleRIT.tolak,
+          lat: lat,
+          long: long,
+          desc: reasonController.text,
+          images: mediaFileReason,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          if (Get.isDialogOpen == true) Get.back();
+          buttonRIT.value = EnumButtonRIT.cancelRIT;
+          dialogService.showSuccessSnackbar('Berhasil Menolak RIT');
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> _getOrder({bool isRefresh = false}) async {
@@ -413,23 +421,6 @@ class RitController extends GetxController {
       dialogService.showSuccessSnackbar('Berhasil Menyimpan Foto');
     } catch (e) {
       debugPrint('$e');
-    }
-  }
-
-  void selectImage(Rx<XFile>? file, RxList<XFile> files) async {
-    try {
-      final pickedFile = await Get.to(() => const CameraScreen());
-
-      if (pickedFile != null) {
-        if (file != null) {
-          file.value = pickedFile;
-        } else {
-          files.add(pickedFile);
-        }
-        update(); // Memperbarui state untuk menampilkan gambar yang dipilih
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
     }
   }
 

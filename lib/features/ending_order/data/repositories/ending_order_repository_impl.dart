@@ -5,6 +5,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
 import '../../../list_order/domain/params/get_rit_param.dart';
+import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/repositories/ending_order_repository.dart';
 import '../datasource/ending_order_remote_datasource.dart';
@@ -65,6 +66,22 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
   ) async {
     try {
       final response = await dataSource.pendingOrder(params);
+
+      if (response.error == null) {
+        return Success(EndingOrderEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, EndingOrderEntity>> pendingOrderDriver(
+    ParamsTroubleRIT params,
+  ) async {
+    try {
+      final response = await dataSource.pendingOrderDriver(params);
 
       if (response.error == null) {
         return Success(EndingOrderEntity(list: []), '');

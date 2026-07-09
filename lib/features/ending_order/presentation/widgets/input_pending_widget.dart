@@ -67,7 +67,7 @@ class InputPendingWidget {
                         return;
                       }
 
-                      controller.pendingProduct();
+                      controller.pendingPoDriver();
 
                       Get.back();
                     },

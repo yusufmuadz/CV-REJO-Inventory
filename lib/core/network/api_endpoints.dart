@@ -36,6 +36,7 @@ class ApiEndpoints {
   static const String saveQtyDriver = "deliverynew/scan1";
   static const String takeItTransactionDriver = "deliverynew/claiminvoice";
   static const String saveDataDriver = "deliverynew/reporttruck1";
+  static const String trouble = "deliverynew/trouble";
   static const String finishScanOrder = "deliverynew/finishscan";
 
   static String getDetailTransaction(String invoice) =>

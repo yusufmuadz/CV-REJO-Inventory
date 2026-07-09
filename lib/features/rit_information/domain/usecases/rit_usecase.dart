@@ -4,6 +4,7 @@ import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../entities/rit_entity.dart';
 import '../params/post_rit_param.dart';
+import '../params/trouble_rit_param.dart';
 import '../repositories/rit_repository.dart';
 
 class RitUseCase {
@@ -11,16 +12,14 @@ class RitUseCase {
 
   RitUseCase(this.repository);
 
-  Future<ResultCustom<Failure, RitEntity>> call(
-    ParamsRit params,
-  ) {
+  Future<ResultCustom<Failure, RitEntity>> call(ParamsRit params) {
     return repository.postEndingOrder(params);
   }
 
-  Future<ResultCustom<Failure, RitEntity>> callPendingOrder(
-    ParamsRit params,
+  Future<ResultCustom<Failure, RitEntity>> postCancelRIT(
+    ParamsTroubleRIT params,
   ) {
-    return repository.pendingOrder(params);
+    return repository.postCancelRIT(params);
   }
 
   Future<ResultCustom<Failure, List<OrderEntity>>> callGetOrders(

@@ -114,8 +114,9 @@ class InputImageView extends StatelessWidget {
     bool isTransportation = false,
   }) {
     return InkWell(
-      onTap: () =>
-          isTransportation ? null : controller.selectImage(file, mediaFileList),
+      onTap: () => isTransportation
+          ? null
+          : CustomImage().selectImage(file, mediaFileList),
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(
           color: const Color(0xFFffd8ab),

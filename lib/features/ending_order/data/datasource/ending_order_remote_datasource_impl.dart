@@ -5,6 +5,7 @@ import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../models/response_model_ending_order.dart';
 import 'ending_order_remote_datasource.dart';
@@ -107,6 +108,51 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
       final response = await dioClient.post(
         ApiEndpoints.pendingOrder(role),
+        data: formData,
+      );
+
+      // debugPrint('Data Pending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelEndingOrder.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelEndingOrder> pendingOrderDriver(ParamsTroubleRIT params) async {
+    try {
+      final formData = FormData.fromMap({
+        'invoice': params.invoicePO,
+        'desc': params.desc,
+        'jenis_trouble': params.troubleRIT,
+        'lat': params.lat,
+        'long': params.long,
+        'file1': await MultipartFile.fromFile(
+          params.images[0].path,
+          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+        ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (params.images.length > 1)
+          'file2': await MultipartFile.fromFile(
+            params.images[1].path,
+            filename: 'file2.jpg',
+          ),
+      });
+
+      final response = await dioClient.post(
+        ApiEndpoints.trouble,
         data: formData,
       );
 

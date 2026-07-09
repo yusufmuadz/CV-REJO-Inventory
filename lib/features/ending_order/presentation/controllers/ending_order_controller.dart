@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
+import '../../../../core/services/location_service.dart';
 import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
+import '../../../rit_information/domain/params/trouble_rit_param.dart';
+import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
 
@@ -20,6 +23,7 @@ class EndingOrderController extends GetxController {
   final isLoading = false.obs;
   final isLoadingReason = false.obs;
   final dialogService = Get.find<DialogService>();
+  final locationService = LocationService();
   final noInvoice = ''.obs;
   final rit = ''.obs;
   final dateRit = ''.obs;
@@ -215,6 +219,67 @@ class EndingOrderController extends GetxController {
                   'city': rit.value,
                   'tanggalRit': dateRit.value,
                   'colorRit': colorRit.value,
+                  'isRitToday': isRitToday.value,
+                },
+              );
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> pendingPoDriver() async {
+    if (isLoading.value) return;
+
+    if (mediaFileList.isEmpty) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Masukkan minimal satu foto',
+      );
+      return;
+    }
+    isLoading.value = true;
+
+    try {
+      final position = await locationService.getLatestLocationLightweight();
+
+      final lat = position.latitude.toString();
+      final long = position.longitude.toString();
+
+      final result = await endingOrderUseCase.callPendingOrderDriver(
+        ParamsTroubleRIT(
+          invoicePO: noInvoice.value,
+          troubleRIT: EnumTroubleRIT.satuan,
+          desc: fieldController.text,
+          lat: lat,
+          long: long,
+          images: mediaFileList,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Menunda Pesanan',
+            barrierDismissible: false,
+            onPressed: () {
+              GetStorage().remove('noInvoice');
+              Get.offAllNamed(
+                Routes.RIT_INFORMATION,
+                arguments: {
+                  'city': rit.value,
+                  'colorRit': colorRit.value,
+                  'tanggalRit': dateRit.value,
+                  'routeFrom': 'endingOrder',
                   'isRitToday': isRitToday.value,
                 },
               );
