@@ -8,6 +8,7 @@ import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
+import '../controllers/enums/enum_button.dart';
 import '../widgets/info_item_widget.dart';
 
 class DriverArrive extends StatelessWidget {
@@ -16,19 +17,48 @@ class DriverArrive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Obx(
+      () => ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Visibility(
+            visible:
+                controller.statusButton.value == EnumButtonEndingOrder.savePO,
+            child: _buildFirstContent(),
+          ),
+          Visibility(
+            visible:
+                controller.statusButton.value ==
+                EnumButtonEndingOrder.saveDriverPO,
+            child: _buildSecondContent(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFirstContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // _buildContentImage(
-        //   title: 'Armada Sampai',
-        //   mediaFileList: controller.mediaFileList,
-        // ),
-        // const SizedBox(height: 10),
-        // _buildContentImage(
-        //   title: 'Toko',
-        //   mediaFileList: controller.mediaFileFrontMerchant,
-        // ),
-        // const SizedBox(height: 10),
+        CustomImage().buildContentImage(
+          title: 'Armada Sampai',
+          mediaFileList: controller.mediaFileList,
+        ),
+        const SizedBox(height: 10),
+        CustomImage().buildContentImage(
+          title: 'Toko',
+          mediaFileList: controller.mediaFileFrontMerchant,
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget _buildSecondContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildSelectInfoItem(mediaFileList: controller.mediaFileListAllItem),
         const SizedBox(height: 10),
         _buildSelectInfoInvoice(

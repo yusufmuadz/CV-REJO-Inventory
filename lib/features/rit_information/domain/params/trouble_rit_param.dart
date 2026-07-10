@@ -3,8 +3,8 @@ import 'package:cv_rejo/features/rit_information/presentation/controllers/enums/
 
 class ParamsTroubleRIT {
   final String? invoicePO;
-  final String? noRIT;
-  final String? tanggalRIT;
+  final String noRIT;
+  final String tanggalRIT;
   final EnumTroubleRIT troubleRIT;
   final String desc;
   final String lat;
@@ -13,8 +13,8 @@ class ParamsTroubleRIT {
 
   ParamsTroubleRIT({
     this.invoicePO,
-    this.noRIT,
-    this.tanggalRIT,
+    required this.noRIT,
+    required this.tanggalRIT,
     required this.troubleRIT,
     required this.desc,
     required this.lat,

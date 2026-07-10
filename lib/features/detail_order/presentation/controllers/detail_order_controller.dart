@@ -10,6 +10,7 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../shared/images/camera_screen.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
@@ -88,8 +89,14 @@ class DetailOrderController extends GetxController {
       statusPO.value = args['status_po'] ?? '';
       // statusDriver.value = 'completed';
 
-      if (AppRole.isDriver && statusDriver.value == 'ongoing') {
-        isSelect.value = true;
+      if (AppRole.isDriver) {
+        if (statusDriver.value == 'ongoing') {
+          isSelect.value = true;
+        } else if (statusDriver.value == 'completed') {
+          final getIsTakeToTheRoad = GetStorage().read('isTakeToTheRoad');
+
+          isTakeToTheRoad.value = getIsTakeToTheRoad ?? false;
+        }
       }
 
       if (routeFrom.value == 'listHistoryOrder') {
@@ -533,5 +540,50 @@ class DetailOrderController extends GetxController {
             mode: LaunchMode.externalApplication,
           )
         : debugPrint("Can't open WhatsApp");
+  }
+
+  void onBack() {
+    if (takeItOrder.value) {
+      Get.back();
+      // Get.offAllNamed(Routes.HOME);
+      return;
+    }
+
+    if (AppRole.isDriver && isTakeToTheRoad.value) {
+      dialogService.showConfirmation(
+        title: 'Batalkan Keberangkatan',
+        confirmText: 'Ya',
+        cancelText: 'Tidak',
+        description: 'Apakah anda ingin membatalkan keberangkatan sekarang?',
+        onConfirm: () {
+          GetStorage().remove('isTakeToTheRoad');
+          GetStorage().remove('noInvoice');
+
+          if (AppRole.isDriver && routeFrom.value == 'home') {
+            final rit = GetStorage().read('city') ?? '';
+            final colorRit = GetStorage().read('colorRit') ?? '';
+            final dateRit = GetStorage().read('tanggalRit') ?? '';
+            final isRitToday = GetStorage().read('isRitToday') ?? false;
+
+            Get.offAllNamed(
+              Routes.RIT_INFORMATION,
+              arguments: {
+                'city': rit.value,
+                'colorRit': colorRit.value,
+                'tanggalRit': dateRit.value,
+                'routeFrom': 'endingOrder',
+                'isRitToday': isRitToday.value,
+              },
+            );
+            return;
+          }
+
+          Get.back();
+          Get.back();
+        },
+      );
+      return;
+    }
+    Get.back();
   }
 }

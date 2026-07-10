@@ -80,7 +80,14 @@ class EndingOrderView extends GetView<EndingOrderController> {
 
         controller.pendingProduct();
       },
-      onPressed2: () => controller.saveOrder(),
+      onPressed2: () {
+        if (AppRole.isDriver) {
+          controller.savePoDriver();
+          return;
+        }
+
+        controller.saveOrder();
+      },
     );
   }
 

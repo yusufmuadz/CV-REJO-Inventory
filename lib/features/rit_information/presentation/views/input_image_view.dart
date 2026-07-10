@@ -42,11 +42,11 @@ class InputImageView extends StatelessWidget {
           title: 'Surat Jalan',
           mediaFileList: controller.mediaFileListSJ,
         ),
-        const SizedBox(height: 10),
-        _buildContentImageNew(
-          title: 'Invoice',
-          mediaFileList: controller.mediaFileListInvoice,
-        ),
+        // const SizedBox(height: 10),
+        // _buildContentImageNew(
+        //   title: 'Invoice',
+        //   mediaFileList: controller.mediaFileListInvoice,
+        // ),
         const SizedBox(height: 10),
         _buildContentImageNew(
           title: 'Sangu',

@@ -10,9 +10,9 @@ class ParamsRit {
   final XFile? leftTruckImage;
   final XFile? overAllTruckImage;
   final XFile tankTruckImage;
-  final List<XFile>? inoviceImages;
-  final List<XFile>? pocketImages;
-  final List<XFile>? travelDocImages;
+  final XFile? pocketImage;
+  final XFile? travelDocImage;
+  final List<XFile>? invoiceImages;
 
   ParamsRit({
     required this.rit,
@@ -24,8 +24,8 @@ class ParamsRit {
     this.leftTruckImage,
     this.overAllTruckImage,
     required this.tankTruckImage,
-    this.inoviceImages,
-    this.pocketImages,
-    this.travelDocImages,
+    this.pocketImage,
+    this.travelDocImage,
+    this.invoiceImages,
   });
 }

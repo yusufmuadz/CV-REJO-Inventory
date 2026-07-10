@@ -23,13 +23,15 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
       final formData = FormData.fromMap({
         'rit': params.rit,
         'km': params.km,
-        'foto_km': '',
-        'foto_truck_depan': '',
-        'foto_truck_kiri': '',
-        'foto_truck_kanan': '',
-        'foto_truck_belakang': '',
-        'foto_truck_overall': '',
-        'foto_truck_tangki': '',
+        'foto_km': params.kmImage,
+        'foto_truck_depan': params.frontTruckImage,
+        'foto_truck_kiri': params.leftTruckImage,
+        'foto_truck_kanan': params.rightTruckImage,
+        'foto_truck_belakang': params.backTruckImage,
+        // 'foto_truck_overall': params.overAllTruckImage,
+        'foto_truck_tangki': params.tankTruckImage,
+        'foto_truck_sj': params.travelDocImage,
+        'foto_truck_uang': params.pocketImage,
       });
 
       final response = await dioClient.post(

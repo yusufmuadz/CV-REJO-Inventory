@@ -17,6 +17,7 @@ class InputAssistantDialog {
             final resultAdd = await controller.postDataListController
                 .addAssistant();
 
+            if (!resultAdd) return;
             Get.back(result: resultAdd);
             controller.dialogService.showSuccessSnackbar(
               'Berhasil Menambahkan Asisten',

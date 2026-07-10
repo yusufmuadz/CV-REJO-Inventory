@@ -7,7 +7,7 @@ import '../params/trouble_rit_param.dart';
 import '../params/post_rit_param.dart';
 
 abstract class RitRepository {
-  Future<ResultCustom<Failure, RitEntity>> postEndingOrder(
+  Future<ResultCustom<Failure, RitEntity>> postSaveDataDriver(
     ParamsRit params,
   );
   Future<ResultCustom<Failure, RitEntity>> postCancelRIT(

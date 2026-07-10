@@ -14,7 +14,7 @@ class RitRepositoryImpl implements RitRepository {
   RitRepositoryImpl(this.dataSource);
 
   @override
-  Future<ResultCustom<Failure, RitEntity>> postEndingOrder(
+  Future<ResultCustom<Failure, RitEntity>> postSaveDataDriver(
     ParamsRit params,
   ) async {
     try {

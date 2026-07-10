@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';
@@ -29,25 +30,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
             centerTitle: false,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                if (controller.takeItOrder.value) {
-                  Get.back();
-                  // Get.offAllNamed(Routes.HOME);
-                  return;
-                }
-
-                if (AppRole.isDriver && controller.isTakeToTheRoad.value) {
-                  controller.dialogService.showConfirmation(
-                    title: 'Batalkan Keberangkatan',
-                    confirmText: 'Ya',
-                    cancelText: 'Tidak',
-                    description:
-                        'Apakah anda ingin membatalkan keberangkatan sekarang?',
-                  );
-                  return;
-                }
-                Get.back();
-              },
+              onPressed: () => controller.onBack(),
             ),
             actions: [
               Visibility(

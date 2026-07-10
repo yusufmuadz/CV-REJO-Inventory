@@ -132,17 +132,27 @@ class RitPage extends GetView<RitController> {
       title2: 'Sampai Kantor',
       color1: Colors.redAccent[200]!,
       color2: const Color(0xFF2ED471),
-      onPressed1: () => RitDialog().inputRetur(controller: controller),
-      onPressed2: () {
-        // controller.isSave.value = false;
-        // controller.isArriveInput.value = true;
-        controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
-        controller.pageIndex.value = 2;
-        controller.pageController.animateToPage(
-          2,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+      onPressed1: () {
+        controller.dialogService.showErrorSnackbar(
+          title: 'Warning!',
+          'Coming Soon',
         );
+        // RitDialog().inputRetur(controller: controller);
+      },
+      onPressed2: () {
+        controller.dialogService.showErrorSnackbar(
+          title: 'Warning!',
+          'Coming Soon',
+        );
+        // // controller.isSave.value = false;
+        // // controller.isArriveInput.value = true;
+        // controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
+        // controller.pageIndex.value = 2;
+        // controller.pageController.animateToPage(
+        //   2,
+        //   duration: const Duration(milliseconds: 300),
+        //   curve: Curves.easeInOut,
+        // );
       },
     );
   }

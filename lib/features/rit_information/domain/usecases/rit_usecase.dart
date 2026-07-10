@@ -13,7 +13,7 @@ class RitUseCase {
   RitUseCase(this.repository);
 
   Future<ResultCustom<Failure, RitEntity>> call(ParamsRit params) {
-    return repository.postEndingOrder(params);
+    return repository.postSaveDataDriver(params);
   }
 
   Future<ResultCustom<Failure, RitEntity>> postCancelRIT(

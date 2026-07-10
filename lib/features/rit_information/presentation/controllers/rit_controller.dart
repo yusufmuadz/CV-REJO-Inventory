@@ -15,6 +15,7 @@ import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
+import '../../domain/params/post_rit_param.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 import 'enums/enum_rit.dart';
@@ -106,11 +107,15 @@ class RitController extends GetxController {
       isRitToday.value = args['isRitToday'] ?? false;
     }
 
-    final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
+    // final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
 
-    if (isAccepted) {
-      buttonRIT.value = EnumButtonRIT.buttonTakeOff;
-    }
+    // if (isAccepted) {
+    //   buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    // } else {
+    final getButtonRIT = GetStorage().read('buttonRIT');
+
+    buttonRIT.value = getButtonRIT ?? EnumButtonRIT.acceptRIT;
+    // }
 
     _getOrder();
   }
@@ -138,10 +143,11 @@ class RitController extends GetxController {
     GetStorage().write('colorRit', colorRit.value);
     GetStorage().write('tanggalRit', tanggalRit.value);
     GetStorage().write('isRitToday', isRitToday.value);
-    GetStorage().write('isAcceptRIT', true);
     isAcceptRIT.value = true;
 
     buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+
+    GetStorage().write('buttonRIT', buttonRIT.value);
     // buttonRIT.value = EnumButtonRIT.buttonChangePO;
     // isAccept.value = !isAccept.value;
   }
@@ -173,72 +179,90 @@ class RitController extends GetxController {
   Future<void> saveOrder() async {
     if (isLoading.value) return;
 
-    /////////// AWAL SEMENTARA ////////////
+    if (_checkEmptyInputDriver()) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Silakan lengkapi data terlebih dahulu!',
+      );
+      return;
+    }
 
-    // isSave.value = true;
-    buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
-    pageIndex.value = 0;
-    pageController.animateToPage(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-
-    /////////// AKHIR SEMENTARA ////////////
-
-    // if (mediaFileList.isEmpty ||
-    //     mediaFileListKM.isEmpty ||
-    //     mediaFileListTangki.isEmpty ||
-    //     mediaFileListSJ.isEmpty ||
-    //     kmController.text.isEmpty) {
-    //   dialogService.showErrorSnackbar(
-    //     title: 'Gagal!',
-    //     'Silakan lengkapi data terlebih dahulu!',
-    //   );
-    //   return;
-    // }
     isLoading.value = true;
 
     try {
-      // final result = await ritUseCase.call(
-      //   ParamsRit(
-      //     rit: isDistrictSelected.value,
-      //     km: kmController.text,
-      //     kmImage: mediaFileListKM[0],
-      //     tankTruckImage: mediaFileListTangki[0],
-      //   ),
-      // );
+      final result = await ritUseCase.call(
+        ParamsRit(
+          rit: isDistrictSelected.value,
+          km: kmController.text,
+          kmImage: mediaFileListKM[0],
+          tankTruckImage: mediaFileListTangki[0],
+          frontTruckImage: mediaFileRightTransport.value,
+          rightTruckImage: mediaFileRightTransport.value,
+          backTruckImage: mediaFileBackTransport.value,
+          leftTruckImage: mediaFileLeftTransport.value,
+          // overAllTruckImage: mediaFileList[0],
+          travelDocImage: mediaFileListSJ[0],
+          pocketImage: mediaFileListTransportMoney[0],
+        ),
+      );
 
-      // switch (result) {
-      //   case Success(:final data):
-      //     debugPrint('Data Save Order: $data');
-      //     dialogService.showDialogBox(
-      //       title: 'Success',
-      //       description: 'Berhasil Menyimpan Data',
-      //       barrierDismissible: false,
-      //       onPressed: () {
-      //         mediaFileList.clear();
-      //         mediaFileListKM.clear();
-      //         mediaFileListTangki.clear();
-      //         mediaFileListSJ.clear();
-      //         kmController.clear();
-      //         isSave.value = true;
-      //         pageIndex.value = 0;
-      //         pageController.animateToPage(
-      //           0,
-      //           duration: const Duration(milliseconds: 300),
-      //           curve: Curves.easeInOut,
-      //         );
-      //       },
-      //     );
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Save Order: $data');
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Menyimpan Data',
+            barrierDismissible: false,
+            onPressed: () {
+              mediaFileList.clear();
+              mediaFileListKM.clear();
+              mediaFileListTangki.clear();
+              mediaFileListSJ.clear();
+              mediaFileListTransportMoney.clear();
+              mediaFileFrontTransport.value = XFile('');
+              mediaFileRightTransport.value = XFile('');
+              mediaFileBackTransport.value = XFile('');
+              mediaFileLeftTransport.value = XFile('');
+              kmController.clear();
 
-      //   case ErrorResult(:final message):
-      //     if (Get.isDialogOpen == true) Get.back();
-      //     dialogService.showError('Failed', message);
-      // }
+              buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
+              if (Get.isDialogOpen == true) Get.back();
+
+              pageIndex.value = 0;
+              pageController.animateToPage(
+                0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+              GetStorage().write('buttonRIT', buttonRIT.value);
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  bool _checkEmptyInputDriver() {
+    final isTranportation =
+        mediaFileFrontTransport.value.path.isEmpty ||
+        mediaFileRightTransport.value.path.isEmpty ||
+        mediaFileBackTransport.value.path.isEmpty ||
+        mediaFileLeftTransport.value.path.isEmpty;
+
+    return isTranportation ||
+        mediaFileListKM.isEmpty ||
+        mediaFileListTangki.isEmpty ||
+        mediaFileListSJ.isEmpty ||
+        mediaFileListTransportMoney.isEmpty ||
+        kmController.text.isEmpty;
   }
 
   Future<void> cancelRIT() async {

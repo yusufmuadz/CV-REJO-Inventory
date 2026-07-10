@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
 import '../../../../core/services/location_service.dart';
-import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -12,8 +11,10 @@ import '../../../../routes/app_pages.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
+import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
+import 'enums/enum_button.dart';
 
 class EndingOrderController extends GetxController {
   final EndingOrderUseCase endingOrderUseCase;
@@ -29,6 +30,8 @@ class EndingOrderController extends GetxController {
   final dateRit = ''.obs;
   final colorRit = ''.obs;
   final isRitToday = false.obs;
+
+  final statusButton = EnumButtonEndingOrder.savePO.obs;
 
   final statusChecker2 = ''.obs;
   final statatusDriver = ''.obs;
@@ -76,6 +79,18 @@ class EndingOrderController extends GetxController {
     fieldController.dispose();
     mediaFileList.clear();
     noInvoice.value = '';
+  }
+
+  void savePoDriver() {
+    if (statatusDriver.value == 'completed') {
+      if (statusButton.value == EnumButtonEndingOrder.savePO) {
+        statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+      } else {
+        succesSavePO(data: EndingOrderEntity());
+      }
+    } else {
+      saveOrder();
+    }
   }
 
   Future<void> saveOrder() async {
@@ -256,6 +271,8 @@ class EndingOrderController extends GetxController {
       final result = await endingOrderUseCase.callPendingOrderDriver(
         ParamsTroubleRIT(
           invoicePO: noInvoice.value,
+          noRIT: rit.value,
+          tanggalRIT: dateRit.value,
           troubleRIT: EnumTroubleRIT.satuan,
           desc: fieldController.text,
           lat: lat,
@@ -294,5 +311,28 @@ class EndingOrderController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void succesSavePO({EndingOrderEntity? data}) {
+    dialogService.showDialogBox(
+      title: 'Success',
+      description: 'Berhasil Menyimpan Pesanan',
+      barrierDismissible: false,
+      onPressed: () {
+        GetStorage().remove('noInvoice');
+        GetStorage().remove('status_driver');
+
+        Get.offAllNamed(
+          Routes.RIT_INFORMATION,
+          arguments: {
+            'city': rit.value,
+            'colorRit': colorRit.value,
+            'tanggalRit': dateRit.value,
+            'routeFrom': 'endingOrder',
+            'isRitToday': isRitToday.value,
+          },
+        );
+      },
+    );
   }
 }

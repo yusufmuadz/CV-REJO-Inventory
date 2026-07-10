@@ -123,6 +123,20 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     final invoice = GetStorage().read('noInvoice') ?? '';
     getLocalRit();
 
+    if (AppRole.isDriver && rit.value.isNotEmpty && invoice.isNotEmpty) {
+      final statusDriver = GetStorage().read('status_driver') ?? '';
+
+      Get.toNamed(
+        Routes.DETAIL_ORDER,
+        arguments: {
+          'invoice': invoice,
+          'routeFrom': 'home',
+          'status_driver': statusDriver,
+        },
+      );
+      return;
+    }
+
     if ((ritToday != isRitToday.value) || rit.value.isEmpty) {
       // GetStorage().remove('noInvoice');
       GetStorage().remove('city');
@@ -143,6 +157,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     GetStorage().remove('noInvoice');
 
     if (AppRole.isDriver && rit.value.isNotEmpty) {
+      if (invoice.isNotEmpty) {}
+
       Get.toNamed(
         Routes.RIT_INFORMATION,
         arguments: {

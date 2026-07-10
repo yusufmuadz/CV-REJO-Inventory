@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
@@ -55,6 +56,12 @@ class ButtonDetailOrderWidget {
       onPressed1: () {
         if (AppRole.isDriver) {
           controller.isTakeToTheRoad.value = true;
+          GetStorage().write(
+            'isTakeToTheRoad',
+            controller.isTakeToTheRoad.value,
+          );
+          GetStorage().write('noInvoice', controller.noInvoice.value);
+          GetStorage().write('status_driver', controller.statusDriver.value);
           return;
         }
         if (AppRole.isChecker2) {

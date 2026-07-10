@@ -32,11 +32,12 @@ class BoxStatus {
     }
 
     if (AppRole.isDriver) {
-      if (statusDriver == 'completed') {
-        text = 'Ready';
-      } else {
-        text = 'On Progress';
-      }
+      text = 'Coming Soon';
+      // if (statusDriver == 'completed') {
+      //   text = 'Ready';
+      // } else {
+      //   text = 'On Progress';
+      // }
     }
 
     return text;
