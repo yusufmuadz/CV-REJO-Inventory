@@ -13,75 +13,79 @@ Future<bool?> openInputFieldDialog({
   required String itemName,
   required String qty,
   required String barcodeValue,
-  required DetailOrderController controller,
+  required DetailOrderController detailController,
 }) async {
+  final controller = detailController.addProductOrderController;
+
   await Future.delayed(const Duration(milliseconds: 300));
 
   RxList<XFile> mediaFileList = RxList<XFile>.from(
-    controller.orderDetail.value.orderDetails?[index].mediaFileList ??
+    detailController.orderDetail.value.orderDetails?[index].mediaFileList ??
         <XFile>[],
   );
 
-  final result = await controller.dialogService.inputDialogWithAlertDialog(
-    height: 0.5,
-    barrierDismissible: false,
-    title: 'Informasi Barang',
-    titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-    actionsPadding: const EdgeInsets.fromLTRB(20, 0.5, 20, 10),
-    contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
-    insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-    content: PopScope(
-      canPop: false,
-      child: Obx(
-        () => ContentInputProductDialog(
-          itemName: itemName,
-          barcodeValue: barcodeValue,
-          mediaFileList: mediaFileList,
-          messageProduct: controller.messageProduct.value,
-          isLoadingProduct: controller.isLoadingProduct.value,
-          qtyController: TextEditingController(text: qty),
-        ),
-      ),
-    ),
-    actions: [
-      Obx(() {
-        String text1 = 'Batal';
-        String text2 = 'Tambah';
-        Color color1 = Colors.redAccent[100] ?? Colors.red;
-        Color color2 = const Color(0xFF2ED471);
-        final bool isMessageEmpty = controller.messageProduct.value.isEmpty;
-        final bool isVisibleButton2 =
-            !controller.isLoadingProduct.value && isMessageEmpty;
-
-        if (!isMessageEmpty) {
-          text1 = 'Ulangi';
-        }
-
-        return _buildButtonStyle(
-          title1: text1,
-          title2: text2,
-          color1: color1,
-          color2: color2,
-          visible: isVisibleButton2,
-          onPressed1: () {
-            if (controller.messageProduct.isNotEmpty) {
-              controller.messageProduct.value = '';
-              return;
-            }
-            controller.isLoadingProduct.value = false;
-            Get.back(result: false);
-          },
-          onPressed2: () {
-            controller.addProduct(
-              barcode: barcodeValue,
-              quantity: qty,
+  final result = await detailController.dialogService
+      .inputDialogWithAlertDialog(
+        height: 0.5,
+        barrierDismissible: false,
+        title: 'Informasi Barang',
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 0.5, 20, 10),
+        contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+        content: PopScope(
+          canPop: false,
+          child: Obx(
+            () => ContentInputProductDialog(
+              itemName: itemName,
+              barcodeValue: barcodeValue,
               mediaFileList: mediaFileList,
+              messageProduct: detailController.messageProduct.value,
+              isLoadingProduct: detailController.isLoadingProduct.value,
+              qtyController: TextEditingController(text: qty),
+            ),
+          ),
+        ),
+        actions: [
+          Obx(() {
+            String text1 = 'Batal';
+            String text2 = 'Tambah';
+            Color color1 = Colors.redAccent[100] ?? Colors.red;
+            Color color2 = const Color(0xFF2ED471);
+            final bool isMessageEmpty =
+                detailController.messageProduct.value.isEmpty;
+            final bool isVisibleButton2 =
+                !detailController.isLoadingProduct.value && isMessageEmpty;
+
+            if (!isMessageEmpty) {
+              text1 = 'Ulangi';
+            }
+
+            return _buildButtonStyle(
+              title1: text1,
+              title2: text2,
+              color1: color1,
+              color2: color2,
+              visible: isVisibleButton2,
+              onPressed1: () {
+                if (detailController.messageProduct.isNotEmpty) {
+                  detailController.messageProduct.value = '';
+                  return;
+                }
+                detailController.isLoadingProduct.value = false;
+                Get.back(result: false);
+              },
+              onPressed2: () {
+                controller.addProduct(
+                  barcode: barcodeValue,
+                  quantity: qty,
+                  mediaFileList: mediaFileList,
+                );
+              },
             );
-          },
-        );
-      }),
-    ],
-  );
+          }),
+        ],
+      );
 
   return result;
 }
@@ -95,7 +99,7 @@ Future<bool?> openInputListProductDialog({
   final result = await Get.bottomSheet(
     ContentInputAllProductDialog(
       controller: controller,
-      button: _buildButton(controller: controller),
+      button: _buildButton(detailController: controller),
     ),
     isScrollControlled: true,
     isDismissible: false,
@@ -109,15 +113,17 @@ Future<bool?> openInputListProductDialog({
   return result;
 }
 
-Widget _buildButton({required DetailOrderController controller}) {
+Widget _buildButton({required DetailOrderController detailController}) {
+  final controller = detailController.addProductOrderController;
+
   return Obx(() {
     String text1 = 'Batal';
     String text2 = 'Tambah';
     Color color1 = Colors.redAccent[100] ?? Colors.red;
     Color color2 = const Color(0xFF2ED471);
-    final bool isMessageEmpty = controller.messageProduct.value.isEmpty;
+    final bool isMessageEmpty = detailController.messageProduct.value.isEmpty;
     final bool isVisibleButton2 =
-        !controller.isLoadingProduct.value && isMessageEmpty;
+        !detailController.isLoadingProduct.value && isMessageEmpty;
 
     if (!isMessageEmpty) {
       text1 = 'Ulangi';
@@ -130,11 +136,11 @@ Widget _buildButton({required DetailOrderController controller}) {
       color2: color2,
       visible: isVisibleButton2,
       onPressed1: () {
-        if (controller.messageProduct.isNotEmpty) {
-          controller.messageProduct.value = '';
+        if (detailController.messageProduct.isNotEmpty) {
+          detailController.messageProduct.value = '';
           return;
         }
-        controller.isLoadingProduct.value = false;
+        detailController.isLoadingProduct.value = false;
         Get.back(result: false);
       },
       onPressed2: () {

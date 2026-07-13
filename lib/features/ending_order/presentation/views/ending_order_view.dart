@@ -7,7 +7,6 @@ import '../../../../utils/loading_custom.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
 import '../widgets/field_input_widget.dart';
-import '../widgets/image_input_widget.dart';
 import '../widgets/input_pending_widget.dart';
 import 'driver_arrive.dart';
 

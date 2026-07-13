@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../../core/services/contact_service.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/images/camera_screen.dart';
@@ -22,6 +23,8 @@ import '../../domain/entities/detail_order_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/usecases/detail_order_usecase.dart';
 import '../widgets/dialog/input_product_dialog.dart';
+import 'add_product_order_controller.dart';
+import 'get_detail_order_controller.dart';
 
 class DetailOrderController extends GetxController {
   final DetailOrderUseCase detailOrderUseCase;
@@ -59,6 +62,9 @@ class DetailOrderController extends GetxController {
   final selectTransportation = ''.obs;
   final nopolTransportation = ''.obs;
 
+  late final GetDetailOrderController getDetailOrderController;
+  late final AddProductOrderController addProductOrderController;
+
   final orderDetail = DetailOrderEntity(
     invoice: '',
     orderNo: '',
@@ -78,6 +84,9 @@ class DetailOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getDetailOrderController = Get.find<GetDetailOrderController>();
+    addProductOrderController = Get.find<AddProductOrderController>();
+
     final args = Get.arguments;
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
@@ -127,6 +136,10 @@ class DetailOrderController extends GetxController {
     _getDetailOrder();
   }
 
+  Future<void> _getDetailOrder() async {
+    getDetailOrderController.getDetailOrder();
+  }
+
   void selectedProduct(int index) async {
     if (index != -1) {
       final order = orderDetail.value.orderDetails![index];
@@ -143,7 +156,7 @@ class DetailOrderController extends GetxController {
               index: index,
               itemName: order.item,
               qty: order.qty,
-              controller: this,
+              detailController: this,
               barcodeValue: order.barcode,
             ) ??
             false;
@@ -169,122 +182,8 @@ class DetailOrderController extends GetxController {
     }
   }
 
-  void addImageInAllProduct({required int index}) async {
-    try {
-      // String? path = await cameraService.takePicture();
-      final String? path = await Get.to(() => const CameraScreen());
-
-      if (index >= 0 && path != null) {
-        final order = orderDetail.value.orderDetails![index];
-
-        RxList<XFile> files = RxList<XFile>.from(order.mediaFileList ?? []);
-
-        files.add(XFile(path));
-
-        final updatedOrder = order.copyWith(mediaFileList: files);
-
-        final updateList = List<ItemOrderModel>.from(
-          orderDetail.value.orderDetails!,
-        );
-        updateList[index] = updatedOrder;
-
-        orderDetail.value = orderDetail.value.copyWith(
-          orderDetails: updateList,
-        );
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-      dialogService.showErrorSnackbar('Gagal menambah gambar\n$e');
-    }
-  }
-
-  void removeImageInAllProduct({
-    required int indexOrder,
-    required int indexImage,
-    required RxList<XFile> files,
-  }) {
-    try {
-      orderDetail.value.orderDetails![indexOrder].mediaFileList?.removeAt(
-        indexImage,
-      );
-      orderDetail.refresh();
-    } catch (e) {
-      debugPrint('Error remove image: $e');
-      dialogService.showErrorSnackbar('Gagal menghapus gambar\n$e');
-    }
-  }
-
-  Future<void> _getDetailOrder() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-
-    try {
-      // final result = await detailOrderUseCase.call('01SL20260600005');
-      final result = await detailOrderUseCase.call(noInvoice.value);
-
-      switch (result) {
-        case Success(:final data):
-          orderDetail.value = data;
-
-          final list = data.orderDetails ?? [];
-
-          if (AppRole.isDriver && list.isNotEmpty) {
-            final finishCheckFirstItem =
-                list.firstOrNull?.statusFinishScan ?? false;
-            if (finishCheckFirstItem) {
-              statusDriver.value = 'completed';
-            }
-          }
-
-          driverSelected.value = data.assistant?.namaDriver ?? '';
-          assistantSelected.value = data.assistant?.namaKenek ?? '';
-          selectTransportation.value = data.assistant?.namaKendaraan ?? '';
-
-          if (!AppRole.isDriver) {
-            bool check =
-                data.assistant!.namaDriver != '-' &&
-                data.assistant!.namaDriver != '-' &&
-                data.assistant!.namaKendaraan != '-';
-
-            if (AppRole.isChecker2) {
-              check =
-                  data.driver!.namaDriver != '-' &&
-                  data.driver!.namaDriver != '-' &&
-                  data.driver!.namaKendaraan != '-';
-              driverSelected.value = data.driver?.namaDriver ?? '';
-              assistantSelected.value = data.driver?.namaKenek ?? '';
-              selectTransportation.value = data.driver?.namaKendaraan ?? '';
-              nopolTransportation.value = data.driver?.idKendaraan ?? '';
-            }
-
-            // debugPrint('Check Assistant: $check');
-            // debugPrint('Check Driver: ${data.assistant?.namaDriver}');
-            // debugPrint('Check Nama Kenek: ${data.assistant?.namaKenek}');
-            // debugPrint('Check Nama Kendaraan: ${data.assistant?.namaKendaraan}');
-
-            isSelect.value = check;
-          }
-
-        case ErrorResult(:final message):
-          if (Get.isDialogOpen == true) Get.back();
-          // loadState.value = LoadState.error;
-          dialogService.showError('Failed', message);
-      }
-    } catch (e) {
-      if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', '$e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   void startingPO() async {
     if (isLoading.value) return;
-
-    // if (pageIndex.value == 0 && isSelected.value.isEmpty) {
-    //   dialogService.showError('Error', 'Pilih RIT terlebih dahulu');
-    //   return;
-    // }
 
     isLoading.value = true;
 
@@ -322,7 +221,7 @@ class DetailOrderController extends GetxController {
               'Failed',
               data.message.replaceAll('LockPO', ''),
               singleButton: !lockPO,
-              onPressed2: () => onTapHubungiAdmin(),
+              onPressed2: () => ContactService.onTapHubungiAdmin(),
             );
           }
         // debugPrint('Data Take It Order: ${data.length}');
@@ -337,121 +236,6 @@ class DetailOrderController extends GetxController {
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  Future<void> addProduct({
-    required String barcode,
-    required String quantity,
-    required RxList<XFile> mediaFileList,
-  }) async {
-    if (isLoadingProduct.value) return;
-
-    if (mediaFileList.isEmpty) {
-      return;
-    }
-
-    isLoadingProduct.value = true;
-
-    try {
-      final result = await detailOrderUseCase.callPostItem(
-        ParamsPostProduct(
-          role: AppRole.current!.name.toLowerCase(),
-          barcode: barcode,
-          invoice: noInvoice.value,
-          qty: quantity,
-          statusChecker2: statusChecker2.value,
-          images: mediaFileList,
-        ),
-      );
-
-      switch (result) {
-        case Success(:final data):
-          debugPrint('Data Item Product: $data');
-          // messageProduct.value = 'Berhasil Menambahkan Produk';
-          // statusPostProduct.value = true;
-          Get.back(result: true); // Tutup dialog
-          dialogService.showSuccessSnackbar('Berhasil Menambahkan Produk');
-
-        case ErrorResult(:final message):
-          // loadState.value = LoadState.error;
-          messageProduct.value = message;
-          statusPostProduct.value = false;
-      }
-    } finally {
-      isLoadingProduct.value = false;
-    }
-  }
-
-  Future<void> addAllProducts() async {
-    final orders = orderDetail.value.orderDetails;
-    if (orders == null || orders.isEmpty) return;
-
-    // Filter hanya yang punya gambar
-    final ordersWithImages = orders
-        .where(
-          (elmnt) =>
-              elmnt.mediaFileList != null && elmnt.mediaFileList!.isNotEmpty,
-        )
-        .toList();
-
-    if (ordersWithImages.isEmpty) {
-      dialogService.showErrorSnackbar('Tidak ada gambar untuk diupload');
-      return;
-    }
-
-    try {
-      for (var i = 0; i < ordersWithImages.length; i++) {
-        final order = ordersWithImages[i];
-
-        // Set loading untuk item ini
-        order.isLoading = true;
-        orderDetail.refresh();
-
-        try {
-          final result = await detailOrderUseCase.callPostItem(
-            ParamsPostProduct(
-              role: AppRole.current!.name.toLowerCase(),
-              barcode: order.barcode, // Ambil dari model
-              invoice: noInvoice.value,
-              qty: order.qty.toString(), // Ambil dari model
-              statusChecker2: statusChecker2.value,
-              images: order.mediaFileList!, // Ambil dari model
-            ),
-          );
-
-          switch (result) {
-            case Success(:final data):
-              debugPrint('Data Item Product ${i + 1}: $data');
-              order.isChecked = true;
-              order.isLoading = false;
-
-            case ErrorResult(:final message):
-              order.isChecked = false;
-              order.isLoading = false;
-              order.hasError = true;
-              debugPrint('Error item ${i + 1}: $message');
-          }
-        } catch (e) {
-          order.isLoading = false;
-          order.hasError = true;
-          debugPrint('Exception item ${i + 1}: $e');
-        }
-
-        // Refresh UI setelah setiap item selesai
-        orderDetail.refresh();
-      }
-
-      // Tampilkan snackbar hasil akhir
-      final successCount = ordersWithImages
-          .where((o) => o.isChecked == true)
-          .length;
-      dialogService.showSuccessSnackbar(
-        'Berhasil upload $successCount dari ${ordersWithImages.length} produk',
-      );
-    } catch (e) {
-      debugPrint('Error in addAllProducts: $e');
-      dialogService.showErrorSnackbar('Terjadi kesalahan saat upload');
     }
   }
 
@@ -529,17 +313,6 @@ class DetailOrderController extends GetxController {
     await canLaunchUrlString(url)
         ? launchUrlString(url)
         : debugPrint("Can't open Maps");
-  }
-
-  //////// ====== LAUNCH WHATSAPP ====== ////////
-
-  void onTapHubungiAdmin() async {
-    await canLaunchUrl(Uri.parse(ApiEndpoints.hubungiAdmin))
-        ? launchUrl(
-            Uri.parse(ApiEndpoints.hubungiAdmin),
-            mode: LaunchMode.externalApplication,
-          )
-        : debugPrint("Can't open WhatsApp");
   }
 
   void onBack() {

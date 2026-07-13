@@ -373,24 +373,4 @@ class ProfileView extends StatelessWidget {
       child: Icon(icon, size: size ?? 14, color: colorIcon),
     );
   }
-
-  Widget _showTrailing({bool isTrailingIcon = true, String value = ''}) {
-    if (isTrailingIcon) {
-      return Icon(
-        Ionicons.chevron_forward_outline,
-        size: 20,
-        color: const Color(0xFF1E293B),
-      );
-    }
-
-    return Text(
-      value,
-      style: TextStyles.basicTextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        color: const Color(0xFF64748B),
-        fontFamily: GoogleFonts.nunitoSans().fontFamily,
-      ),
-    );
-  }
 }

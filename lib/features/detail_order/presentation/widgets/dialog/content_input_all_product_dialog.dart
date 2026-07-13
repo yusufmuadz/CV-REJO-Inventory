@@ -191,6 +191,7 @@ class ContentInputAllProductDialog extends StatelessWidget {
     required ItemOrderModel order,
     EdgeInsetsGeometry? margin,
   }) {
+    final addController = controller.addProductOrderController;
     if (indexImage == 1 && files.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -202,7 +203,7 @@ class ContentInputAllProductDialog extends StatelessWidget {
         child: CustomImage().displayImage(
           path: files[indexImage].path,
           isPadding: false,
-          onTapRemove: () => controller.removeImageInAllProduct(
+          onTapRemove: () => addController.removeImageInAllProduct(
             indexOrder: index,
             indexImage: indexImage,
             files: files,
@@ -214,7 +215,7 @@ class ContentInputAllProductDialog extends StatelessWidget {
     return Container(
       margin: margin,
       child: InkWell(
-        onTap: () => controller.addImageInAllProduct(index: index),
+        onTap: () => addController.addImageInAllProduct(index: index),
         child: DottedBorder(
           options: RoundedRectDottedBorderOptions(
             color: const Color(0xFFffd8ab),
