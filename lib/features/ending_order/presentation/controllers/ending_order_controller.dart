@@ -61,6 +61,11 @@ class EndingOrderController extends GetxController {
     dateRit.value = GetStorage().read('tanggalRit') ?? '';
     colorRit.value = GetStorage().read('colorRit') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
+    String? getStatusButton = GetStorage().read('buttonEndingDriver');
+
+    if (getStatusButton != null) {
+      statusButton.value = EnumButtonEndingOrder.values.byName(getStatusButton);
+    }
 
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
@@ -83,11 +88,7 @@ class EndingOrderController extends GetxController {
 
   void savePoDriver() {
     if (statatusDriver.value == 'completed') {
-      if (statusButton.value == EnumButtonEndingOrder.savePO) {
-        statusButton.value = EnumButtonEndingOrder.saveDriverPO;
-      } else {
-        succesSavePO(data: EndingOrderEntity());
-      }
+      saveArriveDriver();
     } else {
       saveOrder();
     }
@@ -308,6 +309,113 @@ class EndingOrderController extends GetxController {
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> saveArriveDriver() async {
+    if (isLoading.value) return;
+
+    if (_emptyDriverPO()) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        'Lengkapi data terlebih dahulu',
+      );
+      return;
+    }
+    isLoading.value = true;
+
+    try {
+      String lat = '';
+      String long = '';
+
+      // if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
+      final position = await locationService.getLatestLocationLightweight();
+
+      lat = position.latitude.toString();
+      long = position.longitude.toString();
+
+      if (lat.isEmpty || long.isEmpty) {
+        return;
+      }
+      // }
+
+      final result = await endingOrderUseCase.callArriveDriver(
+        statusButton: statusButton.value,
+        params: ParamsEndingOrder(
+          invoice: noInvoice.value,
+          // desc: fieldController.text,
+          lat: lat,
+          long: long,
+          paymentMethod: selectedPaymentType.value,
+          paymentNominal: fieldController.text.replaceAll(',', ''),
+          statusChecker2: statusChecker2.value,
+          imagesDriver: ImagesDriverModel(
+            imagesTransportation: mediaFileList,
+            imagesMerchant: mediaFileFrontMerchant,
+            imagesAllItem: mediaFileListAllItem,
+            imagesHandover: mediaFileListInfoInvoice,
+            imagesPayment: mediaFileListPaymentType,
+          ),
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          if (statusButton.value == EnumButtonEndingOrder.savePO) {
+            statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+            mediaFileList.clear();
+            mediaFileFrontMerchant.clear();
+            GetStorage().write('buttonEndingDriver', statusButton.value.name);
+            return;
+          }
+
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Menyimpan Pesanan',
+            barrierDismissible: false,
+            onPressed: () {
+              GetStorage().remove('noInvoice');
+              GetStorage().remove('status_driver');
+              GetStorage().remove('isTakeToTheRoad');
+              GetStorage().remove('buttonEndingDriver');
+
+              mediaFileList.clear();
+              mediaFileListAllItem.clear();
+              mediaFileListInfoInvoice.clear();
+              mediaFileListPaymentType.clear();
+
+              Get.offAllNamed(
+                Routes.RIT_INFORMATION,
+                arguments: {
+                  'city': rit.value,
+                  'colorRit': colorRit.value,
+                  'tanggalRit': dateRit.value,
+                  'routeFrom': 'endingOrder',
+                  'isRitToday': isRitToday.value,
+                },
+              );
+            },
+          );
+
+        case ErrorResult(:final message):
+          debugPrint('Error Simpan Pesanan: $message');
+          if (Get.isDialogOpen == true) Get.back();
+          String pesan = message;
+
+          if (message.contains('Bad state: No element')) {
+            pesan =
+                'Kemungkinan pesanan sudah disimpan sebelumnya. Silakan cek di history pesanan.';
+          }
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', pesan);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -334,5 +442,37 @@ class EndingOrderController extends GetxController {
         );
       },
     );
+  }
+
+  bool _emptyDriverPO() {
+    debugPrint('Status Button: ${statusButton.value}');
+    debugPrint('Media File List All Item: ${mediaFileListAllItem.length}');
+    debugPrint(
+      'Media File List Info Invoice: ${mediaFileListInfoInvoice.length}',
+    );
+    debugPrint(
+      'Media File List Payment Type: ${mediaFileListPaymentType.length}',
+    );
+    debugPrint('Field Controller: ${fieldController.text}');
+
+    if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
+      if (mediaFileListAllItem.isEmpty || mediaFileListInfoInvoice.isEmpty) {
+        return true; // Ada yang kosong
+      }
+
+      // Gunakan konstanta/enum jika ada, misal: PaymentType.lunas.name
+      if (selectedPaymentType.value == 'Lunas') {
+        if (mediaFileListPaymentType.isEmpty || fieldController.text.isEmpty) {
+          return true; // Ada yang kosong
+        }
+      }
+    } else {
+      if (mediaFileList.isEmpty || mediaFileFrontMerchant.isEmpty) {
+        return true; // Ada yang kosong
+      }
+    }
+
+    // Jika semua kondisi di atas lolos, berarti tidak ada yang kosong
+    return false;
   }
 }

@@ -9,6 +9,7 @@ import '../../../../core/theme/text_styles.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../domain/entities/rit_list_entity.dart';
 import '../controllers/list_order_controller.dart';
+import '../widgets/dialog_list_order/detail_rit_dialog.dart';
 
 class ListRitView extends StatelessWidget {
   final ListOrderController controller;
@@ -197,27 +198,77 @@ class ListRitView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // const SizedBox(height: 10),
-                      // Row(
-                      //   children: [
-                      //     const Icon(
-                      //       Icons.location_on_outlined,
-                      //       size: 18,
-                      //       color: Color(0xFF8A5012),
-                      //     ),
-                      //     const SizedBox(width: 5),
-                      //     Text(
-                      //       'Malang, Jogja, Semarang',
-                      //       style: TextStyles.basicTextStyle(
-                      //         fontSize: 16,
-                      //         fontFamily:
-                      //             GoogleFonts.hankenGrotesk().fontFamily,
-                      //         fontWeight: FontWeight.w400,
-                      //         color: const Color(0xFF524439),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 18,
+                            color: Color(0xFF8A5012),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              'Contoh: Malang, Jogja, Semarang',
+                              style: TextStyles.basicTextStyle(
+                                fontSize: 16,
+                                fontFamily:
+                                    GoogleFonts.hankenGrotesk().fontFamily,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF524439),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Visibility(
+                        visible: AppRole.isChecker2,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () async {
+                              if (ritOrder.city !=
+                                  controller.isRitDetail.value) {
+                                controller.isRitDetail.value = ritOrder.city;
+                                await controller.getDataListController.getOrder(
+                                  isDetail: true,
+                                  isRefresh: true,
+                                  noRIT: ritOrder.city,
+                                  dateRIT: ritOrder.tanggalRit,
+                                );
+                              }
+
+                              // if (controller.orders.isNotEmpty) {
+                              DetailRITDialog().showDetailRIT(
+                                controller: controller,
+                              );
+                              // }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color(0xFFd5914d),
+                              ),
+                              child: Text(
+                                'Lihat PO',
+                                style: TextStyles.basicTextStyle(
+                                  fontSize: 12,
+                                  letterSpacing: 0.48,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  fontFamily:
+                                      GoogleFonts.hankenGrotesk().fontFamily,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -283,17 +334,17 @@ class ListRitView extends StatelessWidget {
           ),
         );
 
-      case LoadState.error:
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Center(
-            child: ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh, size: 18),
-              label: const Text('Coba Lagi'),
-            ),
-          ),
-        );
+      // case LoadState.error:
+      //   return Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 16),
+      //     child: Center(
+      //       child: ElevatedButton.icon(
+      //         onPressed: onRetry,
+      //         icon: const Icon(Icons.refresh, size: 18),
+      //         label: const Text('Coba Lagi'),
+      //       ),
+      //     ),
+      //   );
 
       default:
         return const SizedBox.shrink();

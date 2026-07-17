@@ -8,4 +8,5 @@ abstract class RitRemoteDataSource {
   Future<ResponseModelRit> postSaveDataDriver(ParamsRit params);
   Future<ResponseModelRit> postCancelRIT(ParamsTroubleRIT params);
   Future<ResponseModelGetTransactionAll> getOrders(ParamsGetTransaction params);
+  Future<ResponseModelRit> postArriveOfficeDriver(ParamsRit params);
 }

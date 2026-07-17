@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../controllers/home_controller.dart';
-import '../widgets/app_bar_widget.dart';
+import '../widgets/home_app_bar/app_bar_widget.dart';
 import '../widgets/home_dialog/home_dialog.dart';
 
 class TakeItOrderView extends StatelessWidget {

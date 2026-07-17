@@ -7,6 +7,7 @@ import 'package:camera/camera.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../shared/images/custom_image.dart';
+import '../../../../utils/thousand_formatter.dart';
 import '../controllers/ending_order_controller.dart';
 import '../controllers/enums/enum_button.dart';
 import '../widgets/info_item_widget.dart';
@@ -42,11 +43,13 @@ class DriverArrive extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomImage().buildContentImage(
+          maxImage: 1,
           title: 'Armada Sampai',
           mediaFileList: controller.mediaFileList,
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(
+          maxImage: 1,
           title: 'Toko',
           mediaFileList: controller.mediaFileFrontMerchant,
         ),
@@ -66,6 +69,12 @@ class DriverArrive extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         _buildPaymentType(mediaFileList: controller.mediaFileListPaymentType),
+        // Visibility(
+        //   visible: controller.selectedInfoInvoice.value == 'Lunas',
+        //   child: _buildPaymentType(
+        //     mediaFileList: controller.mediaFileListPaymentType,
+        //   ),
+        // ),
       ],
     );
   }
@@ -182,6 +191,7 @@ class DriverArrive extends StatelessWidget {
             }
 
             return CustomImage().buildContentImage(
+              maxImage: 1,
               title: title,
               isShadow: false,
               mediaFileList: mediaFileList,
@@ -247,6 +257,7 @@ class DriverArrive extends StatelessWidget {
             controller: controller.fieldController,
             keyboardType: TextInputType.number,
             hintText: 'Masukkan nominal',
+            inputFormatters: [ThousandsSeparatorInputFormatter()],
             prefixIcon: Icon(
               CupertinoIcons.money_dollar,
               color: const Color(0xFFfa913c),

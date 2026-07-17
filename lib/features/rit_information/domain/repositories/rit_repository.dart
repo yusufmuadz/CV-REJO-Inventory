@@ -7,13 +7,14 @@ import '../params/trouble_rit_param.dart';
 import '../params/post_rit_param.dart';
 
 abstract class RitRepository {
-  Future<ResultCustom<Failure, RitEntity>> postSaveDataDriver(
-    ParamsRit params,
-  );
+  Future<ResultCustom<Failure, RitEntity>> postSaveDataDriver(ParamsRit params);
   Future<ResultCustom<Failure, RitEntity>> postCancelRIT(
     ParamsTroubleRIT params,
   );
   Future<ResultCustom<Failure, List<OrderEntity>>> getOrders(
     ParamsGetTransaction params,
+  );
+  Future<ResultCustom<Failure, RitEntity>> postArriveOfficeDriver(
+    ParamsRit params,
   );
 }

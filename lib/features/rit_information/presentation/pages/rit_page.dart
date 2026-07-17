@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
@@ -24,9 +27,52 @@ class RitPage extends GetView<RitController> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Obx(
-            () => Text('Detail Rit - ${controller.isDistrictSelected.value}'),
-          ),
+          title: Obx(() {
+            final dateFormat = DateFormat('dd MMMM yyyy');
+            String dateTime = dateFormat.format(DateTime.now());
+
+            if (controller.tanggalRit.value != '') {
+              dateTime = dateFormat.format(
+                DateTime.parse(controller.tanggalRit.value),
+              );
+            }
+
+            if (controller.buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
+              return Text(
+                'Sampai Kantor',
+                style: TextStyles.basicTextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                  color: const Color(0xFF1F2937),
+                ),
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Detail RIT - ${controller.isDistrictSelected.value}',
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                    color: const Color(0xFF1F2937),
+                  ),
+                ),
+                Text(
+                  dateTime,
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            );
+          }),
           elevation: 1,
           centerTitle: false,
           leading: IconButton(
@@ -140,19 +186,19 @@ class RitPage extends GetView<RitController> {
         // RitDialog().inputRetur(controller: controller);
       },
       onPressed2: () {
-        controller.dialogService.showErrorSnackbar(
-          title: 'Warning!',
-          'Coming Soon',
-        );
-        // // controller.isSave.value = false;
-        // // controller.isArriveInput.value = true;
-        // controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
-        // controller.pageIndex.value = 2;
-        // controller.pageController.animateToPage(
-        //   2,
-        //   duration: const Duration(milliseconds: 300),
-        //   curve: Curves.easeInOut,
+        // controller.dialogService.showErrorSnackbar(
+        //   title: 'Warning!',
+        //   'Coming Soon',
         // );
+        // controller.isSave.value = false;
+        // controller.isArriveInput.value = true;
+        controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
+        controller.pageIndex.value = 2;
+        controller.pageController.animateToPage(
+          2,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       },
     );
   }
@@ -186,36 +232,7 @@ class RitPage extends GetView<RitController> {
     return CustomButton.basicButton(
       title: 'Simpan',
       color: const Color(0xFF2ED471),
-      onPressed: () {
-        // debugPrint('Simpan Dokumen Sampai Kantor');
-        if (controller.recipientName.text.isEmpty ||
-            controller.mediaFileRecipientInvoice.isEmpty ||
-            controller.mediaFileRecipientMoney.isEmpty ||
-            controller.mediaFileRecipientMoneyRit.isEmpty) {
-          return;
-        }
-
-        final dateRit = GetStorage().read('tanggalRit') ?? '';
-        final isRitToday = GetStorage().read('isRitToday') ?? false;
-
-        GetStorage().remove('noInvoice');
-        GetStorage().remove('city');
-        GetStorage().remove('colorRit');
-        GetStorage().remove('isAcceptRIT');
-
-        ///// ========== KE HALAMAN LIST RIT =========== /////
-
-        Get.offNamed(
-          Routes.LIST_ORDER,
-          arguments: {
-            'routeFrom': 'home',
-            'tanggalRit': dateRit,
-            'isRitToday': isRitToday,
-          },
-        );
-
-        controller.dialogService.showSuccessSnackbar('Berhasil Menyimpan RIT');
-      },
+      onPressed: () => controller.saveOrder(),
     );
   }
 }

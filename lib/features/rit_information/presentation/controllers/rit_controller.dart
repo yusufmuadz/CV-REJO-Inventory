@@ -4,10 +4,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 
 import '../../../../core/services/location_service.dart';
-import '../../../../routes/app_pages.dart';
-import '../../../../shared/images/camera_screen.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
@@ -75,6 +74,7 @@ class RitController extends GetxController {
   final mediaFileRecipientInvoice = <XFile>[].obs;
   final mediaFileRecipientMoney = <XFile>[].obs;
   final mediaFileRecipientMoneyRit = <XFile>[].obs;
+  final mediaFileRecipientBox = <XFile>[].obs;
 
   final selectedPoRetur = ''.obs;
   final selectedInfoRetur = 'Terkait'.obs;
@@ -112,9 +112,11 @@ class RitController extends GetxController {
     // if (isAccepted) {
     //   buttonRIT.value = EnumButtonRIT.buttonTakeOff;
     // } else {
-    final getButtonRIT = GetStorage().read('buttonRIT');
+    String? getButtonRIT = GetStorage().read('buttonRIT');
 
-    buttonRIT.value = getButtonRIT ?? EnumButtonRIT.acceptRIT;
+    if (getButtonRIT != null) {
+      buttonRIT.value = EnumButtonRIT.values.byName(getButtonRIT);
+    }
     // }
 
     _getOrder();
@@ -147,7 +149,7 @@ class RitController extends GetxController {
 
     buttonRIT.value = EnumButtonRIT.buttonTakeOff;
 
-    GetStorage().write('buttonRIT', buttonRIT.value);
+    GetStorage().write('buttonRIT', buttonRIT.value.name);
     // buttonRIT.value = EnumButtonRIT.buttonChangePO;
     // isAccept.value = !isAccept.value;
   }
@@ -192,7 +194,9 @@ class RitController extends GetxController {
     try {
       final result = await ritUseCase.call(
         ParamsRit(
+          isArriveOffice: buttonRIT.value == EnumButtonRIT.buttonSaveDoc,
           rit: isDistrictSelected.value,
+          dateRit: tanggalRit.value,
           km: kmController.text,
           kmImage: mediaFileListKM[0],
           tankTruckImage: mediaFileListTangki[0],
@@ -203,6 +207,8 @@ class RitController extends GetxController {
           // overAllTruckImage: mediaFileList[0],
           travelDocImage: mediaFileListSJ[0],
           pocketImage: mediaFileListTransportMoney[0],
+          receiptMoneyImage: mediaFileRecipientMoneyRit[0],
+          fileBoxImage: mediaFileRecipientBox[0],
         ),
       );
 
@@ -225,6 +231,13 @@ class RitController extends GetxController {
               mediaFileLeftTransport.value = XFile('');
               kmController.clear();
 
+              if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
+                mediaFileRecipientMoneyRit.clear();
+                mediaFileRecipientBox.clear();
+                _arriveAtOffice();
+                return;
+              }
+
               buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
               if (Get.isDialogOpen == true) Get.back();
 
@@ -234,7 +247,7 @@ class RitController extends GetxController {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
-              GetStorage().write('buttonRIT', buttonRIT.value);
+              GetStorage().write('buttonRIT', buttonRIT.value.name);
             },
           );
 
@@ -257,12 +270,61 @@ class RitController extends GetxController {
         mediaFileBackTransport.value.path.isEmpty ||
         mediaFileLeftTransport.value.path.isEmpty;
 
+    final isArriveAtOffice =
+        buttonRIT.value == EnumButtonRIT.buttonSaveDoc &&
+        (mediaFileRecipientMoneyRit.isEmpty || mediaFileRecipientBox.isEmpty);
+
     return isTranportation ||
+        isArriveAtOffice ||
         mediaFileListKM.isEmpty ||
         mediaFileListTangki.isEmpty ||
         mediaFileListSJ.isEmpty ||
         mediaFileListTransportMoney.isEmpty ||
         kmController.text.isEmpty;
+  }
+
+  void _arriveAtOffice() {
+    // // debugPrint('Simpan Dokumen Sampai Kantor');
+    // if (recipientName.text.isEmpty ||
+    //     mediaFileListKM.isEmpty ||
+    //     kmController.text.isEmpty ||
+    //     mediaFileList.isEmpty ||
+    //     mediaFileListTangki.isEmpty ||
+    //     mediaFileRecipientInvoice.isEmpty ||
+    //     mediaFileRecipientMoney.isEmpty ||
+    //     mediaFileRecipientMoneyRit.isEmpty ||
+    //     mediaFileRecipientBox.isEmpty) {
+    //   dialogService.showErrorSnackbar(
+    //     title: 'Warning!',
+    //     'Lengkapi data terlebih dahulu',
+    //   );
+    //   return;
+    // }
+
+    final dateRit = GetStorage().read('tanggalRit') ?? '';
+    final isRitToday = GetStorage().read('isRitToday') ?? false;
+
+    GetStorage().remove('noInvoice');
+    GetStorage().remove('city');
+    GetStorage().remove('colorRit');
+    GetStorage().remove('isAcceptRIT');
+    GetStorage().remove('tanggalRit');
+    GetStorage().remove('isRitToday');
+    GetStorage().remove('buttonRIT');
+    GetStorage().remove('buttonEndingDriver');
+
+    ///// ========== KE HALAMAN LIST RIT =========== /////
+
+    Get.offNamed(
+      Routes.LIST_ORDER,
+      arguments: {
+        'routeFrom': 'home',
+        'tanggalRit': dateRit,
+        'isRitToday': isRitToday,
+      },
+    );
+
+    // dialogService.showSuccessSnackbar('Berhasil Menyimpan RIT');
   }
 
   Future<void> cancelRIT() async {

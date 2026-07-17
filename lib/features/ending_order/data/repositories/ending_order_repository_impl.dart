@@ -8,6 +8,7 @@ import '../../../list_order/domain/params/get_rit_param.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/repositories/ending_order_repository.dart';
+import '../../presentation/controllers/enums/enum_button.dart';
 import '../datasource/ending_order_remote_datasource.dart';
 
 class EndingOrderRepositoryImpl implements EndingOrderRepository {
@@ -88,6 +89,55 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       }
       return ErrorResult(message: response.error!);
     } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, EndingOrderEntity>> arriveDriver(
+    ParamsEndingOrder params,
+    EnumButtonEndingOrder statusButton,
+  ) async {
+    try {
+      // 1. Kasus: Simpan PO Saja
+      if (statusButton == EnumButtonEndingOrder.savePO) {
+        final res = await dataSource.firstArriveCustomer(params);
+
+        if (res.status == false || res.error != null) {
+          return ErrorResult(message: res.error!);
+        }
+
+        return Success(EndingOrderEntity(), '');
+      }
+
+      // 2. Kasus: Proses Lengkap (All Item, Image, Payment)
+      final resAllItem = await dataSource.arriveAllItem(params);
+      if (resAllItem.status == false ||
+          (resAllItem.error != null &&
+              resAllItem.error != 'Foto sudah diupload.')) {
+        return ErrorResult(message: resAllItem.error!);
+      }
+
+      final resImage = await dataSource.arriveImageHandover(params);
+      if (resImage.status == false || resImage.error != null) {
+        return ErrorResult(message: resImage.error!);
+      }
+
+      if (params.paymentNominal != null) {
+        final resPayment = await dataSource.arrivePaymentCustomer(params);
+        if (resPayment.status == false || resPayment.error != null) {
+          return ErrorResult(message: resPayment.error!);
+        }
+      }
+
+      // 3. Jika semua berhasil
+      return Success(
+        EndingOrderEntity(totalPO: '0', list: []),
+        '', // Pertimbangkan untuk mengisi pesan sukses yang bermakna, atau null jika tidak perlu
+      );
+    } catch (e) {
+      // Disarankan menambahkan logging untuk debugging
+      // debugPrint('arriveDriver Exception: $e');
       return ErrorResult(message: e.toString());
     }
   }

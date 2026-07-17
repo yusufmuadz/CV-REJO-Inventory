@@ -1,5 +1,3 @@
-import '../../domain/entities/ending_order_entity.dart';
-
 class ResponseModelEndingOrder {
   final bool? status;
   final String? message;

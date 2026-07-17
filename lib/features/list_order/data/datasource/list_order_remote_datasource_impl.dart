@@ -48,7 +48,10 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'date_rit': date ?? '',
+        if (params.dateRit != null && params.pastRit == false)
+          'date_rit': date ?? '',
+        if (params.dateRit != null && params.pastRit == true)
+          'daterit': date ?? '',
       };
 
       String url = 'all';

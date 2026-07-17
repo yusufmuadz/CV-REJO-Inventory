@@ -38,6 +38,11 @@ class ApiEndpoints {
   static const String saveDataDriver = "deliverynew/reporttruck1";
   static const String trouble = "deliverynew/trouble";
   static const String finishScanOrder = "deliverynew/finishscan";
+  static const String arriveFirstCustomer = "deliverynew/delivery";
+  static const String arriveItemCustomer = "deliverynew/unload";
+  static const String arriveHandoverCustomer = "deliverynew/confirmdelivery";
+  static const String arrivePaymentCustomer = "deliverynew/payment";
+  static const String arriveAtOffice = "deliverynew/handover";
 
   static String getDetailTransaction(String invoice) =>
       "transaction/get?invoice=$invoice";

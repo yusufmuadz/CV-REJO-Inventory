@@ -215,6 +215,8 @@ class CustomCardList extends StatelessWidget {
                 statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',
                 statusDriver: transaction.driver?.status ?? '',
+                statusScanDriver: transaction.driver?.scanDriver ?? false,
+                statusArriveDriver: transaction.driver?.arriveDriver ?? false,
               ),
             ),
             child: Text(
@@ -223,6 +225,8 @@ class CustomCardList extends StatelessWidget {
                 statusChecker1: transaction.checker1?.status ?? '',
                 statusChecker2: transaction.checker2?.status ?? '',
                 statusDriver: transaction.driver?.status ?? '',
+                statusScanDriver: transaction.driver?.scanDriver ?? false,
+                statusArriveDriver: transaction.driver?.arriveDriver ?? false,
               ),
               style: _textStyle(color: Colors.white),
             ),

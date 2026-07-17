@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
 import '../../../../shared/images/custom_image.dart';
+import '../widgets/arrive_image_widget.dart';
 
 class ArriveAtOffice extends StatelessWidget {
   final RitController controller;
@@ -34,9 +35,31 @@ class ArriveAtOffice extends StatelessWidget {
             return null;
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
+        ArriveImageWidget().buildContentImageArrive(
+          title: 'KM kendaraan',
+          mediaFileList: controller.mediaFileListKM,
+          controller: controller,
+        ),
+        const SizedBox(height: 10),
+        ArriveImageWidget().buildInputKM(controller: controller),
+        const SizedBox(height: 10),
+        ArriveImageWidget().buildContentImageArrive(
+          title: 'kendaraan',
+          isTransportation: true,
+          maxImage: 4,
+          mediaFileList: controller.mediaFileList,
+          controller: controller,
+        ),
+        const SizedBox(height: 10),
+        ArriveImageWidget().buildContentImageArrive(
+          title: 'Tangki Bahan Bakar dan Foto Segel',
+          mediaFileList: controller.mediaFileListTangki,
+          controller: controller,
+        ),
+        const SizedBox(height: 10),
         CustomImage().buildContentImage(
-          title: 'Surat Jalan/Invoice',
+          title: 'Invoice/Surat Jalan',
           mediaFileList: controller.mediaFileRecipientInvoice,
         ),
         const SizedBox(height: 10),
@@ -49,6 +72,12 @@ class ArriveAtOffice extends StatelessWidget {
           title: 'Penggunaan Uang Perjalanan',
           mediaFileList: controller.mediaFileRecipientMoneyRit,
         ),
+        const SizedBox(height: 10),
+        CustomImage().buildContentImage(
+          title: 'Kotak Berkas',
+          mediaFileList: controller.mediaFileRecipientBox,
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }

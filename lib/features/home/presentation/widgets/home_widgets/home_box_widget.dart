@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/services/location_service.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../controllers/home_controller.dart';
 import 'home_card_widget.dart';
@@ -25,7 +26,7 @@ class HomeBoxWidget extends StatelessWidget {
               value: transController.totalOrder.value,
               iconColor: const Color(0xFF15803D),
               bgIconColor: const Color(0xFFDCFCE7),
-              onTap: () {
+              onTap: () async {
                 controller.routeTo();
               },
             ),

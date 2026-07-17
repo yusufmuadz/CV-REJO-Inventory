@@ -10,7 +10,6 @@ import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
-import '../../../detail_order/presentation/widgets/dialog/assistant_dialog.dart';
 import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
@@ -34,8 +33,8 @@ class ListOrderController extends GetxController {
 
   final orders = <OrderEntity>[].obs;
   final currentPage = 1.obs;
+  final currentPageDetail = 1.obs;
   final pageIndex = 0.obs;
-  final hasmore = true.obs;
   final searchController = TextEditingController();
   final pageController = PageController(initialPage: 0);
 
@@ -44,6 +43,7 @@ class ListOrderController extends GetxController {
   final isStatusSelected = 'All'.obs;
   final isDistrictSelected = ''
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
+  final isRitDetail = ''.obs;
   final listSelected = <dynamic>[].obs;
 
   final isRitToday = false.obs;
@@ -62,12 +62,15 @@ class ListOrderController extends GetxController {
   final sortByNew = true.obs;
 
   final loadState = LoadState.initial.obs;
+  final loadStateDetailPO = LoadState.initial.obs;
 
   final driverSelected = ''.obs;
   final assistantSelected = ''.obs;
   final selectTransportation = ''.obs;
   final statusTransportationSelected = 'Internal'.obs;
   final nopolTransportation = ''.obs;
+
+  final extNopolTransporation = TextEditingController();
 
   final listUser = <UserEntity>[].obs;
   final transportations = <TransportationEntity>[].obs;
@@ -79,6 +82,8 @@ class ListOrderController extends GetxController {
     {'id': '2', 'name': 'Ongoing', 'isSelected': false},
   ].obs;
 
+  final scrollDetailPOController = ScrollController();
+
   late final GetDataListController getDataListController;
   late final PostDataListController postDataListController;
 
@@ -87,6 +92,10 @@ class ListOrderController extends GetxController {
     super.onInit();
     getDataListController = Get.find<GetDataListController>();
     postDataListController = Get.find<PostDataListController>();
+
+    if (AppRole.isChecker2) {
+      scrollDetailPOController.addListener(_onScrollDetailPO);
+    }
 
     final args = Get.arguments;
     if (args != null) {
@@ -121,6 +130,7 @@ class ListOrderController extends GetxController {
     super.onClose();
     isLoading.value = false;
     loadState.value = LoadState.idle;
+    scrollDetailPOController.dispose();
   }
 
   void onRefreshTransaction() {
@@ -135,6 +145,11 @@ class ListOrderController extends GetxController {
     }
   }
 
+  Future<void> onRefreshDetailPO() async {
+    orders.clear();
+    await getDataListController.getOrder(isRefresh: true, isDetail: true);
+  }
+
   void onRefreshAssistant() {
     getDataListController.getAssisten();
   }
@@ -145,12 +160,22 @@ class ListOrderController extends GetxController {
 
   void onResetSort() {
     currentPage.value = 1;
-    hasmore.value = true;
     orders.clear();
     sortByNew.value = true;
     isStatusSelected.value = '';
     isDistrictSelected.value = '';
     getDataListController.getOrder();
+  }
+
+  void _onScrollDetailPO() {
+    final canLoad = loadState.value == LoadState.idle;
+
+    if (canLoad &&
+        scrollDetailPOController.position.pixels >=
+            scrollDetailPOController.position.maxScrollExtent - 200) {
+      currentPage.value++;
+      getDataListController.getOrder();
+    }
   }
 
   void onWidgetScroll(ScrollController activeController) {
@@ -258,12 +283,14 @@ class ListOrderController extends GetxController {
           getDataListController.getAssisten();
         }
 
-        final resultAddAssistant = await InputAssistantDialog.inputAsisten(this);
+        final resultAddAssistant = await InputAssistantDialog.inputAsisten(
+          this,
+        );
 
         if (!resultAddAssistant) return;
       } else if (!AppRole.isDriver) {
-        final resultTakRIT = await postDataListController.takeRIT();
-        if (!resultTakRIT) return;
+        // final resultTakRIT = await postDataListController.takeRIT();
+        // if (!resultTakRIT) return;
       }
 
       if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {

@@ -9,6 +9,7 @@ import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
+import '../widgets/dialog_list_order/detail_rit_dialog.dart';
 import 'list_order_controller.dart';
 
 class GetDataListController extends GetxController {
@@ -18,31 +19,50 @@ class GetDataListController extends GetxController {
 
   ListOrderController get listCtrl => Get.find<ListOrderController>();
 
-  Future<void> getOrder({bool isRefresh = false}) async {
+  Future<void> getOrder({
+    bool isRefresh = false,
+    bool isDetail = false,
+    String? dateRIT,
+    String? noRIT,
+  }) async {
     try {
-      listCtrl.loadState.value = (isRefresh || listCtrl.currentPage.value == 1)
-          ? LoadState.initial
-          : LoadState.loadingMore;
+      if (isDetail) {
+        listCtrl.loadStateDetailPO.value = _getLoad(
+          isRefresh: isRefresh,
+          currentPage: listCtrl.currentPageDetail.value,
+        );
+      } else {
+        listCtrl.loadState.value = _getLoad(
+          isRefresh: isRefresh,
+          currentPage: listCtrl.currentPage.value,
+        );
+      }
 
       if (isRefresh) {
-        if (listCtrl.pageIndex.value == 0) {
+        if (listCtrl.pageIndex.value == 0 && !isDetail) {
           listCtrl.listRit.clear();
         } else {
           listCtrl.orders.clear();
         }
 
-        listCtrl.currentPage.value = 1;
+        if (isDetail) {
+          listCtrl.currentPageDetail.value = 1;
+        } else {
+          listCtrl.currentPage.value = 1;
+        }
       }
 
       final result = await listOrderUseCase.call(
         ParamsGetTransaction(
           limit: '10',
-          page: '${listCtrl.currentPage.value}',
+          page: isDetail
+              ? '${listCtrl.currentPageDetail.value}'
+              : '${listCtrl.currentPage.value}',
           q: listCtrl.searchController.text,
           sort: listCtrl.sortByNew.value ? 'newest' : 'oldest',
           filter: listCtrl.isStatusSelected.value.toLowerCase(),
-          district: listCtrl.isDistrictSelected.value.toLowerCase(),
-          dateRit: listCtrl.tanggalRit.value,
+          district: noRIT ?? listCtrl.isDistrictSelected.value.toLowerCase(),
+          dateRit: dateRIT ?? listCtrl.tanggalRit.value,
           pastRit: !listCtrl.isRitToday.value,
         ),
       );
@@ -54,7 +74,11 @@ class GetDataListController extends GetxController {
             if (isRefresh && listCtrl.currentPage.value == 1) {
               listCtrl.loadState.value = LoadState.idle;
             } else {
-              listCtrl.loadState.value = LoadState.noMore;
+              if (isDetail) {
+                listCtrl.loadStateDetailPO.value = LoadState.noMore;
+              } else {
+                listCtrl.loadState.value = LoadState.noMore;
+              }
             }
             return;
           }
@@ -62,17 +86,28 @@ class GetDataListController extends GetxController {
           final filterData = data.where((element) {
             bool result = true;
 
-            if (AppRole.isChecker2 &&
-                element.checker2?.status == 'completed' &&
-                element.loader?.status == 'available') {
-              result = false;
-            }
+            // if (AppRole.isChecker2 &&
+            //     element.checker2?.status == 'completed' &&
+            //     element.loader?.status == 'available') {
+            //   result = false;
+            // }
 
             return result;
           }).toList();
 
           listCtrl.orders.addAll(filterData);
-          listCtrl.loadState.value = LoadState.idle;
+
+          debugPrint('isDetail: $isDetail');
+
+          if (isDetail) {
+            debugPrint('Data Order: ${listCtrl.orders.length}');
+            listCtrl.loadStateDetailPO.value = LoadState.idle;
+            // if (listCtrl.orders.isNotEmpty) {
+            //   DetailRITDialog().showDetailRIT(controller: listCtrl);
+            // }
+          } else {
+            listCtrl.loadState.value = LoadState.idle;
+          }
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -86,6 +121,14 @@ class GetDataListController extends GetxController {
     } finally {
       listCtrl.isLoading.value = false;
     }
+  }
+
+  LoadState _getLoad({bool isRefresh = false, int currentPage = 1}) {
+    final result = (isRefresh || currentPage == 1)
+        ? LoadState.initial
+        : LoadState.loadingMore;
+
+    return result;
   }
 
   Future<void> getRit({bool? isPashRit, String? dateRIT}) async {

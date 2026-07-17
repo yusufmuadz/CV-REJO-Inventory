@@ -8,6 +8,8 @@ class BoxStatus {
     String statusChecker1 = '',
     String statusChecker2 = '',
     String statusDriver = '',
+    bool statusScanDriver = false,
+    bool statusArriveDriver = false,
   }) {
     String text = 'Checker';
 
@@ -32,12 +34,17 @@ class BoxStatus {
     }
 
     if (AppRole.isDriver) {
-      text = 'Coming Soon';
-      // if (statusDriver == 'completed') {
-      //   text = 'Ready';
-      // } else {
-      //   text = 'On Progress';
-      // }
+      if (statusDriver == 'completed') {
+        text = 'Ready';
+      } else {
+        if (statusScanDriver) {
+          text = 'READY';
+        } else if (statusArriveDriver) {
+          text = 'COMPLETED';
+        } else {
+          text = 'AVAILABLE';
+        }
+      }
     }
 
     return text;
@@ -48,6 +55,8 @@ class BoxStatus {
     String statusChecker1 = '',
     String statusChecker2 = '',
     String statusDriver = '',
+    bool statusScanDriver = false,
+    bool statusArriveDriver = false,
   }) {
     Color color = Color(0xFF5eb75f);
 
@@ -75,7 +84,13 @@ class BoxStatus {
       if (statusDriver == 'completed') {
         color = const Color(0xFF5eb75f);
       } else {
-        color = const Color(0xFF666666);
+        if (statusScanDriver) {
+          color = const Color(0xFF5eb75f);
+        } else if (statusArriveDriver) {
+          color = const Color(0xFF666666);
+        } else {
+          color = const Color(0xFF2ED471);
+        }
       }
     }
 

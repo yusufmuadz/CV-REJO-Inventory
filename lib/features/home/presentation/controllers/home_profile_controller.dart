@@ -14,8 +14,8 @@ class HomeProfileController extends GetxController {
   HomeController get masterController => Get.find<HomeController>();
   final TokenStorage _tokenStorage = Get.find<TokenStorage>();
 
-  final versionApp = '6.0.0'.obs;
-  final updateVersionApp = '10 Jul 2026'.obs;
+  final versionApp = '7.0.0'.obs;
+  final updateVersionApp = '17 Jul 2026'.obs;
 
   Future<void> versionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -65,6 +65,9 @@ class HomeProfileController extends GetxController {
         GetStorage().remove('isTakeToTheRoad');
         GetStorage().remove('status_driver');
         GetStorage().remove('status_checker2');
+        GetStorage().remove('buttonRIT');
+        GetStorage().remove('buttonEndingDriver');
+        GetStorage().remove('resetDate');
         AppRole.logout();
         _tokenStorage.clear();
         masterController.tabIndex.value = 0;

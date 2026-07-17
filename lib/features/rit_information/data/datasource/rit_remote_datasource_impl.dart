@@ -32,12 +32,20 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
         'foto_truck_tangki': params.tankTruckImage,
         'foto_truck_sj': params.travelDocImage,
         'foto_truck_uang': params.pocketImage,
+        if (params.isArriveOffice == true) 'tanggal_rit': params.dateRit,
+        if (params.isArriveOffice == true)
+          'foto_bukti_tf': params.receiptMoneyImage,
+        if (params.isArriveOffice == true)
+          'foto_kotak_berkas': params.fileBoxImage,
       });
 
-      final response = await dioClient.post(
-        ApiEndpoints.saveDataDriver,
-        data: formData,
-      );
+      String apiUrl = ApiEndpoints.saveDataDriver;
+
+      if (params.isArriveOffice == true) {
+        apiUrl = ApiEndpoints.arriveAtOffice;
+      }
+
+      final response = await dioClient.post(apiUrl, data: formData);
 
       // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
 
@@ -139,6 +147,50 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelGetTransactionAll.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelRit> postArriveOfficeDriver(ParamsRit params) async {
+    try {
+      final formData = FormData.fromMap({
+        'rit': params.rit,
+        'tanggal_rit': params.dateRit,
+        'km': params.km,
+        'foto_km': params.kmImage,
+        'foto_truck_depan': params.frontTruckImage,
+        'foto_truck_kiri': params.leftTruckImage,
+        'foto_truck_kanan': params.rightTruckImage,
+        'foto_truck_belakang': params.backTruckImage,
+        // 'foto_truck_overall': params.overAllTruckImage,
+        'foto_truck_tangki': params.tankTruckImage,
+        'foto_truck_sj': params.travelDocImage,
+        'foto_truck_uang': params.pocketImage,
+        'foto_bukti_tf': params.receiptMoneyImage,
+        'foto_kotak_berkas': params.fileBoxImage,
+      });
+
+      final response = await dioClient.post(
+        ApiEndpoints.arriveAtOffice,
+        data: formData,
+      );
+
+      // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelRit.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

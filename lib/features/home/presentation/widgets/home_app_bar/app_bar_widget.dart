@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/theme/text_styles.dart';
+import '../../../../../core/theme/text_styles.dart';
 
 class AppBarWidget {
   Widget content({required String title, required Function() onTap}) {

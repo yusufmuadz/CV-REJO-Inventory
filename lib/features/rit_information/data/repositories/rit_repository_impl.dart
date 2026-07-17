@@ -57,4 +57,20 @@ class RitRepositoryImpl implements RitRepository {
       return ErrorResult(message: e.toString());
     }
   }
+
+  @override
+  Future<ResultCustom<Failure, RitEntity>> postArriveOfficeDriver(
+    ParamsRit params,
+  ) async {
+    try {
+      final response = await dataSource.postArriveOfficeDriver(params);
+
+      if (response.error == null) {
+        return Success(RitEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
 }

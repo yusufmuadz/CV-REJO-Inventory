@@ -1,7 +1,12 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
+import '../../../../../core/theme/text_styles.dart';
+import '../../../../../shared/images/custom_image.dart';
+import '../../../../../shared/text_field/textfield_shared.dart';
 import '../../../../list_order/presentation/controllers/list_order_controller.dart';
 
 class InputAssistenWidget extends StatelessWidget {
@@ -27,10 +32,77 @@ class InputAssistenWidget extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    // if (AppRole.isChecker2 &&
-    //     controller.statusTransportationSelected.value == 'External') {
-    //   return SizedBox.shrink();
-    // }
+    if (AppRole.isChecker2 &&
+        controller.statusTransportationSelected.value == 'External') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitle(title: 'Masukkan Nopol*', color: Color(0xFF1F2937)),
+          const SizedBox(height: 5),
+          Container(
+            height: 40,
+            margin: const EdgeInsets.only(top: 2),
+            child: SharedTextField(
+              radius: 8,
+              controller: controller.extNopolTransporation,
+              hintText: 'Nopol Kendaraan',
+              fillColor: const Color(0xFFF9FAFB),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              textStyle: TextStyles.basicTextStyle(
+                height: 1.5,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1F2937),
+                fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildTitle(title: 'Nama Driver*', color: Color(0xFF1F2937)),
+          const SizedBox(height: 5),
+          Container(
+            height: 40,
+            margin: const EdgeInsets.only(top: 2),
+            child: SharedTextField(
+              radius: 8,
+              controller: controller.extNopolTransporation,
+              hintText: 'Masukkan Nama Driver',
+              fillColor: const Color(0xFFF9FAFB),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              textStyle: TextStyles.basicTextStyle(
+                height: 1.5,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1F2937),
+                fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          CustomImage().buildContentImage(
+            title: 'Muatan/Semua barang',
+            mediaFileList: <XFile>[].obs,
+          ),
+          const SizedBox(height: 10),
+          CustomImage().buildContentImage(
+            title: 'Kendaraan',
+            mediaFileList: <XFile>[].obs,
+          ),
+          const SizedBox(height: 10),
+          CustomImage().buildContentImage(
+            title: 'Surat Jalan/Invoice',
+            mediaFileList: <XFile>[].obs,
+          ),
+          const SizedBox(height: 10),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -27,4 +27,8 @@ class RitUseCase {
   ) {
     return repository.getOrders(params);
   }
+
+  Future<ResultCustom<Failure, RitEntity>> callPostArriveOfficeDriver(ParamsRit params) {
+    return repository.postArriveOfficeDriver(params);
+  }
 }

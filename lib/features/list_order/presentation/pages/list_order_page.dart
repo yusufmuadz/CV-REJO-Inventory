@@ -7,7 +7,6 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../detail_order/presentation/widgets/dialog/assistant_dialog.dart';
 import '../controllers/list_order_controller.dart';
 import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
@@ -75,6 +74,7 @@ class ListOrderPage extends GetView<ListOrderController> {
               controller.isLoading.value) {
             return const LoadingView();
           }
+
           return RefreshIndicator(
             edgeOffset: controller.pageIndex.value == 0 || AppRole.isPIC
                 ? 0

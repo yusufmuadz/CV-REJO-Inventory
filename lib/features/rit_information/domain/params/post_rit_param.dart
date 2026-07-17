@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 
 class ParamsRit {
+  final bool isArriveOffice;
   final String rit;
+  final String dateRit;
   final String km;
   final XFile kmImage;
   final XFile? frontTruckImage;
@@ -12,10 +14,14 @@ class ParamsRit {
   final XFile tankTruckImage;
   final XFile? pocketImage;
   final XFile? travelDocImage;
+  final XFile? receiptMoneyImage;
+  final XFile? fileBoxImage;
   final List<XFile>? invoiceImages;
 
   ParamsRit({
+    required this.isArriveOffice,
     required this.rit,
+    required this.dateRit,
     required this.km,
     required this.kmImage,
     this.frontTruckImage,
@@ -27,5 +33,7 @@ class ParamsRit {
     this.pocketImage,
     this.travelDocImage,
     this.invoiceImages,
+    this.receiptMoneyImage,
+    this.fileBoxImage,
   });
 }

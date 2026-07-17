@@ -131,7 +131,9 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelEndingOrder> pendingOrderDriver(ParamsTroubleRIT params) async {
+  Future<ResponseModelEndingOrder> pendingOrderDriver(
+    ParamsTroubleRIT params,
+  ) async {
     try {
       final formData = FormData.fromMap({
         'invoice': params.invoicePO,
@@ -157,6 +159,212 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       );
 
       // debugPrint('Data Pending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelEndingOrder.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  // Pertama kali Driver sampai di Customer Foto Armada & Foto Toko
+  @override
+  Future<ResponseModelEndingOrder> firstArriveCustomer(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      String nameFile = 'file';
+      final imagesTransportation =
+          params.imagesDriver?.imagesTransportation ?? [];
+      final imagesMerchant = params.imagesDriver?.imagesMerchant ?? [];
+
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'desc': params.desc,
+        'lat': params.lat,
+        'long': params.long,
+        if (imagesTransportation.isNotEmpty)
+          '${nameFile}1': await MultipartFile.fromFile(
+            imagesTransportation[0].path,
+            filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
+          ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (imagesMerchant.isNotEmpty)
+          '${nameFile}2': await MultipartFile.fromFile(
+            imagesMerchant[0].path,
+            filename: '${nameFile}2.jpg',
+          ),
+      });
+
+      String apiUrl = ApiEndpoints.arriveFirstCustomer;
+
+      final response = await dioClient.post(apiUrl, data: formData);
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelEndingOrder.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  // Setelah Foto Armada & Foto Toko, Driver mengisikan data untuk pembayaran, ada foto semua barang yang sampai, foto serah terima dan jenis pembayaran
+  @override
+  Future<ResponseModelEndingOrder> arriveAllItem(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      String nameFile = 'file';
+      final imagesAllItem = params.imagesDriver?.imagesAllItem ?? [];
+
+      debugPrint('Send Media File List All Item: ${imagesAllItem.length}');
+
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'desc': params.desc,
+        'lat': params.lat,
+        'long': params.long,
+        if (imagesAllItem.isNotEmpty)
+          '${nameFile}1': await MultipartFile.fromFile(
+            imagesAllItem[0].path,
+            filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
+          ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (imagesAllItem.length > 1)
+          '${nameFile}2': await MultipartFile.fromFile(
+            imagesAllItem[1].path,
+            filename: '${nameFile}2.jpg',
+          ),
+      });
+
+      String apiUrl = ApiEndpoints.arriveItemCustomer;
+
+      final response = await dioClient.post(apiUrl, data: formData);
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelEndingOrder.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  // Setelah foto semua barang yang sampai, mengisikan foto serah terima
+  @override
+  Future<ResponseModelEndingOrder> arriveImageHandover(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      String nameFile = 'file';
+      final imagesHandover = params.imagesDriver?.imagesHandover ?? [];
+
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'desc': params.desc,
+        'lat': params.lat,
+        'long': params.long,
+        if (imagesHandover.isNotEmpty)
+          '${nameFile}1': await MultipartFile.fromFile(
+            imagesHandover[0].path,
+            filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
+          ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (imagesHandover.length > 1)
+          '${nameFile}2': await MultipartFile.fromFile(
+            imagesHandover[1].path,
+            filename: '${nameFile}2.jpg',
+          ),
+      });
+
+      String apiUrl = ApiEndpoints.arriveHandoverCustomer;
+
+      final response = await dioClient.post(apiUrl, data: formData);
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelEndingOrder.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  // Setelah foto serah terima, mengisikan jenis pembayaran
+  @override
+  Future<ResponseModelEndingOrder> arrivePaymentCustomer(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      String nameFile = 'file';
+      final imagesPayment = params.imagesDriver?.imagesPayment ?? [];
+
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'desc': params.desc,
+        'lat': params.lat,
+        'long': params.long,
+        'payment_type': params.paymentMethod,
+        'payment_nominal': params.paymentNominal,
+        if (imagesPayment.isNotEmpty)
+          '${nameFile}1': await MultipartFile.fromFile(
+            imagesPayment[0].path,
+            filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
+          ),
+        // Collection if: hanya masuk ke map kalau kondisi true
+        if (imagesPayment.length > 1)
+          '${nameFile}2': await MultipartFile.fromFile(
+            imagesPayment[1].path,
+            filename: '${nameFile}2.jpg',
+          ),
+      });
+
+      String apiUrl = ApiEndpoints.arrivePaymentCustomer;
+
+      final response = await dioClient.post(apiUrl, data: formData);
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
 
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||

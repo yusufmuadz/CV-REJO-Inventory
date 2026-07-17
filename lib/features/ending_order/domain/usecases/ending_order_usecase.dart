@@ -1,6 +1,7 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
+import '../../presentation/controllers/enums/enum_button.dart';
 import '../entities/ending_order_entity.dart';
 import '../params/post_ending_order_param.dart';
 import '../repositories/ending_order_repository.dart';
@@ -26,5 +27,12 @@ class EndingOrderUseCase {
     ParamsTroubleRIT params,
   ) {
     return repository.pendingOrderDriver(params);
+  }
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> callArriveDriver({
+    required ParamsEndingOrder params,
+    required EnumButtonEndingOrder statusButton,
+  }) {
+    return repository.arriveDriver(params, statusButton);
   }
 }
