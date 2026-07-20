@@ -34,17 +34,21 @@ class BoxStatus {
     }
 
     if (AppRole.isDriver) {
-      if (statusDriver == 'completed') {
-        text = 'Ready';
-      } else {
-        if (statusScanDriver) {
-          text = 'READY';
-        } else if (statusArriveDriver) {
-          text = 'COMPLETED';
-        } else {
-          text = 'AVAILABLE';
-        }
+      // if (statusDriver == 'completed') {
+      //   text = 'Ready';
+      // } else {
+      if (statusScanDriver) {
+        text = 'READY';
       }
+
+      if (statusArriveDriver) {
+        text = 'COMPLETED';
+      }
+
+      if (!statusScanDriver || !statusArriveDriver) {
+        text = 'AVAILABLE';
+      }
+      // }
     }
 
     return text;
@@ -81,16 +85,16 @@ class BoxStatus {
     }
 
     if (AppRole.isDriver) {
-      if (statusDriver == 'completed') {
+      if (statusScanDriver) {
         color = const Color(0xFF5eb75f);
-      } else {
-        if (statusScanDriver) {
-          color = const Color(0xFF5eb75f);
-        } else if (statusArriveDriver) {
-          color = const Color(0xFF666666);
-        } else {
-          color = const Color(0xFF2ED471);
-        }
+      }
+
+      if (statusArriveDriver) {
+        color = const Color(0xFF666666);
+      }
+
+      if (!statusScanDriver || !statusArriveDriver) {
+        color = const Color(0xFF2ED471);
       }
     }
 

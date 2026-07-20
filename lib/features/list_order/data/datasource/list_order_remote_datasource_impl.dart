@@ -13,11 +13,9 @@ import '../../../detail_order/data/models/response_model_get_user.dart';
 import '../../../detail_order/domain/params/add_assistant_param.dart';
 import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
-import '../../domain/params/take_it_param.dart';
 import '../models/response_model_get_district.dart';
 import '../models/response_model_get_rit.dart';
 import '../models/response_model_get_transaction_all.dart';
-import '../models/response_model_take_it_transaction.dart';
 import 'list_order_remote_datasource.dart';
 
 class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {

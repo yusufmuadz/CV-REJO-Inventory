@@ -11,7 +11,7 @@ class Status {
     required this.date,
     required this.desc,
     required this.by,
-    this.scanDriver,
+    required this.scanDriver,
     this.arriveDriver,
   });
 

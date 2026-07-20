@@ -416,7 +416,12 @@ class EndingOrderController extends GetxController {
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', pesan);
       }
-    } finally {
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', e.toString());
+    }
+    finally {
       isLoading.value = false;
     }
   }

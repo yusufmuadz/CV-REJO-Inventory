@@ -107,17 +107,17 @@ class RitController extends GetxController {
       isRitToday.value = args['isRitToday'] ?? false;
     }
 
-    // final isAccepted = GetStorage().read('isAcceptRIT') ?? false;
-
-    // if (isAccepted) {
-    //   buttonRIT.value = EnumButtonRIT.buttonTakeOff;
-    // } else {
     String? getButtonRIT = GetStorage().read('buttonRIT');
 
     if (getButtonRIT != null) {
       buttonRIT.value = EnumButtonRIT.values.byName(getButtonRIT);
     }
-    // }
+
+    final getRIT = GetStorage().read('city');
+
+    if (getRIT == null && getButtonRIT != null) {
+      buttonRIT.value = EnumButtonRIT.acceptRIT;
+    }
 
     _getOrder();
   }
@@ -181,10 +181,11 @@ class RitController extends GetxController {
   Future<void> saveOrder() async {
     if (isLoading.value) return;
 
-    if (_checkEmptyInputDriver()) {
+    if (_getEmptyInputErrorMessage() != null) {
       dialogService.showErrorSnackbar(
         title: 'Gagal!',
-        'Silakan lengkapi data terlebih dahulu!',
+        _getEmptyInputErrorMessage() ??
+            'Silakan lengkapi data terlebih dahulu!',
       );
       return;
     }
@@ -200,15 +201,19 @@ class RitController extends GetxController {
           km: kmController.text,
           kmImage: mediaFileListKM[0],
           tankTruckImage: mediaFileListTangki[0],
-          frontTruckImage: mediaFileRightTransport.value,
+          frontTruckImage: mediaFileFrontTransport.value,
           rightTruckImage: mediaFileRightTransport.value,
           backTruckImage: mediaFileBackTransport.value,
           leftTruckImage: mediaFileLeftTransport.value,
           // overAllTruckImage: mediaFileList[0],
           travelDocImage: mediaFileListSJ[0],
           pocketImage: mediaFileListTransportMoney[0],
-          receiptMoneyImage: mediaFileRecipientMoneyRit[0],
-          fileBoxImage: mediaFileRecipientBox[0],
+          receiptMoneyImage: mediaFileRecipientMoneyRit.isEmpty
+              ? XFile('')
+              : mediaFileRecipientMoneyRit[0],
+          fileBoxImage: mediaFileRecipientBox.isEmpty
+              ? XFile('')
+              : mediaFileRecipientBox[0],
         ),
       );
 
@@ -264,7 +269,7 @@ class RitController extends GetxController {
   }
 
   bool _checkEmptyInputDriver() {
-    final isTranportation =
+    final isTransportation =
         mediaFileFrontTransport.value.path.isEmpty ||
         mediaFileRightTransport.value.path.isEmpty ||
         mediaFileBackTransport.value.path.isEmpty ||
@@ -274,7 +279,7 @@ class RitController extends GetxController {
         buttonRIT.value == EnumButtonRIT.buttonSaveDoc &&
         (mediaFileRecipientMoneyRit.isEmpty || mediaFileRecipientBox.isEmpty);
 
-    return isTranportation ||
+    return isTransportation ||
         isArriveAtOffice ||
         mediaFileListKM.isEmpty ||
         mediaFileListTangki.isEmpty ||
@@ -283,26 +288,57 @@ class RitController extends GetxController {
         kmController.text.isEmpty;
   }
 
-  void _arriveAtOffice() {
-    // // debugPrint('Simpan Dokumen Sampai Kantor');
-    // if (recipientName.text.isEmpty ||
-    //     mediaFileListKM.isEmpty ||
-    //     kmController.text.isEmpty ||
-    //     mediaFileList.isEmpty ||
-    //     mediaFileListTangki.isEmpty ||
-    //     mediaFileRecipientInvoice.isEmpty ||
-    //     mediaFileRecipientMoney.isEmpty ||
-    //     mediaFileRecipientMoneyRit.isEmpty ||
-    //     mediaFileRecipientBox.isEmpty) {
-    //   dialogService.showErrorSnackbar(
-    //     title: 'Warning!',
-    //     'Lengkapi data terlebih dahulu',
-    //   );
-    //   return;
-    // }
+  String? _getEmptyInputErrorMessage() {
+    // 1. Cek Kondisi Khusus RIT (hanya jika mode Save Doc)
+    if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
+      if (mediaFileRecipientMoneyRit.isEmpty) {
+        return 'Foto pengunaan uang belum diisi!';
+      }
+      if (mediaFileRecipientBox.isEmpty) {
+        return 'Foto kotak belum diisi!';
+      }
+    }
 
-    final dateRit = GetStorage().read('tanggalRit') ?? '';
-    final isRitToday = GetStorage().read('isRitToday') ?? false;
+    // 2. Cek Foto Transportasi (4 sisi)
+    if (mediaFileFrontTransport.value.path.isEmpty) {
+      return 'Foto Armada bagian DEPAN belum diisi!';
+    }
+    if (mediaFileRightTransport.value.path.isEmpty) {
+      return 'Foto Armada bagian KANAN belum diisi!';
+    }
+    if (mediaFileBackTransport.value.path.isEmpty) {
+      return 'Foto Armada bagian BELAKANG belum diisi!';
+    }
+    if (mediaFileLeftTransport.value.path.isEmpty) {
+      return 'Foto Armada bagian KIRI belum diisi!';
+    }
+
+    // 3. Cek List Dokumen & Foto
+    if (mediaFileListKM.isEmpty) {
+      return 'Foto KM belum diupload!';
+    }
+    if (mediaFileListTangki.isEmpty) {
+      return 'Foto Tangki belum diupload!';
+    }
+    if (mediaFileListSJ.isEmpty) {
+      return 'Foto Surat Jalan (SJ) belum diupload!';
+    }
+    if (mediaFileListTransportMoney.isEmpty) {
+      return 'Foto uang transportasi belum diupload!';
+    }
+
+    // 4. Cek Input Text
+    if (kmController.text.isEmpty) {
+      return 'Nomor KM belum diisi!';
+    }
+
+    // Jika semua lolos
+    return null;
+  }
+
+  void _arriveAtOffice() {
+    final getDateRit = GetStorage().read('tanggalRit') ?? '';
+    final getRitToday = GetStorage().read('isRitToday') ?? false;
 
     GetStorage().remove('noInvoice');
     GetStorage().remove('city');
@@ -313,14 +349,16 @@ class RitController extends GetxController {
     GetStorage().remove('buttonRIT');
     GetStorage().remove('buttonEndingDriver');
 
+    buttonRIT.value = EnumButtonRIT.acceptRIT;
+
     ///// ========== KE HALAMAN LIST RIT =========== /////
 
     Get.offNamed(
       Routes.LIST_ORDER,
       arguments: {
         'routeFrom': 'home',
-        'tanggalRit': dateRit,
-        'isRitToday': isRitToday,
+        'tanggalRit': getDateRit,
+        'isRitToday': getRitToday,
       },
     );
 
@@ -395,6 +433,7 @@ class RitController extends GetxController {
           // sort: sortByNew.value ? 'newest' : 'oldest',
           district: isDistrictSelected.value,
           dateRit: tanggalRit.value,
+          pastRit: !isRitToday.value,
         ),
       );
 

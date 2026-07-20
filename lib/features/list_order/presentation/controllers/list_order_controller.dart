@@ -289,8 +289,8 @@ class ListOrderController extends GetxController {
 
         if (!resultAddAssistant) return;
       } else if (!AppRole.isDriver) {
-        // final resultTakRIT = await postDataListController.takeRIT();
-        // if (!resultTakRIT) return;
+        final resultTakRIT = await postDataListController.takeRIT();
+        if (!resultTakRIT) return;
       }
 
       if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {
