@@ -97,14 +97,14 @@ class ListOrderRepositoryImpl implements ListOrderRepository {
   ) async {
     try {
       final response = await dataSource.addAssistant(params);
-      String message = response.message ?? '';
+      String message = response.message;
 
       if (response.error != null) {
         message = response.error ?? '';
       }
 
       return Success(
-        BasicEntity(status: response.status ?? false, message: message),
+        BasicEntity(status: response.status, message: message),
         '',
       );
     } catch (e) {

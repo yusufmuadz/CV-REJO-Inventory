@@ -15,5 +15,5 @@ abstract class DetailOrderRemoteDataSource {
     ParamsPostProduct params,
   );
   Future<ResponseModelBasic> takeItTransactionDriver(ParamsAddAssistant params);
-  Future<ResponseModelTakeItTransaction> takeItTransaction(ParamsTakeIt params);
+  Future<ResponseModelBasic> takeItTransaction(ParamsTakeIt params);
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/services/location_service.dart';
 import '../../../../core/result/result_custom.dart';
@@ -193,11 +194,19 @@ class RitController extends GetxController {
     isLoading.value = true;
 
     try {
+      String date = tanggalRit.value;
+
+      if (date.isNotEmpty) {
+        date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+        debugPrint('Date HandOver: $date');
+      }
+
       final result = await ritUseCase.call(
         ParamsRit(
           isArriveOffice: buttonRIT.value == EnumButtonRIT.buttonSaveDoc,
+          recipient: recipientName.text,
           rit: isDistrictSelected.value,
-          dateRit: tanggalRit.value,
+          dateRit: date,
           km: kmController.text,
           kmImage: mediaFileListKM[0],
           tankTruckImage: mediaFileListTangki[0],
@@ -205,7 +214,7 @@ class RitController extends GetxController {
           rightTruckImage: mediaFileRightTransport.value,
           backTruckImage: mediaFileBackTransport.value,
           leftTruckImage: mediaFileLeftTransport.value,
-          // overAllTruckImage: mediaFileList[0],
+          overAllTruckImage: mediaFileFrontTransport.value, //mediaFileList[0],
           travelDocImage: mediaFileListSJ[0],
           pocketImage: mediaFileListTransportMoney[0],
           receiptMoneyImage: mediaFileRecipientMoneyRit.isEmpty
@@ -266,26 +275,6 @@ class RitController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  bool _checkEmptyInputDriver() {
-    final isTransportation =
-        mediaFileFrontTransport.value.path.isEmpty ||
-        mediaFileRightTransport.value.path.isEmpty ||
-        mediaFileBackTransport.value.path.isEmpty ||
-        mediaFileLeftTransport.value.path.isEmpty;
-
-    final isArriveAtOffice =
-        buttonRIT.value == EnumButtonRIT.buttonSaveDoc &&
-        (mediaFileRecipientMoneyRit.isEmpty || mediaFileRecipientBox.isEmpty);
-
-    return isTransportation ||
-        isArriveAtOffice ||
-        mediaFileListKM.isEmpty ||
-        mediaFileListTangki.isEmpty ||
-        mediaFileListSJ.isEmpty ||
-        mediaFileListTransportMoney.isEmpty ||
-        kmController.text.isEmpty;
   }
 
   String? _getEmptyInputErrorMessage() {
@@ -356,7 +345,7 @@ class RitController extends GetxController {
     Get.offNamed(
       Routes.LIST_ORDER,
       arguments: {
-        'routeFrom': 'home',
+        'routeFrom': 'endingOrder',
         'tanggalRit': getDateRit,
         'isRitToday': getRitToday,
       },
@@ -543,7 +532,7 @@ class RitController extends GetxController {
       }
 
       Get.back();
-      dialogService.showSuccessSnackbar('Berhasil Menyimpan Foto');
+      // dialogService.showSuccessSnackbar('Berhasil Menyimpan Foto');
     } catch (e) {
       debugPrint('$e');
     }

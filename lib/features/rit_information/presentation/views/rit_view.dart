@@ -129,7 +129,18 @@ class RitView extends StatelessWidget {
       margin: margin,
       child: CustomCardList(
         onTap: () {
+          final arriveDriver = transaction.driver?.arriveDriver;
+
           if (isAccepted) return;
+
+          if (arriveDriver == true) {
+            controller.dialogService.showError(
+              'Informasi',
+              'PO Sudah diselesaikan',
+            );
+            return;
+          }
+
           Get.toNamed(
             Routes.DETAIL_ORDER,
             arguments: {

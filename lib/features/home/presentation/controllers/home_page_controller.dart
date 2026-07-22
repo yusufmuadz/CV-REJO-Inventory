@@ -9,14 +9,18 @@ class HomePageController extends GetxController {
   HomeController get masterController => Get.find<HomeController>();
 
   void changePage(int index) {
-    // pageController.jumpToPage(index);
-    // _changeStatusBar(index);
-    masterController.getCacheSize(index);
-    masterController.pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    try {
+      // pageController.jumpToPage(index);
+      // _changeStatusBar(index);
+      masterController.getCacheSize(index);
+      masterController.pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } catch (e) {
+      // masterController.dialogService.defaultDialog(title: 'ERROR', content: );
+    }
   }
 
   void _changeStatusBar(int index) {

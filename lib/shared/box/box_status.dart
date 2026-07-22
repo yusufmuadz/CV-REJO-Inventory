@@ -45,7 +45,7 @@ class BoxStatus {
         text = 'COMPLETED';
       }
 
-      if (!statusScanDriver || !statusArriveDriver) {
+      if (!statusScanDriver && !statusArriveDriver) {
         text = 'AVAILABLE';
       }
       // }
@@ -93,7 +93,7 @@ class BoxStatus {
         color = const Color(0xFF666666);
       }
 
-      if (!statusScanDriver || !statusArriveDriver) {
+      if (!statusScanDriver && !statusArriveDriver) {
         color = const Color(0xFF2ED471);
       }
     }

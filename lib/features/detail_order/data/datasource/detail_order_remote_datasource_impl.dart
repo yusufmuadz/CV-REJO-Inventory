@@ -1,12 +1,10 @@
 import 'package:cv_rejo/features/detail_order/data/models/response_model_detail_order.dart';
-import 'package:cv_rejo/features/detail_order/data/models/response_model_get_transporation.dart';
 import 'package:cv_rejo/features/detail_order/data/models/response_model_basic.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
-import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../list_order/data/models/response_model_take_it_transaction.dart';
@@ -15,7 +13,6 @@ import '../../../scan_product/data/models/response_model_post_item_product.dart'
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/params/pending_so_param.dart';
-import '../models/response_model_get_user.dart';
 import 'detail_order_remote_datasource.dart';
 
 class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
@@ -171,7 +168,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelTakeItTransaction> takeItTransaction(
+  Future<ResponseModelBasic> takeItTransaction(
     ParamsTakeIt params,
   ) async {
     try {
@@ -191,7 +188,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelTakeItTransaction.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

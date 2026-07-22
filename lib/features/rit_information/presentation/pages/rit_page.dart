@@ -126,6 +126,10 @@ class RitPage extends GetView<RitController> {
   Widget _buildButton() {
     final buttonRIT = controller.buttonRIT.value;
 
+    if (controller.isLoading.value) {
+      return const LoadingView();
+    }
+
     // if (buttonRIT == EnumButtonRIT.buttonChangePO) {
     //   return _buildButtonChangePO();
     // }

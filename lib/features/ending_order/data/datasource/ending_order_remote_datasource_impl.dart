@@ -5,9 +5,9 @@ import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_ending_order_param.dart';
-import '../models/response_model_ending_order.dart';
 import 'ending_order_remote_datasource.dart';
 
 class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
@@ -16,7 +16,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   EndingOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelEndingOrder> postEndingOrder(
+  Future<ResponseModelBasic> postEndingOrder(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -64,7 +64,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -79,7 +79,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelEndingOrder> pendingOrder(
+  Future<ResponseModelBasic> pendingOrder(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -116,7 +116,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -131,7 +131,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelEndingOrder> pendingOrderDriver(
+  Future<ResponseModelBasic> pendingOrderDriver(
     ParamsTroubleRIT params,
   ) async {
     try {
@@ -163,7 +163,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -179,7 +179,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
   // Pertama kali Driver sampai di Customer Foto Armada & Foto Toko
   @override
-  Future<ResponseModelEndingOrder> firstArriveCustomer(
+  Future<ResponseModelBasic> firstArriveCustomer(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -215,7 +215,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -231,7 +231,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
   // Setelah Foto Armada & Foto Toko, Driver mengisikan data untuk pembayaran, ada foto semua barang yang sampai, foto serah terima dan jenis pembayaran
   @override
-  Future<ResponseModelEndingOrder> arriveAllItem(
+  Future<ResponseModelBasic> arriveAllItem(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -267,7 +267,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -283,7 +283,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
   // Setelah foto semua barang yang sampai, mengisikan foto serah terima
   @override
-  Future<ResponseModelEndingOrder> arriveImageHandover(
+  Future<ResponseModelBasic> arriveImageHandover(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -317,7 +317,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],
@@ -333,7 +333,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
   // Setelah foto serah terima, mengisikan jenis pembayaran
   @override
-  Future<ResponseModelEndingOrder> arrivePaymentCustomer(
+  Future<ResponseModelBasic> arrivePaymentCustomer(
     ParamsEndingOrder params,
   ) async {
     try {
@@ -369,7 +369,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.data != null) {
-        return ResponseModelEndingOrder.fromMap(response.data);
+        return ResponseModelBasic.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

@@ -14,7 +14,7 @@ abstract class RitRepository {
   Future<ResultCustom<Failure, List<OrderEntity>>> getOrders(
     ParamsGetTransaction params,
   );
-  Future<ResultCustom<Failure, RitEntity>> postArriveOfficeDriver(
-    ParamsRit params,
-  );
+  // Future<ResultCustom<Failure, RitEntity>> postArriveOfficeDriver(
+  //   ParamsRit params,
+  // );
 }

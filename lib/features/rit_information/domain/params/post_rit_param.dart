@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 
 class ParamsRit {
   final bool isArriveOffice;
+  final String? recipient;
   final String rit;
   final String dateRit;
   final String km;
@@ -20,6 +21,7 @@ class ParamsRit {
 
   ParamsRit({
     required this.isArriveOffice,
+    this.recipient,
     required this.rit,
     required this.dateRit,
     required this.km,
