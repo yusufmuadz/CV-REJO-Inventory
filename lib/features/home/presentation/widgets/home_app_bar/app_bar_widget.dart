@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/text_styles.dart';
 
 class AppBarWidget {
-  Widget content({required String title, required Function() onTap}) {
+  Widget content({required String title, bool isIcon = true, Function()? onTap}) {
     return Container(
       height: 90,
       padding: EdgeInsets.all(16),
@@ -32,12 +32,15 @@ class AppBarWidget {
               color: Color(0xFF151C27),
             ),
           ),
-          InkWell(
-            onTap: onTap,
-            child: Icon(
-              Icons.add_circle_outline,
-              size: 27,
-              color: Color(0xFF151C27),
+          Visibility(
+            visible: isIcon,
+            child: InkWell(
+              onTap: onTap,
+              child: Icon(
+                Icons.add_circle_outline,
+                size: 27,
+                color: Color(0xFF151C27),
+              ),
             ),
           ),
         ],

@@ -20,16 +20,17 @@ class InputAssistenWidget extends StatelessWidget {
       () => SingleChildScrollView(
         child: Column(
           children: [
-            // Visibility(
-            //   visible: AppRole.isChecker2,
-            //   child: _buildSelectStatusTransportation(),
-            // ),
+            Visibility(
+              visible: AppRole.isChecker2,
+              child: _buildSelectStatusTransportation(),
+            ),
             _buildContent(),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildContent() {
     if (AppRole.isChecker2 &&

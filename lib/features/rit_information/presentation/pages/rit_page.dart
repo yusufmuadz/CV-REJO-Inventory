@@ -130,13 +130,13 @@ class RitPage extends GetView<RitController> {
       return const LoadingView();
     }
 
-    // if (buttonRIT == EnumButtonRIT.buttonChangePO) {
-    //   return _buildButtonChangePO();
-    // }
+    if (buttonRIT == EnumButtonRIT.buttonChangePO) {
+      return _buildButtonChangePO();
+    }
 
-    // if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
-    //   return _buildButtonConfirmChangePO();
-    // }
+    if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+      return _buildButtonConfirmChangePO();
+    }
 
     if (buttonRIT == EnumButtonRIT.buttonArriveRIT) {
       return _buildShowButtonArrive();
@@ -183,11 +183,11 @@ class RitPage extends GetView<RitController> {
       color1: Colors.redAccent[200]!,
       color2: const Color(0xFF2ED471),
       onPressed1: () {
-        controller.dialogService.showErrorSnackbar(
-          title: 'Warning!',
-          'Coming Soon',
-        );
-        // RitDialog().inputRetur(controller: controller);
+        // controller.dialogService.showErrorSnackbar(
+        //   title: 'Warning!',
+        //   'Coming Soon',
+        // );
+        RitDialog().inputRetur(controller: controller);
       },
       onPressed2: () {
         // controller.dialogService.showErrorSnackbar(
@@ -224,9 +224,21 @@ class RitPage extends GetView<RitController> {
       color1: Colors.redAccent[200]!,
       color2: const Color(0xFF8B97F3),
       onPressed1: () {
+        controller.cancelSelection();
         controller.buttonRIT.value = EnumButtonRIT.buttonChangePO;
       },
       onPressed2: () {
+        final hasEmptyNumber = controller.orders.any(
+          (e) => e.number.value == 0,
+        );
+
+        if (hasEmptyNumber) {
+          controller.dialogService.showErrorSnackbar(
+            title: 'Warning!',
+            'Pilih PO yang ingin diurutkan terlebih dahulu',
+          );
+          return;
+        }
         RitDialogInfoPo().confirmPO(controller: controller);
       },
     );

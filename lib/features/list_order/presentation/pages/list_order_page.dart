@@ -8,6 +8,7 @@ import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/list_order_controller.dart';
+import '../widgets/dialog_list_order/input_assistant_dialog.dart';
 import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
 import '../views/list_order_view.dart';
@@ -173,8 +174,16 @@ class ListOrderPage extends GetView<ListOrderController> {
     return CustomButton.basicButton(
       title: 'Pilih RIT',
       color: const Color(0xFF2ED471),
-      onPressed: () =>
-          controller.isSelection.value = !controller.isSelection.value,
+      onPressed: () async {
+        // if (controller.listUser.isEmpty) {
+        //   controller.getDataListController.getAssisten();
+        // }
+
+        // final resultAddAssistant = await InputAssistantDialog.inputAsisten(
+        //   controller,
+        // );
+        controller.isSelection.value = !controller.isSelection.value;
+      },
     );
   }
 }

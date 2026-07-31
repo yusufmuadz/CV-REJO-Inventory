@@ -27,8 +27,8 @@ class RitConstraint extends StatelessWidget {
         AppBarWidget().content(
           title: 'Kendala',
           onTap: () {
-            controller.dialogService.showErrorSnackbar('Coming soon');
-            // _popupAddConstraint(isPreviewMode: false);
+            // controller.dialogService.showErrorSnackbar('Coming soon');
+            _popupAddConstraint(isPreviewMode: false);
           },
         ),
         const SizedBox(height: 10),
@@ -169,6 +169,7 @@ class RitConstraint extends StatelessWidget {
 
   _popupAddConstraint({
     String? title,
+    String? solution,
     String? nominal,
     String? date,
     String? desc,
@@ -177,6 +178,7 @@ class RitConstraint extends StatelessWidget {
   }) {
     final ritController = controller.homeRITController;
     final titleProductController = TextEditingController(text: title);
+    final solutionController = TextEditingController(text: solution);
     final nominalProductController = TextEditingController(text: nominal);
     final descProductController = TextEditingController(text: desc);
     final mediaFileList = <XFile>[].obs;
@@ -245,6 +247,12 @@ class RitConstraint extends StatelessWidget {
                         isReadOnly: isPreviewMode,
                         title: 'Kendala',
                         controller: titleProductController,
+                      ),
+                      const SizedBox(height: 15),
+                      _buildTitleField(
+                        isReadOnly: isPreviewMode,
+                        title: 'Solusi/Tindakan',
+                        controller: solutionController,
                       ),
                       const SizedBox(height: 15),
                       _buildTitleField(

@@ -40,10 +40,12 @@ class Data {
             customer: CustomerModel(
               username: '',
               name: '',
+              phone: '',
               district: '',
               latitude: '',
               longitude: '',
               address: '',
+              dropAddress: '',
             ),
             date: DateModel(transaction: '', delivery: ''),
           )
@@ -60,10 +62,12 @@ class Data {
         customer: CustomerModel(
           username: '',
           name: '',
+          phone: '',
           district: '',
           latitude: '',
           longitude: '',
           address: '',
+          dropAddress: '',
         ),
         date: DateModel(transaction: '', delivery: ''),
       );

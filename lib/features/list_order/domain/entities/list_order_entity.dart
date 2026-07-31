@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import '../../data/models/courier_model.dart';
 import '../../data/models/date_model.dart';
 import '../../data/models/status_model.dart';
@@ -15,6 +17,12 @@ class OrderEntity {
   Status? checker2;
   Status? loader;
   Status? driver;
+  String? address;
+  String? noTelp;
+  String? maps;
+  String? lat;
+  String? long;
+  RxInt number = 0.obs;
   bool isSelected;
 
   OrderEntity({
@@ -30,6 +38,10 @@ class OrderEntity {
     this.checker2,
     this.loader,
     this.driver,
+    this.address,
+    this.noTelp,
+    this.maps,
+    required this.number,
     this.isSelected = false,
   });
 
@@ -57,7 +69,11 @@ class OrderEntity {
           : Status.fromJson(json['checker2']),
       loader: json['loader'] == null ? null : Status.fromJson(json['loader']),
       driver: json['driver'] == null ? null : Status.fromJson(json['driver']),
+      address: json['alamat'] ?? '-',
+      noTelp: json['no_telp'] ?? '-',
+      maps: json['maps'] ?? '-',
       isSelected: json['isSelected'] ?? false,
+      number: 0.obs,
     );
   }
 }

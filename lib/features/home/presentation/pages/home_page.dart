@@ -41,6 +41,7 @@ class HomePage extends GetView<HomeController> {
       children: [
         HomeView(controller: controller),
         // ListOrderPage(),
+        if (AppRole.isChecker2) TakeItOrderView(controller: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
         ProfileView(controller: controller),

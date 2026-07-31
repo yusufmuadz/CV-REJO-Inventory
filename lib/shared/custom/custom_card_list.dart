@@ -1,7 +1,9 @@
 import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/theme/text_styles.dart';
 import '../../features/list_order/domain/entities/list_order_entity.dart';
+import '../../features/rit_information/presentation/controllers/enums/enum_rit.dart';
 import '../../gen/assets.gen.dart';
 import '../box/box_status.dart';
 
@@ -13,6 +15,7 @@ class CustomCardList extends StatelessWidget {
   final OrderEntity transaction;
   final String? color;
   final bool isHistory;
+  final EnumButtonRIT? buttonRIT;
 
   const CustomCardList({
     super.key,
@@ -23,10 +26,22 @@ class CustomCardList extends StatelessWidget {
     this.isSelected = '',
     this.color,
     this.isHistory = false,
+    this.buttonRIT,
   });
 
   @override
   Widget build(BuildContext context) {
+    Color colorShow = isSelected == transaction.invoice
+        ? Colors.grey.shade100
+        : color != null
+        ? Color(int.parse('0xFF$color')).withOpacity(0.3)
+        : Colors.white;
+
+    if (transaction.number.value != 0 &&
+        buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+      colorShow = Color(int.parse('0xFF$color')).withOpacity(0.6);
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -64,11 +79,7 @@ class CustomCardList extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected == transaction.invoice
-                    ? Colors.grey.shade100
-                    : color != null
-                    ? Color(int.parse('0xFF$color')).withOpacity(0.3)
-                    : Colors.white,
+                color: colorShow,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: color != null
                     ? []
@@ -88,7 +99,8 @@ class CustomCardList extends StatelessWidget {
                       _buildInfoText(
                         showStatus: !isHistory,
                         title: 'ID Transaksi',
-                        value: AppRole.isDriver
+                        value:
+                            AppRole.isDriver && transaction.suratJalan != null
                             ? transaction.suratJalan!.replaceAll('SJ/', '')
                             : transaction.orderNo.replaceAll('SL', 'SO'),
                       ),
@@ -102,32 +114,106 @@ class CustomCardList extends StatelessWidget {
                         value: transaction.customer,
                       ),
                       const SizedBox(height: 10),
+                      Visibility(
+                        visible: AppRole.isDriver,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: _buildInfoIconText(
+                            image: Assets.icons.phone.path,
+                            value: transaction.noTelp ?? '-',
+                          ),
+                        ),
+                      ),
                       _buildInfoIconText(
                         image: Assets.icons.dateIn.path,
                         value: transaction.date.transaction,
                       ),
                       const SizedBox(height: 10),
                       _buildInfoIconText(
-                        image: Assets.icons.district.path,
+                        image: Assets.icons.maps.path,
                         value: transaction.district,
+                        address: transaction.address,
                         isDistrict: true,
+                      ),
+                      Visibility(
+                        visible: AppRole.isDriver,
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: InkWell(
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                              margin: const EdgeInsets.only(top: 10, left: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: const Color(0xFFffd8ab),
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.map_outlined,
+                                    size: 16,
+                                    color: const Color(0xFFd68e85),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'Buka Peta',
+                                    style: _textStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFFd68e85),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 10,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFD9D9D9),
+                  Visibility(
+                    visible:
+                        transaction.number.value != 0 &&
+                        buttonRIT == EnumButtonRIT.buttonConfirmChangePO,
+                    child: Positioned(
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Center(
+                        child: Text(
+                          '${transaction.number}',
+                          style: TextStyles.basicTextStyle(
+                            fontSize: 100,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black.withValues(alpha: 0.3),
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xFF7C7C7C),
-                        size: 14,
+                    ),
+                  ),
+                  Visibility(
+                    visible: !AppRole.isDriver,
+                    child: Positioned(
+                      bottom: 0,
+                      right: 10,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFD9D9D9),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color(0xFF7C7C7C),
+                          size: 14,
+                        ),
                       ),
                     ),
                   ),
@@ -239,9 +325,11 @@ class CustomCardList extends StatelessWidget {
   Widget _buildInfoIconText({
     required String image,
     required String value,
+    String? address,
     bool isDistrict = false,
   }) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 20,
@@ -251,12 +339,24 @@ class CustomCardList extends StatelessWidget {
         ),
         const SizedBox(width: 15),
         Expanded(
-          child: Text(
-            value.isEmpty ? '-' : value,
-            style: _textStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value.isEmpty ? '-' : value,
+                style: _textStyle(fontSize: 14, fontWeight: FontWeight.w400),
+              ),
+              Visibility(
+                visible: AppRole.isDriver && isDistrict,
+                child: Text(
+                  address ?? '-',
+                  style: _textStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                ),
+              ),
+            ],
           ),
         ),
-        Visibility(visible: isDistrict, child: const SizedBox(width: 30)),
+        Visibility(visible: isDistrict, child: const SizedBox(width: 40)),
       ],
     );
   }

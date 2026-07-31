@@ -10,6 +10,7 @@ import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
+import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
@@ -90,6 +91,99 @@ class RitController extends GetxController {
   final pageIndex = 0.obs;
   late PageController pageController;
 
+  final ordersSample = <OrderEntity>[
+    OrderEntity(
+      invoice: '01SL20260700683',
+      orderNo: 'PO/2607/0712',
+      suratJalan: '2607/0712',
+      customer: 'John Doe',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'SEMARANG',
+      address:
+          'Jl. Gajahmada No. 123, Kelurahan Mugassari, Kecamatan Semarang Selatan, Kota Semarang, Jawa Tengah 50241',
+      number: 0.obs,
+    ),
+    OrderEntity(
+      invoice: '01SL20260700684',
+      orderNo: 'PO/2607/0714',
+      suratJalan: '2607/0714',
+      customer: 'Charlie Brown',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'SURAKARTA',
+      address:
+          'Kawasan Niaga Slamet Riyadi No. 55, Kota Surakarta, Jawa Tengah 57111',
+      number: 0.obs,
+    ),
+    OrderEntity(
+      invoice: '01SL20260700685',
+      orderNo: 'PO/2607/0715',
+      suratJalan: '2607/0715',
+      customer: 'Thomas Edison',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'SURABAYA',
+      address:
+          'Jl. Manggis No. 123, Kelurahan Surabaya, Kecamatan Surabaya, Kota Surabaya, Jawa Timur 60111',
+      number: 0.obs,
+    ),
+    OrderEntity(
+      invoice: '01SL20260700686',
+      orderNo: 'PO/2607/0716',
+      suratJalan: '2607/0716',
+      customer: 'Bruce Wayne',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'PANDAAN',
+      address:
+          'Jl. Raya Pandanan No. 123, Kelurahan Pandanan, Kecamatan Pandanan, Kota Surabaya, Jawa Timur 60111',
+      number: 0.obs,
+    ),
+    OrderEntity(
+      invoice: '01SL20260700687',
+      orderNo: 'PO/2607/0717',
+      suratJalan: '2607/0717',
+      customer: 'John Doe',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'WONOSARI',
+      address:
+          'Jl. Raya Wonosari No. 123, Kelurahan Wonosari, Kecamatan Wonosari, Kota Surabaya, Jawa Timur 60111',
+      number: 0.obs,
+    ),
+    OrderEntity(
+      invoice: '01SL20260700688',
+      orderNo: 'PO/2607/0718',
+      suratJalan: '2607/0718',
+      customer: 'Nick Fury',
+      date: DateModel.fromJson({
+        "transaction": "23-July-2026",
+        "delivery": "23-July-2026",
+      }),
+      noTelp: '08123456789',
+      district: 'MALANG',
+      address:
+          'Jl. Raya Malang No. 123, Kelurahan Malang, Kecamatan Malang, Kota Malang, Jawa Timur 65111',
+      number: 0.obs,
+    ),
+  ].obs;
+
   late final ListOrderController listOrderController;
 
   // late ScrollController scrollController;
@@ -146,13 +240,14 @@ class RitController extends GetxController {
     GetStorage().write('colorRit', colorRit.value);
     GetStorage().write('tanggalRit', tanggalRit.value);
     GetStorage().write('isRitToday', isRitToday.value);
-    isAcceptRIT.value = true;
+    // isAcceptRIT.value = true;
 
-    buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+
+    buttonRIT.value = EnumButtonRIT.buttonChangePO;
+    isAccept.value = !isAccept.value;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
-    // buttonRIT.value = EnumButtonRIT.buttonChangePO;
-    // isAccept.value = !isAccept.value;
   }
 
   void selectAll() {
@@ -437,7 +532,10 @@ class RitController extends GetxController {
             }
             return;
           }
-          orders.addAll(data);
+          final filterData = data;
+          // final filterData = ordersSample;
+
+          orders.addAll(filterData);
           loadState.value = LoadState.idle;
 
         case ErrorResult(:final message):
@@ -469,16 +567,51 @@ class RitController extends GetxController {
     Get.back();
   }
 
-  void registerListController() {
-    if (!Get.isRegistered<ListOrderController>()) {
-      ListOrderBinding().dependencies();
-      listOrderController = Get.find<ListOrderController>();
-      debugPrint('Register List Order Controller');
-    } else {
-      listOrderController = Get.find<ListOrderController>();
-      debugPrint('Get List Order Controller');
+  void cancelSelection() {
+    for (final order in orders) {
+      order.number.value = 0;
     }
   }
+
+  void toggleOrder(OrderEntity order) {
+    if (order.number.value == 0) {
+      // Ambil nomor terbesar
+      final maxNumber = orders
+          .map((e) => e.number.value)
+          .fold<int>(0, (a, b) => a > b ? a : b);
+
+      order.number.value = maxNumber + 1;
+    } else {
+      // Nomor yang akan dihapus
+      final removedNumber = order.number.value;
+
+      // Hapus nomor item
+      order.number.value = 0;
+
+      // Geser semua nomor setelahnya
+      for (final item in orders) {
+        if (item.number.value > removedNumber) {
+          item.number--;
+        }
+      }
+    }
+
+    orders.refresh();
+
+    // update(); // GetBuilder
+    // atau controller.orders.refresh(); jika RxList
+  }
+
+  // void registerListController() {
+  //   if (!Get.isRegistered<ListOrderController>()) {
+  //     ListOrderBinding().dependencies();
+  //     listOrderController = Get.find<ListOrderController>();
+  //     debugPrint('Register List Order Controller');
+  //   } else {
+  //     listOrderController = Get.find<ListOrderController>();
+  //     debugPrint('Get List Order Controller');
+  //   }
+  // }
 
   void reorderOrders(int oldIndex, int newIndex) {
     // 1. Sesuaikan index (quirk bawaan Flutter)

@@ -14,6 +14,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/address.png
+  AssetGenImage get address => const AssetGenImage('assets/icons/address.png');
+
   /// File path: assets/icons/barcode.png
   AssetGenImage get barcode => const AssetGenImage('assets/icons/barcode.png');
 
@@ -50,6 +53,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/logout.png
   AssetGenImage get logout => const AssetGenImage('assets/icons/logout.png');
 
+  /// File path: assets/icons/maps.png
+  AssetGenImage get maps => const AssetGenImage('assets/icons/maps.png');
+
   /// File path: assets/icons/orderan.png
   AssetGenImage get orderan => const AssetGenImage('assets/icons/orderan.png');
 
@@ -59,8 +65,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/person2.png
   AssetGenImage get person2 => const AssetGenImage('assets/icons/person2.png');
 
+  /// File path: assets/icons/phone.png
+  AssetGenImage get phone => const AssetGenImage('assets/icons/phone.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
+    address,
     barcode,
     cardMember,
     dateIn,
@@ -71,9 +81,11 @@ class $AssetsIconsGen {
     home,
     hubungiadmin,
     logout,
+    maps,
     orderan,
     person,
     person2,
+    phone,
   ];
 }
 

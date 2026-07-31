@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_card_list.dart';
@@ -42,81 +44,112 @@ class RitView extends StatelessWidget {
     // 1. Buat ScrollController lokal di dalam fungsi buildContent
     final localScrollController = ScrollController();
 
-    return PrimaryScrollController(
-      controller: localScrollController,
-      child: Builder(
-        builder: (context) {
-          // 2. Pasang listener DI DALAM Builder menggunakan context lokal yang sudah valid
-          localScrollController.removeListener(
-            () {},
-          ); // bersihkan listener lama jika ada rereder
-          localScrollController.addListener(() {
-            // Kirim langsung localScrollController yang sedang aktif ke GetX
-            controller.onWidgetScroll(localScrollController);
-          });
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(
+          () => Visibility(
+            visible:
+                controller.buttonRIT.value ==
+                EnumButtonRIT.buttonConfirmChangePO,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Text(
+                'Untuk melakukan perubahan urutan PO, klik sesuai urutan PO yang ingin diubah.',
+                style: TextStyles.basicTextStyle(
+                  fontSize: 12,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: PrimaryScrollController(
+            controller: localScrollController,
+            child: Builder(
+              builder: (context) {
+                // 2. Pasang listener DI DALAM Builder menggunakan context lokal yang sudah valid
+                localScrollController.removeListener(
+                  () {},
+                ); // bersihkan listener lama jika ada rereder
+                localScrollController.addListener(() {
+                  // Kirim langsung localScrollController yang sedang aktif ke GetX
+                  controller.onWidgetScroll(localScrollController);
+                });
 
-          return RefreshIndicator(
-            onRefresh: () async => controller.onRefreshTransaction(),
-            child: Obx(() {
-              final isShowPlus =
-                  controller.loadState.value != LoadState.initial &&
-                  controller.loadState.value != LoadState.idle;
+                return RefreshIndicator(
+                  onRefresh: () async => controller.onRefreshTransaction(),
+                  child: Obx(() {
+                    final isShowPlus =
+                        controller.loadState.value != LoadState.initial &&
+                        controller.loadState.value != LoadState.idle;
 
-              if (controller.orders.isEmpty &&
-                  controller.loadState.value != LoadState.initial) {
-                return _buildEmptyOrder();
-              }
+                    if (controller.orders.isEmpty &&
+                        controller.loadState.value != LoadState.initial) {
+                      return _buildEmptyOrder();
+                    }
 
-              return ReorderableListView.builder(
-                itemCount: controller.orders.length + (isShowPlus ? 1 : 0),
-                physics: const AlwaysScrollableScrollPhysics(),
-                // 3. Pasang localScrollController ke ReorderableListView
-                scrollController: localScrollController,
-                padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
-                buildDefaultDragHandles:
-                    controller.buttonRIT.value ==
-                    EnumButtonRIT.buttonConfirmChangePO,
-                itemBuilder: (context, index) {
-                  if (index == controller.orders.length) {
-                    return _buildBottomIndicator(
-                      // key: const ValueKey('bottom_indicator_key'),
-                      controller.loadState.value,
-                      controller.retryFetch,
-                    );
-                  }
-
-                  return _buildOrder(
-                    index: index,
-                    margin: const EdgeInsets.only(bottom: 10),
-                  );
-                },
-                footer: const SizedBox.shrink(),
-                proxyDecorator:
-                    (Widget child, int index, Animation<double> animation) {
-                      return AnimatedBuilder(
-                        animation: animation,
-                        builder: (BuildContext context, Widget? child) {
-                          final double elevation = Tween<double>(
-                            begin: 0.0,
-                            end: 8.0,
-                          ).evaluate(animation);
-
-                          return Material(
-                            borderRadius: BorderRadius.circular(10.0),
-                            elevation: elevation,
-                            child: _buildOrder(index: index),
+                    return ReorderableListView.builder(
+                      itemCount:
+                          controller.orders.length + (isShowPlus ? 1 : 0),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      // 3. Pasang localScrollController ke ReorderableListView
+                      scrollController: localScrollController,
+                      padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+                      buildDefaultDragHandles:
+                          controller.buttonRIT.value ==
+                          EnumButtonRIT.buttonConfirmChangePO,
+                      itemBuilder: (context, index) {
+                        if (index == controller.orders.length) {
+                          return _buildBottomIndicator(
+                            // key: const ValueKey('bottom_indicator_key'),
+                            controller.loadState.value,
+                            controller.retryFetch,
                           );
-                        },
-                      );
-                    },
-                onReorder: (int oldIndex, int newIndex) {
-                  controller.reorderOrders(oldIndex, newIndex);
-                },
-              );
-            }),
-          );
-        },
-      ),
+                        }
+
+                        return _buildOrder(
+                          index: index,
+                          margin: const EdgeInsets.only(bottom: 10),
+                        );
+                      },
+                      footer: const SizedBox.shrink(),
+                      proxyDecorator:
+                          (
+                            Widget child,
+                            int index,
+                            Animation<double> animation,
+                          ) {
+                            return AnimatedBuilder(
+                              animation: animation,
+                              builder: (BuildContext context, Widget? child) {
+                                final double elevation = Tween<double>(
+                                  begin: 0.0,
+                                  end: 8.0,
+                                ).evaluate(animation);
+
+                                return Material(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  elevation: elevation,
+                                  child: _buildOrder(index: index),
+                                );
+                              },
+                            );
+                          },
+                      onReorder: (int oldIndex, int newIndex) {
+                        controller.reorderOrders(oldIndex, newIndex);
+                      },
+                    );
+                  }),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -127,33 +160,66 @@ class RitView extends StatelessWidget {
     return Container(
       key: ValueKey(transaction.invoice),
       margin: margin,
-      child: CustomCardList(
-        onTap: () {
-          final arriveDriver = transaction.driver?.arriveDriver;
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Visibility(
+          //   visible:
+          //       transaction.number.value != 0 &&
+          //       controller.buttonRIT.value ==
+          //           EnumButtonRIT.buttonConfirmChangePO,
+          //   child: Container(
+          //     margin: const EdgeInsets.only(right: 10),
+          //     child: Text(
+          //       '${transaction.number}.',
+          //       style: TextStyles.basicTextStyle(
+          //         fontSize: 14,
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.black,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          Expanded(
+            child: CustomCardList(
+              onTap: () {
+                final arriveDriver = transaction.driver?.arriveDriver;
 
-          if (isAccepted) return;
+                if (isAccepted) {
+                  return;
+                }
 
-          if (arriveDriver == true) {
-            controller.dialogService.showError(
-              'Informasi',
-              'PO Sudah diselesaikan',
-            );
-            return;
-          }
+                if (arriveDriver == true) {
+                  controller.dialogService.showError(
+                    'Informasi',
+                    'PO Sudah diselesaikan',
+                  );
+                  return;
+                }
 
-          Get.toNamed(
-            Routes.DETAIL_ORDER,
-            arguments: {
-              'invoice': transaction.invoice,
-              'status_driver': transaction.driver?.status ?? '',
-            },
-          );
-        },
-        showSelection: false,
-        isSelected: '',
-        onCheckboxChanged: () {},
-        transaction: transaction,
-        color: controller.colorRit.value.replaceAll('#', ''),
+                if (controller.buttonRIT.value ==
+                    EnumButtonRIT.buttonConfirmChangePO) {
+                  controller.toggleOrder(transaction);
+                  return;
+                }
+
+                Get.toNamed(
+                  Routes.DETAIL_ORDER,
+                  arguments: {
+                    'invoice': transaction.invoice,
+                    'status_driver': transaction.driver?.status ?? '',
+                  },
+                );
+              },
+              showSelection: false,
+              isSelected: '',
+              onCheckboxChanged: () {},
+              transaction: transaction,
+              buttonRIT: controller.buttonRIT.value,
+              color: controller.colorRit.value.replaceAll('#', ''),
+            ),
+          ),
+        ],
       ),
     );
   }

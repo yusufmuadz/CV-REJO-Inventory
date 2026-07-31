@@ -73,10 +73,12 @@ class DetailOrderController extends GetxController {
     customer: CustomerModel(
       username: '',
       name: '',
+      phone: '',
       district: '',
       latitude: '',
       longitude: '',
       address: '',
+      dropAddress: '',
     ),
     date: DateModel(transaction: '', delivery: ''),
   ).obs;
@@ -291,11 +293,13 @@ class DetailOrderController extends GetxController {
     final latitude = customer.latitude;
     final longitude = customer.longitude;
     final address = customer.address;
+    final dropAddress = customer.dropAddress;
 
     debugPrint('Latitude: $latitude, Longitude: $longitude');
-    debugPrint('Alamat: $address');
+    // debugPrint('Alamat: $address');
+    debugPrint('Drop Alamat: $dropAddress');
 
-    if ((latitude == '-' || longitude == '-') && address.isEmpty) {
+    if ((latitude == '-' || longitude == '-') && dropAddress.isEmpty) {
       dialogService.showErrorSnackbar(
         title: 'Gagal!',
         'Koordinat/Alamat Kosong',
@@ -306,7 +310,7 @@ class DetailOrderController extends GetxController {
     String url = ApiEndpoints.maps('$latitude, $longitude');
 
     if (latitude == '-' || longitude == '-') {
-      String encodedQuery = Uri.encodeComponent(address);
+      String encodedQuery = Uri.encodeComponent(dropAddress);
       url = ApiEndpoints.maps(encodedQuery);
     }
 

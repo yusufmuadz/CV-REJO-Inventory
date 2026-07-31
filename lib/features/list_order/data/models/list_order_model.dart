@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import '../../domain/entities/list_order_entity.dart';
 import 'courier_model.dart';
 import 'date_model.dart';
@@ -16,6 +18,7 @@ class ListOrderModel extends OrderEntity {
     required super.checker2,
     required super.driver,
     required super.isSelected,
+    required super.number,
   });
 
   factory ListOrderModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +34,7 @@ class ListOrderModel extends OrderEntity {
       checker2: Status.fromJson(json['checker2']),
       driver: Status.fromJson(json['driver']),
       isSelected: json['isSelected'] ?? false,
+      number: json['number'] ?? 0.obs,
     );
   }
 }

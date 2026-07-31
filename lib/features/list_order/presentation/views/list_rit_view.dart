@@ -209,7 +209,9 @@ class ListRitView extends StatelessWidget {
                           const SizedBox(width: 5),
                           Expanded(
                             child: Text(
-                              'Contoh: Malang, Jogja, Semarang',
+                              ritOrder.route.isEmpty
+                                  ? '-'
+                                  : ritOrder.route.join(', '),
                               style: TextStyles.basicTextStyle(
                                 fontSize: 16,
                                 fontFamily:

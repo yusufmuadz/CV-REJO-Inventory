@@ -13,9 +13,11 @@ class ContentInfoCustomerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final namePenerima = controller.orderDetail.value.customer.name;
+    final phone = controller.orderDetail.value.customer.phone;
     final tanggalBatas = controller.orderDetail.value.date.delivery;
     final district = controller.orderDetail.value.customer.district;
     final address = controller.orderDetail.value.customer.address;
+    final dropAddress = controller.orderDetail.value.customer.dropAddress;
     final isStatusDriver = controller.statusDriver.value == 'completed';
 
     final isDriver = AppRole.isDriver && isStatusDriver;
@@ -41,7 +43,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           child: _buildInfoContent(
             isPhone: true,
             title: 'Nomor Telepon',
-            value: '081234567890',
+            value: phone,
             icon: Icons.phone_outlined,
           ),
         ),
@@ -61,7 +63,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           child: _buildInfoContent(
             isAddress: true,
             title: 'Alamat Pengiriman',
-            value: address,
+            value: dropAddress,
             icon: Icons.apartment,
             mgBottom: 16,
           ),

@@ -9,6 +9,10 @@ import '../controllers/enums/enum_rit.dart';
 class RitDialogInfoPo {
   // ignore: non_constant_identifier_names
   void confirmPO({required RitController controller}) {
+    final transaction =
+        controller.orders.where((e) => e.number.value > 0).toList()
+          ..sort((a, b) => a.number.value.compareTo(b.number.value));
+
     controller.dialogService.defaultDialog(
       title: 'Konfirmasi Perubahan',
       titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -48,7 +52,7 @@ class RitDialogInfoPo {
                 color: Colors.white,
               ),
               child: ListView.separated(
-                itemCount: controller.orders.length,
+                itemCount: transaction.length,
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 separatorBuilder: (context, index) => const Divider(
@@ -57,7 +61,7 @@ class RitDialogInfoPo {
                   color: Color(0xFFE2E8F8),
                 ),
                 itemBuilder: (context, index) {
-                  final order = controller.orders[index];
+                  final order = transaction[index];
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -83,7 +87,7 @@ class RitDialogInfoPo {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                order.orderNo,
+                                order.suratJalan?.replaceAll('SJ/', '') ?? '-',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyles.basicTextStyle(

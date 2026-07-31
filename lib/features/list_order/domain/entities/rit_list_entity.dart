@@ -13,6 +13,7 @@ class RitListEntity {
   final String poDoneLoader;
   final String poPendingDelivery;
   final String poDoneDelivery;
+  final List<String> route;
 
   RitListEntity({
     required this.city,
@@ -29,6 +30,7 @@ class RitListEntity {
     required this.poDoneLoader,
     required this.poPendingDelivery,
     required this.poDoneDelivery,
+    required this.route,
   });
 
   factory RitListEntity.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,9 @@ class RitListEntity {
       poDoneLoader: json['po_done_loader'] ?? '-',
       poPendingDelivery: json['po_pending_delivery'] ?? '-',
       poDoneDelivery: json['po_done_delivery'] ?? '-',
+      route: json['rute'] != null
+          ? List<String>.from(json['rute'])
+          : List<String>.from(['-']), // json['rute'],
     );
   }
 }
