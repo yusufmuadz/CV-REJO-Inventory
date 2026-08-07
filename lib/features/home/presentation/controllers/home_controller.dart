@@ -11,6 +11,7 @@ import '../../../../core/services/dialog_service.dart';
 import 'home_page_controller.dart';
 import 'home_profile_controller.dart';
 import 'home_rit_controller.dart';
+import 'home_tracking_driver_controller.dart';
 import 'home_transactions_controller.dart';
 
 class HomeController extends GetxController with WidgetsBindingObserver {
@@ -44,6 +45,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   late final HomeRITController homeRITController;
   late final HomePageController homePageController;
   late final HomeProfileController homeProfileController;
+  late final HomeTrackingDriverController homeTrackingDriverController;
 
   @override
   void onInit() {
@@ -52,6 +54,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeRITController = Get.find<HomeRITController>();
     homePageController = Get.find<HomePageController>();
     homeProfileController = Get.find<HomeProfileController>();
+    homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
   }
 
   @override

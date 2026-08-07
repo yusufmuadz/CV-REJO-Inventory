@@ -66,8 +66,13 @@ class EndingOrderView extends GetView<EndingOrderController> {
   }
 
   Widget _buildButtonSelect() {
+    String titlePending = 'Pending PO';
+
+    if (AppRole.isDriver && controller.statatusDriver.value == 'completed') {
+      titlePending = 'Kendala PO';
+    }
     return CustomButton.doubleButton(
-      title1: 'Pending PO',
+      title1: titlePending,
       title2: 'Simpan PO',
       color1: Colors.redAccent,
       color2: const Color(0xFF2ED471),

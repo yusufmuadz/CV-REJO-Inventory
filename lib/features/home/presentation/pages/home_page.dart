@@ -9,6 +9,7 @@ import '../controllers/home_controller.dart';
 import '../views/home_view.dart';
 import '../views/rit_contsraint_view.dart';
 import '../views/take_it_order_view.dart';
+import '../views/home_tracking_driver_view.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -41,7 +42,8 @@ class HomePage extends GetView<HomeController> {
       children: [
         HomeView(controller: controller),
         // ListOrderPage(),
-        if (AppRole.isChecker2) TakeItOrderView(controller: controller),
+        if (AppRole.isChecker2 || AppRole.isPIC)
+          HomeTrackingDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
         ProfileView(controller: controller),

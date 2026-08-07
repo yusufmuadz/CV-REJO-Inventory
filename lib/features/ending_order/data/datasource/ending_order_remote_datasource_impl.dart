@@ -16,9 +16,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   EndingOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelBasic> postEndingOrder(
-    ParamsEndingOrder params,
-  ) async {
+  Future<ResponseModelBasic> postEndingOrder(ParamsEndingOrder params) async {
     try {
       String nameFile = 'file';
 
@@ -79,9 +77,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelBasic> pendingOrder(
-    ParamsEndingOrder params,
-  ) async {
+  Future<ResponseModelBasic> pendingOrder(ParamsEndingOrder params) async {
     try {
       final formData = FormData.fromMap({
         'invoice': params.invoice,
@@ -131,9 +127,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelBasic> pendingOrderDriver(
-    ParamsTroubleRIT params,
-  ) async {
+  Future<ResponseModelBasic> pendingOrderDriver(ParamsTroubleRIT params) async {
     try {
       final formData = FormData.fromMap({
         'invoice': params.invoicePO,
@@ -231,9 +225,7 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
   // Setelah Foto Armada & Foto Toko, Driver mengisikan data untuk pembayaran, ada foto semua barang yang sampai, foto serah terima dan jenis pembayaran
   @override
-  Future<ResponseModelBasic> arriveAllItem(
-    ParamsEndingOrder params,
-  ) async {
+  Future<ResponseModelBasic> arriveAllItem(ParamsEndingOrder params) async {
     try {
       String nameFile = 'file';
       final imagesAllItem = params.imagesDriver?.imagesAllItem ?? [];

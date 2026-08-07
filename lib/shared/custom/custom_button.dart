@@ -149,7 +149,7 @@ class CustomButton {
       //   activeIcon: Icon(Ionicons.document_text, color: Color(0xFF06823f)),
       //   label: 'Pesanan',
       // ),
-      if (AppRole.isChecker2)
+      if (AppRole.isChecker2 || AppRole.isPIC)
         BottomNavigationBarItem(
           icon: Icon(Ionicons.compass_outline, color: Color(0xFF8890a0)),
           activeIcon: Icon(Ionicons.compass, color: Color(0xFF06823f)),
