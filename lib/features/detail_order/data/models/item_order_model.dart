@@ -99,7 +99,8 @@ class ItemOrderModel {
       statusFinishScan: statusFinishScan ?? this.statusFinishScan,
       statusArrive: statusArrive ?? this.statusArrive,
       statusUnload: statusUnload ?? this.statusUnload,
-      statusConfirmDelivery: statusConfirmDelivery ?? this.statusConfirmDelivery,
+      statusConfirmDelivery:
+          statusConfirmDelivery ?? this.statusConfirmDelivery,
       isChecked: isChecked ?? this.isChecked,
       note: note ?? this.note,
       color: color ?? this.color,
@@ -111,21 +112,34 @@ class ItemOrderModel {
 
 class StatusItem {
   final String? status;
-  String? qty;
+  final String? qty;
+  final List<dynamic>? images;
 
-  StatusItem({this.status, this.qty});
+  StatusItem({this.status, this.qty, this.images});
 
   factory StatusItem.fromJson(Map<String, dynamic> json) {
-    return StatusItem(status: json['status'], qty: json['qty'] ?? '0');
+    return StatusItem(
+      status: json['status'],
+      qty: json['qty'] ?? '0',
+      images: json['foto'] is List
+          ? List<dynamic>.from(json['foto'])
+          : json['foto'],
+    );
   }
 }
 
 class StatusOrder {
   final String? status;
+  final List<dynamic>? images;
 
-  StatusOrder({this.status});
+  StatusOrder({this.status, this.images});
 
   factory StatusOrder.fromJson(Map<String, dynamic> json) {
-    return StatusOrder(status: json['status']);
+    return StatusOrder(
+      status: json['status'],
+      images: json['foto'] is List
+          ? List<dynamic>.from(json['foto'])
+          : json['foto'],
+    );
   }
 }

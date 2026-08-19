@@ -5,14 +5,24 @@ class ParamsTroubleRIT {
   final String? invoicePO;
   final String noRIT;
   final String tanggalRIT;
-  final EnumTroubleRIT troubleRIT;
+  final DateTime? date;
+  final String? titleTrouble;
+  final String? solution;
+  final String? nominal;
   final String desc;
   final String lat;
   final String long;
+  final String? status;
+  final EnumTroubleRIT troubleRIT;
   final List<XFile> images;
 
   ParamsTroubleRIT({
     this.invoicePO,
+    this.date,
+    this.titleTrouble,
+    this.solution,
+    this.nominal,
+    this.status,
     required this.noRIT,
     required this.tanggalRIT,
     required this.troubleRIT,

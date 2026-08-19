@@ -24,33 +24,31 @@ class CustomGridImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        itemCount: mediaFileList.length + (plusLength ?? 1),
-        itemBuilder: (context, index) {
-          if (index < mediaFileList.length) {
-            return CustomImage().displayImage(
-              isPreview: isPreview,
-              path: mediaFileList[index].path,
-              onTapRemove: () => onRemove(index),
-            );
-          } else if (mediaFileList.length < maxImage && !isPreview) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: CustomImage().addImage(onTap: onAdd),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
       ),
+      itemCount: mediaFileList.length + (plusLength ?? 1),
+      itemBuilder: (context, index) {
+        if (index < mediaFileList.length) {
+          return CustomImage().displayImage(
+            isPreview: isPreview,
+            path: mediaFileList[index].path,
+            onTapRemove: () => onRemove(index),
+          );
+        } else if (mediaFileList.length < maxImage && !isPreview) {
+          return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: CustomImage().addImage(onTap: onAdd),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

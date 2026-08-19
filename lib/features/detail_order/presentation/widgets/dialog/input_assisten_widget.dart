@@ -31,7 +31,6 @@ class InputAssistenWidget extends StatelessWidget {
     );
   }
 
-
   Widget _buildContent() {
     if (AppRole.isChecker2 &&
         controller.statusTransportationSelected.value == 'External') {
@@ -173,13 +172,17 @@ class InputAssistenWidget extends StatelessWidget {
     if (AppRole.isChecker2) {
       return _buildDropdown(
         title: 'Kendaraan',
+        isNotTransportation: false,
         selectedValue:
             controller.selectTransportation.value.isEmpty ||
                 controller.selectTransportation.value == '-'
             ? controller.transportations.first.jenisKendaraan ?? '-'
             : controller.selectTransportation.value,
         items: controller.transportations.map<DropdownMenuItem<String>>((item) {
-          return _buildMenuItem(item: item.jenisKendaraan ?? '-');
+          return _buildMenuItemTransportation(
+            item: item.jenisKendaraan ?? '-',
+            plat: item.idDeliveryMobil ?? '-',
+          );
         }).toList(),
         onChanged: (value) {
           controller.selectTransportation.value = value.toString();
@@ -197,11 +200,18 @@ class InputAssistenWidget extends StatelessWidget {
 
     return _buildDropdown(
       title: 'Kendaraan',
+      isNotTransportation: false,
       selectedValue: controller.selectTransportation.value.isEmpty
           ? controller.transportations.first.namaKendaraan ?? '-'
           : controller.selectTransportation.value,
       items: controller.transportations.map<DropdownMenuItem<String>>((item) {
-        return _buildMenuItem(item: item.namaKendaraan ?? '-');
+        if (AppRole.isPIC) {
+          return _buildMenuItem(item: item.namaKendaraan ?? '-');
+        }
+        return _buildMenuItemTransportation(
+          item: item.namaKendaraan ?? '-',
+          plat: item.idDeliveryMobil ?? '-',
+        );
       }).toList(),
       onChanged: (value) {
         controller.selectTransportation.value = value.toString();
@@ -225,9 +235,10 @@ class InputAssistenWidget extends StatelessWidget {
     required List<DropdownMenuItem<String>> items,
     required String selectedValue,
     Function(Object?)? onChanged,
+    bool? isNotTransportation = true,
   }) {
     return Container(
-      height: 45,
+      height: isNotTransportation == true ? 45 : 50,
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -235,7 +246,7 @@ class InputAssistenWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(7),
       ),
       child: DropdownButton(
-        isDense: true,
+        isDense: isNotTransportation ?? true,
         isExpanded: true,
         hint: Text('Pilih $title'),
         icon: const Icon(Icons.arrow_drop_down),
@@ -262,6 +273,37 @@ class InputAssistenWidget extends StatelessWidget {
     );
   }
 
+  DropdownMenuItem<String> _buildMenuItemTransportation({
+    required String item,
+    required String plat,
+  }) {
+    return DropdownMenuItem(
+      value: item,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            item.capitalizeFirst ?? '-',
+            style: const TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          Text(
+            'H 1028 KX',
+            style: const TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSelectStatusTransportation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,6 +319,10 @@ class InputAssistenWidget extends StatelessWidget {
             },
           ).toList(),
           onChanged: (value) {
+            if (value.toString() == 'External') {
+              controller.dialogService.showComingSoonSnackbar();
+              return;
+            }
             controller.statusTransportationSelected.value = value.toString();
           },
         ),

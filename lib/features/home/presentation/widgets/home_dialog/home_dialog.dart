@@ -42,6 +42,7 @@ class HomeDialog {
           ritController.addConstraint(
             title: titleProductController.text,
             nominal: nominalProductController.text,
+            solution: '',
             date: DateTime.now(),
             status: 'SELESAI',
             description: descProductController.text,

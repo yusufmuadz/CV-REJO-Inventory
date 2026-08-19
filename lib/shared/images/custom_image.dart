@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 
 import '../../core/services/dialog_service.dart';
+import '../../utils/loading_custom.dart';
 import 'camera_screen.dart';
 import '../../features/rit_information/presentation/controllers/rit_controller.dart';
 
@@ -134,6 +135,66 @@ class CustomImage {
     );
   }
 
+  Widget displayImageNetwork({
+    required String path,
+    bool isPreview = false,
+    bool isPadding = true,
+    Function()? onTapRemove,
+  }) {
+    return Stack(
+      children: [
+        InkWell(
+          onTap: isPreview ? () => previewImageNetwork(path: path) : null,
+          child: Padding(
+            padding: !isPreview && isPadding
+                ? const EdgeInsets.all(5.0)
+                : EdgeInsets.zero,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(7),
+              child: Image.network(
+                path,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                loadingBuilder: (context, child, event) {
+                  if (event == null) return child;
+                  return const LoadingView();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.red),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: const Center(child: Icon(Icons.error)),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        Visibility(
+          visible: !isPreview,
+          child: Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: onTapRemove,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 16, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildContentImage({
     int? maxImage,
     bool isShadow = true,
@@ -145,76 +206,92 @@ class CustomImage {
   }) {
     return _buildBoxStyle(
       isShadow: isShadow,
-      child: Obx(() {
-        if (isHistory && mediaFileList.isEmpty) {
-          return const Center(child: Text('Coming soon'));
-        }
+      child: _buildContent(
+        maxImage: maxImage,
+        readOnly: readOnly,
+        isPreview: isPreview,
+        isHistory: isHistory,
+        title: title,
+        mediaFileList: mediaFileList,
+      ),
+    );
+  }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(
-              visible: mediaFileList.isNotEmpty && !readOnly,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  children: [
-                    Expanded(child: CustomImage().buildTitle(title: title)),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      margin: const EdgeInsets.only(top: 10),
-                      child: InkWell(
-                        onTap: () => clearAllImages(mediaFileList),
-                        child: const Text(
-                          'Hapus Semua',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+  Widget _buildContent({
+    int? maxImage,
+    bool readOnly = false,
+    bool isPreview = false,
+    bool isHistory = false,
+    required String title,
+    required RxList<XFile> mediaFileList,
+  }) {
+    if (mediaFileList.isEmpty && readOnly && isPreview) {
+      return const Center(child: Text('Tidak ada gambar'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Visibility(
+          visible: mediaFileList.isNotEmpty && !readOnly,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              children: [
+                Expanded(child: CustomImage().buildTitle(title: title)),
+                Container(
+                  alignment: Alignment.centerRight,
+                  margin: const EdgeInsets.only(top: 10),
+                  child: InkWell(
+                    onTap: () => clearAllImages(mediaFileList),
+                    child: const Text(
+                      'Hapus Semua',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Visibility(
-              visible: mediaFileList.isNotEmpty,
-              child: CustomGridImage(
-                isPreview: isPreview,
-                maxImage: maxImage ?? 2,
-                mediaFileList: mediaFileList,
-                onAdd: () {
-                  if (readOnly) return;
-                  selectImage(null, mediaFileList);
-                },
-                onRemove: (int index) {
-                  if (readOnly) return;
-                  removeImage(index, null, mediaFileList);
-                },
-              ),
-            ),
-            Visibility(
-              visible: mediaFileList.isEmpty,
-              child: Row(
-                children: [
-                  addImage(
-                    onTap: readOnly
-                        ? null
-                        : () {
-                            selectImage(null, mediaFileList);
-                          },
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(child: CustomImage().buildTitle(title: title)),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        );
-      }),
+          ),
+        ),
+        Visibility(
+          visible: mediaFileList.isNotEmpty,
+          child: CustomGridImage(
+            isPreview: isPreview,
+            maxImage: maxImage ?? 2,
+            mediaFileList: mediaFileList,
+            onAdd: () {
+              if (readOnly) return;
+              selectImage(null, mediaFileList);
+            },
+            onRemove: (int index) {
+              if (readOnly) return;
+              removeImage(index, null, mediaFileList);
+            },
+          ),
+        ),
+        Visibility(
+          visible: mediaFileList.isEmpty,
+          child: Row(
+            children: [
+              addImage(
+                onTap: readOnly
+                    ? null
+                    : () {
+                        selectImage(null, mediaFileList);
+                      },
+              ),
+              const SizedBox(width: 10),
+              Expanded(child: CustomImage().buildTitle(title: title)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -248,6 +325,22 @@ class CustomImage {
       singleButton: true,
       titleButton1: 'Kembali',
       content: Image.file(File(path), fit: BoxFit.cover),
+    );
+  }
+
+  void previewImageNetwork({required String path}) {
+    final dialogService = Get.find<DialogService>();
+
+    dialogService.defaultDialog(
+      height: 0.35,
+      title: 'Preview Image',
+      singleButton: true,
+      titleButton1: 'Kembali',
+      content: Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      ),
     );
   }
 

@@ -9,7 +9,9 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../../utils/maps_utils.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
+import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
@@ -42,16 +44,13 @@ class RitController extends GetxController {
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final routeRit = ''.obs;
   final isRitToday = false.obs;
   final isAcceptRIT = false.obs;
 
   final buttonRIT = EnumButtonRIT.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
 
-  final isTakeOff = false.obs;
-  final isAccept = false.obs;
-  final isSave = false.obs;
-  final isArriveInput = false.obs;
   final isArrive = false.obs;
 
   final kmController = TextEditingController();
@@ -198,6 +197,7 @@ class RitController extends GetxController {
       isDistrictSelected.value = args['city'] ?? '';
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
+      routeRit.value = args['routeRit'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
     }
@@ -240,14 +240,17 @@ class RitController extends GetxController {
     GetStorage().write('colorRit', colorRit.value);
     GetStorage().write('tanggalRit', tanggalRit.value);
     GetStorage().write('isRitToday', isRitToday.value);
-    // isAcceptRIT.value = true;
+    GetStorage().write('routeRit', routeRit.value);
+    isAcceptRIT.value = true;
 
-    // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    buttonRIT.value = EnumButtonRIT.buttonTakeOff;
 
-    buttonRIT.value = EnumButtonRIT.buttonChangePO;
-    isAccept.value = !isAccept.value;
+    // buttonRIT.value = EnumButtonRIT.buttonChangePO;
+    // isAccept.value = !isAccept.value;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
+
+    debugPrint('buttonRIT: ${buttonRIT.value.name}');
   }
 
   void selectAll() {
@@ -437,7 +440,7 @@ class RitController extends GetxController {
 
     ///// ========== KE HALAMAN LIST RIT =========== /////
 
-    Get.offNamed(
+    Get.offAllNamed(
       Routes.LIST_ORDER,
       arguments: {
         'routeFrom': 'endingOrder',
@@ -553,14 +556,33 @@ class RitController extends GetxController {
     }
   }
 
+  //////// ====== LAUNCH MAPS ====== ////////
+
+  void onTapMaps({required OrderEntity order}) {
+    // final latitude = customer.latitude;
+    // final longitude = customer.longitude;
+    final address = order.address;
+    // final dropAddress = order.dropAddress;
+
+    MapsUtils.openMaps(
+      address: address,
+      dropAddress: address,
+      dialogService: dialogService,
+    );
+  }
+
   void changeRit(RitListEntity item) {
+    final route = item.route.isEmpty ? '-' : item.route.join(', ');
+
     isDistrictSelected.value = item.city;
     colorRit.value = item.color;
     tanggalRit.value = item.tanggalRit;
+    routeRit.value = route;
 
     GetStorage().write('city', item.city);
     GetStorage().write('colorRit', item.color);
     GetStorage().write('tanggalRit', item.tanggalRit);
+    GetStorage().write('routeRit', route);
 
     _getOrder(isRefresh: true);
 
@@ -638,13 +660,17 @@ class RitController extends GetxController {
     return false;
   }
 
-  void saveImageTransportation() async {
+  void saveImageTransportation({BuildContext? context}) async {
     try {
       if (mediaFileFrontTransport.value.path.isEmpty ||
           mediaFileBackTransport.value.path.isEmpty ||
           mediaFileLeftTransport.value.path.isEmpty ||
           mediaFileRightTransport.value.path.isEmpty) {
-        dialogService.showErrorSnackbar(title: 'Gagal!', 'Masukkan semua foto');
+        dialogService.showErrorDefaultSnackbar(
+          context: Get.context!,
+          title: 'Gagal!',
+          message: 'Masukkan semua foto',
+        );
         return;
       }
       // isLoading.value = true;

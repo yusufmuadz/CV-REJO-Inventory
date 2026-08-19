@@ -13,14 +13,32 @@ class DialogService {
   SnackbarController showSnackbar({
     required String title,
     required String message,
+    SnackPosition? snackPosition,
     Color? backgroundColor,
   }) {
     return Get.snackbar(
       title,
       message,
       colorText: Colors.white,
+      // snackPosition: snackPosition ?? SnackPosition.TOP,
       backgroundColor: backgroundColor,
       duration: const Duration(seconds: 2),
+    );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+  showDefaultSnackbar({
+    required BuildContext context,
+    required String title,
+    required String message,
+    Color? backgroundColor,
+  }) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: backgroundColor,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
@@ -192,6 +210,15 @@ class DialogService {
     );
   }
 
+  /// ===== SNACKBAR COMING SOON =====
+  SnackbarController showComingSoonSnackbar({String title = 'Warning!'}) {
+    return showSnackbar(
+      title: title,
+      message: 'Fitur sedang dalam pengembangan',
+      backgroundColor: Colors.red,
+    );
+  }
+
   /// ===== SUCCESS =====
   Future<void> showSuccess(String message) {
     return showDialogBox(title: 'Success', description: message);
@@ -206,12 +233,40 @@ class DialogService {
     );
   }
 
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+  showSuccessDefaultSnackbar({
+    required BuildContext context,
+    required String message,
+  }) {
+    return showDefaultSnackbar(
+      context: context,
+      title: 'Success',
+      message: message,
+      backgroundColor: Colors.green,
+    );
+  }
+
   /// ===== SNACKBAR ERROR =====
   SnackbarController showErrorSnackbar(
     String message, {
     String title = 'Error',
+
   }) {
     return showSnackbar(
+      title: title,
+      message: message,
+      backgroundColor: Colors.red,
+    );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+  showErrorDefaultSnackbar({
+    required BuildContext context,
+    String title = 'Error',
+    required String message,
+  }) {
+    return showDefaultSnackbar(
+      context: context,
       title: title,
       message: message,
       backgroundColor: Colors.red,

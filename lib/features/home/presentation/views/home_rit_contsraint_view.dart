@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
+import '../../../../utils/loading_custom.dart';
 import '../../../../utils/thousand_formatter.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../widgets/home_app_bar/app_bar_widget.dart';
@@ -27,8 +28,13 @@ class RitConstraint extends StatelessWidget {
         AppBarWidget().content(
           title: 'Kendala',
           onTap: () {
-            // controller.dialogService.showErrorSnackbar('Coming soon');
             _popupAddConstraint(isPreviewMode: false);
+            // controller.dialogService.showErrorSnackbar('Coming soon');
+            // controller.dialogService.showErrorDefaultSnackbar(
+            //   context: Get.context!,
+            //   title: 'Gagal!',
+            //   message: 'Masukkan semua foto',
+            // );
           },
         ),
         const SizedBox(height: 10),
@@ -54,6 +60,9 @@ class RitConstraint extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Obx(() {
+          if (ritController.isLoading.value) {
+            return const LoadingView();
+          }
           if (ritController.ritConstraints.isEmpty) {
             return Expanded(
               child: const Center(child: Text('Belum ada kendala')),
@@ -67,11 +76,16 @@ class RitConstraint extends StatelessWidget {
                 return InkWell(
                   onTap: () => _popupAddConstraint(
                     isPreviewMode: true,
-                    title: item.title,
-                    nominal: item.nominal,
+                    title: item.titleTrouble,
+                    nominal: item.nominal?.isEmpty ?? true
+                        ? '0'
+                        : formatNumber(int.parse(item.nominal ?? '0')),
                     date: DateFormat('dd MMMM yyyy, HH:mm').format(item.date),
                     desc: item.desc,
                     files: item.mediaFileList,
+                    solution: item.solution,
+                    rit: item.rit,
+                    routeRit: item.routeRit,
                   ),
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -91,7 +105,7 @@ class RitConstraint extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                item.title ?? '',
+                                item.titleTrouble ?? '',
                                 style: GoogleFonts.hankenGrotesk(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -173,6 +187,8 @@ class RitConstraint extends StatelessWidget {
     String? nominal,
     String? date,
     String? desc,
+    String? rit,
+    String? routeRit,
     List<XFile>? files,
     required isPreviewMode,
   }) {
@@ -184,12 +200,14 @@ class RitConstraint extends StatelessWidget {
     final mediaFileList = <XFile>[].obs;
 
     if (files != null && files.isNotEmpty) {
-      mediaFileList.value = mediaFileList;
+      mediaFileList.value = files;
     }
 
     date ??= DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now());
 
     Get.bottomSheet(
+      isDismissible: false,
+      enableDrag: false,
       SizedBox(
         height: Get.height * 0.9,
         child: Padding(
@@ -213,7 +231,10 @@ class RitConstraint extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () => Get.back(),
+                      onTap: () {
+                        if (ritController.isLoading.value) return;
+                        Get.back();
+                      },
                       child: Container(
                         height: 35,
                         width: 35,
@@ -233,49 +254,66 @@ class RitConstraint extends StatelessWidget {
               ),
               const Divider(height: 5, thickness: 1, color: Color(0xFFE2E8F8)),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(16, 13, 16, 16),
-                  child: Column(
-                    children: [
-                      _buildTitleField(
-                        isReadOnly: true,
-                        title: 'Tanggal laporan',
-                        controller: TextEditingController(text: date),
-                      ),
-                      const SizedBox(height: 15),
-                      _buildTitleField(
-                        isReadOnly: isPreviewMode,
-                        title: 'Kendala',
-                        controller: titleProductController,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildTitleField(
-                        isReadOnly: isPreviewMode,
-                        title: 'Solusi/Tindakan',
-                        controller: solutionController,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildTitleField(
-                        isReadOnly: isPreviewMode,
-                        title: 'Nominal',
-                        controller: nominalProductController,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildTitleField(
-                        isDesc: true,
-                        isReadOnly: isPreviewMode,
-                        title: 'Keterangan',
-                        controller: descProductController,
-                      ),
-                      const SizedBox(height: 15),
-                      CustomImage().buildContentImage(
-                        title: 'Bukti Kendala',
-                        readOnly: isPreviewMode,
-                        mediaFileList: mediaFileList,
-                      ),
-                    ],
-                  ),
-                ),
+                child: Obx(() {
+                  if (ritController.isLoading.value) {
+                    return const LoadingView();
+                  }
+
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(16, 13, 16, 16),
+                    child: Column(
+                      children: [
+                        _buildTitleField(
+                          isReadOnly: true,
+                          title: 'Tanggal laporan',
+                          controller: TextEditingController(text: date),
+                        ),
+                        const SizedBox(height: 15),
+                        _buildTitleField(
+                          isRit: true,
+                          isReadOnly: true,
+                          title: 'Nomor RIT',
+                          routeRit: routeRit ?? controller.routeRit.value,
+                          controller: TextEditingController(
+                            text: rit ?? controller.rit.value,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        _buildTitleField(
+                          isReadOnly: isPreviewMode,
+                          title: 'Kendala',
+                          controller: titleProductController,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildTitleField(
+                          isReadOnly: isPreviewMode,
+                          title: 'Solusi/Tindakan',
+                          controller: solutionController,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildTitleField(
+                          isReadOnly: isPreviewMode,
+                          title: 'Nominal',
+                          controller: nominalProductController,
+                        ),
+                        const SizedBox(height: 15),
+                        _buildTitleField(
+                          isDesc: true,
+                          isReadOnly: isPreviewMode,
+                          title: 'Keterangan',
+                          controller: descProductController,
+                        ),
+                        const SizedBox(height: 15),
+                        CustomImage().buildContentImage(
+                          title: 'Bukti Kendala',
+                          readOnly: isPreviewMode,
+                          isPreview: isPreviewMode,
+                          mediaFileList: mediaFileList,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               ),
               const Divider(height: 2, thickness: 1, color: Color(0xFFE2E8F8)),
               // const SizedBox(height: 15),
@@ -297,6 +335,7 @@ class RitConstraint extends StatelessWidget {
                           width: 1,
                         ),
                         onPressed: () {
+                          if (ritController.isLoading.value) return;
                           Get.back();
                         },
                       ),
@@ -311,9 +350,11 @@ class RitConstraint extends StatelessWidget {
                             minimumSize: Size.fromHeight(48),
                             color: const Color(0xFF0056D2),
                             onPressed: () {
+                              if (ritController.isLoading.value) return;
                               ritController.addConstraint(
                                 title: titleProductController.text,
                                 nominal: nominalProductController.text,
+                                solution: solutionController.text,
                                 date: DateTime.now(),
                                 status: 'SELESAI',
                                 description: descProductController.text,
@@ -344,7 +385,9 @@ class RitConstraint extends StatelessWidget {
     required bool isReadOnly,
     required String title,
     required TextEditingController controller,
+    String? routeRit,
     bool? isDesc = false,
+    bool? isRit = false,
   }) {
     String titleField = '$title*';
     String hintText = 'Masukkan $title';
@@ -366,37 +409,87 @@ class RitConstraint extends StatelessWidget {
       hintText = 'Masukkan keterangan kendala (opsional)';
     }
 
+    if (isRit == true) {
+      hintText = '-';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          titleField,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.38,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                titleField,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.38,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: isRit == true,
+              child: Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Rute',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.38,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 5),
-        SharedTextField(
-          isDense: isDesc,
-          readOnly: isReadOnly,
-          maxLines: isDesc == true ? 4 : null,
-          fillColor: fillColor,
-          controller: controller,
-          hintText: hintText,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          contentPadding: isDesc == true ? const EdgeInsets.all(12) : null,
-          validator: isDesc == true
-              ? null
-              : (String? p1) {
-                  if (p1 == null || p1.isEmpty) {
-                    return 'Masukkan $title terlebih dahulu';
-                  }
-                  return null;
-                },
+        Row(
+          children: [
+            Expanded(
+              child: SharedTextField(
+                isDense: isDesc,
+                readOnly: isReadOnly,
+                maxLines: isDesc == true ? 4 : null,
+                fillColor: fillColor,
+                controller: controller,
+                hintText: hintText,
+                keyboardType: keyboardType,
+                inputFormatters: inputFormatters,
+                contentPadding: isDesc == true
+                    ? const EdgeInsets.all(12)
+                    : null,
+                validator: isDesc == true
+                    ? null
+                    : (String? p1) {
+                        if (p1 == null || p1.isEmpty) {
+                          return 'Masukkan $title terlebih dahulu';
+                        }
+                        return null;
+                      },
+              ),
+            ),
+            Visibility(
+              visible: isRit == true,
+              child: Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: SharedTextField(
+                    isDense: false,
+                    readOnly: true,
+                    hintText: '-',
+                    fillColor: fillColor,
+                    controller: TextEditingController(text: routeRit ?? '-'),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

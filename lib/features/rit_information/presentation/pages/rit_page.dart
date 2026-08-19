@@ -82,8 +82,10 @@ class RitPage extends GetView<RitController> {
 
               if ((controller.isAcceptRIT.value && route == 'listOrder') ||
                   route == 'endingOrder') {
-                Get.delete<ListOrderController>(force: true);
-                Get.offNamed(Routes.HOME);
+                // if (Get.isRegistered<ListOrderController>()) {
+                //   Get.delete<ListOrderController>(force: true);
+                // }
+                Get.offAllNamed(Routes.HOME);
                 return;
               }
               Get.back();
@@ -130,13 +132,13 @@ class RitPage extends GetView<RitController> {
       return const LoadingView();
     }
 
-    if (buttonRIT == EnumButtonRIT.buttonChangePO) {
-      return _buildButtonChangePO();
-    }
+    // if (buttonRIT == EnumButtonRIT.buttonChangePO) {
+    //   return _buildButtonChangePO();
+    // }
 
-    if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
-      return _buildButtonConfirmChangePO();
-    }
+    // if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+    //   return _buildButtonConfirmChangePO();
+    // }
 
     if (buttonRIT == EnumButtonRIT.buttonArriveRIT) {
       return _buildShowButtonArrive();

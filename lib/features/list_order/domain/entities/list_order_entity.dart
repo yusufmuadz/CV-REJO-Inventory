@@ -22,6 +22,7 @@ class OrderEntity {
   String? maps;
   String? lat;
   String? long;
+  final String? route;
   RxInt number = 0.obs;
   bool isSelected;
 
@@ -41,6 +42,9 @@ class OrderEntity {
     this.address,
     this.noTelp,
     this.maps,
+    this.lat,
+    this.long,
+    this.route,
     required this.number,
     this.isSelected = false,
   });
@@ -69,8 +73,9 @@ class OrderEntity {
           : Status.fromJson(json['checker2']),
       loader: json['loader'] == null ? null : Status.fromJson(json['loader']),
       driver: json['driver'] == null ? null : Status.fromJson(json['driver']),
-      address: json['alamat'] ?? '-',
-      noTelp: json['no_telp'] ?? '-',
+      address: json['drop_address'] ?? '-',
+      noTelp: json['phone'] ?? '-',
+      route: json['route'] ?? json['router'] ?? '-',
       maps: json['maps'] ?? '-',
       isSelected: json['isSelected'] ?? false,
       number: 0.obs,

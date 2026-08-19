@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_info.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
 
 class ProfileAboutWidget extends StatelessWidget {
@@ -30,7 +31,7 @@ class ProfileAboutWidget extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.black),
               ),
               Text(
-                profileController.versionApp.value,
+                AppInfo.version,
                 style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],

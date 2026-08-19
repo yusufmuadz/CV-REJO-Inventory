@@ -7,6 +7,7 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
+import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import 'ending_order_remote_datasource.dart';
 
@@ -129,16 +130,34 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   @override
   Future<ResponseModelBasic> pendingOrderDriver(ParamsTroubleRIT params) async {
     try {
+      // final testDio = Dio(
+      //   BaseOptions(
+      //     baseUrl: ApiEndpoints.baseUrl,
+      //     connectTimeout: const Duration(seconds: 30),
+      //     receiveTimeout: const Duration(seconds: 30),
+      //     responseType: ResponseType.plain,
+      //   ),
+      // );
+
+      String jenisTrouble = 'satuan';
+
+      if (params.troubleRIT == EnumTroubleRIT.tolak) {
+        jenisTrouble = 'tolak';
+      }
+
       final formData = FormData.fromMap({
+        'no_rit': params.noRIT,
+        'tanggal_rit': params.tanggalRIT,
         'invoice': params.invoicePO,
         'desc': params.desc,
-        'jenis_trouble': params.troubleRIT,
+        'jenis_trouble': jenisTrouble,
         'lat': params.lat,
         'long': params.long,
-        'file1': await MultipartFile.fromFile(
-          params.images[0].path,
-          filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
-        ),
+        if (params.images.isNotEmpty)
+          'file1': await MultipartFile.fromFile(
+            params.images[0].path,
+            filename: 'file1.jpg', // ⬅️ selalu tambahkan filename
+          ),
         // Collection if: hanya masuk ke map kalau kondisi true
         if (params.images.length > 1)
           'file2': await MultipartFile.fromFile(
@@ -147,10 +166,48 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
           ),
       });
 
+      // final data = {
+      //   'invoice': params.invoicePO,
+      //   'desc': params.desc,
+      //   'jenis_trouble': jenisTrouble,
+      //   'lat': params.lat,
+      //   'long': params.long,
+      // };
+
+      // debugPrint('📤 TROUBLE FIELDS: ${formData.fields}');
+      // debugPrint('📤 TROUBLE FILES: ${formData.files.map((e) => e.key)}');
+
+      // debugPrint('========== TEST REQUEST ==========');
+
+      // for (final field in formData.fields) {
+      //   debugPrint('FIELD ${field.key} = ${field.value}');
+      // }
+
+      // for (final file in formData.files) {
+      //   debugPrint('FILE ${file.key} = ${file.value.filename}');
+      // }
+
+      // debugPrint('==================================');
+
+      // debugPrint('Data Pending Order Remote DataSource: ${formData.fields}');
+
       final response = await dioClient.post(
         ApiEndpoints.trouble,
         data: formData,
       );
+
+      debugPrint('========== RESPONSE ==========');
+      debugPrint('STATUS: ${response.statusCode}');
+      debugPrint('CONTENT TYPE: ${response.headers['content-type']}');
+      debugPrint('DATA: ${response.data}');
+      debugPrint('==============================');
+
+      // debugPrint('📥 STATUS: ${response.statusCode}');
+      // debugPrint('📥 DATA: ${response.data}');
+
+      // debugPrint(
+      //   'Response Pending Order Remote DataSource: ${response.statusCode}',
+      // );
 
       // debugPrint('Data Pending Order Remote DataSource: ${response.data}');
 
@@ -165,8 +222,37 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
         );
       }
     } on DioException catch (e) {
+      // debugPrint(
+      //   'Data Pending Order Remote DataSource Dio: ${e.response?.data}',
+      // );
+      debugPrint('========== RAW DIO ERROR ==========');
+      debugPrint('TYPE: ${e.type}');
+      debugPrint('MESSAGE: ${e.message}');
+      debugPrint('ERROR: ${e.error}');
+      debugPrint('STATUS: ${e.response?.statusCode}');
+      debugPrint('RESPONSE: ${e.response?.data}');
+      debugPrint('URI: ${e.requestOptions.uri}');
+      debugPrint('HEADERS: ${e.requestOptions.headers}');
+      debugPrint('===================================');
+
       throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Data Pending Order Remote DataSource Catch: $e');
+      debugPrint('❌ ERROR TYPE: ${e.runtimeType}');
+      debugPrint('❌ ERROR: $e');
+
+      if (e is DioException) {
+        debugPrint('❌ DIO TYPE: ${e.type}');
+        debugPrint('❌ DIO MESSAGE: ${e.message}');
+        debugPrint('❌ DIO ERROR: ${e.error}');
+        debugPrint('❌ DIO RESPONSE: ${e.response}');
+        debugPrint('❌ STATUS CODE: ${e.response?.statusCode}');
+        debugPrint('❌ RESPONSE DATA: ${e.response?.data}');
+        debugPrint('❌ RESPONSE HEADERS: ${e.response?.headers}');
+        debugPrint('❌ REQUEST OPTIONS: ${e.requestOptions.uri}');
+      }
+
+      debugPrint('❌ STACKTRACE: $stackTrace');
       throw ServerException(message: '$e');
     }
   }

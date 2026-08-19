@@ -7,6 +7,7 @@ import 'package:camera/camera.dart';
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/images/custom_image.dart';
+import '../../../domain/entities/detail_order_entity.dart';
 import '../../controllers/detail_order_controller.dart';
 import 'content_info_order_widget.dart';
 
@@ -43,7 +44,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         _buildBoxStyle(child: ContentInfoOrderWidget(controller: controller)),
         Visibility(
           visible: controller.isFromHistory.value,
-          child: _buildPreviewImage(),
+          child: _buildPreviewImage(detailOrder: controller.orderDetail.value),
         ),
       ],
     );
@@ -158,8 +159,9 @@ class ContentDetailOrderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPreviewImage() {
-    RxList<XFile> mediaFileList = <XFile>[].obs;
+  Widget _buildPreviewImage({required DetailOrderEntity detailOrder}) {
+    final orders = detailOrder.orderDetails ?? [];
+    final images = orders.expand((order) => order.pic.images ?? []).toList();
 
     return _buildBoxStyle(
       child: Column(
@@ -170,14 +172,42 @@ class ContentDetailOrderWidget extends StatelessWidget {
             icon: Icons.image_outlined,
           ),
           const SizedBox(height: 20),
-          CustomImage().buildContentImage(
-            readOnly: true,
-            isPreview: true,
-            isHistory: true,
-            maxImage: mediaFileList.length,
-            title: 'Semuanya',
-            mediaFileList: mediaFileList,
+          GridView.builder(
+            shrinkWrap: true,
+            itemCount: images.length,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              final image = images[index];
+
+              if (image == null) {
+                return Text('Gagal mengambil gambar');
+              }
+
+              return SizedBox(
+                height: 120,
+                width: 120,
+                child: CustomImage().displayImageNetwork(
+                  path: image,
+                  isPreview: true,
+                  isPadding: false,
+                ),
+              );
+            },
           ),
+          // CustomImage().buildContentImage(
+          //   readOnly: true,
+          //   isPreview: true,
+          //   isHistory: true,
+          //   maxImage: mediaFileList.length,
+          //   title: 'Semuanya',
+          //   mediaFileList: mediaFileList,
+          // ),
         ],
       ),
     );

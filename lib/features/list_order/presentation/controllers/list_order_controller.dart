@@ -54,6 +54,7 @@ class ListOrderController extends GetxController {
 
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final getRouteRit = ''.obs;
   final totalPendingPoRITCheck2 = '0'.obs;
 
   final reasonPendingRITController = TextEditingController();
@@ -103,6 +104,7 @@ class ListOrderController extends GetxController {
       isDistrictSelected.value = args['city'] ?? '';
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
+      getRouteRit.value = args['routeRit'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
 
       debugPrint('DATE RIT : ${tanggalRit.value}');
@@ -205,9 +207,13 @@ class ListOrderController extends GetxController {
     if (!isSelection.value && !AppRole.isDriver) return;
 
     if (index != -1) {
-      isSelected.value = listRit[index].city;
-      colorRit.value = listRit[index].color;
-      tanggalRit.value = listRit[index].tanggalRit;
+      final item = listRit[index];
+      final route = item.route.isEmpty ? '-' : listRit[index].route.join(', ');
+
+      isSelected.value = item.city;
+      colorRit.value = item.color;
+      tanggalRit.value = item.tanggalRit;
+      getRouteRit.value = route;
       totalPendingPoRITCheck2.value = pendingPoRIT;
     }
 
@@ -222,14 +228,21 @@ class ListOrderController extends GetxController {
     isSelection.value = !isSelection.value;
     colorRit.value = '';
     tanggalRit.value = '';
+    getRouteRit.value = '';
   }
 
-  void takeItRIT({String rit = '', String clrRit = '', String tglRit = ''}) {
+  void takeItRIT({
+    String rit = '',
+    String clrRit = '',
+    String tglRit = '',
+    String routeRit = '',
+  }) {
     pageIndex.value = 1;
     isSelection.value = false;
     isDistrictSelected.value = rit;
     colorRit.value = clrRit;
     tanggalRit.value = tglRit;
+    getRouteRit.value = routeRit;
 
     if (AppRole.isDriver) {
       Get.toNamed(
@@ -241,6 +254,7 @@ class ListOrderController extends GetxController {
           'tanggalRit': tglRit,
           'routeFrom': 'listOrder',
           'isRitToday': isRitToday.value,
+          'routeRit': routeRit,
         },
       );
       pageIndex.value = 0;
@@ -248,6 +262,7 @@ class ListOrderController extends GetxController {
       GetStorage().write('city', rit);
       GetStorage().write('colorRit', clrRit);
       GetStorage().write('tanggalRit', tglRit);
+      GetStorage().write('routeRit', routeRit);
       GetStorage().write('isRitToday', isRitToday.value);
       searchController.text = '';
       sortByNew.value = true;
@@ -265,6 +280,7 @@ class ListOrderController extends GetxController {
     String rit = '',
     String clrRit = '',
     String tglRit = '',
+    String routeRit = '',
     String invoicePO = '',
   }) async {
     if (isLoading.value) return;
@@ -293,13 +309,14 @@ class ListOrderController extends GetxController {
         if (!resultTakRIT) return;
       }
 
-      if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty) {
+      if (rit.isEmpty || clrRit.isEmpty || tglRit.isEmpty || routeRit.isEmpty) {
         rit = isSelected.value;
         clrRit = colorRit.value;
         tglRit = tanggalRit.value;
+        routeRit = getRouteRit.value;
       }
 
-      takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit);
+      takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit, routeRit: routeRit);
       return;
     }
   }

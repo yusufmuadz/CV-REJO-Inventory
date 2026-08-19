@@ -41,7 +41,8 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       }
     } on DioException catch (e) {
       throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Error: $e, StackTrace: $stackTrace');
       throw ServerException(message: '$e');
     }
   }

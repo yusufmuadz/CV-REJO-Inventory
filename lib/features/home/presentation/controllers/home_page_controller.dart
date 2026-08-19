@@ -10,6 +10,12 @@ class HomePageController extends GetxController {
 
   void changePage(int index) {
     try {
+      debugPrint(
+        'PageController: ${masterController.pageController.hashCode}, '
+        'hasClients=${masterController.pageController.hasClients}, '
+        'positions=${masterController.pageController.positions.length}',
+      );
+
       // pageController.jumpToPage(index);
       // _changeStatusBar(index);
       masterController.getCacheSize(index);
@@ -18,7 +24,9 @@ class HomePageController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Error button page => ${e.toString()}');
+      debugPrint('Error button page stack => ${stackTrace}');
       // masterController.dialogService.defaultDialog(title: 'ERROR', content: );
     }
   }

@@ -47,7 +47,7 @@ class ListOrderPage extends GetView<ListOrderController> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               if (controller.isRouteFrom.value == 'endingOrder') {
-                Get.offNamed(Routes.HOME);
+                Get.offAllNamed(Routes.HOME);
                 return;
               }
               Get.back();

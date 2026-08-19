@@ -10,6 +10,7 @@ class DetailOrderEntity {
   final String invoice;
   final String orderNo;
   final String suratJalan;
+  final String? route;
   final Courier courier;
   final CustomerModel customer;
   final DateModel date;
@@ -24,6 +25,7 @@ class DetailOrderEntity {
     required this.courier,
     required this.customer,
     required this.date,
+    this.route,
     this.assistant,
     this.driver,
     this.orderDetails,
@@ -37,6 +39,7 @@ class DetailOrderEntity {
       courier: Courier.fromJson(json['courier']),
       customer: CustomerModel.fromJson(json['customer']),
       date: DateModel.fromJson(json['date']),
+      route: json['route'],
       assistant: json['assistant'] != null
           ? AssistantModel.fromJson(json['assistant'])
           : null,

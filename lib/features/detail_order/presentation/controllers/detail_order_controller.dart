@@ -13,6 +13,7 @@ import '../../../../core/services/contact_service.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/images/camera_screen.dart';
+import '../../../../utils/maps_utils.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
@@ -45,6 +46,8 @@ class DetailOrderController extends GetxController {
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
   final statusDriver = ''.obs;
+
+  final doneByPO = ''.obs;
 
   final isSelect = false.obs;
   final isTakeIt = false.obs;
@@ -98,6 +101,7 @@ class DetailOrderController extends GetxController {
       statusLoader.value = args['status_loader'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
       statusPO.value = args['status_po'] ?? '';
+      doneByPO.value = args['done_by_po'] ?? '-';
       // statusDriver.value = 'completed';
 
       if (AppRole.isDriver) {
@@ -295,28 +299,13 @@ class DetailOrderController extends GetxController {
     final address = customer.address;
     final dropAddress = customer.dropAddress;
 
-    debugPrint('Latitude: $latitude, Longitude: $longitude');
-    // debugPrint('Alamat: $address');
-    debugPrint('Drop Alamat: $dropAddress');
-
-    if ((latitude == '-' || longitude == '-') && dropAddress.isEmpty) {
-      dialogService.showErrorSnackbar(
-        title: 'Gagal!',
-        'Koordinat/Alamat Kosong',
-      );
-      return;
-    }
-
-    String url = ApiEndpoints.maps('$latitude, $longitude');
-
-    if (latitude == '-' || longitude == '-') {
-      String encodedQuery = Uri.encodeComponent(dropAddress);
-      url = ApiEndpoints.maps(encodedQuery);
-    }
-
-    await canLaunchUrlString(url)
-        ? launchUrlString(url)
-        : debugPrint("Can't open Maps");
+    MapsUtils.openMaps(
+      latitude: latitude,
+      longitude: longitude,
+      address: address,
+      dropAddress: dropAddress,
+      dialogService: dialogService,
+    );
   }
 
   void onBack() {

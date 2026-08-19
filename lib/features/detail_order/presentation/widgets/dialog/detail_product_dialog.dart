@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
+import '../../../../../shared/images/custom_image.dart';
 import '../../../data/models/item_order_model.dart';
 import '../../controllers/detail_order_controller.dart';
 
@@ -17,6 +18,7 @@ class DetailProductDialog {
     final nameProduct = orderDetail?.item ?? '-';
     final qty = orderDetail?.qty ?? '-';
     final location = orderDetail?.locationRack ?? '-';
+    final images = orderDetail?.pic.images ?? [];
     final color = orderDetail?.color ?? '-';
 
     controller.dialogService.defaultDialog(
@@ -38,6 +40,7 @@ class DetailProductDialog {
       ),
       content: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Divider(thickness: 1, height: 0, color: Color(0xFFE7EEFE)),
             Visibility(
@@ -80,9 +83,57 @@ class DetailProductDialog {
               icon: Icons.palette_outlined,
               isBox: !AppRole.isPIC,
             ),
+
+            Visibility(
+              visible: AppRole.isPIC && controller.isFromHistory.value,
+              child: _buildImageProduct(images: images),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildImageProduct({required List<dynamic> images}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildBoxIconText(
+          title: 'Foto Produk',
+          value: '-',
+          icon: Icons.photo_camera_outlined,
+          isImage: true,
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          itemCount: images.length,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemBuilder: (context, index) {
+            final image = images[index];
+
+            if (image == null) {
+              return Text('Gagal mengambil gambar');
+            }
+
+            return SizedBox(
+              height: 120,
+              width: 120,
+              child: CustomImage().displayImageNetwork(
+                path: image,
+                isPreview: true,
+                isPadding: false,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -91,6 +142,7 @@ class DetailProductDialog {
     required String value,
     required IconData icon,
     bool isBox = false,
+    bool isImage = false,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -133,14 +185,17 @@ class DetailProductDialog {
                     color: const Color(0xFF524439),
                   ),
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-                    color: const Color(0xFF151C27),
+                Visibility(visible: !isImage, child: const SizedBox(height: 3)),
+                Visibility(
+                  visible: !isImage,
+                  child: Text(
+                    value,
+                    style: TextStyles.basicTextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                      color: const Color(0xFF151C27),
+                    ),
                   ),
                 ),
               ],

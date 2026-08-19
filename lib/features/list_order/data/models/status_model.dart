@@ -4,7 +4,8 @@ class Status {
   final String? desc;
   final bool? scanDriver;
   final bool? arriveDriver;
-  final dynamic by;
+  final bool? statusDelivCancel;
+  final String? by;
 
   Status({
     required this.status,
@@ -13,6 +14,7 @@ class Status {
     required this.by,
     required this.scanDriver,
     this.arriveDriver,
+    this.statusDelivCancel,
   });
 
   factory Status.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Status {
       by: json['by'],
       scanDriver: json['statusscandriver'],
       arriveDriver: json['statusacceptedbycustomer'],
+      statusDelivCancel: json['statusdelivcancel'],
     );
   }
 }

@@ -31,6 +31,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final rit = ''.obs;
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
+  final routeRit = ''.obs;
   final isRitToday = false.obs;
 
   final tabIndex = 0.obs;
@@ -55,6 +56,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homePageController = Get.find<HomePageController>();
     homeProfileController = Get.find<HomeProfileController>();
     homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
+
+    debugPrint('HOME CONTROLLER INIT: ${hashCode}');
   }
 
   @override
@@ -83,6 +86,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     super.onClose();
     pageController.dispose();
     isLoading.value = false;
+
+    debugPrint('HOME CONTROLLER CLOSE: ${hashCode}');
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -92,6 +97,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   }
 
   void _initializeAllData() {
+    getLocalRit();
     homeTransactionsController.getHomeData();
     // homeTransactionsController.getOrder(isRefresh: true);
   }
@@ -100,7 +106,13 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     rit.value = GetStorage().read('city') ?? '';
     colorRit.value = GetStorage().read('colorRit') ?? '';
     tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
+    routeRit.value = GetStorage().read('routeRit') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
+
+    // debugPrint('RIT Storage: $rit');
+    // debugPrint('RIT Storage: $colorRit');
+    // debugPrint('RIT Storage: $tanggalRit');
+    // debugPrint('RIT Storage: $routeRit');
   }
 
   void getCacheSize(int index) async {
@@ -124,7 +136,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
   void routeTo({bool ritToday = true}) {
     final invoice = GetStorage().read('noInvoice') ?? '';
-    getLocalRit();
+    // getLocalRit();
 
     if (AppRole.isDriver && rit.value.isNotEmpty && invoice.isNotEmpty) {
       final statusDriver = GetStorage().read('status_driver') ?? '';
@@ -145,6 +157,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       GetStorage().remove('city');
       GetStorage().remove('colorRit');
       GetStorage().remove('tanggalRit');
+      GetStorage().remove('routeRit');
       GetStorage().remove('isAcceptRIT');
 
       GetStorage().write('isRitToday', ritToday);
@@ -152,6 +165,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       rit.value = '';
       colorRit.value = '';
       tanggalRit.value = '';
+      routeRit.value = '';
       isRitToday.value = ritToday;
 
       debugPrint('CHANGE IS RIT TODAY : ${isRitToday.value}');
@@ -169,6 +183,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
+          'routeRit': routeRit.value,
           'routeFrom': 'home',
           'isRitToday': ritToday,
         },
@@ -184,6 +199,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'city': rit.value,
           'colorRit': colorRit.value,
           'tanggalRit': tanggalRit.value,
+          'routeRit': routeRit.value,
           'isRitToday': ritToday,
         },
       );

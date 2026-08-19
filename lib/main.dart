@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import 'core/constants/app_info.dart';
 import 'core/initializer/app_initializer.dart';
 import 'core/services/navigation_service.dart';
+import 'core/widgets/watermark.dart';
+import 'core/widgets/watermark_overlay.dart';
 import 'routes/app_pages.dart';
 
 void main() async {
@@ -50,7 +53,12 @@ class MyApp extends StatelessWidget {
             child: Column(
               // fit: StackFit.expand,
               children: [
-                Expanded(child: child!),
+                Expanded(
+                  child: WatermarkOverlay(
+                    version: AppInfo.versionLabel,
+                    child: child!,
+                  ),
+                ),
                 if (!keyboardOpen) ConnectionBanner(),
               ],
             ),

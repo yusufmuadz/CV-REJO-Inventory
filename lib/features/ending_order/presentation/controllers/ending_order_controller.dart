@@ -322,9 +322,14 @@ class EndingOrderController extends GetxController {
     if (isLoading.value) return;
 
     if (_emptyDriverPO()) {
-      dialogService.showErrorSnackbar(
+      // dialogService.showErrorSnackbar(
+      //   title: 'Gagal!',
+      //   'Lengkapi data terlebih dahulu',
+      // );
+      dialogService.showErrorDefaultSnackbar(
+        context: Get.context!,
         title: 'Gagal!',
-        'Lengkapi data terlebih dahulu',
+        message: 'Lengkapi data terlebih dahulu',
       );
       return;
     }
@@ -420,8 +425,7 @@ class EndingOrderController extends GetxController {
       if (Get.isDialogOpen == true) Get.back();
       // loadState.value = LoadState.error;
       dialogService.showError('Failed', e.toString());
-    }
-    finally {
+    } finally {
       isLoading.value = false;
     }
   }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide Response;
+import 'package:get/get.dart' hide Response, FormData;
 import '../services/storage_service.dart';
 import 'base_response.dart';
 // import 'connectivity_network.dart';
@@ -158,7 +158,11 @@ class DioClient {
   }
 
   // Generic POST
-  Future<Response> post(String path, {dynamic data, String? contentType}) async {
+  Future<Response> post(
+    String path, {
+    dynamic data,
+    String? contentType,
+  }) async {
     try {
       return await dio.post(
         path,
@@ -174,7 +178,19 @@ class DioClient {
         ),
       );
     } on DioException catch (e) {
-      throw e.error ?? e;
+      debugPrint('========== DIO ERROR ==========');
+      debugPrint('TYPE       : ${e.type}');
+      debugPrint('MESSAGE    : ${e.message}');
+      debugPrint('ERROR      : ${e.error}');
+      debugPrint('STATUS     : ${e.response?.statusCode}');
+      debugPrint('RESPONSE   : ${e.response?.data}');
+      debugPrint('URL        : ${e.requestOptions.uri}');
+      debugPrint('METHOD     : ${e.requestOptions.method}');
+      debugPrint('HEADERS    : ${e.requestOptions.headers}');
+      debugPrint('CONTENT    : ${e.requestOptions.contentType}');
+      debugPrint('================================');
+
+      throw e.error ?? e; // rethrow;
     }
   }
 
@@ -193,6 +209,87 @@ class DioClient {
       return await dio.delete(path);
     } on DioException catch (e) {
       throw e.error ?? e;
+    }
+  }
+
+  /// ================= TEST DIO =================
+  ///
+  /// Digunakan untuk debugging request tanpa interceptor.
+  /// Berguna untuk membandingkan perilaku Dio murni
+  /// dengan DioClient yang menggunakan interceptor.
+  Future<Response> testPost(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? headers,
+    ResponseType responseType = ResponseType.plain,
+  }) async {
+    final testDio = Dio(
+      BaseOptions(
+        baseUrl: ApiEndpoints.baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        responseType: responseType,
+      ),
+    );
+
+    try {
+      debugPrint('========== TEST DIO REQUEST ==========');
+      debugPrint('URL: ${testDio.options.baseUrl}$path');
+
+      if (data is FormData) {
+        debugPrint('----- FORM FIELDS -----');
+
+        for (final field in data.fields) {
+          debugPrint('FIELD ${field.key} = ${field.value}');
+        }
+
+        debugPrint('----- FORM FILES -----');
+
+        for (final file in data.files) {
+          debugPrint('FILE ${file.key} = ${file.value.filename}');
+        }
+      } else {
+        debugPrint('DATA: $data');
+      }
+
+      debugPrint('HEADERS: $headers');
+      debugPrint('======================================');
+
+      final response = await testDio.post(
+        path,
+        data: data,
+        options: Options(headers: headers, responseType: responseType),
+      );
+
+      debugPrint('========== TEST DIO RESPONSE ==========');
+      debugPrint('STATUS: ${response.statusCode}');
+      debugPrint('CONTENT TYPE: ${response.headers['content-type']}');
+      debugPrint('DATA: ${response.data}');
+      debugPrint('=======================================');
+
+      return response;
+    } on DioException catch (e) {
+      debugPrint('========== TEST DIO ERROR =============');
+      debugPrint('TYPE: ${e.type}');
+      debugPrint('MESSAGE: ${e.message}');
+      debugPrint('ERROR: ${e.error}');
+      debugPrint('STATUS: ${e.response?.statusCode}');
+      debugPrint('RESPONSE: ${e.response?.data}');
+      debugPrint('URI: ${e.requestOptions.uri}');
+      debugPrint('METHOD: ${e.requestOptions.method}');
+      debugPrint('HEADERS: ${e.requestOptions.headers}');
+      debugPrint('CONTENT TYPE: ${e.requestOptions.contentType}');
+      debugPrint('=======================================');
+
+      rethrow;
+    } catch (e, stackTrace) {
+      debugPrint('========== TEST DIO UNKNOWN ===========');
+      debugPrint('ERROR: $e');
+      debugPrint('TYPE: ${e.runtimeType}');
+      debugPrint('STACKTRACE: $stackTrace');
+      debugPrint('=======================================');
+
+      rethrow;
     }
   }
 }

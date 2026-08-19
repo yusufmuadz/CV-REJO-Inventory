@@ -7,7 +7,7 @@ import '../../../profile/presentation/views/profile_view.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
 import '../views/home_view.dart';
-import '../views/rit_contsraint_view.dart';
+import '../views/home_rit_contsraint_view.dart';
 import '../views/take_it_order_view.dart';
 import '../views/home_tracking_driver_view.dart';
 
@@ -16,6 +16,13 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    // debugPrint(
+    //   'BUILD HOME PAGE: '
+    //   'page=${identityHashCode(this)}, '
+    //   'controller=${controller.hashCode}, '
+    //   'pageController=${controller.pageController.hashCode}',
+    // );
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) =>
@@ -35,6 +42,13 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget _buildPage() {
+    // debugPrint(
+    //   'CREATE PAGE VIEW: '
+    //   'home=${identityHashCode(this)}, '
+    //   'controller=${controller.hashCode}, '
+    //   'pageController=${controller.pageController.hashCode}',
+    // );
+
     return PageView(
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
@@ -42,7 +56,7 @@ class HomePage extends GetView<HomeController> {
       children: [
         HomeView(controller: controller),
         // ListOrderPage(),
-        if (AppRole.isChecker2 || AppRole.isPIC)
+        if (AppRole.isChecker2)
           HomeTrackingDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),

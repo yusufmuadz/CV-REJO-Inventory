@@ -2,6 +2,7 @@ import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/services/cache_service.dart';
+import '../../../ending_order/domain/usecases/ending_order_usecase.dart';
 import '../../../list_order/domain/usecases/list_order_usecase.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/home_page_controller.dart';
@@ -28,7 +29,10 @@ class HomeBinding extends Bindings {
     );
 
     Get.lazyPut<HomeRITController>(
-      () => HomeRITController(homeUseCase: Get.find<GetHomeUseCase>()),
+      () => HomeRITController(
+        homeUseCase: Get.find<GetHomeUseCase>(),
+        endingOrderUseCase: Get.find<EndingOrderUseCase>(),
+      ),
     );
 
     Get.lazyPut<HomeTrackingDriverController>(

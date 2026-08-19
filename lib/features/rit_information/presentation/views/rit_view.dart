@@ -182,6 +182,7 @@ class RitView extends StatelessWidget {
           // ),
           Expanded(
             child: CustomCardList(
+              onTapMaps: () => controller.onTapMaps(order: transaction),
               onTap: () {
                 final arriveDriver = transaction.driver?.arriveDriver;
 

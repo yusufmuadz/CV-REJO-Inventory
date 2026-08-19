@@ -85,7 +85,7 @@ class TakeItOrderView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.title ?? '',
+                          item.titleTrouble ?? '',
                           style: TextStyles.basicTextStyle(
                             fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
                             fontSize: 16,

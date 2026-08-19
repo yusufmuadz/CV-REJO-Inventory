@@ -19,6 +19,8 @@ class ContentInfoCustomerWidget extends StatelessWidget {
     final address = controller.orderDetail.value.customer.address;
     final dropAddress = controller.orderDetail.value.customer.dropAddress;
     final isStatusDriver = controller.statusDriver.value == 'completed';
+    final doneByPO = controller.doneByPO.value;
+    final route = controller.orderDetail.value.route;
 
     final isDriver = AppRole.isDriver && isStatusDriver;
 
@@ -28,9 +30,11 @@ class ContentInfoCustomerWidget extends StatelessWidget {
         Visibility(
           visible: controller.isFromHistory.value,
           child: _buildInfoContent(
-            title: 'Penanggung Jawab PO',
-            value: 'PENANGGUNG JAWAB PO',
-            icon: Icons.groups_outlined,
+            title: AppRole.isPIC ? 'Penanggung Jawab' : 'Rute',
+            value: AppRole.isPIC ? doneByPO : route ?? '-',
+            icon: AppRole.isPIC
+                ? Icons.groups_outlined
+                : Icons.directions_bus_outlined,
           ),
         ),
         _buildInfoContent(

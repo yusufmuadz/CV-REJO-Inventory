@@ -16,6 +16,7 @@ class CustomCardList extends StatelessWidget {
   final String? color;
   final bool isHistory;
   final EnumButtonRIT? buttonRIT;
+  final Function()? onTapMaps;
 
   const CustomCardList({
     super.key,
@@ -27,6 +28,7 @@ class CustomCardList extends StatelessWidget {
     this.color,
     this.isHistory = false,
     this.buttonRIT,
+    this.onTapMaps,
   });
 
   @override
@@ -134,12 +136,25 @@ class CustomCardList extends StatelessWidget {
                         value: transaction.district,
                         address: transaction.address,
                         isDistrict: true,
+                        isIcon: isHistory,
+                      ),
+                      Visibility(
+                        visible: isHistory,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          child: _buildInfoIconText(
+                            image: Assets.icons.dateOrder.path,
+                            value: transaction.route ?? '-',
+                            isIcon: true,
+                          ),
+                        ),
                       ),
                       Visibility(
                         visible: AppRole.isDriver,
                         child: Align(
                           alignment: Alignment.bottomRight,
                           child: InkWell(
+                            onTap: onTapMaps,
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
                               margin: const EdgeInsets.only(top: 10, left: 10),
@@ -303,6 +318,8 @@ class CustomCardList extends StatelessWidget {
                 statusDriver: transaction.driver?.status ?? '',
                 statusScanDriver: transaction.driver?.scanDriver ?? false,
                 statusArriveDriver: transaction.driver?.arriveDriver ?? false,
+                statusDelivCancel:
+                    transaction.driver?.statusDelivCancel ?? false,
               ),
             ),
             child: Text(
@@ -313,6 +330,8 @@ class CustomCardList extends StatelessWidget {
                 statusDriver: transaction.driver?.status ?? '',
                 statusScanDriver: transaction.driver?.scanDriver ?? false,
                 statusArriveDriver: transaction.driver?.arriveDriver ?? false,
+                statusDelivCancel:
+                    transaction.driver?.statusDelivCancel ?? false,
               ),
               style: _textStyle(color: Colors.white),
             ),
@@ -327,6 +346,7 @@ class CustomCardList extends StatelessWidget {
     required String value,
     String? address,
     bool isDistrict = false,
+    bool isIcon = false,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,7 +376,7 @@ class CustomCardList extends StatelessWidget {
             ],
           ),
         ),
-        Visibility(visible: isDistrict, child: const SizedBox(width: 40)),
+        Visibility(visible: isIcon, child: const SizedBox(width: 40)),
       ],
     );
   }

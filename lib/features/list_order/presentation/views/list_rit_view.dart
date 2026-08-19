@@ -225,7 +225,7 @@ class ListRitView extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Visibility(
-                        visible: AppRole.isChecker2,
+                        visible: AppRole.isPIC || AppRole.isChecker2,
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: InkWell(

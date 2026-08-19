@@ -52,7 +52,7 @@ class HomeTransactionsController extends GetxController {
   }
 
   Future<void> getOrder({bool isRefresh = false}) async {
-    masterController.getLocalRit();
+    // masterController.getLocalRit();
 
     if (masterController.rit.isEmpty) {
       masterController.isLoading.value = false;

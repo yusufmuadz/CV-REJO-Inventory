@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../../../../core/constants/app_info.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/services/contact_service.dart';
 import '../../../../core/theme/text_styles.dart';
@@ -117,7 +118,7 @@ class ProfileView extends StatelessWidget {
                         icon: Icons.inventory_2_outlined,
                         colorBgIcon: const Color(0xFFE8F7F0),
                         colorIcon: const Color(0xFF28A745),
-                        value: profileController.versionApp.value,
+                        value: AppInfo.version,
                       ),
                       Container(
                         height: 32,
@@ -131,7 +132,7 @@ class ProfileView extends StatelessWidget {
                         icon: Icons.calendar_today_outlined,
                         colorBgIcon: const Color(0xFFEFF6FF),
                         colorIcon: const Color(0xFF2563EB),
-                        value: profileController.updateVersionApp.value,
+                        value: AppInfo.updatedAt,
                       ),
                     ],
                   ),
