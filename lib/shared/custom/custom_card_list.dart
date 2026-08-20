@@ -369,7 +369,7 @@ class CustomCardList extends StatelessWidget {
               Visibility(
                 visible: AppRole.isDriver && isDistrict,
                 child: Text(
-                  address ?? '-',
+                  address?.isEmpty == true ? '-' : address ?? '-',
                   style: _textStyle(fontSize: 12, fontWeight: FontWeight.w300),
                 ),
               ),

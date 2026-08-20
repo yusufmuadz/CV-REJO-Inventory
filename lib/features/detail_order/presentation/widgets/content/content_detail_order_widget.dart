@@ -161,7 +161,29 @@ class ContentDetailOrderWidget extends StatelessWidget {
 
   Widget _buildPreviewImage({required DetailOrderEntity detailOrder}) {
     final orders = detailOrder.orderDetails ?? [];
-    final images = orders.expand((order) => order.pic.images ?? []).toList();
+    List<dynamic> images = orders
+        .expand((order) => order.pic.images ?? [])
+        .toList();
+
+    if (AppRole.isChecker1) {
+      images = orders.expand((order) => order.checker1.images ?? []).toList();
+    }
+
+    if (AppRole.isChecker2) {
+      final loaderImages = orders
+          .expand((order) => order.loader.images ?? [])
+          .toList();
+
+      if (loaderImages.isNotEmpty) {
+        images = loaderImages;
+      } else {
+        images = orders.expand((order) => order.checker2.images ?? []).toList();
+      }
+    }
+
+    if (AppRole.isDriver) {
+      images = orders.expand((order) => order.driver.images ?? []).toList();
+    }
 
     return _buildBoxStyle(
       child: Column(
@@ -172,33 +194,57 @@ class ContentDetailOrderWidget extends StatelessWidget {
             icon: Icons.image_outlined,
           ),
           const SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            itemCount: images.length,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+          Visibility(
+            visible: images.isEmpty,
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Color(0xFFD7C3B4)),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: Text('Tidak ada', textAlign: TextAlign.center),
             ),
-            itemBuilder: (context, index) {
-              final image = images[index];
-
-              if (image == null) {
-                return Text('Gagal mengambil gambar');
-              }
-
-              return SizedBox(
-                height: 120,
-                width: 120,
-                child: CustomImage().displayImageNetwork(
-                  path: image,
-                  isPreview: true,
-                  isPadding: false,
-                ),
-              );
-            },
+          ),
+          Visibility(
+            visible: images.isNotEmpty,
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: images.length,
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) {
+                final image = images[index];
+            
+                if (image == null) {
+                  return Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Color(0xFFD7C3B4)),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    child: Text('Gambar tidak tersedia', textAlign: TextAlign.center),
+                  );
+                }
+            
+                return SizedBox(
+                  height: 120,
+                  width: 120,
+                  child: CustomImage().displayImageNetwork(
+                    path: image,
+                    isPreview: true,
+                    isPadding: false,
+                  ),
+                );
+              },
+            ),
           ),
           // CustomImage().buildContentImage(
           //   readOnly: true,

@@ -18,8 +18,26 @@ class DetailProductDialog {
     final nameProduct = orderDetail?.item ?? '-';
     final qty = orderDetail?.qty ?? '-';
     final location = orderDetail?.locationRack ?? '-';
-    final images = orderDetail?.pic.images ?? [];
+    List<dynamic> images = orderDetail?.pic.images ?? [];
     final color = orderDetail?.color ?? '-';
+
+    if (AppRole.isChecker1) {
+      images = orderDetail?.checker1.images ?? [];
+    }
+
+    if (AppRole.isChecker2) {
+      final loaderImages = orderDetail?.loader.images ?? [];
+
+      if (loaderImages.isNotEmpty) {
+        images = loaderImages;
+      } else {
+        images = orderDetail?.checker2.images ?? [];
+      }
+    }
+
+    if (AppRole.isDriver) {
+      images = orderDetail?.driver.images ?? [];
+    }
 
     controller.dialogService.defaultDialog(
       height: 0.50,
@@ -85,7 +103,7 @@ class DetailProductDialog {
             ),
 
             Visibility(
-              visible: AppRole.isPIC && controller.isFromHistory.value,
+              visible: controller.isFromHistory.value,
               child: _buildImageProduct(images: images),
             ),
           ],
@@ -105,33 +123,58 @@ class DetailProductDialog {
           icon: Icons.photo_camera_outlined,
           isImage: true,
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          itemCount: images.length,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
+        Visibility(
+          visible: images.isEmpty,
+          child: Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Color(0xFFD7C3B4)),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            child: Text('Tidak ada', textAlign: TextAlign.center),
           ),
-          itemBuilder: (context, index) {
-            final image = images[index];
+        ),
+        Visibility(
+          visible: images.isNotEmpty,
+          child: GridView.builder(
+            shrinkWrap: true,
+            itemCount: images.length,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              final image = images[index];
 
-            if (image == null) {
-              return Text('Gagal mengambil gambar');
-            }
+              if (image == null) {
+                return Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Color(0xFFD7C3B4)),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  child: Text('Gambar tidak tersedia', textAlign: TextAlign.center),
+                );
+              }
 
-            return SizedBox(
-              height: 120,
-              width: 120,
-              child: CustomImage().displayImageNetwork(
-                path: image,
-                isPreview: true,
-                isPadding: false,
-              ),
-            );
-          },
+              return SizedBox(
+                height: 120,
+                width: 120,
+                child: CustomImage().displayImageNetwork(
+                  path: image,
+                  isPreview: true,
+                  isPadding: false,
+                ),
+              );
+            },
+          ),
         ),
       ],
     );

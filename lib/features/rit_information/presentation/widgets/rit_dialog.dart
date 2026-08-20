@@ -406,6 +406,7 @@ class RitDialog {
                                   pic: StatusItem(),
                                   checker1: StatusItem(),
                                   checker2: StatusOrder(),
+                                  loader: StatusOrder(),
                                   driver: StatusOrder(),
                                   statusFinishScan: false,
                                   statusArrive: false,

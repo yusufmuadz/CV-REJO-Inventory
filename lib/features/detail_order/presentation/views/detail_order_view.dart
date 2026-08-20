@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';

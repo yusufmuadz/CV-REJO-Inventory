@@ -8,6 +8,7 @@ class ItemOrderModel {
   final StatusItem pic;
   final StatusItem checker1;
   final StatusOrder checker2;
+  final StatusOrder loader;
   final StatusOrder driver;
   final bool statusChecker2;
   final bool statusDriver;
@@ -30,6 +31,7 @@ class ItemOrderModel {
     required this.pic,
     required this.checker1,
     required this.checker2,
+    required this.loader,
     required this.driver,
     required this.statusFinishScan,
     required this.statusArrive,
@@ -54,6 +56,7 @@ class ItemOrderModel {
       pic: StatusItem.fromJson(json['pic']),
       checker1: StatusItem.fromJson(json['checker1']),
       checker2: StatusOrder.fromJson(json['checker2']),
+      loader: StatusOrder.fromJson(json['loader']),
       driver: StatusOrder.fromJson(json['driver']),
       statusChecker2: json['status_checker2'] ?? false,
       statusDriver: json['status_deliveryscan'] ?? false,
@@ -73,6 +76,7 @@ class ItemOrderModel {
     StatusItem? pic,
     StatusItem? checker1,
     StatusOrder? checker2,
+    StatusOrder? loader,
     StatusOrder? driver,
     bool? statusChecker2,
     bool? statusDriver,
@@ -93,6 +97,7 @@ class ItemOrderModel {
       pic: pic ?? this.pic,
       checker1: checker1 ?? this.checker1,
       checker2: checker2 ?? this.checker2,
+      loader: loader ?? this.loader,
       driver: driver ?? this.driver,
       statusChecker2: statusChecker2 ?? this.statusChecker2,
       statusDriver: statusDriver ?? this.statusDriver,
