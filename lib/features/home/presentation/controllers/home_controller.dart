@@ -135,6 +135,16 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   }
 
   void routeTo({bool ritToday = true}) {
+    // Get.toNamed(
+    //   Routes.DETAIL_ORDER,
+    //   arguments: {
+    //     'invoice': '01SL20260800566',
+    //     'routeFrom': 'listOrder',
+    //     'take_it_order': true,
+    //     'status_checker2': 'completed',
+    //     'status_po': 'ongoing',
+    //   },
+    // );
     final invoice = GetStorage().read('noInvoice') ?? '';
     // getLocalRit();
 

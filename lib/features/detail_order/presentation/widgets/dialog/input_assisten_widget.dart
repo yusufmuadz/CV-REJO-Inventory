@@ -292,7 +292,7 @@ class InputAssistenWidget extends StatelessWidget {
             ),
           ),
           Text(
-            'H 1028 KX',
+            plat,
             style: const TextStyle(
               fontSize: 10.0,
               fontWeight: FontWeight.w400,

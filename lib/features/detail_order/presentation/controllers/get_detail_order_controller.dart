@@ -18,7 +18,7 @@ class GetDetailOrderController extends GetxController {
     masterCtrlr.isLoading.value = true;
 
     try {
-      // final result = await detailOrderUseCase.call('01SL20200500011');
+      // final result = await detailOrderUseCase.call('01SL20260800566');
       final result = await detailOrderUseCase.call(masterCtrlr.noInvoice.value);
 
       switch (result) {

@@ -175,6 +175,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
           invoice: noInvoice.value,
           qty: quantity,
           images: mediaFileList,
+          statusChecker2: detailOrderController.statusChecker2.value,
         ),
       );
 

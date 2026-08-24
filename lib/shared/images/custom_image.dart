@@ -206,13 +206,15 @@ class CustomImage {
   }) {
     return _buildBoxStyle(
       isShadow: isShadow,
-      child: _buildContent(
-        maxImage: maxImage,
-        readOnly: readOnly,
-        isPreview: isPreview,
-        isHistory: isHistory,
-        title: title,
-        mediaFileList: mediaFileList,
+      child: Obx(
+        () => _buildContent(
+          maxImage: maxImage,
+          readOnly: readOnly,
+          isPreview: isPreview,
+          isHistory: isHistory,
+          title: title,
+          mediaFileList: mediaFileList,
+        ),
       ),
     );
   }
