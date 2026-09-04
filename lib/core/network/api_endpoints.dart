@@ -20,6 +20,7 @@ class ApiEndpoints {
   static const String fetchHistoryTransaction = "transaction/history/get";
   static const String getItemProduct = "items/get";
   static const String getDistrict = "city/getcity";
+  static const String fetchTransactionTracking = "transaction/leader/get";
   static String fetchTransactionAll(String url) => "transaction/$url";
   static String takeItTransaction(String role) => "$role/claim";
   static String saveQty(String role) => "$role/scan/multiple";

@@ -9,7 +9,7 @@ class WatermarkOverlay extends StatelessWidget {
   const WatermarkOverlay({
     super.key,
     required this.child,
-    this.version = 'v7.0.0',
+    this.version = 'v9.0.0',
   });
 
   @override
@@ -18,16 +18,34 @@ class WatermarkOverlay extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         child,
-        IgnorePointer(
-          child: CustomPaint(
-            painter: WatermarkPainter(
-              text: version,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.15),
+        Positioned(
+          bottom: 80,
+          right: 0,
+          left: 0,
+          child: Center(
+            child: Text(
+              version,
+              style: TextStyle(
+                fontSize: 42,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.none,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.15),
+              ),
             ),
           ),
         ),
+        // IgnorePointer(
+        //   child: CustomPaint(
+        //     painter: WatermarkPainter(
+        //       text: version,
+        //       color: Theme.of(
+        //         context,
+        //       ).colorScheme.onSurface.withValues(alpha: 0.15),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

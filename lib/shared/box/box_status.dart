@@ -11,6 +11,7 @@ class BoxStatus {
     bool statusScanDriver = false,
     bool statusArriveDriver = false,
     bool statusDelivCancel = false,
+    bool isTrackingDriver = false,
   }) {
     String text = 'Checker';
 
@@ -31,6 +32,24 @@ class BoxStatus {
     } else {
       if (statusChecker2 == 'completed') {
         text = 'Leader';
+      }
+    }
+
+    if (AppRole.isChecker2 && isTrackingDriver) {
+      if (statusScanDriver) {
+        text = 'READY';
+      }
+
+      if (statusArriveDriver) {
+        text = 'ARRIVE';
+      }
+
+      if (statusDelivCancel) {
+        text = 'PENDING';
+      }
+
+      if (!statusScanDriver && !statusArriveDriver && !statusDelivCancel) {
+        text = 'AVAILABLE';
       }
     }
 
@@ -63,6 +82,7 @@ class BoxStatus {
     bool statusScanDriver = false,
     bool statusArriveDriver = false,
     bool statusDelivCancel = false,
+    bool isTrackingDriver = false,
   }) {
     Color color = Color(0xFF5eb75f);
 
@@ -83,6 +103,24 @@ class BoxStatus {
         color = const Color(0xFF5eb75f);
       } else if (statusChecker2 == 'completed') {
         color = const Color(0xFF666666);
+      }
+    }
+
+    if (AppRole.isChecker2 && isTrackingDriver) {
+      if (statusDelivCancel == true) {
+        color = const Color(0xFF666666);
+      } else {
+        if (statusScanDriver) {
+          color = const Color(0xFF5eb75f);
+        }
+
+        if (statusArriveDriver) {
+          color = const Color(0xFF666666);
+        }
+
+        if (!statusScanDriver && !statusArriveDriver) {
+          color = const Color(0xFF2ED471);
+        }
       }
     }
 

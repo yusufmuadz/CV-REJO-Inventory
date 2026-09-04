@@ -112,6 +112,7 @@ class ProfileView extends StatelessWidget {
                 _buildBoxStyle(
                   padding: const EdgeInsets.all(16),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildVersionStyle(
                         title: 'VERSION',
@@ -123,7 +124,7 @@ class ProfileView extends StatelessWidget {
                       Container(
                         height: 32,
                         width: 1,
-                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
                         color: const Color(0xFFF3F4F6),
                       ),
                       _buildVersionStyle(

@@ -7,9 +7,14 @@ import 'package:ionicons/ionicons.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../shared/box/box_status.dart';
 import '../../../../shared/custom/custom_button.dart';
+import '../../../../shared/custom/custom_card_list.dart';
+import '../../../../shared/custom/custom_search_field.dart';
+import '../../../../shared/order/sort_widget.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/home_tracking_driver_controller.dart';
@@ -30,14 +35,61 @@ class HomeTrackingDriverView extends StatelessWidget {
           title: 'Tracking Driver',
           icon: Ionicons.options_outline,
           onTap: () {
-            controller.dialogService.showComingSoonSnackbar();
+            // controller.dialogService.showComingSoonSnackbar();
             // _popupFilter();
+            if (controller.listRIT.isEmpty) {
+              controller.getDistrict();
+            }
+
+            Get.bottomSheet(
+              SortWidget(
+                isLoading: controller.isLoadingSort,
+                isSortBy: controller.sortByNew,
+                ritSelected: controller.ritTracking,
+                dateRit: controller.dateTracking,
+                listRIT: controller.listRIT,
+                onReset: () {
+                  // Reset filter and sorting
+                  controller.onResetSort();
+                  Get.back();
+                },
+                onApply: () {
+                  // Apply filter and sorting
+                  controller.onRefreshTransaction();
+                  Get.back();
+                },
+              ),
+              isScrollControlled: true,
+            );
           },
+        ),
+        Container(
+          height: 42,
+          margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: CustomSearchField(
+            placeholder: 'Cari pesanan...',
+            searchController: controller.searchTrackingController,
+            prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: const Color(0xFFf4f4f5)),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            onSubmitted: (value) {
+              controller.onRefreshTransaction();
+            },
+            onSuffixTap: () {
+              controller.searchTrackingController.clear();
+              controller.onRefreshTransaction();
+            },
+          ),
         ),
         Expanded(
           child: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
             color: const Color.fromARGB(154, 255, 255, 255),
             child: Obx(
               () => RefreshIndicator(
@@ -59,14 +111,14 @@ class HomeTrackingDriverView extends StatelessWidget {
   }
 
   Widget _buildContent(HomeTrackingDriverController ctrlr) {
-    if (ctrlr.isLoading.value) {
+    if (ctrlr.loadState.value == LoadState.initial && ctrlr.listOrder.isEmpty) {
       return const SliverFillRemaining(
         hasScrollBody: false,
         child: LoadingView(),
       );
     }
 
-    if (ctrlr.listRit.isEmpty) {
+    if (ctrlr.listOrder.isEmpty) {
       return _buildEmpty();
     }
     return _buildList(ctrlr: ctrlr);
@@ -92,24 +144,71 @@ class HomeTrackingDriverView extends StatelessWidget {
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount: ctrlr.listRit.length + (isPlusOne ? 1 : 0),
+        childCount: ctrlr.listOrder.length + (isPlusOne ? 1 : 0),
         (context, index) {
-          if (index == ctrlr.listRit.length) {
+          if (index == ctrlr.listOrder.length) {
             return _buildBottomIndicator(
               ctrlr.loadState.value,
               ctrlr.retryFetch,
             );
           }
 
-          final ritOrder = ctrlr.listRit[index];
+          final order = ctrlr.listOrder[index];
 
-          return _buildOrder(controller: ctrlr, ritOrder: ritOrder);
+          return _buildOrder(transaction: order);
         },
       ),
     );
   }
 
-  Widget _buildOrder({
+  Widget _buildOrder({required OrderEntity transaction}) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
+      child: CustomCardList(
+        onTap: () {
+          String statusPO = transaction.pic?.status ?? '';
+
+          if (AppRole.isChecker1) {
+            statusPO = transaction.checker1?.status ?? '';
+          } else if (AppRole.isChecker2) {
+            if (transaction.checker2?.status != 'completed') {
+              statusPO = transaction.checker2?.status ?? '';
+            } else {
+              statusPO = transaction.loader?.status ?? '';
+            }
+          } else if (AppRole.isDriver) {
+            statusPO = transaction.driver?.status ?? '';
+          }
+
+          if (AppRole.isDriver) {
+            Get.toNamed(
+              Routes.DETAIL_ORDER,
+              arguments: {'invoice': transaction.invoice},
+            );
+            return;
+          }
+
+          Get.toNamed(
+            Routes.DETAIL_ORDER,
+            arguments: {
+              'invoice': transaction.invoice,
+              'routeFrom': 'listOrder',
+              'take_it_order': true,
+              'status_checker2': transaction.checker2?.status ?? '',
+              'status_po': statusPO,
+            },
+          );
+        },
+        isSelected: '',
+        showSelection: false,
+        isHistory: true,
+        isTrackingDriver: true,
+        transaction: transaction,
+      ),
+    );
+  }
+
+  Widget _buildRit({
     required HomeTrackingDriverController controller,
     required RitListEntity ritOrder,
   }) {

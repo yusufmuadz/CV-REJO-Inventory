@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';
@@ -43,7 +44,22 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
               }
 
               Get.bottomSheet(
-                SortWidget(controller: controller),
+                SortWidget(
+                  isLoading: controller.isLoadingSort,
+                  isSortBy: controller.sortByNew,
+                  ritSelected: controller.isDistrictSelected,
+                  listRIT: controller.listDistrict,
+                  onReset: () {
+                    // Apply filter and sorting
+                    controller.onResetSort();
+                    Get.back();
+                  },
+                  onApply: () {
+                    // Apply filter and sorting
+                    controller.onRefreshTransaction();
+                    Get.back();
+                  },
+                ),
                 isScrollControlled: true,
               );
             },
@@ -70,7 +86,7 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: CustomSearchField(
-                  placeholder: 'Cari ID pesanan...',
+                  placeholder: 'Cari pesanan...',
                   searchController: controller.searchController,
                   prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
                   onSubmitted: (value) {

@@ -24,6 +24,11 @@ class HomePageController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+
+      if (AppRole.isChecker2 &&
+          masterController.homeTrackingDriverController.listOrder.isEmpty) {
+        masterController.homeTrackingDriverController.onRefreshTransaction();
+      }
     } catch (e, stackTrace) {
       debugPrint('Error button page => ${e.toString()}');
       debugPrint('Error button page stack => ${stackTrace}');

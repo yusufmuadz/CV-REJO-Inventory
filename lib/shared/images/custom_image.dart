@@ -158,7 +158,16 @@ class CustomImage {
                 height: double.infinity,
                 loadingBuilder: (context, child, event) {
                   if (event == null) return child;
-                  return const LoadingView();
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: const Color(0xFFE8F7F0),
+                      ),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: const LoadingView(),
+                  );
                 },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(

@@ -15,6 +15,7 @@ class CustomCardList extends StatelessWidget {
   final OrderEntity transaction;
   final String? color;
   final bool isHistory;
+  final bool isTrackingDriver;
   final EnumButtonRIT? buttonRIT;
   final Function()? onTapMaps;
 
@@ -27,6 +28,7 @@ class CustomCardList extends StatelessWidget {
     this.isSelected = '',
     this.color,
     this.isHistory = false,
+    this.isTrackingDriver = false,
     this.buttonRIT,
     this.onTapMaps,
   });
@@ -320,6 +322,7 @@ class CustomCardList extends StatelessWidget {
                 statusArriveDriver: transaction.driver?.arriveDriver ?? false,
                 statusDelivCancel:
                     transaction.driver?.statusDelivCancel ?? false,
+                isTrackingDriver: isTrackingDriver,
               ),
             ),
             child: Text(
@@ -332,6 +335,7 @@ class CustomCardList extends StatelessWidget {
                 statusArriveDriver: transaction.driver?.arriveDriver ?? false,
                 statusDelivCancel:
                     transaction.driver?.statusDelivCancel ?? false,
+                isTrackingDriver: isTrackingDriver,
               ),
               style: _textStyle(color: Colors.white),
             ),

@@ -1,14 +1,33 @@
 import 'package:cv_rejo/features/list_order_history/presentation/controllers/list_history_order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
+import '../../core/theme/text_styles.dart';
+import '../../features/list_order/domain/entities/district_entity.dart';
 import '../../utils/loading_custom.dart';
 import '../custom/custom_button.dart';
 
 class SortWidget extends StatelessWidget {
-  final ListHistoryOrderController controller;
+  final RxBool isLoading;
+  final RxBool isSortBy;
+  final RxString ritSelected;
+  final RxString? dateRit;
+  final RxList<DistrictEntity> listRIT;
+  final Function() onReset;
+  final Function() onApply;
 
-  const SortWidget({super.key, required this.controller});
+  const SortWidget({
+    super.key,
+    required this.isLoading,
+    required this.isSortBy,
+    required this.ritSelected,
+    required this.listRIT,
+    required this.onReset,
+    required this.onApply,
+    this.dateRit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +43,7 @@ class SortWidget extends StatelessWidget {
         ),
       ),
       child: Obx(() {
-        if (controller.isLoadingSort.value) {
+        if (isLoading.value) {
           return const Center(child: LoadingView());
         }
 
@@ -48,6 +67,7 @@ class SortWidget extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.only(top: 10.0),
                 children: [
+                  _buildDateTime(context: context),
                   _buildTitle(title: 'Urutkan berdasarkan'),
                   Wrap(
                     spacing: 10.0,
@@ -55,16 +75,16 @@ class SortWidget extends StatelessWidget {
                     children: [
                       _buildSortingOption(
                         label: 'Terbaru',
-                        isSelected: controller.sortByNew.value,
+                        isSelected: isSortBy.value,
                         onSelected: (bool p1) {
-                          controller.sortByNew.value = true;
+                          isSortBy.value = true;
                         },
                       ),
                       _buildSortingOption(
                         label: 'Terlama',
-                        isSelected: !controller.sortByNew.value,
+                        isSelected: !isSortBy.value,
                         onSelected: (bool p1) {
-                          controller.sortByNew.value = false;
+                          isSortBy.value = false;
                         },
                       ),
                     ],
@@ -106,18 +126,14 @@ class SortWidget extends StatelessWidget {
                   Wrap(
                     spacing: 10.0,
                     runSpacing: 0.0,
-                    children: controller.listDistrict
+                    children: listRIT
                         .map(
                           (district) => _buildSortingOption(
                             label: 'RIT-${district.kabupaten}',
-                            isSelected:
-                                controller.isDistrictSelected.value ==
-                                district.kabupaten,
+                            isSelected: ritSelected.value == district.kabupaten,
                             onSelected: (bool p1) {
-                              controller.isDistrictSelected.value = district
-                                  .kabupaten
-                                  .toString();
-                              controller.listDistrict.refresh();
+                              ritSelected.value = district.kabupaten.toString();
+                              ritSelected.refresh();
                             },
                           ),
                         )
@@ -134,16 +150,8 @@ class SortWidget extends StatelessWidget {
               color2: const Color(0xFFd6993a),
               shadowColor: Colors.transparent,
               minimumSize: const Size(double.infinity, 45),
-              onPressed1: () {
-                // Apply filter and sorting
-                controller.onResetSort();
-                Get.back();
-              },
-              onPressed2: () {
-                // Apply filter and sorting
-                controller.onRefreshTransaction();
-                Get.back();
-              },
+              onPressed1: onReset,
+              onPressed2: onApply,
             ),
           ],
         );
@@ -177,6 +185,89 @@ class SortWidget extends StatelessWidget {
         side: BorderSide(color: isSelected ? Colors.transparent : Colors.grey),
       ),
       backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildDateTime({required BuildContext context}) {
+    return Visibility(
+      visible: dateRit != null,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 15),
+        child: InkWell(
+          onTap: () async {
+            DateTime initialDate = DateTime.now();
+
+            if (dateRit != null) {
+              initialDate = DateTime.parse(dateRit!.value);
+            }
+
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: initialDate,
+              firstDate: DateTime(2000),
+              lastDate: DateTime.now().add(const Duration(days: 360)),
+              builder: (context, child) {
+                return Theme(data: Theme.of(context).copyWith(), child: child!);
+              },
+            );
+
+            if (selectedDate != null) {
+              dateRit!.value = selectedDate.toString();
+              // controller.onRefreshTransaction();
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE2E8F8)),
+              borderRadius: BorderRadius.circular(8),
+              color: const Color(0xFFF0F3FF),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 18,
+                  color: const Color(0xFF524439),
+                ),
+                const SizedBox(width: 6),
+                Obx(
+                  () => Visibility(
+                    visible: dateRit!.isNotEmpty,
+                    child: Text(
+                      DateFormat(
+                        'dd MMM yyyy',
+                      ).format(DateTime.parse(dateRit!.value)),
+                      style: TextStyles.basicTextStyle(
+                        fontSize: 16,
+                        fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF151C27),
+                      ),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'Ubah Tanggal',
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 16,
+                    fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF8A5012),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.edit_calendar_outlined,
+                  size: 18,
+                  color: Color(0xFF8A5012),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

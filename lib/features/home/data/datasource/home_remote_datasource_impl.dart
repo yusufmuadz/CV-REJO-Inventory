@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
-import '../../../list_order/data/models/response_model_get_transaction.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../models/response_model_get_home.dart';
@@ -29,9 +29,13 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       };
 
       String queryString = Uri(queryParameters: body).query;
-      final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll('all')}?$queryString',
-      );
+      String apiUrl = '${ApiEndpoints.fetchTransactionAll('all')}?$queryString';
+
+      if (AppRole.isChecker2 && params.isTracking == true) {
+        apiUrl = '${ApiEndpoints.fetchTransactionTracking}?$queryString';
+      }
+
+      final response = await dioClient.get(apiUrl);
 
       // debugPrint('Data Home Transaction Remote DataSource: ${response.data['data']}');
 
