@@ -157,6 +157,7 @@ class RitPage extends GetView<RitController> {
           : const Color(0xFF2ED471),
       onPressed: () {
         debugPrint('Pilih Pesanan');
+        // controller.saveOrderDummy();
         if (controller.pageIndex.value == 0) {
           controller.pageIndex.value = 1;
           controller.pageController.jumpToPage(1);

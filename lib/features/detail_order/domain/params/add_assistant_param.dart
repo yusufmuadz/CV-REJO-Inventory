@@ -6,6 +6,7 @@ class ParamsAddAssistant {
   final String? idDriver;
   final String? idKenek;
   final String? dateRIT;
+  final String? statusTransportation;
   final bool? isChecker2;
 
   ParamsAddAssistant({
@@ -16,6 +17,7 @@ class ParamsAddAssistant {
     this.idDriver,
     this.idKenek,
     this.dateRIT,
+    this.statusTransportation,
     this.isChecker2,
   });
 }

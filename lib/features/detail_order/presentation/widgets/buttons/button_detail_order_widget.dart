@@ -88,6 +88,9 @@ class ButtonDetailOrderWidget {
             'status_checker2': controller.statusChecker2.value,
             'status_driver': controller.statusDriver.value,
             'items': controller.orderDetail.value.orderDetails,
+            'jenisArmada': controller.orderDetail.value.jenisArmada,
+            'driverExternal': controller.orderDetail.value.driverExternal,
+            'mobilExternal': controller.orderDetail.value.mobilExternal,
           },
         );
       },

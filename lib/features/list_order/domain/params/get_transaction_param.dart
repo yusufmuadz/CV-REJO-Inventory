@@ -1,5 +1,8 @@
-
 class ParamsGetTransaction {
+  final String? noInvoice;
+  final String? noPo;
+  final String? noSj;
+  final String? customerName;
   final String? limit;
   final String? page;
   final String? q;
@@ -12,6 +15,10 @@ class ParamsGetTransaction {
   final List<String>? courier;
 
   ParamsGetTransaction({
+    this.noInvoice,
+    this.noPo,
+    this.noSj,
+    this.customerName,
     this.limit,
     this.page,
     this.q,

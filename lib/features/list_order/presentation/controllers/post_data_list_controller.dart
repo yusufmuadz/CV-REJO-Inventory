@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../detail_order/domain/entities/transportation_entity.dart';
 import '../../../detail_order/domain/params/add_assistant_param.dart';
+import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/usecases/list_order_usecase.dart';
 import 'list_order_controller.dart';
 
@@ -30,8 +33,7 @@ class PostDataListController extends GetxController {
       ).format(DateTime.parse(listCtrl.tanggalRit.value));
 
       bool isCheck2 =
-          AppRole.isChecker2 &&
-          listCtrl.totalPendingPoRITCheck2.value != '0';
+          AppRole.isChecker2 && listCtrl.totalPendingPoRITCheck2.value != '0';
 
       final result = await listOrderUseCase.callPostAssistant(
         ParamsAddAssistant(
@@ -75,32 +77,37 @@ class PostDataListController extends GetxController {
     listCtrl.isLoadingAssistant.value = true;
 
     try {
-      final loader = listCtrl.transportations.firstWhereOrNull((element) {
-        bool result = false;
-        String kendaraan = element.namaKendaraan ?? '';
+      TransportationEntity? loader;
+      UserEntity? driver;
+      UserEntity? kenek;
+      String? idKendaraan;
 
-        if (AppRole.isChecker2) {
-          kendaraan = element.jenisKendaraan ?? '';
-        }
+      if (listCtrl.statusTransportationSelected.value == 'Internal') {
+        loader = listCtrl.transportations.firstWhereOrNull((element) {
+          bool result = false;
+          String kendaraan = element.namaKendaraan ?? '';
 
-        if (kendaraan == listCtrl.selectTransportation.value) {
-          result = true;
-        }
-        return result;
-      });
-      final driver = listCtrl.listUser.firstWhereOrNull(
-        (element) => element.nama == listCtrl.driverSelected.value,
-      );
-      final kenek = listCtrl.listUser.firstWhereOrNull(
-        (element) => element.nama == listCtrl.assistantSelected.value,
-      );
+          if (AppRole.isChecker2) {
+            kendaraan = element.jenisKendaraan ?? '';
+          }
 
-      // debugPrint('ID Kendaraan: ${loader}');
-      // debugPrint('ID Forklift: ${loader.id}');
+          if (kendaraan == listCtrl.selectTransportation.value) {
+            result = true;
+          }
+          return result;
+        });
+        driver = listCtrl.listUser.firstWhereOrNull(
+          (element) => element.nama == listCtrl.driverSelected.value,
+        );
+        kenek = listCtrl.listUser.firstWhereOrNull(
+          (element) => element.nama == listCtrl.assistantSelected.value,
+        );
 
-      final idKendaraan = AppRole.isChecker2
-          ? loader!.idDeliveryMobil
-          : loader!.id;
+        // debugPrint('ID Kendaraan: ${loader}');
+        // debugPrint('ID Forklift: ${loader.id}');
+
+        idKendaraan = AppRole.isChecker2 ? loader!.idDeliveryMobil : loader!.id;
+      }
 
       final dateRIT = DateFormat(
         'yyyy-MM-dd',
@@ -110,9 +117,11 @@ class PostDataListController extends GetxController {
         ParamsAddAssistant(
           district: listCtrl.isSelected.value,
           idKendaraan: idKendaraan,
-          idDriver: driver!.userId,
-          idKenek: kenek!.userId,
+          idDriver: driver != null ? driver.userId : '',
+          idKenek: kenek != null ? kenek.userId : '',
           dateRIT: dateRIT,
+          statusTransportation: listCtrl.statusTransportationSelected.value
+              .toUpperCase(),
         ),
       );
 
@@ -122,6 +131,7 @@ class PostDataListController extends GetxController {
             // takeItOrder();
             // isSelect.value = !isSelect.value;
             debugPrint('Success Add Assistant: ${data.message}');
+            listCtrl.isAddAssistant.value = true;
             return true;
           } else {
             if (Get.isDialogOpen == true) Get.back();

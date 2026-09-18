@@ -22,6 +22,7 @@ class OrderEntity {
   String? maps;
   String? lat;
   String? long;
+  String? jenisArmada;
   final String? route;
   RxInt number = 0.obs;
   bool isSelected;
@@ -45,6 +46,7 @@ class OrderEntity {
     this.lat,
     this.long,
     this.route,
+    this.jenisArmada,
     required this.number,
     this.isSelected = false,
   });
@@ -77,6 +79,7 @@ class OrderEntity {
       noTelp: json['phone'] ?? '-',
       route: json['route'] ?? json['router'] ?? '-',
       maps: json['maps'] ?? '-',
+    jenisArmada: json['jenis_armada'] ?? '-',
       isSelected: json['isSelected'] ?? false,
       number: 0.obs,
     );

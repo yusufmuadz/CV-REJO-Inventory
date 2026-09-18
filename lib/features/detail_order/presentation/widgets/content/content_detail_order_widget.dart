@@ -37,6 +37,27 @@ class ContentDetailOrderWidget extends StatelessWidget {
               ? controller.orderDetail.value.suratJalan
               : controller.orderDetail.value.orderNo,
         ),
+        _buildBody(
+          title: 'Status Armada',
+          value: controller.orderDetail.value.jenisArmada ?? '-',
+        ),
+        Visibility(
+          visible:
+              controller.orderDetail.value.jenisArmada!.toLowerCase() ==
+              'external',
+          child: Container(
+            margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
+            child: Text(
+              '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
+              style: TextStyles.basicTextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.italic,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ),
         _buildBoxStyle(
           vertical: 15,
           child: ContentInfoCustomerWidget(controller: controller),
@@ -221,7 +242,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final image = images[index];
-            
+
                 if (image == null) {
                   return Container(
                     alignment: Alignment.center,
@@ -230,10 +251,13 @@ class ContentDetailOrderWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white,
                     ),
-                    child: Text('Gambar tidak tersedia', textAlign: TextAlign.center),
+                    child: Text(
+                      'Gambar tidak tersedia',
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 }
-            
+
                 return SizedBox(
                   height: 120,
                   width: 120,

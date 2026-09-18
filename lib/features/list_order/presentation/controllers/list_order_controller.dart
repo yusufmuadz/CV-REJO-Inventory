@@ -31,6 +31,8 @@ class ListOrderController extends GetxController {
   final isRouteFrom = ''.obs;
   final dialogService = Get.find<DialogService>();
 
+  final isAddAssistant = false.obs;
+
   final orders = <OrderEntity>[].obs;
   final currentPage = 1.obs;
   final currentPageDetail = 1.obs;

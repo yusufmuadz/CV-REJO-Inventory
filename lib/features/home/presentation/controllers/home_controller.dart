@@ -10,6 +10,7 @@ import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
 import 'home_page_controller.dart';
 import 'home_profile_controller.dart';
+import 'home_retur_controller.dart';
 import 'home_rit_controller.dart';
 import 'home_tracking_driver_controller.dart';
 import 'home_transactions_controller.dart';
@@ -47,6 +48,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   late final HomePageController homePageController;
   late final HomeProfileController homeProfileController;
   late final HomeTrackingDriverController homeTrackingDriverController;
+  late final HomeReturController homeReturController;
 
   @override
   void onInit() {
@@ -56,6 +58,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homePageController = Get.find<HomePageController>();
     homeProfileController = Get.find<HomeProfileController>();
     homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
+    homeReturController = Get.find<HomeReturController>();
 
     debugPrint('HOME CONTROLLER INIT: ${hashCode}');
   }
@@ -116,7 +119,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   }
 
   void getCacheSize(int index) async {
-    if ((AppRole.isDriver && index < 2) || (!AppRole.isDriver && index != 1)) {
+    if ((AppRole.isDriver && index < 3) || (!AppRole.isDriver && index != 1)) {
       return;
     }
     // Di dalam State management (misal: GetX atau Provider)
@@ -199,6 +202,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
         },
       );
     } else {
+      debugPrint('RIT VALUE : ${rit.value}');
+      debugPrint('IS RIT TODAY : ${isRitToday.value}');
       ///// ========== KE HALAMAN LIST RIT/PESANAN =========== /////
       ///// ================== JIKA ADA RIT =================== /////
 

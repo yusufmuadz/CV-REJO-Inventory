@@ -247,6 +247,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
           "id_kenek": params.idKenek,
           "date_rit": params.dateRIT,
           if (!AppRole.isChecker2) "id_loader": params.idKendaraan,
+          if (AppRole.isChecker2) "status_armada": params.statusTransportation,
           if (AppRole.isChecker2) "id_mobil": params.idKendaraan,
         },
       );

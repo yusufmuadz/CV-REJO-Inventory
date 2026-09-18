@@ -1,11 +1,7 @@
-import 'package:cv_rejo/features/detail_order/data/models/assistant_model.dart';
 import 'package:cv_rejo/features/detail_order/data/models/customer_model.dart';
 import 'package:cv_rejo/features/detail_order/domain/entities/detail_order_entity.dart';
 import 'package:cv_rejo/features/list_order/data/models/courier_model.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
-
-import 'driver_model.dart';
-import 'item_order_model.dart';
 
 class ResponseModelDetailOrder {
   final bool? status;

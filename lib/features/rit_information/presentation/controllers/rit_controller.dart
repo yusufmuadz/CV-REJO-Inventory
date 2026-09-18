@@ -11,14 +11,14 @@ import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../utils/maps_utils.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
-import '../../../home/presentation/controllers/home_controller.dart';
-import '../../../list_order/data/models/date_model.dart';
+import '../../../detail_order/domain/usecases/detail_order_usecase.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
-import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
+import '../../domain/entities/item_order_retur_entity.dart';
 import '../../domain/params/post_rit_param.dart';
+import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 import 'enums/enum_rit.dart';
@@ -31,6 +31,8 @@ class RitController extends GetxController {
 
   final isLoading = false.obs;
   final isLoadingReason = false.obs;
+  final isLoadingRetur = false.obs;
+  final isLoadingItemPo = false.obs;
   final loadState = LoadState.initial.obs;
   final dialogService = Get.find<DialogService>();
   final locationService = LocationService();
@@ -55,6 +57,7 @@ class RitController extends GetxController {
 
   final kmController = TextEditingController();
   final reasonController = TextEditingController();
+  final reasonReturController = TextEditingController();
 
   final mediaFileList = <XFile>[].obs;
   final mediaFileListKM = <XFile>[].obs;
@@ -82,106 +85,13 @@ class RitController extends GetxController {
   final infoReturList = ['Terkait', 'Tidak Terkait'].obs;
 
   final selectedAllItem = false.obs;
-  final itemPO = <ItemOrderModel>[].obs;
-  final itemPoAddRetur = <ItemOrderModel>[].obs;
+  final itemPO = <ItemOrderReturEntity>[].obs;
+  final itemPoAddRetur = <ItemOrderReturEntity>[].obs;
 
   final recipientName = TextEditingController();
 
   final pageIndex = 0.obs;
   late PageController pageController;
-
-  final ordersSample = <OrderEntity>[
-    OrderEntity(
-      invoice: '01SL20260700683',
-      orderNo: 'PO/2607/0712',
-      suratJalan: '2607/0712',
-      customer: 'John Doe',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'SEMARANG',
-      address:
-          'Jl. Gajahmada No. 123, Kelurahan Mugassari, Kecamatan Semarang Selatan, Kota Semarang, Jawa Tengah 50241',
-      number: 0.obs,
-    ),
-    OrderEntity(
-      invoice: '01SL20260700684',
-      orderNo: 'PO/2607/0714',
-      suratJalan: '2607/0714',
-      customer: 'Charlie Brown',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'SURAKARTA',
-      address:
-          'Kawasan Niaga Slamet Riyadi No. 55, Kota Surakarta, Jawa Tengah 57111',
-      number: 0.obs,
-    ),
-    OrderEntity(
-      invoice: '01SL20260700685',
-      orderNo: 'PO/2607/0715',
-      suratJalan: '2607/0715',
-      customer: 'Thomas Edison',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'SURABAYA',
-      address:
-          'Jl. Manggis No. 123, Kelurahan Surabaya, Kecamatan Surabaya, Kota Surabaya, Jawa Timur 60111',
-      number: 0.obs,
-    ),
-    OrderEntity(
-      invoice: '01SL20260700686',
-      orderNo: 'PO/2607/0716',
-      suratJalan: '2607/0716',
-      customer: 'Bruce Wayne',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'PANDAAN',
-      address:
-          'Jl. Raya Pandanan No. 123, Kelurahan Pandanan, Kecamatan Pandanan, Kota Surabaya, Jawa Timur 60111',
-      number: 0.obs,
-    ),
-    OrderEntity(
-      invoice: '01SL20260700687',
-      orderNo: 'PO/2607/0717',
-      suratJalan: '2607/0717',
-      customer: 'John Doe',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'WONOSARI',
-      address:
-          'Jl. Raya Wonosari No. 123, Kelurahan Wonosari, Kecamatan Wonosari, Kota Surabaya, Jawa Timur 60111',
-      number: 0.obs,
-    ),
-    OrderEntity(
-      invoice: '01SL20260700688',
-      orderNo: 'PO/2607/0718',
-      suratJalan: '2607/0718',
-      customer: 'Nick Fury',
-      date: DateModel.fromJson({
-        "transaction": "23-July-2026",
-        "delivery": "23-July-2026",
-      }),
-      noTelp: '08123456789',
-      district: 'MALANG',
-      address:
-          'Jl. Raya Malang No. 123, Kelurahan Malang, Kecamatan Malang, Kota Malang, Jawa Timur 65111',
-      number: 0.obs,
-    ),
-  ].obs;
 
   late final ListOrderController listOrderController;
 
@@ -222,6 +132,8 @@ class RitController extends GetxController {
     pageController.dispose();
     isLoading.value = false;
     isLoadingReason.value = false;
+    isLoadingRetur.value = false;
+    isLoadingItemPo.value = false;
     loadState.value = LoadState.idle;
 
     // registerScroll();
@@ -269,12 +181,29 @@ class RitController extends GetxController {
 
       final updatedOrder = order.copyWith(isChecked: result);
 
-      final updateList = List<ItemOrderModel>.from(itemPO);
+      final updateList = List<ItemOrderReturEntity>.from(itemPO);
       updateList[index] = updatedOrder;
 
       itemPO.value = updateList;
       selectedAllItem.value = itemPO.every((e) => e.isChecked);
     }
+  }
+
+  Future<void> saveOrderDummy() async {
+    mediaFileList.clear();
+    mediaFileListKM.clear();
+    mediaFileListTangki.clear();
+    mediaFileListSJ.clear();
+    mediaFileListTransportMoney.clear();
+    mediaFileFrontTransport.value = XFile('');
+    mediaFileRightTransport.value = XFile('');
+    mediaFileBackTransport.value = XFile('');
+    mediaFileLeftTransport.value = XFile('');
+    kmController.clear();
+
+    buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
+
+    GetStorage().write('buttonRIT', buttonRIT.value.name);
   }
 
   Future<void> saveOrder() async {
@@ -375,6 +304,69 @@ class RitController extends GetxController {
     }
   }
 
+  Future<void> savePostRetur() async {
+    if (isLoadingRetur.value || isLoadingItemPo.value) return;
+
+    if (_getEmtpyPostRetur() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmtpyPostRetur() ?? 'Silakan lengkapi data terlebih dahulu!',
+      );
+      return;
+    }
+
+    isLoadingRetur.value = true;
+
+    try {
+      final orderIndex = orders.indexWhere(
+        (element) => element.suratJalan == selectedPoRetur.value,
+      );
+
+      final noInvoice = orders[orderIndex].invoice;
+      List<ItemOrderReturEntity> selectedItem = [];
+
+      if (itemPO.isNotEmpty) {
+        selectedItem = itemPO.where((element) => element.isChecked).toList();
+      }
+
+      final result = await ritUseCase.callPostSaveRetur(
+        ParamsPostSaveRetur(
+          invoice: noInvoice,
+          description: reasonReturController.text,
+          itemOrderList: selectedItem,
+          mediaFileList: mediaFileListRetur,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Save Order: $data');
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Menyimpan Data',
+            barrierDismissible: false,
+            onPressed: () {
+              selectedPoRetur.value = '';
+              reasonReturController.clear();
+              itemPO.clear();
+              mediaFileListRetur.clear();
+
+              if (Get.isDialogOpen == true) Get.back();
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+    } finally {
+      isLoadingRetur.value = false;
+    }
+  }
+
   String? _getEmptyInputErrorMessage() {
     // 1. Cek Kondisi Khusus RIT (hanya jika mode Save Doc)
     if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
@@ -420,6 +412,26 @@ class RitController extends GetxController {
     }
 
     // Jika semua lolos
+    return null;
+  }
+
+  String? _getEmtpyPostRetur() {
+    List<ItemOrderReturEntity> selectedItem = [];
+
+    if (itemPO.isNotEmpty) {
+      selectedItem = itemPO.where((element) => element.isChecked).toList();
+    }
+
+    if (selectedPoRetur.isEmpty) {
+      return 'Silakan masukkan Nomor Surat Jalan terlebih dahulu!';
+    } else if (reasonReturController.text.isEmpty) {
+      return 'Silakan masukkan alasan retur terlebih dahulu!';
+    } else if (mediaFileListRetur.isEmpty) {
+      return 'Silakan masukkan foto terlebih dahulu!';
+    } else if (selectedItem.isEmpty) {
+      return 'Silakan pilih item terlebih dahulu!';
+    }
+
     return null;
   }
 
@@ -553,6 +565,41 @@ class RitController extends GetxController {
     } finally {
       // loadState.value = LoadState.idle;
       // isLoading.value = false;
+    }
+  }
+
+  Future<void> getItemPo() async {
+    if (isLoadingItemPo.value) return;
+    isLoadingItemPo.value = true;
+
+    try {
+      final orderIndex = orders.indexWhere(
+        (element) => element.suratJalan == selectedPoRetur.value,
+      );
+
+      final noInvoice = orders[orderIndex].invoice;
+
+      final result = await ritUseCase.callGetOrdersRetur(
+        ParamsGetTransaction(noInvoice: noInvoice),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          final indexData = data.indexWhere(
+            (e) => e.idTransaction == noInvoice,
+          );
+
+          itemPO.value = data[indexData].itemOrder;
+        // selectedAllItem.value = itemPO.every((e) => e.isChecked);
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', 'Error Get Data: $e');
+    } finally {
+      isLoadingItemPo.value = false;
     }
   }
 
@@ -745,22 +792,85 @@ class RitController extends GetxController {
     update(); // Memperbarui state setelah semua gambar dan teks dihapus
   }
 
+  void addItemRetur({
+    int? index,
+    bool isRetur = false,
+    ItemOrderReturEntity? item,
+    required TextEditingController nameProductController,
+    required TextEditingController qtyProductController,
+    required TextEditingController qtyReturProductController,
+    required TextEditingController descProductController,
+    required RxList<XFile> mediaFileListRetur,
+  }) {
+    if (isRetur) {
+      if (qtyProductController.text.isEmpty || mediaFileListRetur.isEmpty) {
+        Future.delayed(const Duration(milliseconds: 50), () {
+          dialogService.showErrorSnackbar(
+            title: 'Gagal!',
+            'Silakan lengkapi data terlebih dahulu!',
+          );
+        });
+        return;
+      }
+
+      final qty = int.parse(qtyProductController.text);
+      final qtyRetur = int.parse(qtyReturProductController.text);
+
+      if (qtyRetur > qty) {
+        Future.delayed(const Duration(milliseconds: 50), () {
+          dialogService.showErrorSnackbar(
+            title: 'Gagal!',
+            'Jumlah Retur tidak boleh lebih besar dari jumlah barang',
+          );
+        });
+        return;
+      }
+
+      if (index != null) {
+        final order = itemPO[index];
+
+        final updateOrder = order.copyWith(
+          inputQtyItem: qtyReturProductController.text,
+          description: descProductController.text,
+          mediaFileList: mediaFileListRetur,
+        );
+
+        itemPO[index] = updateOrder;
+        selectedItem(index);
+      }
+      return;
+    }
+    itemPoAddRetur.add(
+      ItemOrderReturEntity(
+        idTransactionDetail: item?.idTransactionDetail ?? '',
+        idItem: item?.idItem ?? '',
+        name: nameProductController.text,
+        jumlahItem: qtyProductController.text,
+        inputQtyItem: qtyReturProductController.text,
+        hargaJual: item?.hargaJual ?? '0',
+        satuanItem: item?.satuanItem ?? '0',
+        diskonTotal: item?.diskonTotal ?? '0',
+        hargaSatuan: item?.hargaSatuan ?? '0',
+        grandTotal: item?.grandTotal ?? '0',
+        description: descProductController.text,
+        mediaFileList: mediaFileListRetur,
+      ),
+    );
+  }
+
   void addSampleItem() {
     itemPO.add(
-      ItemOrderModel(
-        item: 'Item Testing ${itemPO.length + 1}',
-        qty: '1',
-        barcode: '',
-        pic: StatusItem(),
-        checker1: StatusItem(),
-        checker2: StatusOrder(),
-        loader: StatusOrder(),
-        driver: StatusOrder(),
-        statusFinishScan: false,
-        statusArrive: false,
-        statusUnload: false,
-        statusConfirmDelivery: false,
-        isChecked: false,
+      ItemOrderReturEntity(
+        idTransactionDetail: 'Item Testing ${itemPO.length + 1}',
+        idItem: '${itemPO.length + 2}',
+        name: 'Dummy Item ${itemPO.length + 1}',
+        hargaJual: '900000',
+        satuanItem: '5',
+        jumlahItem: '5',
+        inputQtyItem: '5',
+        diskonTotal: '0',
+        hargaSatuan: '100000',
+        grandTotal: '100000',
       ),
     );
   }

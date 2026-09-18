@@ -6,6 +6,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
+import '../widgets/field_input_loader_widget.dart';
 import '../widgets/field_input_widget.dart';
 import '../widgets/input_pending_widget.dart';
 import 'driver_arrive.dart';
@@ -41,11 +42,18 @@ class EndingOrderView extends GetView<EndingOrderController> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Visibility(
+                visible: !_isImageProduct(),
+                child: FieldInputLoaderWidget(controller: controller),
+              ),
               FieldInputWidget(controller: controller),
               const SizedBox(height: 16),
-              CustomImage().buildContentImage(
-                title: 'Barang',
-                mediaFileList: controller.mediaFileList,
+              Visibility(
+                visible: _isImageProduct(),
+                child: CustomImage().buildContentImage(
+                  title: 'Barang',
+                  mediaFileList: controller.mediaFileList,
+                ),
               ),
               // ImageInputWidget(controller: controller),
             ],
@@ -65,6 +73,16 @@ class EndingOrderView extends GetView<EndingOrderController> {
     );
   }
 
+  bool _isImageProduct() {
+    if (AppRole.isChecker2 &&
+        controller.statusChecker2.value == 'completed' &&
+        controller.jenisArmada.value.toLowerCase() == 'external') {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget _buildButtonSelect() {
     String titlePending = 'Pending PO';
 
@@ -82,12 +100,26 @@ class EndingOrderView extends GetView<EndingOrderController> {
           return;
         }
 
+        // if (AppRole.isChecker2 &&
+        //     controller.statusChecker2.value == 'completed' &&
+        //     !controller.formKey.currentState!.validate()) {
+        //   debugPrint('error');
+        //   return;
+        // }
+
         controller.pendingProduct();
       },
       onPressed2: () {
         if (AppRole.isDriver) {
           controller.savePoDriver();
           return;
+        }
+
+        if (_isImageProduct() && controller.formKey.currentState != null) {
+          if (!controller.formKey.currentState!.validate()) {
+            debugPrint('error');
+            return;
+          }
         }
 
         controller.saveOrder();

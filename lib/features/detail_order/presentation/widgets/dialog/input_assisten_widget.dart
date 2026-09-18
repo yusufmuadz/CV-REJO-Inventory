@@ -37,6 +37,38 @@ class InputAssistenWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            '*Masukkan informasi pengirim per-PO diakhir proses',
+            textAlign: TextAlign.center,
+            style: TextStyles.basicTextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              fontStyle: FontStyle.italic,
+              color: Colors.red,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Text(
+            '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
+            textAlign: TextAlign.center,
+            style: TextStyles.basicTextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              fontStyle: FontStyle.italic,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (AppRole.isChecker2 &&
+        controller.statusTransportationSelected.value == 'null') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           _buildTitle(title: 'Masukkan Nopol*', color: Color(0xFF1F2937)),
           const SizedBox(height: 5),
           Container(
@@ -103,6 +135,7 @@ class InputAssistenWidget extends StatelessWidget {
         ],
       );
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -319,10 +352,10 @@ class InputAssistenWidget extends StatelessWidget {
             },
           ).toList(),
           onChanged: (value) {
-            if (value.toString() == 'External') {
-              controller.dialogService.showComingSoonSnackbar();
-              return;
-            }
+            // if (value.toString() == 'External') {
+            //   controller.dialogService.showComingSoonSnackbar();
+            //   return;
+            // }
             controller.statusTransportationSelected.value = value.toString();
           },
         ),

@@ -155,6 +155,14 @@ class CustomButton {
           activeIcon: Icon(Ionicons.compass, color: Color(0xFF06823f)),
           label: 'Tracking',
         ),
+
+      if (AppRole.isDriver)
+        BottomNavigationBarItem(
+          icon: Icon(Ionicons.arrow_undo_circle_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.arrow_undo_circle, color: Color(0xFF06823f)),
+          label: 'Retur',
+        ),
+
       if (AppRole.isDriver)
         BottomNavigationBarItem(
           icon: Icon(Ionicons.alert_circle_outline, color: Color(0xFF8890a0)),

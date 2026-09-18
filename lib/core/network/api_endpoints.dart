@@ -30,6 +30,10 @@ class ApiEndpoints {
   static String takeItRIT(String role) => "$role/tugas";
   static String getRit(String url) => "rit/$url";
 
+  // Retur
+  static const String getItemOrder = "retur/checktransaction";
+  static const String postRetur = "retur/submitretur";
+
   // PICKING TRANSACTION
   static const String pendingSO = "picking/cancel";
 

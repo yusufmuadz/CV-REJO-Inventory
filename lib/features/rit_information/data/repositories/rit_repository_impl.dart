@@ -2,7 +2,9 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../domain/entities/content_order_retur_entity.dart';
 import '../../domain/entities/rit_entity.dart';
+import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../domain/repositories/rit_repository.dart';
@@ -46,11 +48,40 @@ class RitRepositoryImpl implements RitRepository {
   }
 
   @override
+  Future<ResultCustom<Failure, RitEntity>> postSaveRetur(
+    ParamsPostSaveRetur params,
+  ) async {
+    try {
+      final response = await dataSource.postSaveRetur(params);
+
+      if (response.error == null) {
+        return Success(RitEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
   Future<ResultCustom<Failure, List<OrderEntity>>> getOrders(
     ParamsGetTransaction params,
   ) async {
     try {
       final response = await dataSource.getOrders(params);
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<ContentOrderReturEntity>>> getOrdersRetur(
+    ParamsGetTransaction params,
+  ) async {
+    try {
+      final response = await dataSource.getOrdersRetur(params);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

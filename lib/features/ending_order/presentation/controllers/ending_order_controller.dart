@@ -37,12 +37,15 @@ class EndingOrderController extends GetxController {
   final statatusDriver = ''.obs;
 
   final fieldController = TextEditingController();
+  final extNopolTransportion = TextEditingController();
+  final extDriverName = TextEditingController();
 
   final mediaFileList = <XFile>[].obs;
   final mediaFileListAllItem = <XFile>[].obs;
   final mediaFileFrontMerchant = <XFile>[].obs;
   final mediaFileListInfoInvoice = <XFile>[].obs;
   final mediaFileListPaymentType = <XFile>[].obs;
+  final mediaFileListTransportation = <XFile>[].obs;
 
   final selectedInfoInvoice = 'Lunas'.obs;
   final infoInvoiceList = ['Lunas', 'Belum Lunas'];
@@ -51,6 +54,10 @@ class EndingOrderController extends GetxController {
   final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek', 'Debit'];
 
   final itemPO = <ItemOrderModel>[].obs;
+
+  final jenisArmada = ''.obs;
+
+  final formKey = GlobalKey<FormState>();
 
   @override
   void onInit() {
@@ -71,6 +78,13 @@ class EndingOrderController extends GetxController {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
       statatusDriver.value = args['status_driver'] ?? '';
+
+      if (AppRole.isChecker2) {
+        jenisArmada.value = args['jenisArmada'] ?? '';
+        extDriverName.text = args['driverExternal'] ?? '';
+        extNopolTransportion.text = args['mobilExternal'] ?? '';
+      }
+
       if (AppRole.isDriver) {
         itemPO.value = args['items'] ?? [];
       }
@@ -97,23 +111,43 @@ class EndingOrderController extends GetxController {
   Future<void> saveOrder() async {
     if (isLoading.value) return;
 
-    if (mediaFileList.isEmpty) {
+    if (mediaFileList.isEmpty || _emptyExternal()) {
       dialogService.showErrorSnackbar(
         title: 'Gagal!',
         'Masukkan minimal satu foto',
       );
       return;
     }
+
+    // debugPrint('Simpan PO');
+
     isLoading.value = true;
 
     try {
+      String? lat;
+      String? long;
+
+      if (jenisArmada.value.toLowerCase() == 'external') {
+        final position = await locationService.getLatestLocationLightweight();
+
+        lat = position.latitude.toString();
+        long = position.longitude.toString();
+      }
+
       final result = await endingOrderUseCase.call(
         ParamsEndingOrder(
           role: AppRole.current!.name.toLowerCase(),
           statusChecker2: statusChecker2.value,
+          statusTransportation: jenisArmada.value.toUpperCase(),
           invoice: noInvoice.value,
           desc: fieldController.text,
+          lat: lat,
+          long: long,
+          driverExternal: extDriverName.text,
+          mobilExternal: extNopolTransportion.text,
           images: mediaFileList,
+          imagesTransportation: mediaFileListTransportation,
+          imagesInvoice: mediaFileListInfoInvoice,
         ),
       );
 
@@ -451,6 +485,17 @@ class EndingOrderController extends GetxController {
         );
       },
     );
+  }
+
+  bool _emptyExternal() {
+    if (AppRole.isChecker2 &&
+        jenisArmada.value.toLowerCase() == 'external' &&
+        statusChecker2.value == 'completed' &&
+        (mediaFileListTransportation.isEmpty ||
+            mediaFileListInfoInvoice.isEmpty)) {
+      return true; // Ada yang kosong
+    }
+    return false;
   }
 
   bool _emptyDriverPO() {

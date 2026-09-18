@@ -22,16 +22,18 @@ class WatermarkOverlay extends StatelessWidget {
           bottom: 80,
           right: 0,
           left: 0,
-          child: Center(
-            child: Text(
-              version,
-              style: TextStyle(
-                fontSize: 42,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.none,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.15),
+          child: IgnorePointer(
+            child: Center(
+              child: Text(
+                version,
+                style: TextStyle(
+                  fontSize: 42,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.none,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.15),
+                ),
               ),
             ),
           ),

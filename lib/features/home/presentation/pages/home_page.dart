@@ -6,6 +6,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../profile/presentation/views/profile_view.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
+import '../views/home_retur_driver_view.dart';
 import '../views/home_view.dart';
 import '../views/home_rit_contsraint_view.dart';
 import '../views/take_it_order_view.dart';
@@ -58,6 +59,7 @@ class HomePage extends GetView<HomeController> {
         // ListOrderPage(),
         if (AppRole.isChecker2)
           HomeTrackingDriverView(homeController: controller),
+        if (AppRole.isDriver) HomeReturDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
         ProfileView(controller: controller),

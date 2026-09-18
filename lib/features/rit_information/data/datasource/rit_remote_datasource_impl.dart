@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -13,8 +14,10 @@ import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
+import '../models/response_model_get_orders_retur.dart';
 import 'rit_remote_datasource.dart';
 
 class RitRemoteDataSourceImpl implements RitRemoteDataSource {
@@ -159,6 +162,56 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   }
 
   @override
+  Future<ResponseModelBasic> postSaveRetur(ParamsPostSaveRetur params) async {
+    try {
+      final dataReturJson = jsonEncode(
+        params.itemOrderList.map((element) => element.toJson()).toList(),
+      );
+
+      final formData = FormData.fromMap({
+        'invoice': params.invoice,
+        'keterangan': params.description,
+        'data_retur': dataReturJson,
+        'foto1': await MultipartHelper.fromNullableXFile(
+          params.mediaFileList[0],
+        ),
+        if (params.mediaFileList.length > 1)
+          'foto2': await MultipartHelper.fromNullableXFile(
+            params.mediaFileList[1],
+          ),
+      });
+
+      // debugPrint(formData.fields.toString());
+      // debugPrint(formData.files.toString());
+      // debugPrint('Data Retur: $dataReturJson');
+      // throw ServerException(message: 'Test Post', statusCode: 500);
+
+      final response = await dioClient.post(
+        ApiEndpoints.postRetur,
+        data: formData,
+        contentType: Headers.multipartFormDataContentType,
+      );
+
+      // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
   Future<ResponseModelGetTransactionAll> getOrders(
     ParamsGetTransaction params,
   ) async {
@@ -200,6 +253,36 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelGetTransactionAll.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetOrdersRetur> getOrdersRetur(
+    ParamsGetTransaction params,
+  ) async {
+    try {
+      Map<String, String> body = {'invoice': params.noInvoice ?? ''};
+
+      String queryString = Uri(queryParameters: body).query;
+
+      final response = await dioClient.get(
+        '${ApiEndpoints.getItemOrder}?$queryString',
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetOrdersRetur.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

@@ -8,8 +8,14 @@ class ParamsEndingOrder {
   final String? long;
   final String? paymentMethod;
   final String? paymentNominal;
+  final String? statusTransportation;
+  final String? driverExternal;
+  final String? mobilExternal;
   final String statusChecker2;
   final List<XFile>? images;
+  final List<XFile>? imagesAllItem;
+  final List<XFile>? imagesTransportation;
+  final List<XFile>? imagesInvoice;
   final ImagesDriverModel? imagesDriver;
 
   ParamsEndingOrder({
@@ -20,7 +26,13 @@ class ParamsEndingOrder {
     this.long,
     this.paymentMethod,
     this.paymentNominal,
+    this.statusTransportation,
+    this.driverExternal,
+    this.mobilExternal,
     this.images,
+    this.imagesAllItem,
+    this.imagesTransportation,
+    this.imagesInvoice,
     this.imagesDriver,
     required this.statusChecker2,
   });

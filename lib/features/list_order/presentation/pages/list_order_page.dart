@@ -46,10 +46,12 @@ class ListOrderPage extends GetView<ListOrderController> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if (controller.isRouteFrom.value == 'endingOrder') {
+              if (controller.isRouteFrom.value == 'endingOrder' ||
+                  controller.isAddAssistant.value) {
                 Get.offAllNamed(Routes.HOME);
                 return;
               }
+
               Get.back();
             },
           ),

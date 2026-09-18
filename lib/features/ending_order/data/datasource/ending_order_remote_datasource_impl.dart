@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/helpers/multipart_helper.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
@@ -22,6 +24,12 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       String nameFile = 'file';
 
       debugPrint(params.invoice);
+      // debugPrint('Images: ${params.images != null} ${params.images?.length}');
+      // debugPrint(
+      //   'Transportation ${params.imagesTransportation != null} ${params.imagesTransportation?.length}',
+      // );
+      // debugPrint('Invoice: ${params.imagesInvoice != null}');
+      // debugPrint('Images Length: ${params.images!.length > 1}');
 
       // if (params.role == 'deliver') {
       //   nameFile = 'foto';
@@ -30,18 +38,42 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       final formData = FormData.fromMap({
         'invoice': params.invoice,
         'desc': params.desc,
+        'status_armada': params.statusTransportation,
+        'driver_external': params.driverExternal,
+        'mobil_external': params.mobilExternal,
+        'lat': params.lat,
+        'long': params.long,
         if (params.role == 'deliver') 'gudang': 'BARANG JADI',
-        '${nameFile}1': await MultipartFile.fromFile(
-          params.images![0].path,
-          filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
+        '${nameFile}1': await MultipartHelper.fromNullableXFile(
+          params.images?[0],
+          // filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
         ),
         // Collection if: hanya masuk ke map kalau kondisi true
         if (params.images!.length > 1)
-          '${nameFile}2': await MultipartFile.fromFile(
-            params.images![1].path,
-            filename: '${nameFile}2.jpg',
+          '${nameFile}2': await MultipartHelper.fromNullableXFile(
+            params.images?[1],
+          ),
+
+        if (AppRole.isChecker2 &&
+            params.statusTransportation == 'EXTERNAL' &&
+            params.statusChecker2 == 'completed' &&
+            params.imagesTransportation != null)
+          '${nameFile}3': await MultipartHelper.fromNullableXFile(
+            params.imagesTransportation?[0],
+          ),
+        if (AppRole.isChecker2 &&
+            params.statusTransportation == 'EXTERNAL' &&
+            params.statusChecker2 == 'completed' &&
+            params.imagesInvoice != null)
+          '${nameFile}4': await MultipartHelper.fromNullableXFile(
+            params.imagesInvoice?[0],
           ),
       });
+
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
 
       String role = params.role!;
 

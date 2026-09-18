@@ -1,9 +1,11 @@
 import 'package:cv_rejo/features/home/domain/usecases/get_home_usecase.dart';
+import 'package:cv_rejo/features/home/presentation/controllers/home_retur_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/services/cache_service.dart';
 import '../../../ending_order/domain/usecases/ending_order_usecase.dart';
 import '../../../list_order/domain/usecases/list_order_usecase.dart';
+import '../../../rit_information/domain/usecases/rit_usecase.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/home_page_controller.dart';
 import '../controllers/home_profile_controller.dart';
@@ -23,6 +25,12 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomePageController>(() => HomePageController());
 
     Get.lazyPut<HomeProfileController>(() => HomeProfileController());
+
+    Get.lazyPut<HomePageController>(() => HomePageController());
+
+    Get.lazyPut<HomeReturController>(
+      () => HomeReturController(ritUseCase: Get.find<RitUseCase>()),
+    );
 
     Get.lazyPut<HomeTransactionsController>(
       () => HomeTransactionsController(homeUseCase: Get.find<GetHomeUseCase>()),
