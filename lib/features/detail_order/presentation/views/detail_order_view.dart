@@ -74,6 +74,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
           bottomNavigationBar: Obx(() {
             if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
                 controller.isFromHistory.value ||
+                controller.isTracking.value ||
                 controller.isLoading.value) {
               return const SizedBox.shrink();
             }

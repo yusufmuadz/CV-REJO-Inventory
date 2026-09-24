@@ -2,22 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:camera/camera.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../core/middlewares/app_role.dart';
-import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/contact_service.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../routes/app_pages.dart';
-import '../../../../shared/images/camera_screen.dart';
 import '../../../../utils/maps_utils.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
-import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
@@ -42,6 +36,7 @@ class DetailOrderController extends GetxController {
   final statusPO = ''.obs;
 
   final isFromHistory = false.obs;
+  final isTracking = false.obs;
 
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
@@ -102,6 +97,7 @@ class DetailOrderController extends GetxController {
       statusDriver.value = args['status_driver'] ?? '';
       statusPO.value = args['status_po'] ?? '';
       doneByPO.value = args['done_by_po'] ?? '-';
+      isTracking.value = args['isTracking'] ?? false;
       // statusDriver.value = 'completed';
 
       if (AppRole.isDriver) {

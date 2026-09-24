@@ -211,10 +211,13 @@ class DialogService {
   }
 
   /// ===== SNACKBAR COMING SOON =====
-  SnackbarController showComingSoonSnackbar({String title = 'Warning!'}) {
+  SnackbarController showComingSoonSnackbar({
+    String title = 'Warning!',
+    String? message,
+  }) {
     return showSnackbar(
       title: title,
-      message: 'Fitur sedang dalam pengembangan',
+      message: message ?? 'Fitur sedang dalam pengembangan',
       backgroundColor: Colors.red,
     );
   }
@@ -250,7 +253,6 @@ class DialogService {
   SnackbarController showErrorSnackbar(
     String message, {
     String title = 'Error',
-
   }) {
     return showSnackbar(
       title: title,

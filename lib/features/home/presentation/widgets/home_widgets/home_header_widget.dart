@@ -39,13 +39,18 @@ class HomeHeaderWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hi, ${AppRole.name!.capitalize} 👋',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                      height: 1.3,
+                  SizedBox(
+                    width: Get.width * 0.7,
+                    child: Text(
+                      'Hi, ${AppRole.name!.capitalize} 👋',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        height: 1.3,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),

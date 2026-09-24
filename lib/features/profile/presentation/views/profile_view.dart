@@ -66,6 +66,9 @@ class ProfileView extends StatelessWidget {
                 Center(
                   child: Text(
                     AppRole.name?.capitalize ?? '-',
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyles.basicTextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,

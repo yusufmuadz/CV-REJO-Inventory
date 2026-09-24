@@ -809,6 +809,7 @@ class RitDialog {
     if (title != null) {
       resultTitle = title;
     }
+
     return Row(
       children: [
         Visibility(

@@ -17,6 +17,9 @@ class HomeReturController extends GetxController {
 
   final itemPoAddRetur = <ItemOrderReturEntity>[].obs;
 
+  final formKey = GlobalKey<FormState>();
+  final formKeyItem = GlobalKey<FormState>();
+
   void addItemRetur({
     int? index,
     bool isRetur = false,
@@ -27,7 +30,8 @@ class HomeReturController extends GetxController {
     required RxList<XFile> mediaFileListRetur,
   }) {
     if (isRetur) {
-      if (qtyReturProductController.text.isEmpty || mediaFileListRetur.isEmpty) {
+      if (qtyReturProductController.text.isEmpty ||
+          mediaFileListRetur.isEmpty) {
         Future.delayed(const Duration(milliseconds: 50), () {
           dialogService.showErrorSnackbar(
             title: 'Gagal!',

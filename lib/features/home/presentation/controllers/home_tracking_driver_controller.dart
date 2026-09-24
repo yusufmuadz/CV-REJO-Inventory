@@ -164,8 +164,8 @@ class HomeTrackingDriverController extends GetxController {
           page: '${currentPage.value}',
           q: searchTrackingController.text,
           filter: '',
-          district: '10', // ritTracking.value
-          dateRit: '2026-09-02', // dateTracking.value
+          district: ritTracking.value, // '10'
+          dateRit: dateTracking.value, // '2026-09-02'
           isTracking: true,
         ),
       );

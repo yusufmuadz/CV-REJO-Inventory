@@ -97,6 +97,11 @@ class EndingOrderController extends GetxController {
     isLoading.value = false;
     fieldController.dispose();
     mediaFileList.clear();
+    mediaFileListAllItem.clear();
+    mediaFileFrontMerchant.clear();
+    mediaFileListInfoInvoice.clear();
+    mediaFileListPaymentType.clear();
+    mediaFileListTransportation.clear();
     noInvoice.value = '';
   }
 
@@ -225,6 +230,11 @@ class EndingOrderController extends GetxController {
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', pesan);
       }
+    } catch (e) {
+      debugPrint('Error Simpan Pesanan: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', 'Error Simpan Pesanan\n$e');
     } finally {
       isLoading.value = false;
     }
@@ -280,6 +290,11 @@ class EndingOrderController extends GetxController {
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', message);
       }
+    } catch (e) {
+      debugPrint('Error Simpan Pesanan: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', 'Error Pending Pesanan\n$e');
     } finally {
       isLoading.value = false;
     }
