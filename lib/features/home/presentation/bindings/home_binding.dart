@@ -6,6 +6,7 @@ import '../../../../core/services/cache_service.dart';
 import '../../../ending_order/domain/usecases/ending_order_usecase.dart';
 import '../../../list_order/domain/usecases/list_order_usecase.dart';
 import '../../../rit_information/domain/usecases/rit_usecase.dart';
+import '../controllers/home_bbm_controller.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/home_page_controller.dart';
 import '../controllers/home_profile_controller.dart';
@@ -27,6 +28,8 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomeProfileController>(() => HomeProfileController());
 
     Get.lazyPut<HomePageController>(() => HomePageController());
+
+    Get.lazyPut<HomeBbmController>(() => HomeBbmController());
 
     Get.lazyPut<HomeReturController>(
       () => HomeReturController(ritUseCase: Get.find<RitUseCase>()),

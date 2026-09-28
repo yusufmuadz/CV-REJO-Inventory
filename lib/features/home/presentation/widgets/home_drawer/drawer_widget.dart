@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../../../../../core/constants/app_info.dart';
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/services/contact_service.dart';
 import '../../../../../core/theme/text_styles.dart';
@@ -42,8 +43,8 @@ class DrawerWidget extends StatelessWidget {
                     onTap: () {
                       // controller.homePageController.listMenu[index]['isSelected'] = true;
                       // controller.listMenu.update(controller.listMenu);
-                      controller.homePageController.selectMenu(index);
                       Get.back();
+                      controller.homePageController.selectMenu(index);
                     },
                   );
                 },
@@ -52,71 +53,6 @@ class DrawerWidget extends StatelessWidget {
               ),
             ),
           ),
-          // Column(
-          //   children: controller.listMenu
-          //       .map(
-          //         (element) => _buildTile(
-          //           title: element['label'] as String,
-          //           isSelected: element['isSelected'] as bool,
-          //           icon: element['icon'] as IconData,
-          //           onTap: () {
-          //             controller.homePageController.changePage(element['index'] as int);
-          //             Get.back();
-          //           },
-          //         ),
-          //       )
-          //       .toList(),
-          // ),
-          // _buildTile(
-          //   title: 'Home',
-          //   isSelected: true,
-          //   icon: Ionicons.home,
-          //   onTap: () {
-          //     controller.homePageController.changePage(0);
-          //     Get.back();
-          //   },
-          // ),
-          // const SizedBox(height: 8),
-          // _buildTile(
-          //   title: 'Retur',
-          //   isSelected: false,
-          //   icon: Ionicons.arrow_undo_circle_outline,
-          //   onTap: () {
-          //     Get.back();
-          //     controller.homePageController.changePage(1);
-          //   },
-          // ),
-          // const SizedBox(height: 8),
-          // _buildTile(
-          //   title: 'Kendala',
-          //   isSelected: false,
-          //   icon: Ionicons.alert_circle_outline,
-          //   onTap: () {
-          //     controller.homePageController.changePage(2);
-          //     Get.back();
-          //   },
-          // ),
-          // const SizedBox(height: 8),
-          // _buildTile(
-          //   title: 'Pesanan',
-          //   isSelected: false,
-          //   icon: Ionicons.reader_outline,
-          //   onTap: () {
-          //     controller.homePageController.changePage(3);
-          //     Get.back();
-          //   },
-          // ),
-          // const SizedBox(height: 8),
-          // _buildTile(
-          //   title: 'Isi BBM',
-          //   isSelected: false,
-          //   icon: Ionicons.speedometer_outline,
-          //   onTap: () {
-          //     controller.homePageController.changePage(4);
-          //     Get.back();
-          //   },
-          // ),
-          // const Spacer(),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
             decoration: BoxDecoration(
@@ -152,7 +88,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'App v4.0.0 • Upd: 22 Jun 2026',
+                  'App ${AppInfo.versionLabel} • Upd: ${AppInfo.updatedAt}',
                   style: TextStyles.basicTextStyle(
                     fontSize: 12,
                     fontFamily: GoogleFonts.hankenGrotesk().fontFamily,

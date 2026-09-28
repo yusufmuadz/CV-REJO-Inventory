@@ -9,6 +9,7 @@ import 'package:ionicons/ionicons.dart';
 
 import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
+import 'home_bbm_controller.dart';
 import 'home_page_controller.dart';
 import 'home_profile_controller.dart';
 import 'home_retur_controller.dart';
@@ -51,6 +52,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   late final HomeProfileController homeProfileController;
   late final HomeTrackingDriverController homeTrackingDriverController;
   late final HomeReturController homeReturController;
+  late final HomeBbmController homeBbmController;
 
   @override
   void onInit() {
@@ -61,6 +63,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeProfileController = Get.find<HomeProfileController>();
     homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
     homeReturController = Get.find<HomeReturController>();
+    homeBbmController = Get.find<HomeBbmController>();
 
     if (AppRole.isDriver) {
       scaffoldKey = GlobalKey<ScaffoldState>();

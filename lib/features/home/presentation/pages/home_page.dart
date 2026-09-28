@@ -86,7 +86,7 @@ class HomePage extends GetView<HomeController> {
         if (AppRole.isDriver) HomeReturDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
-        if (AppRole.isDriver) HomeBbmWidget(controller: controller),
+        if (AppRole.isDriver) HomeBbmWidget(homeController: controller),
         ProfileView(controller: controller),
       ],
     );

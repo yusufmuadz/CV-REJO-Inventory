@@ -25,7 +25,7 @@ class HomeDialog {
     final mediaFileList = <XFile>[].obs;
 
     if (files != null && files.isNotEmpty) {
-      mediaFileList.value = mediaFileList;
+      mediaFileList.value = files;
     }
 
     date ??= DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now());
