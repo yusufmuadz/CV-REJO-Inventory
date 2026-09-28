@@ -37,14 +37,18 @@ class ContentDetailOrderWidget extends StatelessWidget {
               ? controller.orderDetail.value.suratJalan
               : controller.orderDetail.value.orderNo,
         ),
-        _buildBody(
-          title: 'Status Armada',
-          value: controller.orderDetail.value.jenisArmada ?? '-',
+        Visibility(
+          visible: AppRole.isChecker2,
+          child: _buildBody(
+            title: 'Status Armada',
+            value: controller.orderDetail.value.jenisArmada ?? '-',
+          ),
         ),
         Visibility(
           visible:
+              AppRole.isChecker2 &&
               controller.orderDetail.value.jenisArmada!.toLowerCase() ==
-              'external',
+                  'external',
           child: Container(
             margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
             child: Text(

@@ -27,6 +27,7 @@ class RitConstraint extends StatelessWidget {
       children: [
         AppBarWidget().content(
           title: 'Kendala',
+          controller: controller,
           onTap: () {
             _popupAddConstraint(isPreviewMode: false);
             // controller.dialogService.showErrorSnackbar('Coming soon');

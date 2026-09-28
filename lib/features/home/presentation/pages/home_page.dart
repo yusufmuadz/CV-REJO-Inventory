@@ -1,3 +1,4 @@
+import 'package:cv_rejo/features/home/presentation/widgets/home_drawer/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,6 +7,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../profile/presentation/views/profile_view.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
+import '../views/home_bbm_widget.dart';
 import '../views/home_retur_driver_view.dart';
 import '../views/home_view.dart';
 import '../views/home_rit_contsraint_view.dart';
@@ -29,15 +31,37 @@ class HomePage extends GetView<HomeController> {
       onPopInvokedWithResult: (didPop, result) =>
           controller.dialogService.handleExit(),
       child: Scaffold(
+        key: controller.scaffoldKey,
         resizeToAvoidBottomInset: false,
         backgroundColor: AppRole.isDriver || AppRole.isChecker1
-            ? Color(0xFFf5f0fa)
+            ? const Color(0xFFf5f0fa)
             : AppColors.backgroundMint,
         body: _buildPage(),
-        bottomNavigationBar: Obx(() {
-          if (controller.isKeyboardOpen.value) return const SizedBox();
-          return CustomButton.bottomBarIcon(controller: controller);
-        }),
+        drawer: DrawerWidget(controller: controller),
+        floatingActionButton: Obx(
+          () => Visibility(
+            visible:
+                AppRole.isDriver &&
+                (controller.tabIndex.value == 0 ||
+                    controller.tabIndex.value == 5),
+            child: FloatingActionButton(
+              shape: const CircleBorder(),
+              elevation: 0.5,
+              backgroundColor: const Color(0xFF2563EB),
+              child: const Icon(Icons.menu),
+              onPressed: () {
+                controller.scaffoldKey.currentState?.openDrawer();
+              },
+            ),
+          ),
+        ),
+        bottomNavigationBar: Visibility(
+          visible: !AppRole.isDriver,
+          child: Obx(() {
+            if (controller.isKeyboardOpen.value) return const SizedBox();
+            return CustomButton.bottomBarIcon(controller: controller);
+          }),
+        ),
       ),
     );
   }
@@ -62,6 +86,7 @@ class HomePage extends GetView<HomeController> {
         if (AppRole.isDriver) HomeReturDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
+        if (AppRole.isDriver) HomeBbmWidget(controller: controller),
         ProfileView(controller: controller),
       ],
     );

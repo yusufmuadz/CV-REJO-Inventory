@@ -63,9 +63,12 @@ class ContentInfoOrderWidget extends StatelessWidget {
                     isChecked = orderDetail?.statusChecker2 ?? false;
                   } else if (AppRole.isDriver) {
                     title = orderDetail?.item ?? '';
-                    value = 'Warna: ${orderDetail?.color}';
                     isChecked = orderDetail?.statusDriver ?? false;
                   }
+                }
+
+                if (AppRole.isChecker1 || AppRole.isChecker2) {
+                  value = 'Warna: ${orderDetail?.color}';
                 }
 
                 return InkWell(
@@ -118,6 +121,23 @@ class ContentInfoOrderWidget extends StatelessWidget {
                                   fontFamily:
                                       GoogleFonts.hankenGrotesk().fontFamily,
                                   color: Color(0xFF5D5E61),
+                                ),
+                              ),
+                              Visibility(
+                                visible: AppRole.isPIC,
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    'Warna: ${orderDetail?.color}',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyles.basicTextStyle(
+                                      fontSize: 12,
+                                      fontFamily: GoogleFonts.hankenGrotesk()
+                                          .fontFamily,
+                                      color: Color(0xFF5D5E61),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],

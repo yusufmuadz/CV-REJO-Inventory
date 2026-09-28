@@ -156,23 +156,30 @@ class InputAssistenWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 23),
-        _buildTitle(title: 'Nama Kenek'),
-        const SizedBox(height: 5),
-        _buildDropdown(
-          title: 'Asisten',
-          selectedValue:
-              controller.assistantSelected.value.isEmpty ||
-                  controller.assistantSelected.value == '-'
-              ? controller.listUser.first.nama
-              : controller.assistantSelected.value,
-          items: controller.listUser.map<DropdownMenuItem<String>>((item) {
-            return _buildMenuItem(item: item.nama);
-          }).toList(),
-          onChanged: (value) {
-            controller.assistantSelected.value = value.toString();
-          },
+        Visibility(
+          visible: !AppRole.isPIC,
+          child: _buildTitle(title: 'Nama Kenek'),
         ),
-        const SizedBox(height: 23),
+        Visibility(
+          visible: !AppRole.isPIC,
+          child: Container(
+            margin: EdgeInsets.only(top: 5, bottom: 23),
+            child: _buildDropdown(
+              title: 'Asisten',
+              selectedValue:
+                  controller.assistantSelected.value.isEmpty ||
+                      controller.assistantSelected.value == '-'
+                  ? controller.listUser.first.nama
+                  : controller.assistantSelected.value,
+              items: controller.listUser.map<DropdownMenuItem<String>>((item) {
+                return _buildMenuItem(item: item.nama);
+              }).toList(),
+              onChanged: (value) {
+                controller.assistantSelected.value = value.toString();
+              },
+            ),
+          ),
+        ),
         _buildTitle(title: 'Kendaraan'),
         const SizedBox(height: 5),
         _buildTransportation(),

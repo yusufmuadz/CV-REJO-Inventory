@@ -22,6 +22,7 @@ class TakeItOrderView extends StatelessWidget {
       children: [
         AppBarWidget().content(
           title: 'Ambil Pesanan',
+          controller: controller,
           onTap: () =>
               controller.dialogService.showErrorSnackbar('Coming soon'),
           // HomeDialog.popupInputTakeIt(

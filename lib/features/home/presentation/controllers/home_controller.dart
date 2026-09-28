@@ -5,6 +5,7 @@ import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:ionicons/ionicons.dart';
 
 import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -26,6 +27,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final cacheService = Get.find<CacheService>();
   final pageController = PageController(initialPage: 0);
   final indexPage = 0.obs;
+  late GlobalKey<ScaffoldState> scaffoldKey;
 
   final searchController = TextEditingController();
 
@@ -59,6 +61,10 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeProfileController = Get.find<HomeProfileController>();
     homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
     homeReturController = Get.find<HomeReturController>();
+
+    if (AppRole.isDriver) {
+      scaffoldKey = GlobalKey<ScaffoldState>();
+    }
 
     debugPrint('HOME CONTROLLER INIT: ${hashCode}');
   }

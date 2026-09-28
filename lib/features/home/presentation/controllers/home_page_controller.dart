@@ -1,12 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import 'home_controller.dart';
 
 class HomePageController extends GetxController {
   HomeController get masterController => Get.find<HomeController>();
+
+  final listMenu = [
+    {
+      'icon': Ionicons.home_outline,
+      'activeIcon': Ionicons.home,
+      'label': 'Home',
+      'onTap': () {},
+      'isSelected': true,
+    },
+    {
+      'icon': Ionicons.arrow_undo_circle_outline,
+      'activeIcon': Ionicons.arrow_undo_circle,
+      'label': 'Retur',
+      'onTap': () {},
+      'isSelected': false,
+    },
+    {
+      'icon': Ionicons.alert_circle_outline,
+      'activeIcon': Ionicons.alert_circle,
+      'label': 'Kendala',
+      'onTap': () {},
+      'isSelected': false,
+    },
+    {
+      'icon': Ionicons.reader_outline,
+      'activeIcon': Ionicons.reader,
+      'label': 'Pesanan',
+      'onTap': () {},
+      'isSelected': false,
+    },
+    {
+      'icon': Ionicons.speedometer_outline,
+      'activeIcon': Ionicons.speedometer,
+      'label': 'Isi BBM',
+      'onTap': () {},
+      'isSelected': false,
+    },
+  ].obs;
+
+  void selectMenu(int index) {
+    for (var i = 0; i < listMenu.length; i++) {
+      listMenu[i]['isSelected'] = i == index;
+    }
+
+    // listMenu[index]['isSelected'] = true;
+    listMenu.refresh();
+    changePage(index);
+    // update();
+  }
 
   void changePage(int index) {
     try {

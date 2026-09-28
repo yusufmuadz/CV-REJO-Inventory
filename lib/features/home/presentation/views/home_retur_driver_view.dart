@@ -16,6 +16,7 @@ class HomeReturDriverView extends StatelessWidget {
       children: [
         AppBarWidget().content(
           title: 'Retur Tidak Terkait',
+          controller: homeController,
           onTap: () {
             ReturInputSheet.show(controller: controller);
           },

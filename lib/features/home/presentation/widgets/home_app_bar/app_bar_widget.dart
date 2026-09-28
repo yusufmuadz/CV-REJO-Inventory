@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
+import '../../controllers/home_controller.dart';
 
 class AppBarWidget {
-  Widget content({required String title, IconData? icon, Function()? onTap}) {
+  Widget content({
+    required String title,
+    IconData? icon,
+    Function()? onTap,
+    HomeController? controller,
+  }) {
     return Container(
       height: 90,
       padding: EdgeInsets.all(16),
@@ -22,6 +29,24 @@ class AppBarWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Visibility(
+            visible: AppRole.isDriver,
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              child: InkWell(
+                onTap: () {
+                  if (controller != null) {
+                    controller.scaffoldKey.currentState?.openDrawer();
+                  }
+                },
+                child: Icon(
+                  Icons.menu_outlined,
+                  size: 27,
+                  color: Color(0xFF151C27),
+                ),
+              ),
+            ),
+          ),
           Text(
             title,
             style: TextStyles.basicTextStyle(

@@ -176,6 +176,12 @@ class CustomButton {
           activeIcon: Icon(Ionicons.reader, color: Color(0xFF06823f)),
           label: 'Pesanan',
         ),
+        if (AppRole.isDriver)
+        BottomNavigationBarItem(
+          icon: Icon(Ionicons.speedometer_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.speedometer, color: Color(0xFF06823f)),
+          label: 'BBM',
+        ),
       BottomNavigationBarItem(
         icon: Icon(Ionicons.person_circle_outline, color: Color(0xFF8890a0)),
         activeIcon: Icon(
