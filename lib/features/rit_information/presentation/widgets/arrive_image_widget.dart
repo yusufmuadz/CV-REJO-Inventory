@@ -327,7 +327,7 @@ class ArriveImageWidget {
                 maxImage: 1,
                 isPopup: true,
                 file: controller.mediaFileBackTransport,
-                title: 'Belakang Kendaraan',
+                title: 'Bak Belakang Kendaraan',
                 pathImage: controller.mediaFileBackTransport.value.path,
                 mediaFileList: controller.mediaFileList,
                 controller: controller,

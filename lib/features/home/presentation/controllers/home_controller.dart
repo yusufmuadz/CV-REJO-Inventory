@@ -65,9 +65,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeReturController = Get.find<HomeReturController>();
     homeBbmController = Get.find<HomeBbmController>();
 
-    if (AppRole.isDriver) {
+    // if (AppRole.isDriver) {
       scaffoldKey = GlobalKey<ScaffoldState>();
-    }
+    // }
 
     debugPrint('HOME CONTROLLER INIT: ${hashCode}');
   }
