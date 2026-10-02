@@ -2,7 +2,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-enum UserRole { picking, packing, loader, deliver }
+enum UserRole { picking, packing, loader, deliver, collector }
 
 class SessionManager extends GetxController {
   // 🔑 Keys
@@ -24,6 +24,7 @@ class SessionManager extends GetxController {
   bool get isChecker1    => _role.value == UserRole.packing;
   bool get isChecker2   => _role.value == UserRole.loader;
   bool get isDriver   => _role.value == UserRole.deliver;
+  bool get isCollector   => _role.value == UserRole.collector;
   bool get isLoggedIn => _role.value != null;
 
   @override

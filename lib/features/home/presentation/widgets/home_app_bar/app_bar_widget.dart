@@ -29,13 +29,13 @@ class AppBarWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Visibility(
-            visible: AppRole.isDriver,
-            child: Container(
+          if (AppRole.isDriver)
+            Container(
               margin: EdgeInsets.only(right: 10),
               child: InkWell(
                 onTap: () {
                   if (controller != null) {
+                    controller.getCacheSize(3);
                     controller.scaffoldKey.currentState?.openDrawer();
                   }
                 },
@@ -46,7 +46,6 @@ class AppBarWidget {
                 ),
               ),
             ),
-          ),
           Text(
             title,
             style: TextStyles.basicTextStyle(

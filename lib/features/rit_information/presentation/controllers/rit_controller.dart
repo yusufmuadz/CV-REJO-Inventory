@@ -12,6 +12,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../../utils/maps_utils.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../detail_order/domain/usecases/detail_order_usecase.dart';
+import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
@@ -93,6 +94,7 @@ class RitController extends GetxController {
   final pageIndex = 0.obs;
   late PageController pageController;
 
+  late final HomeController homeController;
   late final ListOrderController listOrderController;
 
   // late ScrollController scrollController;
@@ -100,6 +102,7 @@ class RitController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    homeController = Get.find<HomeController>();
     pageController = PageController(initialPage: pageIndex.value);
     final args = Get.arguments;
     if (args != null) {
@@ -135,10 +138,32 @@ class RitController extends GetxController {
     isLoadingRetur.value = false;
     isLoadingItemPo.value = false;
     loadState.value = LoadState.idle;
+    // kmController.dispose();
+    // reasonController.dispose();
+    // reasonReturController.dispose();
+    // recipientName.dispose();
 
     // registerScroll();
     debugPrint('On Close');
     super.onClose();
+  }
+
+  void afterEnding() {
+    routeFrom.value = 'endingOrder';
+
+    isDistrictSelected.value = GetStorage().read('city') ?? '';
+    colorRit.value = GetStorage().read('colorRit') ?? '';
+    tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
+    routeRit.value = GetStorage().read('routeRit') ?? '';
+    isRitToday.value = GetStorage().read('isRitToday') ?? false;
+
+    // if (GetStorage().read('city') == null && getButtonRIT != null) {
+    //   buttonRIT.value = EnumButtonRIT.acceptRIT;
+    // }
+
+    // _getOrder();
+
+    onRefreshTransaction();
   }
 
   void onRefreshTransaction() {
@@ -161,6 +186,8 @@ class RitController extends GetxController {
     // isAccept.value = !isAccept.value;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
+
+    homeController.getLocalRit();
 
     debugPrint('buttonRIT: ${buttonRIT.value.name}');
   }

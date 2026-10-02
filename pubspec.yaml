@@ -41,6 +41,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner:
   flutter_gen_runner:
+  # dart run build_runner build
 
 flutter:
   uses-material-design: true

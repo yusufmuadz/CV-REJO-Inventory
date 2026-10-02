@@ -19,12 +19,12 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint(
-    //   'BUILD HOME PAGE: '
-    //   'page=${identityHashCode(this)}, '
-    //   'controller=${controller.hashCode}, '
-    //   'pageController=${controller.pageController.hashCode}',
-    // );
+    debugPrint(
+      'BUILD HOME PAGE: '
+      'page=${identityHashCode(this)}, '
+      'controller=${controller.hashCode}, '
+      'pageController=${controller.pageController.hashCode}',
+    );
 
     return PopScope(
       canPop: false,
@@ -38,23 +38,23 @@ class HomePage extends GetView<HomeController> {
             : AppColors.backgroundMint,
         body: _buildPage(),
         drawer: DrawerWidget(controller: controller),
-        floatingActionButton: Obx(
-          () => Visibility(
-            visible:
-                AppRole.isDriver &&
-                (controller.tabIndex.value == 0 ||
-                    controller.tabIndex.value == 5),
-            child: FloatingActionButton(
-              shape: const CircleBorder(),
-              elevation: 0.5,
-              backgroundColor: const Color(0xFF2563EB),
-              child: const Icon(Icons.menu),
-              onPressed: () {
-                controller.scaffoldKey.currentState?.openDrawer();
-              },
-            ),
-          ),
-        ),
+        // floatingActionButton: Obx(
+        //   () => Visibility(
+        //     visible:
+        //         AppRole.isDriver &&
+        //         (controller.tabIndex.value == 0 ||
+        //             controller.tabIndex.value == 5),
+        //     child: FloatingActionButton(
+        //       shape: const CircleBorder(),
+        //       elevation: 0.5,
+        //       backgroundColor: const Color(0xFF2563EB),
+        //       child: const Icon(Icons.menu),
+        //       onPressed: () {
+        //         controller.scaffoldKey.currentState?.openDrawer();
+        //       },
+        //     ),
+        //   ),
+        // ),
         bottomNavigationBar: Visibility(
           visible: !AppRole.isDriver,
           child: Obx(() {

@@ -3,8 +3,13 @@ import 'package:get/get.dart';
 
 class SharedHeaderPopup extends StatelessWidget {
   final String title;
+  final bool isDisableBack;
 
-  const SharedHeaderPopup({super.key, required this.title});
+  const SharedHeaderPopup({
+    super.key,
+    required this.title,
+    this.isDisableBack = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,10 @@ class SharedHeaderPopup extends StatelessWidget {
           ),
         ),
         InkWell(
-          onTap: () => Get.back(),
+          onTap: () {
+            if (isDisableBack) return;
+            Get.back();
+          },
           child: Container(
             height: 35,
             width: 35,

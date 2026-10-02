@@ -14,38 +14,47 @@ class HomePageController extends GetxController {
       'icon': Ionicons.home_outline,
       'activeIcon': Ionicons.home,
       'label': 'Home',
-      'onTap': () {},
       'isSelected': true,
     },
     {
       'icon': Ionicons.arrow_undo_circle_outline,
       'activeIcon': Ionicons.arrow_undo_circle,
       'label': 'Retur',
-      'onTap': () {},
       'isSelected': false,
     },
     {
       'icon': Ionicons.alert_circle_outline,
       'activeIcon': Ionicons.alert_circle,
       'label': 'Kendala',
-      'onTap': () {},
       'isSelected': false,
     },
     {
       'icon': Ionicons.reader_outline,
       'activeIcon': Ionicons.reader,
       'label': 'Pesanan',
-      'onTap': () {},
       'isSelected': false,
     },
     {
       'icon': Ionicons.speedometer_outline,
       'activeIcon': Ionicons.speedometer,
       'label': 'Isi BBM',
-      'onTap': () {},
       'isSelected': false,
     },
   ].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    debugPrint('🟢 HomePageController INIT: $hashCode');
+  }
+
+  @override
+  void onClose() {
+    debugPrint('🔴 HomePageController CLOSE: $hashCode');
+
+    super.onClose();
+  }
 
   void selectMenu(int index) {
     for (var i = 0; i < listMenu.length; i++) {

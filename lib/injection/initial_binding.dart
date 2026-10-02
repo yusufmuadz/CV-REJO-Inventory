@@ -9,6 +9,7 @@ import '../core/network/koneksi_check.dart';
 import '../core/services/camera_service.dart';
 import '../core/services/contact_service.dart';
 import '../core/services/dialog_service.dart';
+import '../core/services/route_stack_service.dart';
 import '../core/services/storage_service.dart';
 import 'injection_datasource.dart';
 import 'injection_repository.dart';
@@ -17,6 +18,7 @@ import 'injection_usecase.dart';
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
+    Get.put<RouteStackService>(RouteStackService(), permanent: true);
     _injectioDefault();
     injectionUsecase();
     injectionDataSource();

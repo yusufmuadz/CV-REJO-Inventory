@@ -227,6 +227,34 @@ class DialogService {
     return showDialogBox(title: 'Success', description: message);
   }
 
+  Future<void> showSuccessDefaultDialog(
+    String title,
+    String message, {
+    bool singleButton = true,
+    String titleButton1 = 'Kembali',
+    Color color1 = Colors.red,
+    VoidCallback? onPressed1,
+  }) {
+    return defaultDialog(
+      height: 0.15,
+      title: title,
+      onPressed1: onPressed1,
+      singleButton: singleButton,
+      titleButton1: titleButton1,
+      barrierDismissible: false,
+      color1: color1,
+      actionsPadding: const EdgeInsets.all(16),
+      content: PopScope(
+        canPop: false,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Text(message, textAlign: TextAlign.center),
+          ),
+        ),
+      ),
+    );
+  }
+
   /// ===== SNACKBAR SUCCESS =====
   SnackbarController showSuccessSnackbar(String message) {
     return showSnackbar(
@@ -385,6 +413,7 @@ class DialogService {
     EdgeInsetsGeometry? contentPadding,
     EdgeInsetsGeometry? actionsPadding,
     EdgeInsetsGeometry? titlePadding,
+    EdgeInsets? insetPadding,
     String titleButton1 = 'Batal',
     String titleButton2 = 'Simpan',
     Color color1 = const Color(0xFFc7a16d),
@@ -394,26 +423,43 @@ class DialogService {
     TextStyle? titleStyle,
     EdgeInsetsGeometry? marginButton,
     bool barrierDismissible = true,
-    Widget? confirmButton,
+    // Widget? confirmButton,
     required Widget content,
   }) async {
-    return await Get.defaultDialog(
-      radius: 10,
+    return await Get.dialog(
       barrierDismissible: barrierDismissible,
-      title: title,
-      titlePadding: titlePadding ?? const EdgeInsets.only(top: 20),
-      titleStyle:
-          titleStyle ??
-          const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-      contentPadding:
-          contentPadding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
-      content: SizedBox(height: Get.height * height, child: content),
-      confirm:
-          confirmButton ??
+      AlertDialog(
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style:
+              titleStyle ??
+              const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+        ),
+        insetPadding:
+            insetPadding ?? EdgeInsets.all(30), // ⬅️ Hapus padding luar
+        contentPadding:
+            contentPadding ?? EdgeInsets.all(16), // Padding dalam konten
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // Opsional: sudut kotak
+        ),
+        actionsPadding: actionsPadding ?? const EdgeInsets.all(10),
+        titlePadding: titlePadding ?? const EdgeInsets.all(16),
+        // titleStyle:
+        //     titleStyle ??
+        //     const TextStyle(
+        //       fontSize: 20,
+        //       fontWeight: FontWeight.w600,
+        //       color: Colors.black87,
+        //     ),
+        // contentPadding:
+        //     contentPadding ?? const EdgeInsets.fromLTRB(15, 22, 15, 10),
+        content: SizedBox(height: Get.height * height, child: content),
+        actions: [
           Container(
             height: 45,
             width: double.infinity,
@@ -428,6 +474,8 @@ class DialogService {
               onPressed2: onPressed2,
             ),
           ),
+        ],
+      ),
     );
   }
 

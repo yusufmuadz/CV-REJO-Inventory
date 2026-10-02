@@ -5,7 +5,6 @@ import 'package:cv_rejo/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ionicons/ionicons.dart';
 
 import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -66,7 +65,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeBbmController = Get.find<HomeBbmController>();
 
     // if (AppRole.isDriver) {
-      scaffoldKey = GlobalKey<ScaffoldState>();
+    scaffoldKey = GlobalKey<ScaffoldState>();
     // }
 
     debugPrint('HOME CONTROLLER INIT: ${hashCode}');
@@ -100,6 +99,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     isLoading.value = false;
 
     debugPrint('HOME CONTROLLER CLOSE: ${hashCode}');
+    debugPrintStack(label: '🔥 HOME CLOSE STACK', maxFrames: 15);
+
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -121,10 +122,10 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     routeRit.value = GetStorage().read('routeRit') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
 
-    // debugPrint('RIT Storage: $rit');
-    // debugPrint('RIT Storage: $colorRit');
-    // debugPrint('RIT Storage: $tanggalRit');
-    // debugPrint('RIT Storage: $routeRit');
+    debugPrint('RIT Storage: $rit');
+    debugPrint('RIT Storage: $colorRit');
+    debugPrint('RIT Storage: $tanggalRit');
+    debugPrint('RIT Storage: $routeRit');
   }
 
   void getCacheSize(int index) async {

@@ -24,6 +24,7 @@ class HomeBbmWidget extends StatelessWidget {
           controller: homeController,
           onTap: () {
             // homeController.dialogService.showComingSoonSnackbar();
+            debugPrint('🟡 BBM POPUP CONTROLLER: ${controller.hashCode}');
             BbmInputSheet.show(
               homeController: homeController,
               isPreviewMode: false,

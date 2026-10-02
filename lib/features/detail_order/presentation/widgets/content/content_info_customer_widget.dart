@@ -22,7 +22,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
     final doneByPO = controller.doneByPO.value;
     final route = controller.orderDetail.value.route;
 
-    final isDriver = AppRole.isDriver && isStatusDriver;
+    final isDriver = (AppRole.isDriver && isStatusDriver) || AppRole.isPIC;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -111,7 +111,16 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
       //   'Data POST Item Product Remote DataSource: Barcode ${params.barcode}\nInvoice ${params.invoice}\nQty ${params.qty}\nRole ${params.role}',
       // );
 
-      final response = await dioClient.post(apiEndpoint, data: formData);
+      final response = await dioClient.post(
+        apiEndpoint,
+        data: formData,
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'application/json',
+        //   'Authorization':
+        //       'Bearer qKUaHggXv9qO/tzRcBc0UFpyK3RNRVZIZWlIU256azhYTDJaTFNsUk02WDdZbHY0UDNLb2hncnBQUmQyQjlTaU0rcC9laVFZVVVobkFIOE8xR2xWdmxVdlhSdmg0SldHVk01QnBIcld4ekFxalcyendpSkRzUW5KcHNRelhwckFUSUk1Q0dlZENvbWptaG1rWkZhVEh6bzZRb1g1K3gzcE5oa0dUUWFTRnhqMUxwcGp2THNaeG5GWHJRVFM5WHgzczdGS2NpdWl6NDBiWEh5cw==',
+        // },
+      );
 
       // debugPrint('Data POST Item Product Remote DataSource: ${response.data}');
 
@@ -169,9 +178,7 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   }
 
   @override
-  Future<ResponseModelBasic> takeItTransaction(
-    ParamsTakeIt params,
-  ) async {
+  Future<ResponseModelBasic> takeItTransaction(ParamsTakeIt params) async {
     try {
       String role = params.role;
 

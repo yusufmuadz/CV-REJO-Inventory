@@ -81,6 +81,7 @@ class BbmInputSheet extends StatelessWidget {
         filesNota: filesNota,
       ),
       enableDrag: false,
+      isDismissible: false,
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(

@@ -8,6 +8,7 @@ class ParamsAddAssistant {
   final String? dateRIT;
   final String? statusTransportation;
   final bool? isChecker2;
+  final bool isDetail;
 
   ParamsAddAssistant({
     this.invoice,
@@ -19,5 +20,6 @@ class ParamsAddAssistant {
     this.dateRIT,
     this.statusTransportation,
     this.isChecker2,
+    this.isDetail = false,
   });
 }

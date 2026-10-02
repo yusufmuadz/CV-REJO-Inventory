@@ -4,8 +4,10 @@ import 'package:cv_rejo/features/home/domain/entities/home_entity.dart';
 import 'package:cv_rejo/features/list_order/data/datasource/list_order_remote_datasource.dart';
 import 'package:cv_rejo/features/list_order/domain/params/get_transaction_param.dart';
 import '../../../../core/error/failures.dart';
+import '../../../detail_order/domain/entities/basic_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../../domain/params/isi_bbm_param.dart';
 import '../../domain/repositories/home_repository.dart';
 
 class HomeRepositoryImpl extends HomeRepository {
@@ -36,6 +38,26 @@ class HomeRepositoryImpl extends HomeRepository {
         return Success(response.data!.toEntity(), '');
       }
       return ErrorResult(message: response.message ?? 'Error');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, BasicEntity>> postIsiBbm(
+    ParamsIsiBbm params,
+  ) async {
+    try {
+      final response = await dataSource.postIsiBbm(params);
+
+      if (response.error == null) {
+        return Success(
+          BasicEntity(status: response.status, message: response.message),
+          '',
+        );
+      }
+
+      return ErrorResult(message: response.error!);
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

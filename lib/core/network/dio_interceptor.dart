@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../error/exceptions.dart';
 import '../services/storage_service.dart';
@@ -23,6 +24,8 @@ class DioInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await tokenStorage.getAccessToken();
+
+    debugPrint('TOKEN: $token');
 
     if (token != null) {
       options.headers["Authorization"] = "Bearer $token";

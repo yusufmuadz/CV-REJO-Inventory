@@ -12,6 +12,7 @@ import '../../../../utils/maps_utils.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
+import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
@@ -62,6 +63,7 @@ class DetailOrderController extends GetxController {
 
   late final GetDetailOrderController getDetailOrderController;
   late final AddProductOrderController addProductOrderController;
+  late final ListOrderController listOrderController;
 
   final orderDetail = DetailOrderEntity(
     invoice: '',
@@ -112,6 +114,10 @@ class DetailOrderController extends GetxController {
 
       if (routeFrom.value == 'listHistoryOrder') {
         isFromHistory.value = true;
+      } else {
+        if (AppRole.isChecker2) {
+          listOrderController = Get.find<ListOrderController>();
+        }
       }
 
       // debugPrint('No Invoice : ${noInvoice.value}');

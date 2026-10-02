@@ -218,6 +218,19 @@ class DioClient {
   /// Digunakan untuk debugging request tanpa interceptor.
   /// Berguna untuk membandingkan perilaku Dio murni
   /// dengan DioClient yang menggunakan interceptor.
+  ///
+  /// FORMAT UNTUK TEST => TOKEN DISESUAIKAN DULU
+  ///
+  /// response = await dioClient.testPost(
+  ///   ApiEndpoints.changeTransportation,
+  ///   data: data,
+  ///   headers: {
+  ///      Accept': 'application/json',
+  ///      Content-Type': 'application/json',
+  ///      Authorization':
+  ///          Bearer iIJJdxtgYxfRJaIv7ULIUnh4M0ZVQWRDL1dKTndSSFZybmxueGxYR1Rmbi9yTWFpYjg0Z1JCcGsyT2k4TThiclhyaVJUQyt2Rk1tcGhPVjFmMU9VeFZtL0lnQUlOY1g5SW5GYWN3NE1uTTV5ZGxRclBSWVZ3Q0xRM2NibFVjL1FsemRVN1NTZ0NiVnY0MGNDaHRubTNqSjc2UUwyZ1F1MzVBUjVUU0hha3N3K3JoMDI0Y2xHWlMwdzdJVVN0ZC9XNGF0Y1d4U1RyakNVS2hmYUFIZHhkb3VuWXpJRXhHejd5emQvenNBd2xiMGtHM2xDd2c0NDRmbXNpazA9',
+  ///   },
+  /// );
   Future<Response> testPost(
     String path, {
     dynamic data,

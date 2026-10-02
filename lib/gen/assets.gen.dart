@@ -92,6 +92,10 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/bg_collector.png
+  AssetGenImage get bgCollector =>
+      const AssetGenImage('assets/images/bg_collector.png');
+
   /// File path: assets/images/bg_driver.png
   AssetGenImage get bgDriver =>
       const AssetGenImage('assets/images/bg_driver.png');
@@ -114,6 +118,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    bgCollector,
     bgDriver,
     bgPackingMan,
     bgPickingMan,

@@ -19,6 +19,8 @@ class HomeHeaderWidget extends StatelessWidget {
       imagePath = Assets.images.bgDriver.path;
     } else if (AppRole.isChecker1) {
       imagePath = Assets.images.bgPackingMan.path;
+    } else if (AppRole.isCollector) {
+      imagePath = Assets.images.bgCollector.path;
     }
 
     return Stack(
@@ -39,6 +41,19 @@ class HomeHeaderWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Visibility(
+                    visible: AppRole.isDriver,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: InkWell(
+                        onTap: () {
+                          controller.getCacheSize(3);
+                          controller.scaffoldKey.currentState?.openDrawer();
+                        },
+                        child: Icon(Icons.menu, size: 24),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     width: Get.width * 0.7,
                     child: Text(

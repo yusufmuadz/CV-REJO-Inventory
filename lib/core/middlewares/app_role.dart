@@ -10,6 +10,7 @@ class AppRole {
   static bool get isChecker1 => _inst.isChecker1;
   static bool get isChecker2 => _inst.isChecker2;
   static bool get isDriver => _inst.isDriver;
+  static bool get isCollector => _inst.isCollector;
   static bool get isLoggedIn => _inst.isLoggedIn;
 
   // 🎯 User data accessors (langsung pakai di UI)

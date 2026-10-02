@@ -186,6 +186,10 @@ class GetDataListController extends GetxController {
           listCtrl.driverSelected.value = data.first.nama;
           listCtrl.assistantSelected.value = data.first.nama;
 
+          listCtrl.listUser.sort(
+            (UserEntity a, UserEntity b) => a.nama.compareTo(b.nama),
+          );
+
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
           // loadState.value = LoadState.error;
@@ -199,9 +203,17 @@ class GetDataListController extends GetxController {
           if (data.first.namaKendaraan != null &&
               data.first.namaKendaraan != '-') {
             listCtrl.selectTransportation.value = data.first.namaKendaraan!;
+            listCtrl.transportations.sort(
+              (TransportationEntity a, TransportationEntity b) =>
+                  a.namaKendaraan!.compareTo(b.namaKendaraan!),
+            );
           } else if (data.first.jenisKendaraan != null &&
               data.first.jenisKendaraan != '-') {
             listCtrl.selectTransportation.value = data.first.jenisKendaraan!;
+            listCtrl.transportations.sort(
+              (TransportationEntity a, TransportationEntity b) =>
+                  a.jenisKendaraan!.compareTo(b.jenisKendaraan!),
+            );
           }
 
           listCtrl.nopolTransportation.value =

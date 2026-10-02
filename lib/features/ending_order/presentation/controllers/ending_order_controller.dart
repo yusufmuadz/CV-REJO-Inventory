@@ -7,10 +7,14 @@ import '../../../../core/services/location_service.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
+import '../../../list_order/presentation/bindings/list_order_binding.dart';
+import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
+import '../../../rit_information/presentation/controllers/rit_controller.dart';
 import '../../domain/entities/ending_order_entity.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
@@ -30,6 +34,8 @@ class EndingOrderController extends GetxController {
   final dateRit = ''.obs;
   final colorRit = ''.obs;
   final isRitToday = false.obs;
+
+  late final RouteStackService routeStackService;
 
   final statusButton = EnumButtonEndingOrder.savePO.obs;
 
@@ -58,10 +64,14 @@ class EndingOrderController extends GetxController {
   final jenisArmada = ''.obs;
 
   final formKey = GlobalKey<FormState>();
+  late final ListOrderController listOrderController;
+  late final RitController ritController;
 
   @override
   void onInit() {
     super.onInit();
+    routeStackService = Get.find<RouteStackService>();
+
     final args = Get.arguments;
 
     rit.value = GetStorage().read('city') ?? '';
@@ -87,6 +97,19 @@ class EndingOrderController extends GetxController {
 
       if (AppRole.isDriver) {
         itemPO.value = args['items'] ?? [];
+        if (Get.isRegistered<RitController>()) {
+          ritController = Get.find<RitController>();
+        } else {
+          Get.lazyPut(() => RitController(ritUseCase: Get.find()));
+          ritController = Get.find<RitController>();
+        }
+      } else {
+        if (Get.isRegistered<ListOrderController>()) {
+          listOrderController = Get.find<ListOrderController>();
+        } else {
+          Get.lazyPut(() => ListOrderController(listOrderUseCase: Get.find()));
+          listOrderController = Get.find<ListOrderController>();
+        }
       }
     }
   }
@@ -176,13 +199,29 @@ class EndingOrderController extends GetxController {
 
                 GetStorage().remove('noInvoice');
 
-                Get.offAllNamed(
-                  Routes.LIST_ORDER,
-                  arguments: {
-                    'routeFrom': 'endingOrder',
-                    'isRitToday': isRitToday.value,
-                  },
-                );
+                if (routeStackService.contains(Routes.LIST_ORDER)) {
+                  listOrderController.onInit();
+                  listOrderController.onReady();
+                  Get.until(
+                    (route) => route.settings.name == Routes.RIT_INFORMATION,
+                  );
+                } else {
+                  Get.toNamed(
+                    Routes.RIT_INFORMATION,
+                    arguments: {
+                      'routeFrom': 'endingOrder',
+                      'isRitToday': isRitToday.value,
+                    },
+                  );
+                }
+
+                // Get.offAllNamed(
+                //   Routes.LIST_ORDER,
+                //   arguments: {
+                //     'routeFrom': 'endingOrder',
+                //     'isRitToday': isRitToday.value,
+                //   },
+                // );
               } else {
                 GetStorage().remove('noInvoice');
                 // GetStorage().remove('status_checker2');
@@ -445,16 +484,28 @@ class EndingOrderController extends GetxController {
               mediaFileListInfoInvoice.clear();
               mediaFileListPaymentType.clear();
 
-              Get.offAllNamed(
-                Routes.RIT_INFORMATION,
-                arguments: {
-                  'city': rit.value,
-                  'colorRit': colorRit.value,
-                  'tanggalRit': dateRit.value,
-                  'routeFrom': 'endingOrder',
-                  'isRitToday': isRitToday.value,
-                },
-              );
+              if (Get.isRegistered<RitController>()) {
+                ritController.afterEnding();
+              }
+
+              if (routeStackService.contains(Routes.RIT_INFORMATION)) {
+                Get.until(
+                  (route) => route.settings.name == Routes.RIT_INFORMATION,
+                );
+              } else {
+                Get.toNamed(Routes.RIT_INFORMATION);
+              }
+
+              // Get.offAllNamed(
+              //   Routes.RIT_INFORMATION,
+              //   arguments: {
+              //     'city': rit.value,
+              //     'colorRit': colorRit.value,
+              //     'tanggalRit': dateRit.value,
+              //     'routeFrom': 'endingOrder',
+              //     'isRitToday': isRitToday.value,
+              //   },
+              // );
             },
           );
 

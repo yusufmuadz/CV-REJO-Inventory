@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
@@ -6,16 +7,28 @@ import '../../../../detail_order/presentation/widgets/dialog/input_assisten_widg
 import '../../controllers/list_order_controller.dart';
 
 class InputAssistantDialog {
-  static Future<bool> inputAsisten(ListOrderController controller) async {
+  static Future<bool> inputAsisten(
+    ListOrderController controller, {
+    bool isDetail = false,
+    String invoice = '',
+  }) async {
     final bool result =
         await controller.dialogService.inputDialog(
+          height: 0.6,
           title: 'Masukkan ${AppRole.isChecker2 ? 'Muat Barang' : 'Asisten'}',
-          onPressed1: () => Get.back(result: false),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          onPressed1: () {
+            if (controller.isLoadingAssistant.value) return;
+
+            Get.back(result: false);
+          },
           onPressed2: () async {
             if (controller.isLoadingAssistant.value) return;
 
             final resultAdd = await controller.postDataListController
-                .addAssistant();
+                .addAssistant(isDetail: isDetail, invoice: invoice);
 
             if (!resultAdd) return;
             Get.back(result: resultAdd);
@@ -25,10 +38,13 @@ class InputAssistantDialog {
           },
           content: Obx(() {
             if (controller.isLoadingAssistant.value) {
-              return const LoadingView();
+              return SizedBox(width: Get.width, child: const LoadingView());
             }
 
-            return InputAssistenWidget(controller: controller);
+            return InputAssistenWidget(
+              controller: controller,
+              isDetail: isDetail,
+            );
           }),
         ) ??
         false;

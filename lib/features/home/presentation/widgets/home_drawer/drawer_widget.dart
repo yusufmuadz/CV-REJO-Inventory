@@ -70,13 +70,15 @@ class DrawerWidget extends StatelessWidget {
                   onTap: () => ContactService.onTapHubungiAdmin(),
                 ),
                 const SizedBox(height: 8),
-                _buildTileBottom(
-                  title: 'Hapus Cache',
-                  desc: 'Bersihkan data lokal',
-                  value: controller.cacheSize.value,
-                  icon: Icons.delete_sweep_outlined,
-                  onTap: () =>
-                      controller.homeProfileController.onTapClearCache(),
+                Obx(
+                  () => _buildTileBottom(
+                    title: 'Hapus Cache',
+                    desc: 'Bersihkan data lokal',
+                    value: controller.cacheSize.value,
+                    icon: Icons.delete_sweep_outlined,
+                    onTap: () =>
+                        controller.homeProfileController.onTapClearCache(),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 _buildTile(

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
+import 'package:ionicons/ionicons.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/images/custom_image.dart';
+import '../../../../list_order/presentation/widgets/dialog_list_order/input_assistant_dialog.dart';
 import '../../../domain/entities/detail_order_entity.dart';
 import '../../controllers/detail_order_controller.dart';
 import 'content_info_order_widget.dart';
@@ -40,28 +42,32 @@ class ContentDetailOrderWidget extends StatelessWidget {
         Visibility(
           visible: AppRole.isChecker2,
           child: _buildBody(
+            isStatus:
+                !controller.isFromHistory.value &&
+                controller.orderDetail.value.jenisArmada!.toLowerCase() ==
+                    'external',
             title: 'Status Armada',
             value: controller.orderDetail.value.jenisArmada ?? '-',
           ),
         ),
-        Visibility(
-          visible:
-              AppRole.isChecker2 &&
-              controller.orderDetail.value.jenisArmada!.toLowerCase() ==
-                  'external',
-          child: Container(
-            margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
-            child: Text(
-              '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
-              style: TextStyles.basicTextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                fontStyle: FontStyle.italic,
-                color: Colors.red,
-              ),
-            ),
-          ),
-        ),
+        // Visibility(
+        //   visible:
+        //       AppRole.isChecker2 &&
+        //       controller.orderDetail.value.jenisArmada!.toLowerCase() ==
+        //           'external',
+        //   child: Container(
+        //     margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
+        //     child: Text(
+        //       '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
+        //       style: TextStyles.basicTextStyle(
+        //         fontSize: 10,
+        //         fontWeight: FontWeight.w500,
+        //         fontStyle: FontStyle.italic,
+        //         color: Colors.red,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         _buildBoxStyle(
           vertical: 15,
           child: ContentInfoCustomerWidget(controller: controller),
@@ -104,6 +110,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
   Widget _buildBody({
     required String title,
     required String value,
+    bool isStatus = false,
     String pengiriman = '',
   }) {
     return _buildBoxStyle(
@@ -119,15 +126,65 @@ class ContentDetailOrderWidget extends StatelessWidget {
                   color: const Color(0xFF7C7C7C),
                 ),
               ),
-              Text(
-                value,
-                textAlign: TextAlign.left,
-                style: TextStyles.basicTextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF171717),
+              Visibility(
+                visible: !isStatus,
+                child: Text(
+                  value,
+                  textAlign: TextAlign.left,
+                  style: TextStyles.basicTextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF171717),
+                  ),
                 ),
               ),
+              if (isStatus)
+                InkWell(
+                  onTap: () async {
+                    final listController = controller.listOrderController;
+                    if (controller.isLoadingAssistant.value) return;
+
+                    if (listController.listUser.isEmpty) {
+                      listController.getDataListController.getAssisten();
+                    }
+
+                    final result = await InputAssistantDialog.inputAsisten(
+                      listController,
+                      isDetail: true,
+                      invoice: controller.orderDetail.value.invoice,
+                    );
+
+                    if (result) {
+                      controller.onRefreshDetailOrder();
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Color(0xFF2563EB)),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          value,
+                          textAlign: TextAlign.left,
+                          style: TextStyles.basicTextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1D4ED8),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        const Icon(
+                          Ionicons.chevron_down_outline,
+                          size: 13,
+                          color: Color(0xFF2563EB),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
           if (pengiriman.isNotEmpty) _buildShippingText(pengiriman),

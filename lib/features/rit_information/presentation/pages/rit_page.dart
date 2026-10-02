@@ -9,6 +9,8 @@ import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../home/presentation/controllers/home_bbm_controller.dart';
+import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../controllers/rit_controller.dart';
 import '../controllers/enums/enum_rit.dart';
@@ -82,10 +84,54 @@ class RitPage extends GetView<RitController> {
 
               if ((controller.isAcceptRIT.value && route == 'listOrder') ||
                   route == 'endingOrder') {
+                debugPrint(
+                  '🚨 BEFORE NAV '
+                  'currentRoute=${Get.currentRoute} '
+                  'routing=${Get.routing.current}',
+                );
+                debugPrint('CURRENT ROUTE: ${Get.currentRoute}');
+                debugPrint('IS HOME: ${Get.currentRoute == Routes.HOME}');
+                debugNavigation('BEFORE HOME');
                 // if (Get.isRegistered<ListOrderController>()) {
                 //   Get.delete<ListOrderController>(force: true);
                 // }
-                Get.offAllNamed(Routes.HOME);
+                // Get.offAllNamed(Routes.HOME);
+                Get.until((route) => route.settings.name == Routes.HOME);
+
+                // final hasHome = Get.routing.routeStack.any(
+                //   (route) => route.name == Routes.HOME,
+                // );
+
+                // if (hasHome) {
+                //   Get.until((route) => route.settings.name == Routes.HOME);
+                // } else {
+                //   Get.offAllNamed(Routes.HOME);
+                // }
+
+                debugPrint(
+                  '🚨 AFTER NAV '
+                  'currentRoute=${Get.currentRoute} '
+                  'routing=${Get.routing.current}',
+                );
+                debugPrint('📚 CURRENT ROUTE: ${Get.currentRoute}');
+                debugPrint('📚 ROUTING: ${Get.routing}');
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  debugNavigation('500ms AFTER HOME');
+                });
+                Future.delayed(const Duration(seconds: 2), () {
+                  debugPrint(
+                    '⏱️ 2 DETIK SETELAH HOME '
+                    'currentRoute=${Get.currentRoute}',
+                  );
+
+                  debugPrint(
+                    'HOME REGISTERED: ${Get.isRegistered<HomeController>()}',
+                  );
+
+                  debugPrint(
+                    'BBM REGISTERED: ${Get.isRegistered<HomeBbmController>()}',
+                  );
+                });
                 return;
               }
               Get.back();
@@ -111,6 +157,15 @@ class RitPage extends GetView<RitController> {
         }),
       ),
     );
+  }
+
+  void debugNavigation(String label) {
+    debugPrint('========== $label ==========');
+
+    debugPrint('Current route: ${Get.currentRoute}');
+    debugPrint('Previous route: ${Get.previousRoute}');
+    debugPrint('Routing current: ${Get.routing.current}');
+    debugPrint('Routing previous: ${Get.routing.previous}');
   }
 
   Widget _buildPage() {

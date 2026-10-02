@@ -46,7 +46,10 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'date_rit': date ?? '', // if (params.dateRit != null && params.pastRit == false)
+        if (params.dateRit != null)
+          'date_rit':
+              date ??
+              '', // if (params.dateRit != null && params.pastRit == false)
         // if (params.dateRit != null && params.pastRit == true)
         //   'daterit': date ?? '',
       };
@@ -238,18 +241,38 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
 
       if (params.isChecker2 == true) urlRole = 'check2';
 
-      final response = await dioClient.put(
-        ApiEndpoints.takeItRIT(urlRole),
-        data: {
-          "district": params.district,
-          "id_driver": params.idDriver,
-          "id_kenek": params.idKenek,
-          "date_rit": params.dateRIT,
-          if (!AppRole.isChecker2) "id_loader": params.idKendaraan,
-          if (AppRole.isChecker2) "status_armada": params.statusTransportation,
-          if (AppRole.isChecker2) "id_mobil": params.idKendaraan,
-        },
-      );
+      final data = {
+        "id_driver": params.idDriver,
+        "id_kenek": params.idKenek,
+        if (params.isDetail == false) "district": params.district,
+        if (params.isDetail == false) "date_rit": params.dateRIT,
+        if (!AppRole.isChecker2) "id_loader": params.idKendaraan,
+        if (AppRole.isChecker2) "id_mobil": params.idKendaraan,
+        if (AppRole.isChecker2 && params.isDetail == false)
+          "status_armada": params.statusTransportation,
+        if (AppRole.isChecker2 && params.isDetail == true)
+          "invoice": params.invoice,
+      };
+
+      debugPrint('isDetail: ${params.isDetail}');
+      debugPrint('isChecker2: ${AppRole.isChecker2}');
+      debugPrint('URL: ${ApiEndpoints.changeTransportation}');
+      debugPrint('DATA: $data');
+
+      Response<dynamic> response;
+
+      if (params.isDetail == false) {
+        response = await dioClient.put(
+          ApiEndpoints.takeItRIT(urlRole),
+          data: data,
+        );
+      } else {
+        response = await dioClient.post(
+          ApiEndpoints.changeTransportation,
+          data: data,
+          contentType: Headers.formUrlEncodedContentType,
+        );
+      }
 
       // debugPrint('Data Add Assistant Remote DataSource: ${response.data}');
 

@@ -27,12 +27,12 @@ class HomeBinding extends Bindings {
 
     Get.lazyPut<HomeProfileController>(() => HomeProfileController());
 
-    Get.lazyPut<HomePageController>(() => HomePageController());
-
-    Get.lazyPut<HomeBbmController>(() => HomeBbmController());
-
     Get.lazyPut<HomeReturController>(
       () => HomeReturController(ritUseCase: Get.find<RitUseCase>()),
+    );
+
+    Get.lazyPut<HomeBbmController>(
+      () => HomeBbmController(homeUseCase: Get.find<GetHomeUseCase>()),
     );
 
     Get.lazyPut<HomeTransactionsController>(

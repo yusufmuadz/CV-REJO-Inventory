@@ -343,14 +343,21 @@ class CustomImage {
     final dialogService = Get.find<DialogService>();
 
     dialogService.defaultDialog(
-      height: 0.35,
+      height: double.infinity,
       title: 'Preview Image',
       singleButton: true,
       titleButton1: 'Kembali',
-      content: Image.network(
-        path,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      insetPadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.zero,
+      content: InteractiveViewer(
+        minScale: 1.0,
+        maxScale: 5.0,
+        child: Image.network(
+          path,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
+          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+        ),
       ),
     );
   }

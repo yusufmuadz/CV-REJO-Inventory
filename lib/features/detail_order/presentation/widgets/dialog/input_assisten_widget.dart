@@ -11,8 +11,13 @@ import '../../../../list_order/presentation/controllers/list_order_controller.da
 
 class InputAssistenWidget extends StatelessWidget {
   final ListOrderController controller;
+  final bool isDetail;
 
-  const InputAssistenWidget({super.key, required this.controller});
+  const InputAssistenWidget({
+    super.key,
+    required this.controller,
+    this.isDetail = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,30 +161,30 @@ class InputAssistenWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 23),
-        Visibility(
-          visible: !AppRole.isPIC,
-          child: _buildTitle(title: 'Nama Kenek'),
-        ),
-        Visibility(
-          visible: !AppRole.isPIC,
-          child: Container(
-            margin: EdgeInsets.only(top: 5, bottom: 23),
-            child: _buildDropdown(
-              title: 'Asisten',
-              selectedValue:
-                  controller.assistantSelected.value.isEmpty ||
-                      controller.assistantSelected.value == '-'
-                  ? controller.listUser.first.nama
-                  : controller.assistantSelected.value,
-              items: controller.listUser.map<DropdownMenuItem<String>>((item) {
-                return _buildMenuItem(item: item.nama);
-              }).toList(),
-              onChanged: (value) {
-                controller.assistantSelected.value = value.toString();
-              },
-            ),
-          ),
-        ),
+        // Visibility(
+        //   visible: !AppRole.isPIC,
+        //   child: _buildTitle(title: 'Nama Kenek'),
+        // ),
+        // Visibility(
+        //   visible: !AppRole.isPIC,
+        //   child: Container(
+        //     margin: EdgeInsets.only(top: 5, bottom: 23),
+        //     child: _buildDropdown(
+        //       title: 'Asisten',
+        //       selectedValue:
+        //           controller.assistantSelected.value.isEmpty ||
+        //               controller.assistantSelected.value == '-'
+        //           ? controller.listUser.first.nama
+        //           : controller.assistantSelected.value,
+        //       items: controller.listUser.map<DropdownMenuItem<String>>((item) {
+        //         return _buildMenuItem(item: item.nama);
+        //       }).toList(),
+        //       onChanged: (value) {
+        //         controller.assistantSelected.value = value.toString();
+        //       },
+        //     ),
+        //   ),
+        // ),
         _buildTitle(title: 'Kendaraan'),
         const SizedBox(height: 5),
         _buildTransportation(),
@@ -204,6 +209,7 @@ class InputAssistenWidget extends StatelessWidget {
             style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -345,6 +351,10 @@ class InputAssistenWidget extends StatelessWidget {
   }
 
   Widget _buildSelectStatusTransportation() {
+    if (isDetail) {
+      controller.statusTransportationSelected.value = 'Internal';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -358,13 +368,12 @@ class InputAssistenWidget extends StatelessWidget {
               return _buildMenuItem(item: item);
             },
           ).toList(),
-          onChanged: (value) {
-            // if (value.toString() == 'External') {
-            //   controller.dialogService.showComingSoonSnackbar();
-            //   return;
-            // }
-            controller.statusTransportationSelected.value = value.toString();
-          },
+          onChanged: isDetail
+              ? null
+              : (value) {
+                  controller.statusTransportationSelected.value = value
+                      .toString();
+                },
         ),
         const SizedBox(height: 23),
       ],

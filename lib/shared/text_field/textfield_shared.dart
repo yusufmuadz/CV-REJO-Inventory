@@ -31,7 +31,7 @@ class SharedTextField extends StatelessWidget {
     this.labelText,
     this.hintText,
     this.prefixIcon,
-    this.textInputAction = TextInputAction.next,
+    this.textInputAction = TextInputAction.done,
     this.keyboardType,
     this.obscureText = false,
     this.suffixIcon,
@@ -63,6 +63,7 @@ class SharedTextField extends StatelessWidget {
         isDense: isDense,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
+        
         contentPadding:
             contentPadding ??
             const EdgeInsets.symmetric(horizontal: 16, vertical: 0),

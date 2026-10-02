@@ -19,6 +19,8 @@ class BbmForm extends StatefulWidget {
   final String? inputNopol;
   final String? date;
   final String? desc;
+  final String? nominal;
+  final String? paymentMethod;
   final String? rit;
   final String? routeRit;
 
@@ -38,6 +40,8 @@ class BbmForm extends StatefulWidget {
     this.inputNopol,
     this.date,
     this.desc,
+    this.nominal,
+    this.paymentMethod,
     this.rit,
     this.routeRit,
     this.filesFront,
@@ -54,14 +58,6 @@ class BbmForm extends StatefulWidget {
 }
 
 class _BbmFormState extends State<BbmForm> {
-  late final RxList<XFile> mediaFileListFront;
-  late final RxList<XFile> mediaFilesAwalSegel;
-  late final RxList<XFile> mediaFilesDispenserAwalPengisian;
-  late final RxList<XFile> mediaFilesPengisianTangkiFull;
-  late final RxList<XFile> mediaFilesDispenserAkhirPengisian;
-  late final RxList<XFile> mediaFilesSegelBaru;
-  late final RxList<XFile> mediaFilesNota;
-
   late bool isPreviewMode;
 
   HomeController get homeController => widget.homeController;
@@ -73,6 +69,20 @@ class _BbmFormState extends State<BbmForm> {
   TextEditingController get inputNopolController =>
       controller.inputNopolController;
   TextEditingController get descController => controller.descController;
+  TextEditingController get nominalController => controller.nominalController;
+  TextEditingController get paymentMethodController =>
+      controller.paymentMethodController;
+
+  RxList<XFile> get mediaFileListFront => controller.mediaFileListFront;
+  RxList<XFile> get mediaFilesAwalSegel => controller.mediaFilesAwalSegel;
+  RxList<XFile> get mediaFilesDispenserAwalPengisian =>
+      controller.mediaFilesDispenserAwalPengisian;
+  RxList<XFile> get mediaFilesPengisianTangkiFull =>
+      controller.mediaFilesPengisianTangkiFull;
+  RxList<XFile> get mediaFilesDispenserAkhirPengisian =>
+      controller.mediaFilesDispenserAkhirPengisian;
+  RxList<XFile> get mediaFilesSegelBaru => controller.mediaFilesSegelBaru;
+  RxList<XFile> get mediaFilesNota => controller.mediaFilesNota;
 
   @override
   initState() {
@@ -81,20 +91,14 @@ class _BbmFormState extends State<BbmForm> {
     date.value =
         widget.date ?? DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now());
 
-    mediaFileListFront = <XFile>[].obs;
-    mediaFilesAwalSegel = <XFile>[].obs;
-    mediaFilesDispenserAwalPengisian = <XFile>[].obs;
-    mediaFilesPengisianTangkiFull = <XFile>[].obs;
-    mediaFilesDispenserAkhirPengisian = <XFile>[].obs;
-    mediaFilesSegelBaru = <XFile>[].obs;
-    mediaFilesNota = <XFile>[].obs;
-
     isPreviewMode = widget.isPreviewMode;
 
     if (widget.isPreviewMode) {
       isiAwalController.text = widget.isiAwal ?? '';
       inputNopolController.text = widget.inputNopol ?? '';
       descController.text = widget.desc ?? '';
+      nominalController.text = widget.nominal ?? '';
+      paymentMethodController.text = widget.paymentMethod ?? '';
 
       if (widget.filesFront != null && widget.filesFront!.isNotEmpty) {
         mediaFileListFront.value = widget.filesFront!;
@@ -133,9 +137,9 @@ class _BbmFormState extends State<BbmForm> {
 
   @override
   dispose() {
-    isiAwalController.dispose();
-    inputNopolController.dispose();
-    descController.dispose();
+    if (!isPreviewMode) {
+      // controller.clearForm();
+    }
 
     super.dispose();
   }
@@ -164,8 +168,9 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           _buildTitleField(
+            isNumber: true,
             isReadOnly: isPreviewMode,
-            title: 'Isi Awal',
+            title: 'Isi KM Awal',
             controller: isiAwalController,
           ),
           const SizedBox(height: 15),
@@ -175,7 +180,21 @@ class _BbmFormState extends State<BbmForm> {
             controller: inputNopolController,
           ),
           const SizedBox(height: 15),
+          _buildTitleField(
+            isNumber: true,
+            isReadOnly: isPreviewMode,
+            title: 'Nominal',
+            controller: nominalController,
+          ),
+          const SizedBox(height: 15),
+          _buildTitleField(
+            isReadOnly: isPreviewMode,
+            title: 'Tipe Pembayaran',
+            controller: paymentMethodController,
+          ),
+          const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Depan',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -183,6 +202,7 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Awal Segel',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -190,13 +210,15 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
-            title: 'Dispenser Awal Pengisian',
+            maxImage: 1,
+            title: 'Dispenser Awal Pengisian(angka:0)',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
             mediaFileList: mediaFilesDispenserAwalPengisian,
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Pengisian Tangki Full',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -204,6 +226,7 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Dispenser Akhir Pengisian',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -211,6 +234,7 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Segel Baru',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -218,6 +242,7 @@ class _BbmFormState extends State<BbmForm> {
           ),
           const SizedBox(height: 15),
           CustomImage().buildContentImage(
+            maxImage: 1,
             title: 'Nota',
             readOnly: isPreviewMode,
             isPreview: isPreviewMode,
@@ -235,6 +260,8 @@ class _BbmFormState extends State<BbmForm> {
     String? routeRit,
     bool? isDesc = false,
     bool? isRit = false,
+    bool? isNumber = false,
+    bool? isMandatory = false,
   }) {
     String titleField = '$title*';
     String hintText = 'Masukkan $title';
@@ -242,9 +269,9 @@ class _BbmFormState extends State<BbmForm> {
     Color fillColor = Colors.white70;
     List<TextInputFormatter>? inputFormatters;
 
-    if (title == 'Nominal') {
+    if (isNumber == true) {
       keyboardType = TextInputType.number;
-      inputFormatters = [ThousandsSeparatorInputFormatter()];
+      inputFormatters = [FilteringTextInputFormatter.digitsOnly];
     }
 
     if (isReadOnly) {
@@ -258,6 +285,10 @@ class _BbmFormState extends State<BbmForm> {
 
     if (isRit == true) {
       hintText = '-';
+    }
+
+    if (isMandatory == false) {
+      titleField = title;
     }
 
     return Column(
@@ -311,7 +342,7 @@ class _BbmFormState extends State<BbmForm> {
                 contentPadding: isDesc == true
                     ? const EdgeInsets.all(12)
                     : null,
-                validator: isReadOnly || isDesc == true
+                validator: isReadOnly || isDesc == true || isMandatory == false
                     ? null
                     : (String? p1) {
                         if (p1 == null || p1.isEmpty) {

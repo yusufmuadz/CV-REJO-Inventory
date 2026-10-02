@@ -19,10 +19,15 @@ class AssistantDialog {
               title: 'Nama Driver',
               value: controller.driverSelected.value,
             ),
-            const SizedBox(height: 23),
-            _buildDetailTextAssistant(
-              title: 'Nama Kenek',
-              value: controller.assistantSelected.value,
+            Visibility(
+              visible: AppRole.isChecker2,
+              child: Container(
+                margin: const EdgeInsets.only(top: 23),
+                child: _buildDetailTextAssistant(
+                  title: 'Nama Kenek',
+                  value: controller.assistantSelected.value,
+                ),
+              ),
             ),
             const SizedBox(height: 23),
             _buildDetailTextAssistant(

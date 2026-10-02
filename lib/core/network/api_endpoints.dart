@@ -21,6 +21,7 @@ class ApiEndpoints {
   static const String getItemProduct = "items/get";
   static const String getDistrict = "city/getcity";
   static const String fetchTransactionTracking = "transaction/leader/get";
+  static const String changeTransportation = "loader/changearmada";
   static String fetchTransactionAll(String url) => "transaction/$url";
   static String takeItTransaction(String role) => "$role/claim";
   static String saveQty(String role) => "$role/scan/multiple";
@@ -48,6 +49,7 @@ class ApiEndpoints {
   static const String arriveHandoverCustomer = "deliverynew/confirmdelivery";
   static const String arrivePaymentCustomer = "deliverynew/payment";
   static const String arriveAtOffice = "deliverynew/handover";
+  static const String isiBbm = "deliverynew/gasstation";
 
   static String getDetailTransaction(String invoice) =>
       "transaction/get?invoice=$invoice";

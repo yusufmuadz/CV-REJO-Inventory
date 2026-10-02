@@ -51,6 +51,7 @@ class ArriveImageWidget {
           SharedTextField(
             controller: controller.kmController,
             keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
             hintText: 'Contoh: 12345',
             prefixIcon: Icon(Icons.speed, color: const Color(0xFFfa913c)),
             validator: (String? p1) {

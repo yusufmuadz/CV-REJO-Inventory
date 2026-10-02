@@ -54,7 +54,7 @@ class HomeProfileController extends GetxController {
       titleButton1: 'Tidak',
       titleButton2: 'Ya',
       onPressed1: () => Get.back(),
-      onPressed2: () {
+      onPressed2: () async {
         GetStorage().remove('noInvoice');
         GetStorage().remove('user');
         GetStorage().remove('city');
@@ -72,6 +72,7 @@ class HomeProfileController extends GetxController {
         AppRole.logout();
         _tokenStorage.clear();
         masterController.tabIndex.value = 0;
+        await masterController.cacheService.clearAllCache();
         Get.offAllNamed(Routes.LOGIN);
       },
     );

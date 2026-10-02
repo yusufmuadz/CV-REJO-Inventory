@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import 'core/constants/app_info.dart';
 import 'core/initializer/app_initializer.dart';
+import 'core/observers/app_route_observer.dart';
 import 'core/services/navigation_service.dart';
 import 'core/widgets/watermark.dart';
 import 'core/widgets/watermark_overlay.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         // ✅ Global snackbar config (opsional)
         defaultTransition: Transition.fade,
         enableLog: true,
+        navigatorObservers: [AppRouteObserver()],
         builder: (context, child) {
           final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 

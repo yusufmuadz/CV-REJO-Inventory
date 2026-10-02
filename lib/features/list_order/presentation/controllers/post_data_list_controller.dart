@@ -72,7 +72,7 @@ class PostDataListController extends GetxController {
     }
   }
 
-  Future<bool> addAssistant() async {
+  Future<bool> addAssistant({bool isDetail = false, String invoice = ''}) async {
     if (listCtrl.isLoadingAssistant.value) return false;
     listCtrl.isLoadingAssistant.value = true;
 
@@ -115,11 +115,13 @@ class PostDataListController extends GetxController {
 
       final result = await listOrderUseCase.callPostAssistant(
         ParamsAddAssistant(
+          invoice: invoice,
           district: listCtrl.isSelected.value,
           idKendaraan: idKendaraan,
           idDriver: driver != null ? driver.userId : '',
           idKenek: kenek != null ? kenek.userId : '',
           dateRIT: dateRIT,
+          isDetail: isDetail,
           statusTransportation: listCtrl.statusTransportationSelected.value
               .toUpperCase(),
         ),

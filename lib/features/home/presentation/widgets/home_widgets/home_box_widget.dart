@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/services/location_service.dart';
+import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../controllers/home_controller.dart';
 import 'home_card_widget.dart';
@@ -14,6 +14,17 @@ class HomeBoxWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transController = controller.homeTransactionsController;
+    String title1 = 'Total\nPesanan';
+    String title2 = 'History\nPesanan';
+    String subtitle1 = 'Sedang Berjalan';
+    String subtitle2 = 'Telah dikerjakan';
+
+    if (AppRole.isCollector) {
+      title1 = 'Invoice Dalam Tangan';
+      title2 = 'History Invoice Selesai';
+      subtitle1 = 'Invoice';
+      subtitle2 = 'Invoice';
+    }
 
     return Obx(
       () => Row(
@@ -21,8 +32,8 @@ class HomeBoxWidget extends StatelessWidget {
           Expanded(
             child: HomeCardWidget(
               icon: Icons.inventory_2_outlined,
-              title: 'Total\nPesanan',
-              subtitle: 'Sedang Berjalan',
+              title: title1,
+              subtitle: subtitle1,
               value: transController.totalOrder.value,
               iconColor: const Color(0xFF15803D),
               bgIconColor: const Color(0xFFDCFCE7),
@@ -32,26 +43,29 @@ class HomeBoxWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(
-            child: HomeCardWidget(
-              isPast: true,
-              icon: CupertinoIcons.cube_box,
-              title: 'Total\nPesanan',
-              subtitle: 'Pesanan Lampau',
-              value: 0,
-              iconColor: const Color(0xFFC2410C),
-              bgIconColor: const Color(0xFFFFEDD5),
-              onTap: () {
-                controller.routeTo(ritToday: false);
-              },
+          Visibility(
+            visible: !AppRole.isCollector,
+            child: Expanded(
+              child: HomeCardWidget(
+                isPast: true,
+                icon: CupertinoIcons.cube_box,
+                title: 'Total\nPesanan',
+                subtitle: 'Pesanan Lampau',
+                value: 0,
+                iconColor: const Color(0xFFC2410C),
+                bgIconColor: const Color(0xFFFFEDD5),
+                onTap: () {
+                  controller.routeTo(ritToday: false);
+                },
+              ),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: HomeCardWidget(
               icon: Icons.history_rounded,
-              title: 'History\nPesanan',
-              subtitle: 'Telah dikerjakan',
+              title: title2,
+              subtitle: subtitle2,
               value: transController.totalOrderHistory.value,
               iconColor: const Color(0xFF1D4ED8),
               bgIconColor: const Color(0xFFDBEAFE),
