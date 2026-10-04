@@ -137,6 +137,36 @@ class ListOrderController extends GetxController {
     scrollDetailPOController.dispose();
   }
 
+  void afterEnding() {
+    getDataListController = Get.find<GetDataListController>();
+    postDataListController = Get.find<PostDataListController>();
+
+    if (AppRole.isChecker2) {
+      scrollDetailPOController.addListener(_onScrollDetailPO);
+    }
+
+    isRouteFrom.value = 'endingOrder';
+    isDistrictSelected.value = GetStorage().read('city') ?? '';
+    colorRit.value = GetStorage().read('colorRit') ?? '';
+    tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
+    getRouteRit.value = GetStorage().read('routeRit') ?? '';
+    isRitToday.value = GetStorage().read('isRitToday') ?? false;
+
+    debugPrint('DATE RIT : ${tanggalRit.value}');
+
+    if (isDistrictSelected.value.isNotEmpty) {
+      pageIndex.value = 1;
+    }
+
+    if (pageIndex.value == 0) {
+      debugPrint('List RIT');
+      getDataListController.getRit();
+    } else {
+      debugPrint('List Order');
+      getDataListController.getOrder();
+    }
+  }
+
   void onRefreshTransaction() {
     currentPage.value = 1;
 

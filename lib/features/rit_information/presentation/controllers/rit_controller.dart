@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../utils/maps_utils.dart';
@@ -40,6 +41,8 @@ class RitController extends GetxController {
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
   final isFirstOpen = true.obs;
+
+  late final RouteStackService routeStackService;
 
   final currentPage = 1.obs;
   final orders = <OrderEntity>[].obs;
@@ -102,6 +105,7 @@ class RitController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    routeStackService = Get.find<RouteStackService>();
     homeController = Get.find<HomeController>();
     pageController = PageController(initialPage: pageIndex.value);
     final args = Get.arguments;

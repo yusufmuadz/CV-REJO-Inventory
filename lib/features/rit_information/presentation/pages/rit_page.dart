@@ -96,17 +96,17 @@ class RitPage extends GetView<RitController> {
                 //   Get.delete<ListOrderController>(force: true);
                 // }
                 // Get.offAllNamed(Routes.HOME);
-                Get.until((route) => route.settings.name == Routes.HOME);
+                // Get.until((route) => route.settings.name == Routes.HOME);
 
                 // final hasHome = Get.routing.routeStack.any(
                 //   (route) => route.name == Routes.HOME,
                 // );
 
-                // if (hasHome) {
-                //   Get.until((route) => route.settings.name == Routes.HOME);
-                // } else {
-                //   Get.offAllNamed(Routes.HOME);
-                // }
+                if (controller.routeStackService.contains(Routes.HOME)) {
+                  Get.until((route) => route.settings.name == Routes.HOME);
+                } else {
+                  Get.offAllNamed(Routes.HOME);
+                }
 
                 debugPrint(
                   '🚨 AFTER NAV '

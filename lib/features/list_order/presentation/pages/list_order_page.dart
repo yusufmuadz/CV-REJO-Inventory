@@ -48,7 +48,13 @@ class ListOrderPage extends GetView<ListOrderController> {
             onPressed: () {
               if (controller.isRouteFrom.value == 'endingOrder' ||
                   controller.isAddAssistant.value) {
-                Get.offAllNamed(Routes.HOME);
+                if (controller.routeStackService.contains(Routes.HOME)) {
+                  Get.until((route) => route.settings.name == Routes.HOME);
+                } else {
+                  Get.offAllNamed(Routes.HOME);
+                }
+
+                // Get.offAllNamed(Routes.HOME);
                 return;
               }
 
