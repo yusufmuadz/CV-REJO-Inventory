@@ -6,10 +6,14 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
 import '../../../login/domain/entities/user_entity.dart';
+import '../../data/models/courier_model.dart';
+import '../../data/models/date_model.dart';
+import '../../data/models/status_model.dart';
+import '../../domain/entities/invoice_entity.dart';
 import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
-import '../widgets/dialog_list_order/detail_rit_dialog.dart';
+import 'enums/button_inv_enum.dart';
 import 'list_order_controller.dart';
 
 class GetDataListController extends GetxController {
@@ -18,6 +22,19 @@ class GetDataListController extends GetxController {
   GetDataListController({required this.listOrderUseCase});
 
   ListOrderController get listCtrl => Get.find<ListOrderController>();
+
+  final isGetLoading = false.obs;
+  final getLoadState = LoadState.initial.obs;
+
+  final buttonINV = EnumButtonInv.availableINV.obs;
+
+  final isSelectedRoute = ''.obs;
+  final dateRoute = ''.obs;
+
+  final searchInvController = TextEditingController();
+
+  void retryFetch() =>
+      getOrder(isRefresh: getLoadState.value == LoadState.error);
 
   Future<void> getOrder({
     bool isRefresh = false,
@@ -228,4 +245,188 @@ class GetDataListController extends GetxController {
       listCtrl.isLoadingAssistant.value = false;
     }
   }
+
+  void onSelectedInv(int index) {
+    if (index != -1) {
+      final invEntity = listInv[index];
+
+      bool result = !invEntity.isChecked;
+
+      final updatedInv = invEntity.copyWith(isChecked: result);
+
+      final updateList = List<InvoiceEntity>.from(listInv);
+      updateList[index] = updatedInv;
+
+      listInv.value = updateList;
+      // selectedAllItem.value = listInv.every((e) => e.isChecked);
+
+      //   isSelectedRoute.value = id;
+      //   listInv[index].isSelected = !listInv[index].isSelected;
+      //   dateRoute.value = listInv[index].date?.transaction ?? '';
+    } else {
+      isSelectedRoute.value = '';
+      dateRoute.value = '';
+    }
+  }
+
+  final listInv = <InvoiceEntity>[
+    InvoiceEntity(
+      invoice: '01SL00000000001',
+      orderNo: 'PO/0000/0001',
+      customer: 'TESTING DUMMY CUSTOMER',
+      district: 'PARANGKUSUMO',
+      suratJalan: 'SJ/0000/0001',
+      address:
+          'Jl. Raya Pantai Parangkusumo, Parangkusumo, Kec. Parangkusumo, Kota Surabaya, Jawa Timur 60254',
+      noTelp: '081234567890',
+      maps: '-',
+      lat: '-',
+      long: '-',
+      jenisArmada: 'INTERNAL',
+      route: 'PANTAI PARANGKUSUMO',
+      isSelected: false,
+      date: DateModel(transaction: '2026-10-05', delivery: ''),
+      courier: Courier(service: '', waybillNumber: ''),
+      pic: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker1: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker2: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      loader: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      driver: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+    ),
+    InvoiceEntity(
+      invoice: '01SL00000000002',
+      orderNo: 'PO/0000/0002',
+      customer: 'TESTING DUMMY',
+      district: 'PARANGTRITIS',
+      suratJalan: 'SJ/0000/0002',
+      address: 'JALANJALAN',
+      noTelp: '081234567890',
+      maps: '-',
+      lat: '-',
+      long: '-',
+      jenisArmada: 'INTERNAL',
+      route: 'PANTAI PARANGTRITIS',
+      isSelected: false,
+      date: DateModel(transaction: '2026-10-05', delivery: ''),
+      courier: Courier(service: '', waybillNumber: ''),
+      pic: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker1: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker2: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      loader: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      driver: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+    ),
+    InvoiceEntity(
+      invoice: '01SL00000000003',
+      orderNo: 'PO/0000/0003',
+      customer: 'DUMMY CUSTOMER',
+      district: 'GOA CINA',
+      suratJalan: 'SJ/0000/0003',
+      address:
+          'Jl. Goa Cina, Parangkusumo, Kec. Parangkusumo, Kota Surabaya, Jawa Timur 60254',
+      noTelp: '081234567890',
+      maps: '-',
+      lat: '-',
+      long: '-',
+      jenisArmada: 'INTERNAL',
+      route: 'GOA CINA',
+      isSelected: false,
+      date: DateModel(transaction: '2026-10-05', delivery: ''),
+      courier: Courier(service: '', waybillNumber: ''),
+      pic: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker1: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      checker2: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      loader: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+      driver: Status(
+        status: 'ongoing',
+        date: '2026-10-05',
+        desc: '',
+        by: '',
+        scanDriver: false,
+      ),
+    ),
+  ].obs;
 }

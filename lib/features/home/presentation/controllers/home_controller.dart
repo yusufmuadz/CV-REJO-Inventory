@@ -99,7 +99,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     isLoading.value = false;
 
     debugPrint('HOME CONTROLLER CLOSE: ${hashCode}');
-    debugPrintStack(label: '🔥 HOME CLOSE STACK', maxFrames: 15);
+    // debugPrintStack(label: '🔥 HOME CLOSE STACK', maxFrames: 15);
 
     WidgetsBinding.instance.removeObserver(this);
   }

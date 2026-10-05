@@ -53,7 +53,7 @@ class BoxStatus {
       }
     }
 
-    if (AppRole.isDriver) {
+    if (AppRole.isDriver || AppRole.isCollector) {
       if (statusDelivCancel == true) {
         text = 'PENDING';
       } else {
@@ -138,6 +138,113 @@ class BoxStatus {
 
         if (!statusScanDriver && !statusArriveDriver) {
           color = const Color(0xFF2ED471);
+        }
+      }
+    }
+
+    if (AppRole.isCollector) {
+      if (statusDelivCancel == true) {
+        color = const Color(0xFF666666);
+      } else {
+        if (statusScanDriver) {
+          color = const Color(0xFF5eb75f);
+        }
+
+        if (statusArriveDriver) {
+          color = const Color(0xFF666666);
+        }
+
+        if (!statusScanDriver && !statusArriveDriver) {
+          color = const Color(0xFFA7F3D0);
+        }
+      }
+    }
+
+    return color;
+  }
+
+  ////////=====COLLECTOR=====////////
+
+  static Color buildBorderColor({
+    bool statusScanDriver = false,
+    bool statusArriveDriver = false,
+    bool statusDelivCancel = false,
+    bool isTrackingDriver = false,
+  }) {
+    Color color = Color(0xFFA7F3D0);
+
+    if (AppRole.isCollector) {
+      if (statusDelivCancel == true) {
+        color = const Color(0xFFFDE68A);
+      } else {
+        if (statusScanDriver) {
+          color = const Color(0xFFC7D2FE);
+        }
+
+        if (statusArriveDriver) {
+          color = const Color(0xFFE2E8F0);
+        }
+
+        if (!statusScanDriver && !statusArriveDriver) {
+          color = const Color(0xFFA7F3D0);
+        }
+      }
+    }
+
+    return color;
+  }
+
+  static Color buildBgColor({
+    bool statusScanDriver = false,
+    bool statusArriveDriver = false,
+    bool statusDelivCancel = false,
+    bool isTrackingDriver = false,
+  }) {
+    Color color = Color(0xFFECFDF5);
+
+    if (AppRole.isCollector) {
+      if (statusDelivCancel == true) {
+        color = const Color(0xFFFFFBEB);
+      } else {
+        if (statusScanDriver) {
+          color = const Color(0xFFEEF2FF);
+        }
+
+        if (statusArriveDriver) {
+          color = const Color(0xFFF1F5F9);
+        }
+
+        if (!statusScanDriver && !statusArriveDriver) {
+          color = const Color(0xFFECFDF5);
+        }
+      }
+    }
+
+    return color;
+  }
+
+  static Color buildTextColor({
+    bool statusScanDriver = false,
+    bool statusArriveDriver = false,
+    bool statusDelivCancel = false,
+    bool isTrackingDriver = false,
+  }) {
+    Color color = Color(0xFF059669);
+
+    if (AppRole.isCollector) {
+      if (statusDelivCancel == true) {
+        color = const Color(0xFFD97706);
+      } else {
+        if (statusScanDriver) {
+          color = const Color(0xFF4F46E5);
+        }
+
+        if (statusArriveDriver) {
+          color = const Color(0xFF475569);
+        }
+
+        if (!statusScanDriver && !statusArriveDriver) {
+          color = const Color(0xFF047857);
         }
       }
     }

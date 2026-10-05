@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/middlewares/app_role.dart';
+import '../../../../../core/theme/text_styles.dart';
 import '../../../../list_order/domain/entities/list_order_entity.dart';
 import '../../controllers/home_controller.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -54,6 +57,14 @@ class HomeTransactionsInProgress extends StatelessWidget {
   Widget _buildOrdersSection() {
     final transController = controller.homeTransactionsController;
 
+    String label = 'Pesanan Dikerjakan';
+    String message = 'Tidak ada pesanan';
+
+    if (AppRole.isCollector) {
+      label = 'Invoice Hari Ini';
+      message = 'Tidak ada invoice';
+    }
+
     return Container(
       height: 250,
       padding: const EdgeInsets.all(15),
@@ -71,20 +82,19 @@ class HomeTransactionsInProgress extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Pesanan Dikerjakan',
-            style: TextStyle(
+          Text(
+            label,
+            style: TextStyles.basicTextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
+              fontFamily: GoogleFonts.roboto().fontFamily,
               color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           Visibility(
             visible: transController.orders.isEmpty,
-            child: Expanded(
-              child: const Center(child: Text('Tidak ada pesanan')),
-            ),
+            child: Expanded(child: Center(child: Text(message))),
           ),
           Visibility(
             visible: transController.orders.isNotEmpty,

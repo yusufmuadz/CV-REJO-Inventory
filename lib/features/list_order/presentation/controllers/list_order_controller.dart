@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
@@ -30,6 +31,8 @@ class ListOrderController extends GetxController {
   final isLoadingReason = false.obs;
   final isRouteFrom = ''.obs;
   final dialogService = Get.find<DialogService>();
+
+  late final RouteStackService routeStackService;
 
   final isAddAssistant = false.obs;
 

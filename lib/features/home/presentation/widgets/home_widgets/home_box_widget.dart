@@ -18,12 +18,14 @@ class HomeBoxWidget extends StatelessWidget {
     String title2 = 'History\nPesanan';
     String subtitle1 = 'Sedang Berjalan';
     String subtitle2 = 'Telah dikerjakan';
+    IconData icon1 = Icons.inventory_2_outlined;
 
     if (AppRole.isCollector) {
       title1 = 'Invoice Dalam Tangan';
-      title2 = 'History Invoice Selesai';
+      title2 = 'History Invoice';
       subtitle1 = 'Invoice';
       subtitle2 = 'Invoice';
+      icon1 = Icons.description_outlined;
     }
 
     return Obx(
@@ -31,7 +33,7 @@ class HomeBoxWidget extends StatelessWidget {
         children: [
           Expanded(
             child: HomeCardWidget(
-              icon: Icons.inventory_2_outlined,
+              icon: icon1,
               title: title1,
               subtitle: subtitle1,
               value: transController.totalOrder.value,
