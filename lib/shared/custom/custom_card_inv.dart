@@ -35,140 +35,104 @@ class CustomCardInv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color colorShow = invEntity.isChecked
-        ? Colors.grey.shade100
-        : Colors.white;
+    Color colorShow = invEntity.isChecked ? Colors.grey.shade100 : Colors.white;
 
     return InkWell(
       onTap: onTap,
       hoverColor: Colors.transparent,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Visibility(
-            visible: buttonINV == EnumButtonInv.availableINV,
-            child: Container(
-              margin: const EdgeInsets.only(right: 10),
-              child: Container(
-                height: 20,
-                width: 20,
-                padding: invEntity.isChecked ? const EdgeInsets.all(2) : null,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Colors.blue),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: invEntity.isChecked
-                    ? Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.blue,
-                        ),
-                      )
-                    : null,
-              ),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: colorShow,
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromARGB(10, 0, 0, 0),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+              spreadRadius: 0,
             ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: colorShow,
-                borderRadius: BorderRadius.circular(9),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(10, 0, 0, 0),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                    spreadRadius: 0,
+          ],
+        ),
+        child: Column(
+          children: [
+            _buildInfoText(
+              showStatus: !isHistory,
+              title: 'INVOICE',
+              value: invEntity.suratJalan!.replaceAll('SJ/', ''),
+            ),
+            Divider(thickness: 1, height: 28, color: const Color(0xFFE2E8F0)),
+            _buildInfoIconText(
+              label: 'Customer',
+              value: invEntity.customer ?? '-',
+              bgColor: const Color(0xFFFDF2F8),
+              borderColor: const Color(0xFFFCE7F3),
+              icon: CupertinoIcons.person,
+              iconColor: const Color(0xFFDB2777),
+            ),
+            const SizedBox(height: 10),
+            _buildInfoIconText(
+              label: 'Tanggal Pengiriman',
+              value: invEntity.date?.transaction ?? '-',
+              icon: CupertinoIcons.timer,
+              bgColor: const Color(0xFFFFF1F2),
+              borderColor: const Color(0xFFFFE4E6),
+              iconColor: const Color(0xFFF43F5E),
+            ),
+            const SizedBox(height: 10),
+            _buildInfoIconText(
+              value: invEntity.district ?? '-',
+              address: invEntity.address,
+              isDistrict: true,
+              isIcon: isHistory,
+              icon: Ionicons.business_outline,
+              bgColor: const Color(0xFFFAF5FF),
+              borderColor: const Color(0xFFF3E8FF),
+              iconColor: const Color(0xFFA855F7),
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: InkWell(
+                onTap: onTapMaps,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                  margin: const EdgeInsets.only(top: 10, left: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: const Color(0xFFffd8ab),
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
                   ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  _buildInfoText(
-                    showStatus: !isHistory,
-                    title: 'INVOICE',
-                    value: invEntity.suratJalan!.replaceAll('SJ/', ''),
-                  ),
-                  Divider(
-                    thickness: 1,
-                    height: 28,
-                    color: const Color(0xFFE2E8F0),
-                  ),
-                  _buildInfoIconText(
-                    label: 'Customer',
-                    value: invEntity.customer ?? '-',
-                    bgColor: const Color(0xFFFDF2F8),
-                    borderColor: const Color(0xFFFCE7F3),
-                    icon: CupertinoIcons.person_fill,
-                    iconColor: const Color(0xFFDB2777),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildInfoIconText(
-                    label: 'Tanggal Pengiriman',
-                    value: invEntity.date?.transaction ?? '-',
-                    icon: CupertinoIcons.timer,
-                    bgColor: const Color(0xFFFFF1F2),
-                    borderColor: const Color(0xFFFFE4E6),
-                    iconColor: const Color(0xFFF43F5E),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildInfoIconText(
-                    value: invEntity.district ?? '-',
-                    address: invEntity.address,
-                    isDistrict: true,
-                    isIcon: isHistory,
-                    icon: Ionicons.business_outline,
-                    bgColor: const Color(0xFFFAF5FF),
-                    borderColor: const Color(0xFFF3E8FF),
-                    iconColor: const Color(0xFFA855F7),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: InkWell(
-                      onTap: onTapMaps,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-                        margin: const EdgeInsets.only(top: 10, left: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: const Color(0xFFffd8ab),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.map_outlined,
-                              size: 16,
-                              color: const Color(0xFFd68e85),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              'Buka Peta',
-                              style: _textStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFd68e85),
-                              ),
-                            ),
-                          ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.map_outlined,
+                        size: 16,
+                        color: const Color(0xFFd68e85),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Buka Peta',
+                        style: _textStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFd68e85),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -193,6 +157,23 @@ class CustomCardInv extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Visibility(
+          visible: buttonINV == EnumButtonInv.availableINV,
+          child: Container(
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Color(0xFFCBD5E1)),
+              borderRadius: BorderRadius.circular(6),
+              color: invEntity.isChecked
+                  ? const Color(0xFF22C55E)
+                  : Colors.white,
+            ),
+            child: invEntity.isChecked
+                ? Icon(Ionicons.checkmark_sharp, color: Colors.white)
+                : null,
+          ),
+        ),
         SizedBox(
           width: 70,
           child: Text(
@@ -207,7 +188,7 @@ class CustomCardInv extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: _textStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: _textStyleCousine(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         Visibility(
@@ -323,6 +304,20 @@ class CustomCardInv extends StatelessWidget {
     Color color = const Color(0xFF171717),
   }) {
     return GoogleFonts.plusJakartaSans(
+      color: color,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+    );
+  }
+
+  TextStyle _textStyleCousine({
+    double fontSize = 13,
+    FontWeight fontWeight = FontWeight.w400,
+    double? height,
+    Color color = const Color(0xFF171717),
+  }) {
+    return GoogleFonts.cousine(
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
