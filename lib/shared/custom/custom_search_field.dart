@@ -5,6 +5,7 @@ class CustomSearchField extends StatelessWidget {
   final Function(String)? onSubmitted;
   final Function() onSuffixTap;
   final String placeholder;
+  final Color? backgroundColor;
   final EdgeInsetsGeometry? prefixInsets;
   final FocusNode? focusNode;
   final BoxDecoration? decoration;
@@ -17,7 +18,8 @@ class CustomSearchField extends StatelessWidget {
     required this.placeholder,
     this.prefixInsets,
     this.focusNode,
-    this.decoration
+    this.decoration,
+    this.backgroundColor,
   });
 
   @override
@@ -28,6 +30,7 @@ class CustomSearchField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       prefixInsets:
           prefixInsets ?? const EdgeInsetsDirectional.fromSTEB(6, 8, 0, 8),
+      backgroundColor: backgroundColor,
       placeholderStyle: const TextStyle(
         color: Color(0xFF7C7C7C),
         fontSize: 13,
@@ -40,7 +43,7 @@ class CustomSearchField extends StatelessWidget {
       // suffixMode: OverlayVisibilityMode.editing,
       onSubmitted: onSubmitted,
       onSuffixTap: onSuffixTap,
-      decoration: decoration
+      decoration: decoration,
     );
   }
 }

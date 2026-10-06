@@ -35,7 +35,7 @@ class CustomCardInv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color colorShow = invEntity.isChecked ? Colors.grey.shade100 : Colors.white;
+    Color colorShow = invEntity.isChecked ? Color(0xFFECFDF5) : Colors.white;
 
     return InkWell(
       onTap: onTap,
@@ -47,7 +47,7 @@ class CustomCardInv extends StatelessWidget {
         decoration: BoxDecoration(
           color: colorShow,
           borderRadius: BorderRadius.circular(9),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          border: Border.all(color: const Color(0xFFA7F3D0)),
           boxShadow: const [
             BoxShadow(
               color: Color.fromARGB(10, 0, 0, 0),
@@ -68,12 +68,13 @@ class CustomCardInv extends StatelessWidget {
             _buildInfoIconText(
               label: 'Customer',
               value: invEntity.customer ?? '-',
+              fontWeightValue: FontWeight.bold,
               bgColor: const Color(0xFFFDF2F8),
               borderColor: const Color(0xFFFCE7F3),
               icon: CupertinoIcons.person,
               iconColor: const Color(0xFFDB2777),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             _buildInfoIconText(
               label: 'Tanggal Pengiriman',
               value: invEntity.date?.transaction ?? '-',
@@ -82,9 +83,10 @@ class CustomCardInv extends StatelessWidget {
               borderColor: const Color(0xFFFFE4E6),
               iconColor: const Color(0xFFF43F5E),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             _buildInfoIconText(
               value: invEntity.district ?? '-',
+              fontWeightValue: FontWeight.bold,
               address: invEntity.address,
               isDistrict: true,
               isIcon: isHistory,
@@ -155,32 +157,35 @@ class CustomCardInv extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Visibility(
-          visible: buttonINV == EnumButtonInv.availableINV,
+          visible: buttonINV == EnumButtonInv.acceptINV,
           child: Container(
             height: 20,
             width: 20,
+            margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Color(0xFFCBD5E1)),
+              border: invEntity.isChecked
+                  ? null
+                  : Border.all(width: 1, color: Color(0xFFCBD5E1)),
               borderRadius: BorderRadius.circular(6),
               color: invEntity.isChecked
                   ? const Color(0xFF22C55E)
                   : Colors.white,
             ),
             child: invEntity.isChecked
-                ? Icon(Ionicons.checkmark_sharp, color: Colors.white)
+                ? Icon(Icons.check_rounded, size: 18, color: Colors.white)
                 : null,
           ),
         ),
         SizedBox(
-          width: 70,
+          width: 75,
           child: Text(
             '$title : ',
             style: _textStyle(
+              // height: 1,
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF94A3B8),
             ),
           ),
@@ -188,13 +193,17 @@ class CustomCardInv extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: _textStyleCousine(fontSize: 15, fontWeight: FontWeight.bold),
+            style: _textStyleCousine(
+              // height: 1.22,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         Visibility(
           visible: isShowStatus,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             margin: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
@@ -236,6 +245,7 @@ class CustomCardInv extends StatelessWidget {
     String? address,
     bool isDistrict = false,
     bool isIcon = false,
+    FontWeight fontWeightValue = FontWeight.w600,
     Color? bgColor,
     Color? borderColor,
     Color? iconColor,
@@ -249,10 +259,10 @@ class CustomCardInv extends StatelessWidget {
           height: 32,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(7),
-            border: Border.all(
-              width: 1,
-              color: borderColor ?? Colors.transparent,
-            ),
+            // border: Border.all(
+            //   width: 1,
+            //   color: borderColor ?? Colors.transparent,
+            // ),
             color: bgColor,
           ),
           // clipBehavior: Clip.none,
@@ -274,19 +284,27 @@ class CustomCardInv extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 2),
               Text(
                 value.isEmpty ? '-' : value,
                 style: _textStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  fontWeight: fontWeightValue,
                   color: const Color(0xFF1E293B),
                 ),
               ),
               Visibility(
                 visible: isDistrict,
-                child: Text(
-                  address?.isEmpty == true ? '-' : address ?? '-',
-                  style: _textStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                child: Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    address?.isEmpty == true ? '-' : address ?? '-',
+                    style: _textStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF64748B),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -305,6 +323,7 @@ class CustomCardInv extends StatelessWidget {
   }) {
     return GoogleFonts.plusJakartaSans(
       color: color,
+      // backgroundColor: Colors.blue,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
@@ -317,11 +336,13 @@ class CustomCardInv extends StatelessWidget {
     double? height,
     Color color = const Color(0xFF171717),
   }) {
-    return GoogleFonts.cousine(
+    return GoogleFonts.ibmPlexMono(
       color: color,
+      // backgroundColor: Colors.amber,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
+      textBaseline: TextBaseline.ideographic,
     );
   }
 }

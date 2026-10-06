@@ -1,28 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
-import '../../../../core/middlewares/app_role.dart';
-import '../../../../core/theme/text_styles.dart';
+import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_inv.dart';
-import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../domain/entities/invoice_entity.dart';
-import '../controllers/enums/button_inv_enum.dart';
-import '../controllers/get_data_list_controller.dart';
-import '../controllers/list_order_controller.dart';
-import '../widgets/dialog_list_order/detail_rit_dialog.dart';
+import '../controllers/inv_controller.dart';
+import '../controllers/rit_controller.dart';
+import '../../../list_order/domain/entities/invoice_entity.dart';
+import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 
 class ListInvRouteView extends StatelessWidget {
-  final ListOrderController masterCtrlr;
+  final RitController masterCtrlr;
   const ListInvRouteView({super.key, required this.masterCtrlr});
 
   @override
   Widget build(BuildContext context) {
-    final controller = masterCtrlr.getDataListController;
+    final controller = masterCtrlr.invController;
 
     return Column(
       children: [
@@ -30,13 +25,15 @@ class ListInvRouteView extends StatelessWidget {
           height: 42,
           margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            border: Border.all(width: 1, color: const Color(0xFFE2E8F0)),
             borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
           ),
           child: CustomSearchField(
             placeholder: 'Cari invoice...',
             searchController: controller.searchInvController,
             prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
+            backgroundColor: const Color(0xFFF8FAFC),
             onSubmitted: (value) {
               // controller.onRefreshTransaction();
             },
@@ -46,15 +43,15 @@ class ListInvRouteView extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(height: 10),
-        Divider(thickness: 1, height: 8, color: Colors.grey[100]),
+        const SizedBox(height: 14),
+        Divider(thickness: 1, height: 0, color: Colors.grey[100]),
         Expanded(child: _buildContent()),
       ],
     );
   }
 
   Widget _buildContent() {
-    final controller = masterCtrlr.getDataListController;
+    final controller = masterCtrlr.invController;
     // 1. Buat ScrollController lokal agar fresh setiap kali widget dibangun
     final localScrollController = ScrollController();
 
@@ -83,24 +80,27 @@ class ListInvRouteView extends StatelessWidget {
                 if (controller.listInv.isEmpty)
                   _buildEmptyOrder()
                 else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      childCount:
-                          controller.listInv.length + (isPlusOne ? 1 : 0),
-                      (context, index) {
-                        if (index == controller.listInv.length) {
-                          return _buildBottomIndicator(
-                            controller.getLoadState.value,
-                            controller.retryFetch,
-                          );
-                        }
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        childCount:
+                            controller.listInv.length + (isPlusOne ? 1 : 0),
+                        (context, index) {
+                          if (index == controller.listInv.length) {
+                            return _buildBottomIndicator(
+                              controller.getLoadState.value,
+                              controller.retryFetch,
+                            );
+                          }
 
-                        return _buildOrder(
-                          index: index,
-                          controller: controller,
-                          invEntity: controller.listInv[index],
-                        );
-                      },
+                          return _buildOrder(
+                            index: index,
+                            controller: controller,
+                            invEntity: controller.listInv[index],
+                          );
+                        },
+                      ),
                     ),
                   ),
               ],
@@ -114,38 +114,45 @@ class ListInvRouteView extends StatelessWidget {
   Widget _buildOrder({
     required int index,
     required InvoiceEntity invEntity,
-    required GetDataListController controller,
+    required InvController controller,
   }) {
     return Obx(
-      () => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
+      () => Container(
+        margin: const EdgeInsets.only(bottom: 12),
         child: CustomCardInv(
-          onTap: () {
-            if (controller.buttonINV.value == EnumButtonInv.availableINV) {
-              controller.onSelectedInv(index);
-            }
-            // Get.toNamed(
-            //   Routes.DETAIL_ORDER,
-            //   arguments: {
-            //     'invoice': transaction.invoice,
-            //     'routeFrom': 'listOrder',
-            //     'take_it_order': true,
-            //     'status_checker2': transaction.checker2?.status ?? '',
-            //     'status_po': statusPO,
-            //   },
-            // );
-
-            // // controller.takeItOrder(invoicePO: transaction.invoice);
-
-            // // if (controller.isSelection.value) {
-            // //   controller.onSelected(transaction.invoice);
-            // // }
-          },
           isSelected: controller.isSelectedRoute.value,
           buttonINV: controller.buttonINV.value,
           invEntity: invEntity,
           color: 'E0E0E0',
           onCheckboxChanged: () => controller.onSelectedInv(index),
+          onTap: () {
+            if (controller.buttonINV.value == EnumButtonInv.acceptINV) {
+              controller.onSelectedInv(index);
+              return;
+            }
+
+            if (masterCtrlr.routeStackService.contains(Routes.DETAIL_ORDER)) {
+              Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
+            } else {
+              masterCtrlr.dialogService.showErrorSnackbar(
+                'Invoice Dummy',
+                title: 'Warning!',
+                duration: 1,
+              );
+
+              Get.toNamed(
+                Routes.DETAIL_ORDER,
+                arguments: {
+                  'invoice': '01SL20200800085',
+                  'routeFrom': 'listOrder',
+                  // 'take_it_order': true,
+                  // 'status_checker2': invEntity.checker2?.status ?? '',
+                  // 'status_driver': transaction.driver?.status ?? '',
+                  'status_po': 'ongoing',
+                },
+              );
+            }
+          },
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
@@ -17,6 +18,7 @@ import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../domain/entities/item_order_retur_entity.dart';
 import '../../domain/params/post_rit_param.dart';
@@ -25,6 +27,7 @@ import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 import 'enums/enum_rit.dart';
 import 'enums/enum_trouble.dart';
+import 'inv_controller.dart';
 
 class RitController extends GetxController {
   final RitUseCase ritUseCase;
@@ -99,6 +102,7 @@ class RitController extends GetxController {
 
   late final HomeController homeController;
   late final ListOrderController listOrderController;
+  late final InvController invController;
 
   // late ScrollController scrollController;
 
@@ -107,7 +111,15 @@ class RitController extends GetxController {
     super.onReady();
     routeStackService = Get.find<RouteStackService>();
     homeController = Get.find<HomeController>();
-    pageController = PageController(initialPage: pageIndex.value);
+    invController = Get.find<InvController>();
+
+    if (AppRole.isCollector) {
+      pageIndex.value = 3;
+      pageController = PageController(initialPage: 3);
+    } else {
+      pageController = PageController(initialPage: pageIndex.value);
+    }
+
     final args = Get.arguments;
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
@@ -221,6 +233,15 @@ class RitController extends GetxController {
   }
 
   Future<void> saveOrderDummy() async {
+    if (_getEmptyInputErrorMessage() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyInputErrorMessage() ??
+            'Silakan lengkapi data terlebih dahulu!',
+      );
+      return;
+    }
+
     mediaFileList.clear();
     mediaFileListKM.clear();
     mediaFileListTangki.clear();
@@ -231,6 +252,33 @@ class RitController extends GetxController {
     mediaFileBackTransport.value = XFile('');
     mediaFileLeftTransport.value = XFile('');
     kmController.clear();
+
+    if (AppRole.isCollector) {
+      mediaFileListInvoice.clear();
+      if (invController.buttonINV.value == EnumButtonInv.buttonSaveDoc) {
+        invController.buttonINV.value = EnumButtonInv.acceptINV;
+
+        if (routeStackService.contains(Routes.HOME)) {
+          Get.until((route) => route.settings.name == Routes.HOME);
+        } else {
+          Get.offAllNamed(Routes.HOME);
+        }
+
+        dialogService.showSuccessSnackbar('Berhasil Menyimpan');
+
+        return;
+      }
+      invController.buttonINV.value = EnumButtonInv.saveTakeOff;
+
+      pageIndex.value = 3;
+      pageController.animateToPage(
+        3,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      return;
+    }
 
     buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
 
@@ -281,6 +329,7 @@ class RitController extends GetxController {
           fileBoxImage: mediaFileRecipientBox.isEmpty
               ? XFile('')
               : mediaFileRecipientBox[0],
+          invoiceImages: mediaFileListInvoice,
         ),
       );
 
@@ -399,9 +448,12 @@ class RitController extends GetxController {
   }
 
   String? _getEmptyInputErrorMessage() {
+    bool isCollector =
+        invController.buttonINV.value == EnumButtonInv.buttonSaveDoc;
+
     // 1. Cek Kondisi Khusus RIT (hanya jika mode Save Doc)
-    if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
-      if (mediaFileRecipientMoneyRit.isEmpty) {
+    if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc || isCollector) {
+      if (!AppRole.isCollector && mediaFileRecipientMoneyRit.isEmpty) {
         return 'Foto pengunaan uang belum diisi!';
       }
       if (mediaFileRecipientBox.isEmpty) {
@@ -427,14 +479,22 @@ class RitController extends GetxController {
     if (mediaFileListKM.isEmpty) {
       return 'Foto KM belum diupload!';
     }
-    if (mediaFileListTangki.isEmpty) {
+    if (!AppRole.isCollector && mediaFileListTangki.isEmpty) {
       return 'Foto Tangki belum diupload!';
     }
-    if (mediaFileListSJ.isEmpty) {
+    if ((!AppRole.isCollector || isCollector) && mediaFileListSJ.isEmpty) {
       return 'Foto Surat Jalan (SJ) belum diupload!';
     }
-    if (mediaFileListTransportMoney.isEmpty) {
+    if ((!AppRole.isCollector || isCollector) &&
+        mediaFileListTransportMoney.isEmpty) {
+      if (AppRole.isCollector) {
+        return 'Foto bukti transfer/uang belum diupload!';
+      }
       return 'Foto uang transportasi belum diupload!';
+    }
+
+    if (AppRole.isCollector && !isCollector && mediaFileListInvoice.isEmpty) {
+      return 'Foto Surat/dokumen belum diupload!';
     }
 
     // 4. Cek Input Text
@@ -467,9 +527,6 @@ class RitController extends GetxController {
   }
 
   void _arriveAtOffice() {
-    final getDateRit = GetStorage().read('tanggalRit') ?? '';
-    final getRitToday = GetStorage().read('isRitToday') ?? false;
-
     GetStorage().remove('noInvoice');
     GetStorage().remove('city');
     GetStorage().remove('colorRit');
@@ -483,14 +540,24 @@ class RitController extends GetxController {
 
     ///// ========== KE HALAMAN LIST RIT =========== /////
 
-    Get.offAllNamed(
-      Routes.LIST_ORDER,
-      arguments: {
-        'routeFrom': 'endingOrder',
-        'tanggalRit': getDateRit,
-        'isRitToday': getRitToday,
-      },
-    );
+    if (routeStackService.contains(Routes.LIST_ORDER)) {
+      listOrderController.afterEnding();
+      Get.until((route) => route.settings.name == Routes.LIST_ORDER);
+    } else {
+      Get.offAllNamed(
+        Routes.LIST_ORDER,
+        arguments: {'routeFrom': 'endingOrder', 'isRitToday': isRitToday.value},
+      );
+    }
+
+    // Get.offAllNamed(
+    //   Routes.LIST_ORDER,
+    //   arguments: {
+    //     'routeFrom': 'endingOrder',
+    //     'tanggalRit': getDateRit,
+    //     'isRitToday': getRitToday,
+    //   },
+    // );
 
     // dialogService.showSuccessSnackbar('Berhasil Menyimpan RIT');
   }

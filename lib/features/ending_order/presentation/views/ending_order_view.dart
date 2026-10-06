@@ -6,9 +6,11 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
+import '../controllers/enums/enum_button.dart';
 import '../widgets/field_input_loader_widget.dart';
 import '../widgets/field_input_widget.dart';
 import '../widgets/input_pending_widget.dart';
+import 'collector_arrive.dart';
 import 'driver_arrive.dart';
 
 class EndingOrderView extends GetView<EndingOrderController> {
@@ -35,8 +37,12 @@ class EndingOrderView extends GetView<EndingOrderController> {
             return const LoadingView();
           }
 
-          if (AppRole.isDriver &&
-              controller.statatusDriver.value == 'completed') {
+          if (AppRole.isCollector) {
+            return CollectorArrive(controller: controller);
+          }
+
+          if ((AppRole.isDriver &&
+              controller.statusDriver.value == 'completed')) {
             return DriverArrive(controller: controller);
           }
           return ListView(
@@ -67,6 +73,11 @@ class EndingOrderView extends GetView<EndingOrderController> {
           //     controller.statatusDriver.value == 'completed') {
           //   return CustomButton.bottomBarStyle(child: _buildButtonSave());
           // }
+
+          if (AppRole.isCollector) {
+            return CustomButton.bottomBarStyle(child: _buildButtonSave());
+          }
+
           return CustomButton.bottomBarStyle(child: _buildButtonSelect());
         }),
       ),
@@ -86,7 +97,7 @@ class EndingOrderView extends GetView<EndingOrderController> {
   Widget _buildButtonSelect() {
     String titlePending = 'Pending PO';
 
-    if (AppRole.isDriver && controller.statatusDriver.value == 'completed') {
+    if (AppRole.isDriver && controller.statusDriver.value == 'completed') {
       titlePending = 'Kendala PO';
     }
     return CustomButton.doubleButton(
@@ -131,7 +142,13 @@ class EndingOrderView extends GetView<EndingOrderController> {
     return CustomButton.basicButton(
       title: 'Simpan',
       color: const Color(0xFF2ED471),
-      onPressed: () => controller.saveOrder(),
+      onPressed: () {
+        if (AppRole.isCollector) {
+          controller.saveDummyCollector();
+          controller.resetInv();
+        }
+        // controller.saveOrder();
+      },
     );
   }
 }

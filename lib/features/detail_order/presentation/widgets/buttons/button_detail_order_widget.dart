@@ -31,7 +31,7 @@ class ButtonDetailOrderWidget {
     Color color1 = const Color(0xFFFF51BD);
     Color color2 = const Color(0xFF255BF0);
 
-    if (AppRole.isDriver) {
+    if (AppRole.isDriver || AppRole.isCollector) {
       if (controller.statusDriver.value == 'completed') {
         title1 = 'Berangkat';
         title2 = 'Sampai';

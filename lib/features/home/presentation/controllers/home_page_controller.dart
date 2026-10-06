@@ -40,6 +40,12 @@ class HomePageController extends GetxController {
       'label': 'Isi BBM',
       'isSelected': false,
     },
+    {
+      'icon': Ionicons.clipboard_outline,
+      'activeIcon': Ionicons.clipboard,
+      'label': 'Kolektor',
+      'isSelected': false,
+    },
   ].obs;
 
   @override

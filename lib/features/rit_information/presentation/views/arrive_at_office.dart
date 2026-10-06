@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../controllers/rit_controller.dart';
 import '../../../../shared/images/custom_image.dart';
@@ -51,11 +52,16 @@ class ArriveAtOffice extends StatelessWidget {
           mediaFileList: controller.mediaFileList,
           controller: controller,
         ),
-        const SizedBox(height: 10),
-        ArriveImageWidget().buildContentImageArrive(
-          title: 'Tangki Bahan Bakar dan Foto Segel',
-          mediaFileList: controller.mediaFileListTangki,
-          controller: controller,
+        Visibility(
+          visible: AppRole.isDriver,
+          child: Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: ArriveImageWidget().buildContentImageArrive(
+              title: 'Tangki Bahan Bakar dan Foto Segel',
+              mediaFileList: controller.mediaFileListTangki,
+              controller: controller,
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(
@@ -67,10 +73,15 @@ class ArriveAtOffice extends StatelessWidget {
           title: 'Bukti Transfer/Uang Cash Pembayaran',
           mediaFileList: controller.mediaFileListTransportMoney,
         ),
-        const SizedBox(height: 10),
-        CustomImage().buildContentImage(
-          title: 'Penggunaan Uang Perjalanan',
-          mediaFileList: controller.mediaFileRecipientMoneyRit,
+        Visibility(
+          visible: AppRole.isDriver,
+          child: Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: CustomImage().buildContentImage(
+              title: 'Penggunaan Uang Perjalanan',
+              mediaFileList: controller.mediaFileRecipientMoneyRit,
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(

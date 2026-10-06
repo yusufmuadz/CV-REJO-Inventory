@@ -9,7 +9,7 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../controllers/enums/button_inv_enum.dart';
 import '../controllers/list_order_controller.dart';
-import '../views/list_inv_route_view.dart';
+import '../../../rit_information/presentation/views/list_inv_route_view.dart';
 import '../widgets/dialog_list_order/input_assistant_dialog.dart';
 import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
@@ -28,9 +28,7 @@ class ListOrderPage extends GetView<ListOrderController> {
             String title = 'Pesanan';
             String dateName = 'Hari Ini';
 
-            if (AppRole.isCollector) {
-              title = 'Invoice';
-            } else if (controller.pageIndex.value == 0) {
+            if (controller.pageIndex.value == 0) {
               title = 'RIT';
             }
 
@@ -95,9 +93,7 @@ class ListOrderPage extends GetView<ListOrderController> {
             onRefresh: () async {
               controller.onRefreshTransaction();
             },
-            child: AppRole.isCollector
-                ? ListInvRouteView(masterCtrlr: controller)
-                : ListOrderView(controller: controller),
+            child: ListOrderView(controller: controller),
           );
         }),
         bottomNavigationBar: AppRole.isDriver
@@ -105,10 +101,6 @@ class ListOrderPage extends GetView<ListOrderController> {
             : Obx(() {
                 if (controller.isLoading.value) {
                   return const SizedBox.shrink();
-                }
-
-                if (AppRole.isCollector) {
-                  return CustomButton.bottomBarStyle(child: _buildButtonInv());
                 }
 
                 return CustomButton.bottomBarStyle(child: _buildButton());
@@ -137,20 +129,6 @@ class ListOrderPage extends GetView<ListOrderController> {
       }
     }
     return const SizedBox.shrink();
-  }
-
-  Widget _buildButtonInv() {
-    final dataController = controller.getDataListController;
-
-    if (dataController.buttonINV.value == EnumButtonInv.acceptINV) {
-      return _buildButtonTakeOff();
-    }
-
-    if (controller.listRit.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return _buildButtonAcceptInv();
   }
 
   Widget _buildButtonSelect() {
@@ -216,41 +194,6 @@ class ListOrderPage extends GetView<ListOrderController> {
         //   controller,
         // );
         controller.isSelection.value = !controller.isSelection.value;
-      },
-    );
-  }
-
-  ////////=====COLLECTOR=====////////
-
-  Widget _buildButtonAcceptInv() {
-    if (controller.loadState.value == LoadState.initial) {
-      return const SizedBox.shrink();
-    }
-
-    return CustomButton.basicButton(
-      title: 'Terima Invoice',
-      color: const Color(0xFF2ED471),
-      onPressed: () async {
-        final dataController = controller.getDataListController;
-
-        dataController.buttonINV.value = EnumButtonInv.acceptINV;
-      },
-    );
-  }
-
-  Widget _buildButtonTakeOff() {
-    return CustomButton.basicButton(
-      title: 'Keberangkatan',
-      color: const Color(0xFFd5914d),
-      onPressed: () {
-        debugPrint('Pilih Pesanan');
-        // controller.saveOrderDummy();
-        // if (controller.pageIndex.value == 0) {
-        //   controller.pageIndex.value = 1;
-        //   controller.pageController.jumpToPage(1);
-        // } else {
-        //   controller.saveOrder();
-        // }
       },
     );
   }

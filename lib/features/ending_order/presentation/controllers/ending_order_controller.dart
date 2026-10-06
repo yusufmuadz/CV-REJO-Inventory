@@ -35,14 +35,17 @@ class EndingOrderController extends GetxController {
   final colorRit = ''.obs;
   final isRitToday = false.obs;
 
+  final statusPaymentInv = false.obs;
+
   late final RouteStackService routeStackService;
 
   final statusButton = EnumButtonEndingOrder.savePO.obs;
 
   final statusChecker2 = ''.obs;
-  final statatusDriver = ''.obs;
+  final statusDriver = ''.obs;
 
   final fieldController = TextEditingController();
+  final fieldReasonInvController = TextEditingController();
   final extNopolTransportion = TextEditingController();
   final extDriverName = TextEditingController();
 
@@ -87,7 +90,7 @@ class EndingOrderController extends GetxController {
     if (args != null) {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
-      statatusDriver.value = args['status_driver'] ?? '';
+      statusDriver.value = args['status_driver'] ?? '';
 
       if (AppRole.isChecker2) {
         jenisArmada.value = args['jenisArmada'] ?? '';
@@ -95,7 +98,7 @@ class EndingOrderController extends GetxController {
         extNopolTransportion.text = args['mobilExternal'] ?? '';
       }
 
-      if (AppRole.isDriver) {
+      if (AppRole.isDriver || AppRole.isCollector) {
         itemPO.value = args['items'] ?? [];
         if (Get.isRegistered<RitController>()) {
           ritController = Get.find<RitController>();
@@ -119,6 +122,7 @@ class EndingOrderController extends GetxController {
     super.onClose();
     isLoading.value = false;
     fieldController.dispose();
+    fieldReasonInvController.dispose();
     mediaFileList.clear();
     mediaFileListAllItem.clear();
     mediaFileFrontMerchant.clear();
@@ -128,8 +132,51 @@ class EndingOrderController extends GetxController {
     noInvoice.value = '';
   }
 
+  void saveDummyCollector() {
+    // if (_getEmptyMessageInv() != null) {
+    //   dialogService.showErrorSnackbar(
+    //     title: 'Gagal!',
+    //     _getEmptyMessageInv() ?? '',
+    //   );
+    //   return;
+    // }
+
+    if (statusButton.value == EnumButtonEndingOrder.savePO) {
+      statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
+      return;
+    }
+
+    if (Get.isRegistered<RitController>()) {
+      ritController.afterEnding();
+    }
+
+    if (routeStackService.contains(Routes.RIT_INFORMATION)) {
+      Get.until((route) => route.settings.name == Routes.RIT_INFORMATION);
+    } else {
+      Get.offAllNamed(
+        Routes.RIT_INFORMATION,
+        arguments: {
+          'city': rit.value,
+          'colorRit': colorRit.value,
+          'tanggalRit': dateRit.value,
+          'routeFrom': 'endingOrder',
+          'isRitToday': isRitToday.value,
+        },
+      );
+    }
+
+    // if (statusPaymentInv.value) {}
+  }
+
+  void resetInv() {
+    fieldController.clear();
+    mediaFileFrontMerchant.clear();
+    mediaFileList.clear();
+    selectedPaymentType.value = 'Tunai';
+  }
+
   void savePoDriver() {
-    if (statatusDriver.value == 'completed') {
+    if (statusDriver.value == 'completed') {
       saveArriveDriver();
     } else {
       saveOrder();
@@ -205,7 +252,7 @@ class EndingOrderController extends GetxController {
                     (route) => route.settings.name == Routes.LIST_ORDER,
                   );
                 } else {
-                  Get.toNamed(
+                  Get.offAllNamed(
                     Routes.LIST_ORDER,
                     arguments: {
                       'routeFrom': 'endingOrder',
@@ -235,7 +282,16 @@ class EndingOrderController extends GetxController {
                       (route) => route.settings.name == Routes.RIT_INFORMATION,
                     );
                   } else {
-                    Get.toNamed(Routes.RIT_INFORMATION);
+                    Get.offAllNamed(
+                      Routes.RIT_INFORMATION,
+                      arguments: {
+                        'city': rit.value,
+                        'colorRit': colorRit.value,
+                        'tanggalRit': dateRit.value,
+                        'routeFrom': 'endingOrder',
+                        'isRitToday': isRitToday.value,
+                      },
+                    );
                   }
                   // Get.offAllNamed(
                   //   Routes.RIT_INFORMATION,
@@ -259,7 +315,7 @@ class EndingOrderController extends GetxController {
                     (route) => route.settings.name == Routes.LIST_ORDER,
                   );
                 } else {
-                  Get.toNamed(
+                  Get.offAllNamed(
                     Routes.LIST_ORDER,
                     arguments: {
                       'routeFrom': 'endingOrder',
@@ -344,7 +400,7 @@ class EndingOrderController extends GetxController {
                 listOrderController.afterEnding();
                 Get.until((route) => route.settings.name == Routes.LIST_ORDER);
               } else {
-                Get.toNamed(
+                Get.offAllNamed(
                   Routes.LIST_ORDER,
                   arguments: {
                     'routeFrom': 'endingOrder',
@@ -429,7 +485,16 @@ class EndingOrderController extends GetxController {
                   (route) => route.settings.name == Routes.RIT_INFORMATION,
                 );
               } else {
-                Get.toNamed(Routes.RIT_INFORMATION);
+                Get.offAllNamed(
+                  Routes.RIT_INFORMATION,
+                  arguments: {
+                    'city': rit.value,
+                    'colorRit': colorRit.value,
+                    'tanggalRit': dateRit.value,
+                    'routeFrom': 'endingOrder',
+                    'isRitToday': isRitToday.value,
+                  },
+                );
               }
               // Get.offAllNamed(
               //   Routes.RIT_INFORMATION,
@@ -545,7 +610,16 @@ class EndingOrderController extends GetxController {
                   (route) => route.settings.name == Routes.RIT_INFORMATION,
                 );
               } else {
-                Get.toNamed(Routes.RIT_INFORMATION);
+                Get.offAllNamed(
+                  Routes.RIT_INFORMATION,
+                  arguments: {
+                    'city': rit.value,
+                    'colorRit': colorRit.value,
+                    'tanggalRit': dateRit.value,
+                    'routeFrom': 'endingOrder',
+                    'isRitToday': isRitToday.value,
+                  },
+                );
               }
 
               // Get.offAllNamed(
@@ -598,7 +672,16 @@ class EndingOrderController extends GetxController {
         if (routeStackService.contains(Routes.RIT_INFORMATION)) {
           Get.until((route) => route.settings.name == Routes.RIT_INFORMATION);
         } else {
-          Get.toNamed(Routes.RIT_INFORMATION);
+          Get.offAllNamed(
+            Routes.RIT_INFORMATION,
+            arguments: {
+              'city': rit.value,
+              'colorRit': colorRit.value,
+              'tanggalRit': dateRit.value,
+              'routeFrom': 'endingOrder',
+              'isRitToday': isRitToday.value,
+            },
+          );
         }
 
         // Get.offAllNamed(
@@ -627,15 +710,15 @@ class EndingOrderController extends GetxController {
   }
 
   bool _emptyDriverPO() {
-    debugPrint('Status Button: ${statusButton.value}');
-    debugPrint('Media File List All Item: ${mediaFileListAllItem.length}');
-    debugPrint(
-      'Media File List Info Invoice: ${mediaFileListInfoInvoice.length}',
-    );
-    debugPrint(
-      'Media File List Payment Type: ${mediaFileListPaymentType.length}',
-    );
-    debugPrint('Field Controller: ${fieldController.text}');
+    // debugPrint('Status Button: ${statusButton.value}');
+    // debugPrint('Media File List All Item: ${mediaFileListAllItem.length}');
+    // debugPrint(
+    //   'Media File List Info Invoice: ${mediaFileListInfoInvoice.length}',
+    // );
+    // debugPrint(
+    //   'Media File List Payment Type: ${mediaFileListPaymentType.length}',
+    // );
+    // debugPrint('Field Controller: ${fieldController.text}');
 
     if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
       if (mediaFileListAllItem.isEmpty || mediaFileListInfoInvoice.isEmpty) {
@@ -656,5 +739,35 @@ class EndingOrderController extends GetxController {
 
     // Jika semua kondisi di atas lolos, berarti tidak ada yang kosong
     return false;
+  }
+
+  String? _getEmptyMessageInv() {
+    if (statusButton.value == EnumButtonEndingOrder.savePO) {
+      if (mediaFileFrontMerchant.isEmpty) {
+        return 'Foto Toko belum diupload!';
+      }
+
+      if (mediaFileList.isEmpty) {
+        return 'Foto Bukti Tagihan belum diupload!';
+      }
+    }
+
+    if (statusButton.value == EnumButtonEndingOrder.saveCollectorInv) {
+      if (statusPaymentInv.value) {
+        if (fieldController.text.isEmpty) {
+          return 'Masukkan nominal pembayaran!';
+        }
+
+        if (mediaFileList.isEmpty) {
+          return 'Foto Bukti pembayaran belum diupload!';
+        }
+      } else {
+        if (fieldController.text.isEmpty) {
+          return 'Masukkan keterangan utama terlebih dahulu!';
+        }
+      }
+    }
+
+    return null;
   }
 }

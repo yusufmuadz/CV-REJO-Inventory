@@ -43,7 +43,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           icon: Icons.person_outline,
         ),
         Visibility(
-          visible: isDriver,
+          visible: AppRole.isCollector || isDriver,
           child: _buildInfoContent(
             isPhone: true,
             title: 'Nomor Telepon',
@@ -63,7 +63,7 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           mgBottom: 16,
         ),
         Visibility(
-          visible: isDriver,
+          visible: AppRole.isCollector || isDriver,
           child: _buildInfoContent(
             isAddress: true,
             title: 'Alamat Pengiriman',

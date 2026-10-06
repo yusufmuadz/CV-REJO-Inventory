@@ -13,6 +13,7 @@ class DialogService {
   SnackbarController showSnackbar({
     required String title,
     required String message,
+    int duration = 2,
     SnackPosition? snackPosition,
     Color? backgroundColor,
   }) {
@@ -22,7 +23,7 @@ class DialogService {
       colorText: Colors.white,
       // snackPosition: snackPosition ?? SnackPosition.TOP,
       backgroundColor: backgroundColor,
-      duration: const Duration(seconds: 2),
+      duration: Duration(seconds: duration),
     );
   }
 
@@ -281,10 +282,12 @@ class DialogService {
   SnackbarController showErrorSnackbar(
     String message, {
     String title = 'Error',
+    int? duration,
   }) {
     return showSnackbar(
       title: title,
       message: message,
+      duration: duration ?? 2,
       backgroundColor: Colors.red,
     );
   }

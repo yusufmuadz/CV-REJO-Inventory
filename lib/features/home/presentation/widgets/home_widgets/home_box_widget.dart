@@ -72,6 +72,10 @@ class HomeBoxWidget extends StatelessWidget {
               iconColor: const Color(0xFF1D4ED8),
               bgIconColor: const Color(0xFFDBEAFE),
               onTap: () {
+                if (AppRole.isCollector) {
+                  controller.dialogService.showComingSoonSnackbar();
+                  return;
+                }
                 Get.toNamed(Routes.LIST_HISTORY_ORDER);
               },
             ),

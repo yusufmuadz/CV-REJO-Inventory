@@ -5,13 +5,16 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../home/presentation/controllers/home_bbm_controller.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
+import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
+import '../views/list_inv_route_view.dart';
 import '../controllers/rit_controller.dart';
 import '../controllers/enums/enum_rit.dart';
 import '../widgets/rit_dialog.dart';
@@ -33,10 +36,17 @@ class RitPage extends GetView<RitController> {
             final dateFormat = DateFormat('dd MMMM yyyy');
             String dateTime = dateFormat.format(DateTime.now());
 
+            String label =
+                'Detail RIT - ${controller.isDistrictSelected.value}';
+
             if (controller.tanggalRit.value != '') {
               dateTime = dateFormat.format(
                 DateTime.parse(controller.tanggalRit.value),
               );
+            }
+
+            if (AppRole.isCollector) {
+              label = 'Invoice Hari Ini';
             }
 
             if (controller.buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
@@ -55,7 +65,7 @@ class RitPage extends GetView<RitController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Detail RIT - ${controller.isDistrictSelected.value}',
+                  label,
                   style: TextStyles.basicTextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -81,6 +91,22 @@ class RitPage extends GetView<RitController> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               final route = controller.routeFrom.value;
+
+              if (controller.pageIndex.value != 0 &&
+                  controller.pageIndex.value != 3) {
+                if (AppRole.isCollector) {
+                  controller.pageIndex.value = 3;
+                } else {
+                  controller.pageIndex.value = 0;
+                }
+
+                controller.pageController.jumpToPage(
+                  controller.pageIndex.value,
+                );
+
+                debugPrint('Pilih Pesanan');
+                return;
+              }
 
               if ((controller.isAcceptRIT.value && route == 'listOrder') ||
                   route == 'endingOrder') {
@@ -153,6 +179,11 @@ class RitPage extends GetView<RitController> {
               controller.buttonRIT.value == EnumButtonRIT.cancelRIT) {
             return const SizedBox.shrink();
           }
+
+          if (AppRole.isCollector) {
+            return CustomButton.bottomBarStyle(child: _buildButtonInv());
+          }
+
           return CustomButton.bottomBarStyle(child: _buildButton());
         }),
       ),
@@ -176,6 +207,7 @@ class RitPage extends GetView<RitController> {
         RitView(controller: controller),
         InputImageView(controller: controller),
         ArriveAtOffice(controller: controller),
+        ListInvRouteView(masterCtrlr: controller),
       ],
     );
   }
@@ -205,19 +237,35 @@ class RitPage extends GetView<RitController> {
       return _buildButtonArriveSafeDoc();
     }
 
+    return _buildButtonTakeOffSave();
+  }
+
+  Widget _buildButtonTakeOffSave() {
+    String title = 'Keberangkatan';
+    Color color = const Color(0xFFd5914d);
+
+    if (controller.pageIndex.value != 0 && controller.pageIndex.value != 3) {
+      title = 'Simpan';
+      color = const Color(0xFF2ED471);
+    }
+
     return CustomButton.basicButton(
-      title: controller.pageIndex.value == 0 ? 'Keberangkatan' : 'Simpan',
-      color: controller.pageIndex.value == 0
-          ? const Color(0xFFd5914d)
-          : const Color(0xFF2ED471),
+      title: title,
+      color: color,
       onPressed: () {
         debugPrint('Pilih Pesanan');
         // controller.saveOrderDummy();
-        if (controller.pageIndex.value == 0) {
+
+        if (controller.pageIndex.value == 0 ||
+            controller.pageIndex.value == 3) {
           controller.pageIndex.value = 1;
           controller.pageController.jumpToPage(1);
         } else {
-          controller.saveOrder();
+          if (AppRole.isCollector) {
+            controller.saveOrderDummy();
+          } else {
+            controller.saveOrder();
+          }
         }
       },
     );
@@ -306,7 +354,94 @@ class RitPage extends GetView<RitController> {
     return CustomButton.basicButton(
       title: 'Simpan',
       color: const Color(0xFF2ED471),
-      onPressed: () => controller.saveOrder(),
+      onPressed: () {
+        if (AppRole.isCollector) {
+          controller.saveOrderDummy();
+          return;
+        }
+        controller.saveOrder();
+      },
+    );
+  }
+
+  ////////=====COLLECTOR=====////////
+
+  Widget _buildButtonInv() {
+    if (controller.loadState.value == LoadState.initial) {
+      return const SizedBox.shrink();
+    }
+
+    final dataController = controller.invController;
+
+    if (dataController.buttonINV.value == EnumButtonInv.takeOff) {
+      return _buildButtonTakeOffSave();
+    }
+
+    if (dataController.buttonINV.value == EnumButtonInv.saveTakeOff) {
+      return _buildButtonArriveAtOffice();
+    }
+
+    if (dataController.buttonINV.value == EnumButtonInv.buttonSaveDoc) {
+      return _buildButtonArriveSafeDoc();
+    }
+
+    if (dataController.listInv.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return _buildButtonAcceptInv();
+  }
+
+  Widget _buildButtonAcceptInv() {
+    return CustomButton.basicButton(
+      title: 'Terima Invoice',
+      color: const Color(0xFF2ED471),
+      onPressed: () async {
+        final dataController = controller.invController;
+
+        final allChecked = dataController.listInv.every(
+          (element) => element.isChecked == true,
+        );
+
+        if (!allChecked) {
+          controller.dialogService.showErrorSnackbar(
+            title: 'Warning!',
+            'Pilih semua invoice terlebih dahulu',
+          );
+          return;
+        }
+
+        final newListInv = dataController.listInv
+            .map((element) => element.copyWith(isChecked: false))
+            .toList();
+
+        dataController.listInv.value = newListInv;
+
+        dataController.buttonINV.value = EnumButtonInv.takeOff;
+      },
+    );
+  }
+
+  Widget _buildButtonArriveAtOffice() {
+    if (controller.loadState.value == LoadState.initial) {
+      return const SizedBox.shrink();
+    }
+
+    return CustomButton.basicButton(
+      title: 'Sampai Kantor',
+      color: const Color(0xFF2ED471),
+      onPressed: () async {
+        final dataController = controller.invController;
+
+        dataController.buttonINV.value = EnumButtonInv.buttonSaveDoc;
+
+        controller.pageIndex.value = 2;
+        controller.pageController.animateToPage(
+          2,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      },
     );
   }
 }

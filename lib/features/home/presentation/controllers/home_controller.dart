@@ -196,7 +196,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
     GetStorage().remove('noInvoice');
 
-    if (AppRole.isDriver && rit.value.isNotEmpty) {
+    if ((AppRole.isDriver && rit.value.isNotEmpty) || AppRole.isCollector) {
       if (invoice.isNotEmpty) {}
 
       Get.toNamed(
