@@ -6,6 +6,7 @@ enum EnumButtonInv {
   buttonConfirmChangeINV, // Setelah klik button urutan
   saveChangeINV, // Simpan urutan
   buttonSaveDoc, // Button simpan INVOICE sampai kantor
+  buttonCompleteINV, // Button selesai INVOICE
   cancelChangePO, // Batalkan urutan
   cancelINV, // Batalkan RIT
 }

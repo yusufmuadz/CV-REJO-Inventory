@@ -11,6 +11,7 @@ abstract class HomeRemoteDataSource {
   Future<ResponseModelGetTransactionAll> fetchTransaction(
     ParamsGetTransaction params,
   );
+  Future<ResponseModelGetRit> getRit(ParamGetRIT param);
   Future<ResponseModelGetHome> getHomeData();
   Future<ResponseModelBasic> postIsiBbm(ParamsIsiBbm params);
   // Future<ResponseModelGetRit> getRit(ParamGetRIT param);

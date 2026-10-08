@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -8,7 +9,9 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
+import '../../../list_order/data/models/response_model_get_rit.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
+import '../../../list_order/domain/params/get_rit_param.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/params/isi_bbm_param.dart';
 import '../models/response_model_get_home.dart';
@@ -33,18 +36,68 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       };
 
       String queryString = Uri(queryParameters: body).query;
-      String apiUrl = '${ApiEndpoints.fetchTransactionAll('all')}?$queryString';
+      String apiUrl = ApiEndpoints.fetchTransactionAll('all');
 
       if (AppRole.isChecker2 && params.isTracking == true) {
-        apiUrl = '${ApiEndpoints.fetchTransactionTracking}?$queryString';
+        apiUrl = ApiEndpoints.fetchTransactionTracking;
       }
 
-      final response = await dioClient.get(apiUrl);
+      if (AppRole.isChecker2 && params.isSisipan == true) {
+        apiUrl = ApiEndpoints.fetchTransactionSisipan;
+      }
+
+      final response = await dioClient.get('$apiUrl?$queryString');
 
       // debugPrint('Data Home Transaction Remote DataSource: ${response.data['data']}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ResponseModelGetTransactionAll.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetRit> getRit(ParamGetRIT params) async {
+    try {
+      // String url = 'getrit';
+      String? date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      // if (params.isPastRit == true) {
+      //   url = 'pastrit';
+
+      //   if (params.date != null) {
+      //     date = DateFormat(
+      //       'yyyy-MM-dd',
+      //     ).format(DateTime.parse(params.date ?? date));
+      //   }
+      // }
+
+      Map<String, String> body = {
+        if (params.search != null) 'search': '${params.search}',
+        if (params.isPastRit) 'date': date,
+      };
+
+      String queryString = Uri(queryParameters: body).query;
+
+      final response = await dioClient.get(
+        '${ApiEndpoints.fetchRITSisipan}?$queryString',
+      );
+
+      // debugPrint('Data Get Rit Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetRit.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

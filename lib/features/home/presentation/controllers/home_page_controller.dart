@@ -99,6 +99,11 @@ class HomePageController extends GetxController {
           masterController.homeTrackingDriverController.listOrder.isEmpty) {
         masterController.homeTrackingDriverController.onRefreshTransaction();
       }
+
+      if (AppRole.isChecker2 &&
+          masterController.homeRitSisipanController.listRit.isEmpty) {
+        masterController.homeRitSisipanController.onRefreshRIT();
+      }
     } catch (e, stackTrace) {
       debugPrint('Error button page => ${e.toString()}');
       debugPrint('Error button page stack => ${stackTrace}');

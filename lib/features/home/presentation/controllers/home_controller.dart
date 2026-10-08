@@ -8,11 +8,14 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/services/cache_service.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import 'home_bbm_controller.dart';
+import 'home_collector_controller.dart';
 import 'home_page_controller.dart';
 import 'home_profile_controller.dart';
 import 'home_retur_controller.dart';
 import 'home_rit_controller.dart';
+import 'home_rit_sisipan_controller.dart';
 import 'home_tracking_driver_controller.dart';
 import 'home_transactions_controller.dart';
 
@@ -28,6 +31,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final pageController = PageController(initialPage: 0);
   final indexPage = 0.obs;
   late GlobalKey<ScaffoldState> scaffoldKey;
+
+  late final RouteStackService routeStackService;
 
   final searchController = TextEditingController();
 
@@ -52,6 +57,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   late final HomeTrackingDriverController homeTrackingDriverController;
   late final HomeReturController homeReturController;
   late final HomeBbmController homeBbmController;
+  late final HomeCollectorController homeCollectorController;
+  late final HomeRitSisipanController homeRitSisipanController;
 
   @override
   void onInit() {
@@ -63,6 +70,9 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     homeTrackingDriverController = Get.find<HomeTrackingDriverController>();
     homeReturController = Get.find<HomeReturController>();
     homeBbmController = Get.find<HomeBbmController>();
+    homeCollectorController = Get.find<HomeCollectorController>();
+    routeStackService = Get.find<RouteStackService>();
+    homeRitSisipanController = Get.find<HomeRitSisipanController>();
 
     // if (AppRole.isDriver) {
     scaffoldKey = GlobalKey<ScaffoldState>();
@@ -132,6 +142,8 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     if ((AppRole.isDriver && index < 3) || (!AppRole.isDriver && index != 1)) {
       return;
     }
+
+    if (AppRole.isChecker2 && index != 3) return;
     // Di dalam State management (misal: GetX atau Provider)
     int currentSize = await cacheService.getCacheSize();
     cacheSize.value = cacheService.formatSize(currentSize);
@@ -145,6 +157,32 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     getCacheSize(tabIndex.value);
     Get.back();
     dialogService.showSuccessSnackbar('Berhasil Menghapus Cache');
+  }
+
+  void routeToSortingPO() {
+    // getLocalRit();
+
+    if (rit.value.isNotEmpty) {
+      Get.toNamed(
+        Routes.RIT_INFORMATION,
+        arguments: {
+          // 'invoice': invoice,
+          'city': rit.value,
+          'colorRit': colorRit.value,
+          'tanggalRit': tanggalRit.value,
+          'routeRit': routeRit.value,
+          'routeFrom': 'home',
+          'isRitToday': true,
+          'isSisipan': true,
+        },
+      );
+      return;
+    }
+
+    Get.toNamed(
+      Routes.LIST_ORDER,
+      arguments: {'routeFrom': 'home', 'isRitToday': true, 'isSisipan': true},
+    );
   }
 
   void routeTo({bool ritToday = true}) {

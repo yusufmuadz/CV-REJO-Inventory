@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,11 +8,8 @@ import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/data/models/status_model.dart';
 import '../../../list_order/domain/entities/invoice_entity.dart';
 import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
-import 'rit_controller.dart';
 
-class InvController extends GetxController {
-  // RitController get masterController => Get.find<RitController>();
-
+class HomeCollectorController extends GetxController {
   final isGetLoading = false.obs;
   final getLoadState = LoadState.initial.obs;
 
@@ -21,6 +19,22 @@ class InvController extends GetxController {
   final dateRoute = ''.obs;
 
   final searchInvController = TextEditingController();
+
+  final recipientName = TextEditingController();
+  final kmController = TextEditingController();
+
+  final mediaFileList = <XFile>[].obs;
+  final mediaFileListKM = <XFile>[].obs;
+  final mediaFileListTangki = <XFile>[].obs;
+  final mediaFileListSJ = <XFile>[].obs;
+  final mediaFileListTransportMoney = <XFile>[].obs;
+  final mediaFileRecipientMoneyRit = <XFile>[].obs;
+  final mediaFileRecipientBox = <XFile>[].obs;
+
+  final mediaFileFrontTransport = Rx<XFile>(XFile(''));
+  final mediaFileBackTransport = Rx<XFile>(XFile(''));
+  final mediaFileRightTransport = Rx<XFile>(XFile(''));
+  final mediaFileLeftTransport = Rx<XFile>(XFile(''));
 
   void retryFetch() =>
       getOrder(isRefresh: getLoadState.value == LoadState.error);
@@ -109,15 +123,8 @@ class InvController extends GetxController {
     }
   }
 
-  LoadState _getLoad({bool isRefresh = false, int currentPage = 1}) {
-    final result = (isRefresh || currentPage == 1)
-        ? LoadState.initial
-        : LoadState.loadingMore;
-
-    return result;
-  }
-
   void onSelectedInv(int index) {
+    debugPrint('index: $index');
     if (index != -1) {
       final invEntity = listInv[index];
 
@@ -130,10 +137,6 @@ class InvController extends GetxController {
 
       listInv.value = updateList;
       // selectedAllItem.value = listInv.every((e) => e.isChecked);
-
-      //   isSelectedRoute.value = id;
-      //   listInv[index].isSelected = !listInv[index].isSelected;
-      //   dateRoute.value = listInv[index].date?.transaction ?? '';
     } else {
       isSelectedRoute.value = '';
       dateRoute.value = '';

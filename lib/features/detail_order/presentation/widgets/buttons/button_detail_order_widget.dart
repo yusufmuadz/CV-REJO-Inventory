@@ -31,8 +31,10 @@ class ButtonDetailOrderWidget {
     Color color1 = const Color(0xFFFF51BD);
     Color color2 = const Color(0xFF255BF0);
 
-    if (AppRole.isDriver || AppRole.isCollector) {
-      if (controller.statusDriver.value == 'completed') {
+    if ((AppRole.isDriver && controller.isDriverCollector.value) ||
+        AppRole.isCollector) {
+      if (controller.statusDriver.value == 'completed' &&
+          !controller.isDriverCollector.value) {
         title1 = 'Berangkat';
         title2 = 'Sampai';
         color1 = const Color(0xFFd5914d);
@@ -54,7 +56,7 @@ class ButtonDetailOrderWidget {
       visible2: visible2,
       visibleSpace: visible1 && visible2,
       onPressed1: () {
-        if (AppRole.isDriver) {
+        if (AppRole.isDriver && !controller.isDriverCollector.value) {
           controller.isTakeToTheRoad.value = true;
           GetStorage().write(
             'isTakeToTheRoad',
@@ -91,6 +93,7 @@ class ButtonDetailOrderWidget {
             'jenisArmada': controller.orderDetail.value.jenisArmada,
             'driverExternal': controller.orderDetail.value.driverExternal,
             'mobilExternal': controller.orderDetail.value.mobilExternal,
+            'isDriverCollector': controller.isDriverCollector.value
           },
         );
       },

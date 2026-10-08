@@ -17,6 +17,7 @@ import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
+import '../../presentation/controllers/enums/enum_rit.dart';
 import '../models/response_model_get_orders_retur.dart';
 import 'rit_remote_datasource.dart';
 
@@ -243,9 +244,14 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
         url = 'past';
       }
 
-      final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll(url)}?$queryString',
-      );
+      String endPoint = '${ApiEndpoints.fetchTransactionAll(url)}?$queryString';
+
+      // if (params.buttonRIT == EnumButtonRIT.acceptRIT) {
+      // Untuk mendapatkan semua PO tanpa Pagination
+      endPoint = '${ApiEndpoints.fetchTransactionSisipan}?$queryString';
+      // }
+
+      final response = await dioClient.get(endPoint);
 
       // debugPrint('Data Home Get Transaction Remote DataSource: ${response.data}');
 

@@ -77,6 +77,7 @@ class RitView extends StatelessWidget {
                 ); // bersihkan listener lama jika ada rereder
                 localScrollController.addListener(() {
                   // Kirim langsung localScrollController yang sedang aktif ke GetX
+                  if (controller.isSisipan.value) return;
                   controller.onWidgetScroll(localScrollController);
                 });
 
@@ -100,8 +101,7 @@ class RitView extends StatelessWidget {
                       scrollController: localScrollController,
                       padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
                       buildDefaultDragHandles:
-                          controller.buttonRIT.value ==
-                          EnumButtonRIT.buttonConfirmChangePO,
+                          false, // controller.buttonRIT.value == EnumButtonRIT.buttonConfirmChangePO
                       itemBuilder: (context, index) {
                         if (index == controller.orders.length) {
                           return _buildBottomIndicator(

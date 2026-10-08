@@ -13,7 +13,6 @@ class CustomCardInv extends StatelessWidget {
   final Function() onTap;
   final bool showSelection;
   final String isSelected;
-  final Function()? onCheckboxChanged;
   final InvoiceEntity invEntity;
   final String? color;
   final bool isHistory;
@@ -24,7 +23,6 @@ class CustomCardInv extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.invEntity,
-    this.onCheckboxChanged,
     this.isSelected = '',
     this.color,
     this.buttonINV,

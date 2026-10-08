@@ -131,9 +131,13 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
 
       String queryString = Uri(queryParameters: body).query;
 
-      final response = await dioClient.get(
-        '${ApiEndpoints.getRit(url)}?$queryString',
-      );
+      String apiEndPoint = ApiEndpoints.getRit(url);
+
+      if (params.isSisipan == true) {
+        apiEndPoint = ApiEndpoints.fetchRITSisipan;
+      }
+
+      final response = await dioClient.get('$apiEndPoint?$queryString');
 
       // debugPrint('Data Get Rit Remote DataSource: ${response.data}');
 
@@ -261,14 +265,19 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
 
       Response<dynamic> response;
 
-      if (params.isDetail == false) {
+      if (params.isDetail == false && params.isSisipan == false) {
         response = await dioClient.put(
           ApiEndpoints.takeItRIT(urlRole),
           data: data,
         );
       } else {
+        String apiEndPoint = ApiEndpoints.changeTransportation;
+
+        if (params.isSisipan == true) {
+          apiEndPoint = ApiEndpoints.addAssistantSisipan;
+        }
         response = await dioClient.post(
-          ApiEndpoints.changeTransportation,
+          apiEndPoint,
           data: data,
           contentType: Headers.formUrlEncodedContentType,
         );

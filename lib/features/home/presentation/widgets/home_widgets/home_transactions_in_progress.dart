@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
+import '../../../../../routes/app_pages.dart';
 import '../../../../list_order/domain/entities/list_order_entity.dart';
 import '../../controllers/home_controller.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -39,6 +41,57 @@ class HomeTransactionsInProgress extends StatelessWidget {
             children: [
               // Total Section
               HomeBoxWidget(controller: controller),
+              Visibility(
+                visible: AppRole.isDriver,
+                child: Container(
+                  height: 45,
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: const Color(0xFFD7C3B4),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: InkWell(
+                    onTap: () => controller.routeToSortingPO(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 28,
+                          width: 28,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFECFDF5),
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0xFFD1FAE5),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.sync,
+                            size: 20,
+                            color: const Color(0xFF485461),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Urutkan',
+                          style: TextStyles.basicTextStyle(
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                            fontSize: 13,
+                            color: const Color(0xFF524439),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
 
               // Orders Section

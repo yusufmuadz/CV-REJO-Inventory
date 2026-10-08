@@ -35,7 +35,9 @@ class EndingOrderController extends GetxController {
   final colorRit = ''.obs;
   final isRitToday = false.obs;
 
-  final statusPaymentInv = false.obs;
+  final isDriverCollector = false.obs;
+
+  final statusPaymentInv = true.obs;
 
   late final RouteStackService routeStackService;
 
@@ -91,6 +93,9 @@ class EndingOrderController extends GetxController {
       noInvoice.value = args['invoice'] ?? '';
       statusChecker2.value = args['status_checker2'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
+      isDriverCollector.value = args['isDriverCollector'] ?? false;
+
+      debugPrint('isDriverCollector $isDriverCollector');
 
       if (AppRole.isChecker2) {
         jenisArmada.value = args['jenisArmada'] ?? '';
@@ -100,19 +105,15 @@ class EndingOrderController extends GetxController {
 
       if (AppRole.isDriver || AppRole.isCollector) {
         itemPO.value = args['items'] ?? [];
-        if (Get.isRegistered<RitController>()) {
-          ritController = Get.find<RitController>();
-        } else {
+        if (!Get.isRegistered<RitController>()) {
           Get.lazyPut(() => RitController(ritUseCase: Get.find()));
-          ritController = Get.find<RitController>();
         }
+        ritController = Get.find<RitController>();
       } else {
         if (Get.isRegistered<ListOrderController>()) {
-          listOrderController = Get.find<ListOrderController>();
-        } else {
           Get.lazyPut(() => ListOrderController(listOrderUseCase: Get.find()));
-          listOrderController = Get.find<ListOrderController>();
         }
+        listOrderController = Get.find<ListOrderController>();
       }
     }
   }
@@ -146,26 +147,33 @@ class EndingOrderController extends GetxController {
       return;
     }
 
-    if (Get.isRegistered<RitController>()) {
-      ritController.afterEnding();
+    if (AppRole.isCollector) {
+      if (Get.isRegistered<RitController>()) {
+        ritController.afterEnding();
+      }
+
+      if (routeStackService.contains(Routes.RIT_INFORMATION)) {
+        Get.until((route) => route.settings.name == Routes.RIT_INFORMATION);
+      } else {
+        Get.offAllNamed(
+          Routes.RIT_INFORMATION,
+          arguments: {
+            'city': rit.value,
+            'colorRit': colorRit.value,
+            'tanggalRit': dateRit.value,
+            'routeFrom': 'endingOrder',
+            'isRitToday': isRitToday.value,
+          },
+        );
+      }
+      return;
     }
 
-    if (routeStackService.contains(Routes.RIT_INFORMATION)) {
-      Get.until((route) => route.settings.name == Routes.RIT_INFORMATION);
+    if (routeStackService.contains(Routes.HOME)) {
+      Get.until((route) => route.settings.name == Routes.HOME);
     } else {
-      Get.offAllNamed(
-        Routes.RIT_INFORMATION,
-        arguments: {
-          'city': rit.value,
-          'colorRit': colorRit.value,
-          'tanggalRit': dateRit.value,
-          'routeFrom': 'endingOrder',
-          'isRitToday': isRitToday.value,
-        },
-      );
+      Get.offAllNamed(Routes.HOME);
     }
-
-    // if (statusPaymentInv.value) {}
   }
 
   void resetInv() {

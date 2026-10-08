@@ -1,3 +1,5 @@
+import '../../../rit_information/presentation/controllers/enums/enum_rit.dart';
+
 class ParamsGetTransaction {
   final String? noInvoice;
   final String? noPo;
@@ -12,6 +14,8 @@ class ParamsGetTransaction {
   final String? dateRit;
   final bool? pastRit;
   final bool? isTracking;
+  final bool? isSisipan;
+  final EnumButtonRIT? buttonRIT;
   final List<String>? courier;
 
   ParamsGetTransaction({
@@ -29,5 +33,7 @@ class ParamsGetTransaction {
     this.dateRit,
     this.pastRit,
     this.isTracking,
+    this.isSisipan,
+    this.buttonRIT,
   });
 }

@@ -12,8 +12,6 @@ import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../utils/maps_utils.dart';
-import '../../../detail_order/data/models/item_order_model.dart';
-import '../../../detail_order/domain/usecases/detail_order_usecase.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
@@ -56,6 +54,7 @@ class RitController extends GetxController {
   final routeRit = ''.obs;
   final isRitToday = false.obs;
   final isAcceptRIT = false.obs;
+  final isSisipan = false.obs;
 
   final buttonRIT = EnumButtonRIT.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
@@ -111,6 +110,13 @@ class RitController extends GetxController {
     super.onReady();
     routeStackService = Get.find<RouteStackService>();
     homeController = Get.find<HomeController>();
+
+    if (!Get.isRegistered<InvController>()) {
+      Get.lazyPut(() => InvController());
+    }
+
+    debugPrint('Register ${Get.isRegistered<InvController>()}');
+
     invController = Get.find<InvController>();
 
     if (AppRole.isCollector) {
@@ -129,6 +135,7 @@ class RitController extends GetxController {
       routeRit.value = args['routeRit'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
+      isSisipan.value = args['isSisipan'] ?? false;
     }
 
     String? getButtonRIT = GetStorage().read('buttonRIT');
@@ -196,9 +203,9 @@ class RitController extends GetxController {
     GetStorage().write('routeRit', routeRit.value);
     isAcceptRIT.value = true;
 
-    buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
 
-    // buttonRIT.value = EnumButtonRIT.buttonChangePO;
+    buttonRIT.value = EnumButtonRIT.buttonChangePO;
     // isAccept.value = !isAccept.value;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
@@ -631,6 +638,7 @@ class RitController extends GetxController {
           district: isDistrictSelected.value,
           dateRit: tanggalRit.value,
           pastRit: !isRitToday.value,
+          buttonRIT: buttonRIT.value,
         ),
       );
 

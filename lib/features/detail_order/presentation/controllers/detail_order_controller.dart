@@ -38,6 +38,7 @@ class DetailOrderController extends GetxController {
 
   final isFromHistory = false.obs;
   final isTracking = false.obs;
+  final isDriverCollector = false.obs;
 
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
@@ -100,9 +101,10 @@ class DetailOrderController extends GetxController {
       statusPO.value = args['status_po'] ?? '';
       doneByPO.value = args['done_by_po'] ?? '-';
       isTracking.value = args['isTracking'] ?? false;
+      isDriverCollector.value = args['isDriverCollector'] ?? false;
       // statusDriver.value = 'completed';
 
-      if (AppRole.isDriver) {
+      if (AppRole.isDriver && !isDriverCollector.value) {
         if (statusDriver.value == 'ongoing') {
           isSelect.value = true;
         } else if (statusDriver.value == 'completed') {
@@ -317,7 +319,7 @@ class DetailOrderController extends GetxController {
       return;
     }
 
-    if (AppRole.isDriver && isTakeToTheRoad.value) {
+    if (AppRole.isDriver && !isDriverCollector.value && isTakeToTheRoad.value) {
       dialogService.showConfirmation(
         title: 'Batalkan Keberangkatan',
         confirmText: 'Ya',

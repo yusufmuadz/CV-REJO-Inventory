@@ -37,7 +37,7 @@ class EndingOrderView extends GetView<EndingOrderController> {
             return const LoadingView();
           }
 
-          if (AppRole.isCollector) {
+          if (AppRole.isCollector || controller.isDriverCollector.value) {
             return CollectorArrive(controller: controller);
           }
 
@@ -74,7 +74,8 @@ class EndingOrderView extends GetView<EndingOrderController> {
           //   return CustomButton.bottomBarStyle(child: _buildButtonSave());
           // }
 
-          if (AppRole.isCollector) {
+          if (AppRole.isCollector ||
+              (AppRole.isDriver && controller.isDriverCollector.value)) {
             return CustomButton.bottomBarStyle(child: _buildButtonSave());
           }
 
@@ -143,10 +144,8 @@ class EndingOrderView extends GetView<EndingOrderController> {
       title: 'Simpan',
       color: const Color(0xFF2ED471),
       onPressed: () {
-        if (AppRole.isCollector) {
-          controller.saveDummyCollector();
-          controller.resetInv();
-        }
+        controller.saveDummyCollector();
+        controller.resetInv();
         // controller.saveOrder();
       },
     );

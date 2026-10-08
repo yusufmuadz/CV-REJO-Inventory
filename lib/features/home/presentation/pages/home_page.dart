@@ -7,8 +7,10 @@ import '../../../../shared/custom/custom_button.dart';
 import '../../../profile/presentation/views/profile_view.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
-import '../views/home_bbm_widget.dart';
+import '../views/home_bbm_view.dart';
+import '../views/home_collector_driver_view.dart';
 import '../views/home_retur_driver_view.dart';
+import '../views/home_rit_sisipan_view.dart';
 import '../views/home_view.dart';
 import '../views/home_rit_contsraint_view.dart';
 import '../views/take_it_order_view.dart';
@@ -40,7 +42,7 @@ class HomePage extends GetView<HomeController> {
         drawer: DrawerWidget(controller: controller),
         floatingActionButton: Obx(
           () => Visibility(
-            visible: AppRole.isDriver && controller.tabIndex.value == 5,
+            visible: AppRole.isDriver && controller.tabIndex.value == 6,
             child: FloatingActionButton(
               shape: const CircleBorder(),
               elevation: 0.5,
@@ -80,10 +82,14 @@ class HomePage extends GetView<HomeController> {
         // ListOrderPage(),
         if (AppRole.isChecker2)
           HomeTrackingDriverView(homeController: controller),
+        if (AppRole.isChecker2)
+          HomeRitSisipanView(homeController: controller),
         if (AppRole.isDriver) HomeReturDriverView(homeController: controller),
         if (AppRole.isDriver) RitConstraint(controller: controller),
         if (AppRole.isDriver) TakeItOrderView(controller: controller),
-        if (AppRole.isDriver) HomeBbmWidget(homeController: controller),
+        if (AppRole.isDriver) HomeBbmView(homeController: controller),
+        if (AppRole.isDriver)
+          HomeCollectorDriverView(homeController: controller),
         ProfileView(controller: controller),
       ],
     );

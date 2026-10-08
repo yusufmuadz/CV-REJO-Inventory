@@ -52,6 +52,7 @@ class ListOrderController extends GetxController {
   final listSelected = <dynamic>[].obs;
 
   final isRitToday = false.obs;
+  final isSisipan = false.obs;
   final pastRitDateSelected = DateTime.now().toString().obs;
 
   final listDistrict = <DistrictEntity>[].obs;
@@ -111,6 +112,7 @@ class ListOrderController extends GetxController {
       tanggalRit.value = args['tanggalRit'] ?? '';
       getRouteRit.value = args['routeRit'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
+      isSisipan.value = args['isSisipan'] ?? false;
 
       debugPrint('DATE RIT : ${tanggalRit.value}');
 
@@ -290,6 +292,7 @@ class ListOrderController extends GetxController {
           'routeFrom': 'listOrder',
           'isRitToday': isRitToday.value,
           'routeRit': routeRit,
+          'isSisipan': isSisipan.value,
         },
       );
       pageIndex.value = 0;

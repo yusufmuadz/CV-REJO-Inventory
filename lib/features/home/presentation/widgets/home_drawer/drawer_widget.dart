@@ -24,13 +24,11 @@ class DrawerWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          const SizedBox(height: 16),
           Obx(
             () => Expanded(
               child: ListView.separated(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                physics: const ClampingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final element = controller.homePageController.listMenu[index];
 
@@ -244,7 +242,7 @@ class DrawerWidget extends StatelessWidget {
   Widget _buildHeader() {
     return InkWell(
       onTap: () {
-        controller.homePageController.changePage(5);
+        controller.homePageController.changePage(6);
         Get.back();
       },
       child: Container(

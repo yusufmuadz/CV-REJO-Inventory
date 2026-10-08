@@ -318,21 +318,31 @@ class DialogService {
   /// ===== HANDLE EXIT =====
 
   Future<void> handleExit() {
-    return Get.dialog(
-      AlertDialog(
-        title: const Text('Alert'),
-        content: const Text('Apakah anda yakin untuk keluar'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Tidak')),
-          TextButton(
-            onPressed: () {
-              exit(0);
-            },
-            child: const Text('Keluar'),
-          ),
-        ],
-      ),
+    return defaultDialog(
+      height: 0.15,
+      title: 'ALERT',
+      titleButton1: 'Tidak',
+      titleButton2: 'Keluar',
+      onPressed1: () => Get.back(),
+      onPressed2: () => exit(0),
+      color2: Colors.red,
+      content: Center(child: const Text('Apakah anda yakin untuk keluar?')),
     );
+    // Get.dialog(
+    //   AlertDialog(
+    //     title: const Text(''),
+    //     content: ,
+    //     actions: [
+    //       TextButton(onPressed: , child: const Text('Tidak')),
+    //       TextButton(
+    //         onPressed: () {
+    //           ;
+    //         },
+    //         child: const Text('Keluar'),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   /// ===== DEFAULT DIALOG =====
@@ -404,6 +414,42 @@ class DialogService {
               ),
             ],
       ),
+    );
+  }
+
+  /// ===== GENERAL DIALOG =====
+
+  void showSidePopup({
+    required Widget child,
+    bool fromRight = true,
+    double width = 0.8,
+  }) {
+    Get.generalDialog(
+      barrierDismissible: true,
+      barrierLabel: 'Close',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Align(
+          alignment: fromRight ? Alignment.centerRight : Alignment.centerLeft,
+          child: Material(
+            child: SizedBox(
+              width: Get.width * width,
+              height: double.infinity,
+              child: child,
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset(fromRight ? 1 : -1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
     );
   }
 

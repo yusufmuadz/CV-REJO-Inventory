@@ -8,6 +8,8 @@ import '../../controllers/home_controller.dart';
 class AppBarWidget {
   Widget content({
     required String title,
+    bool isWithoutLeadingIcon = false,
+    bool isActionIcon = true,
     IconData? icon,
     Function()? onTap,
     HomeController? controller,
@@ -29,7 +31,7 @@ class AppBarWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (AppRole.isDriver)
+          if (AppRole.isDriver && !isWithoutLeadingIcon)
             Container(
               margin: EdgeInsets.only(right: 10),
               child: InkWell(
@@ -56,14 +58,17 @@ class AppBarWidget {
               color: Color(0xFF151C27),
             ),
           ),
-          InkWell(
-            onTap: onTap,
-            child: Icon(
-              icon ?? Icons.add_circle_outline,
-              size: 27,
-              color: Color(0xFF151C27),
-            ),
-          ),
+          if (isActionIcon)
+            InkWell(
+              onTap: onTap,
+              child: Icon(
+                icon ?? Icons.add_circle_outline,
+                size: 27,
+                color: Color(0xFF151C27),
+              ),
+            )
+          else
+            const SizedBox(width: 27),
         ],
       ),
     );

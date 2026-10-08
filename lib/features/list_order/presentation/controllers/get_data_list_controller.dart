@@ -148,7 +148,11 @@ class GetDataListController extends GetxController {
     debugPrint('DATE RIT : $sendDate');
 
     final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(isPastRit: !listCtrl.isRitToday.value, date: sendDate),
+      ParamGetRIT(
+        isPastRit: !listCtrl.isRitToday.value,
+        date: sendDate,
+        isSisipan: listCtrl.isSisipan.value,
+      ),
     );
 
     try {

@@ -8,10 +8,10 @@ import '../controllers/home_controller.dart';
 import '../widgets/home_app_bar/app_bar_widget.dart';
 import '../widgets/home_bbm/bbm_input_sheet.dart';
 
-class HomeBbmWidget extends StatelessWidget {
+class HomeBbmView extends StatelessWidget {
   final HomeController homeController;
 
-  const HomeBbmWidget({super.key, required this.homeController});
+  const HomeBbmView({super.key, required this.homeController});
 
   @override
   Widget build(BuildContext context) {

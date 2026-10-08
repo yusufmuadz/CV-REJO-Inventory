@@ -6,6 +6,8 @@ import 'package:cv_rejo/features/list_order/domain/params/get_transaction_param.
 import '../../../../core/error/failures.dart';
 import '../../../detail_order/domain/entities/basic_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
+import '../../../list_order/domain/entities/rit_list_entity.dart';
+import '../../../list_order/domain/params/get_rit_param.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/params/isi_bbm_param.dart';
 import '../../domain/repositories/home_repository.dart';
@@ -22,6 +24,19 @@ class HomeRepositoryImpl extends HomeRepository {
   ) async {
     try {
       final response = await dataSource.fetchTransaction(params);
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<RitListEntity>>> getRit(
+    ParamGetRIT param,
+  ) async {
+    try {
+      final response = await dataSource.getRit(param);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

@@ -219,13 +219,13 @@ class RitPage extends GetView<RitController> {
       return const LoadingView();
     }
 
-    // if (buttonRIT == EnumButtonRIT.buttonChangePO) {
-    //   return _buildButtonChangePO();
-    // }
+    if (buttonRIT == EnumButtonRIT.buttonChangePO) {
+      return _buildButtonChangePO();
+    }
 
-    // if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
-    //   return _buildButtonConfirmChangePO();
-    // }
+    if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+      return _buildButtonConfirmChangePO();
+    }
 
     if (buttonRIT == EnumButtonRIT.buttonArriveRIT) {
       return _buildShowButtonArrive();

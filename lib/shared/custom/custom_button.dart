@@ -156,10 +156,23 @@ class CustomButton {
           label: 'Tracking',
         ),
 
+      if (AppRole.isChecker2)
+        BottomNavigationBarItem(
+          icon: Icon(Ionicons.git_compare_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.git_compare, color: Color(0xFF06823f)),
+          label: 'Sisipan',
+        ),
+
       if (AppRole.isDriver)
         BottomNavigationBarItem(
-          icon: Icon(Ionicons.arrow_undo_circle_outline, color: Color(0xFF8890a0)),
-          activeIcon: Icon(Ionicons.arrow_undo_circle, color: Color(0xFF06823f)),
+          icon: Icon(
+            Ionicons.arrow_undo_circle_outline,
+            color: Color(0xFF8890a0),
+          ),
+          activeIcon: Icon(
+            Ionicons.arrow_undo_circle,
+            color: Color(0xFF06823f),
+          ),
           label: 'Retur',
         ),
 
@@ -176,11 +189,12 @@ class CustomButton {
           activeIcon: Icon(Ionicons.reader, color: Color(0xFF06823f)),
           label: 'Pesanan',
         ),
-        if (AppRole.isDriver)
+
+      if (AppRole.isDriver)
         BottomNavigationBarItem(
-          icon: Icon(Ionicons.speedometer_outline, color: Color(0xFF8890a0)),
-          activeIcon: Icon(Ionicons.speedometer, color: Color(0xFF06823f)),
-          label: 'BBM',
+          icon: Icon(Ionicons.clipboard_outline, color: Color(0xFF8890a0)),
+          activeIcon: Icon(Ionicons.clipboard, color: Color(0xFF06823f)),
+          label: 'Kolektor',
         ),
       BottomNavigationBarItem(
         icon: Icon(Ionicons.person_circle_outline, color: Color(0xFF8890a0)),

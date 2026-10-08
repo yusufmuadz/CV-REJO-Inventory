@@ -9,6 +9,7 @@ class ParamsAddAssistant {
   final String? statusTransportation;
   final bool? isChecker2;
   final bool isDetail;
+  final bool? isSisipan;
 
   ParamsAddAssistant({
     this.invoice,
@@ -21,5 +22,6 @@ class ParamsAddAssistant {
     this.statusTransportation,
     this.isChecker2,
     this.isDetail = false,
+    this.isSisipan,
   });
 }

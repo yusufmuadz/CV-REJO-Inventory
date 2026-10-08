@@ -166,34 +166,10 @@ class ListRitView extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          Icon(
-                            CupertinoIcons.cube_box,
-                            size: 18,
-                            color: const Color(0xFFD68F4D),
-                          ),
-                          const SizedBox(width: 5),
-                          RichText(
-                            text: TextSpan(
-                              text: '$totalOnProgressPO ',
-                              style: TextStyles.basicTextStyle(
-                                fontSize: 16,
-                                fontFamily:
-                                    GoogleFonts.hankenGrotesk().fontFamily,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF151C27),
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'PO Berjalan',
-                                  style: TextStyles.basicTextStyle(
-                                    fontSize: 16,
-                                    fontFamily:
-                                        GoogleFonts.hankenGrotesk().fontFamily,
-                                    fontWeight: FontWeight.w400,
-                                    color: const Color(0xFF524439),
-                                  ),
-                                ),
-                              ],
+                          Visibility(
+                            visible: !controller.isSisipan.value,
+                            child: _buildPoBerjalan(
+                              totalOnProgressPO: totalOnProgressPO,
                             ),
                           ),
                         ],
@@ -280,6 +256,37 @@ class ListRitView extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _buildPoBerjalan({required String totalOnProgressPO}) {
+    return Row(
+      children: [
+        Icon(CupertinoIcons.cube_box, size: 18, color: const Color(0xFFD68F4D)),
+        const SizedBox(width: 5),
+        RichText(
+          text: TextSpan(
+            text: '$totalOnProgressPO ',
+            style: TextStyles.basicTextStyle(
+              fontSize: 16,
+              fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF151C27),
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: 'PO Berjalan',
+                style: TextStyles.basicTextStyle(
+                  fontSize: 16,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF524439),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildRowContent({

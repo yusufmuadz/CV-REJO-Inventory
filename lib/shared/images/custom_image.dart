@@ -76,15 +76,22 @@ class CustomImage {
     bool isTransportation = false,
     Function()? onTap,
     required RxList<XFile> mediaFileList,
-    required RitController controller,
+    RitController? controller,
+    ValueChanged<int>? onRemove,
   }) {
     return CustomGridImage(
       maxImage: maxImage ?? 2,
       mediaFileList: mediaFileList,
       plusLength: (isTransportation && mediaFileList.length == 4 ? 0 : 1),
       onAdd: isTransportation ? onTap : () => selectImage(null, mediaFileList),
-      onRemove: (int index) =>
-          controller.removeImage(index, null, mediaFileList, isTransportation),
+      onRemove: (int index) {
+        if (controller != null) {
+          controller.removeImage(index, null, mediaFileList, isTransportation);
+          return;
+        }
+
+        if (onRemove != null) onRemove(index);
+      },
     );
   }
 
