@@ -61,9 +61,14 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       }
 
       String queryString = Uri(queryParameters: body).query;
-      final response = await dioClient.get(
-        '${ApiEndpoints.fetchTransactionAll(url)}?$queryString',
-      );
+
+      String apiEndPoint = ApiEndpoints.fetchTransactionAll(url);
+
+      if (params.isSisipan == true) {
+        apiEndPoint = ApiEndpoints.fetchTransactionSisipan;
+      }
+
+      final response = await dioClient.get('$apiEndPoint?$queryString');
 
       // debugPrint('Data Home Transaction Remote DataSource: ${response.data}');
 
@@ -259,6 +264,9 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       };
 
       debugPrint('isDetail: ${params.isDetail}');
+      debugPrint(
+        'CHECK: ${params.isDetail == false && params.isSisipan == false}',
+      );
       debugPrint('isChecker2: ${AppRole.isChecker2}');
       debugPrint('URL: ${ApiEndpoints.changeTransportation}');
       debugPrint('DATA: $data');

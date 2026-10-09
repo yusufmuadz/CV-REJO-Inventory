@@ -72,7 +72,10 @@ class PostDataListController extends GetxController {
     }
   }
 
-  Future<bool> addAssistant({bool isDetail = false, String invoice = ''}) async {
+  Future<bool> addAssistant({
+    bool isDetail = false,
+    String invoice = '',
+  }) async {
     if (listCtrl.isLoadingAssistant.value) return false;
     listCtrl.isLoadingAssistant.value = true;
 
@@ -122,6 +125,7 @@ class PostDataListController extends GetxController {
           idKenek: kenek != null ? kenek.userId : '',
           dateRIT: dateRIT,
           isDetail: isDetail,
+          isSisipan: listCtrl.isSisipan.value,
           statusTransportation: listCtrl.statusTransportationSelected.value
               .toUpperCase(),
         ),

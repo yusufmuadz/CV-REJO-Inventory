@@ -132,7 +132,7 @@ class CollectorArrive extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildFieldNote(
-            title: 'Keterangan*',
+            title: 'Note Khusus*',
             textEditingController: controller.fieldController,
           ),
           const SizedBox(height: 15),
@@ -316,7 +316,7 @@ class CollectorArrive extends StatelessWidget {
           decoration: InputDecoration(
             hintText: isOptional
                 ? 'Masukkan keterangan jika diperlukan'
-                : 'Wajib masukkan keterangan*',
+                : 'Wajib masukkan keterangan khusus untuk pengingat penagihan*',
             contentPadding: const EdgeInsets.all(12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

@@ -180,44 +180,47 @@ class RitView extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          Expanded(
-            child: CustomCardList(
-              onTapMaps: () => controller.onTapMaps(order: transaction),
-              onTap: () {
-                final arriveDriver = transaction.driver?.arriveDriver;
+          Obx(
+            () => Expanded(
+              child: CustomCardList(
+                onTapMaps: () => controller.onTapMaps(order: transaction),
+                onTap: () {
+                  final arriveDriver = transaction.driver?.arriveDriver;
 
-                if (isAccepted) {
-                  return;
-                }
+                  if (controller.buttonRIT.value == EnumButtonRIT.acceptRIT) {
+                    return;
+                  }
 
-                if (arriveDriver == true) {
-                  controller.dialogService.showError(
-                    'Informasi',
-                    'PO Sudah diselesaikan',
+                  if (arriveDriver == true) {
+                    controller.dialogService.showError(
+                      'Informasi',
+                      'PO Sudah diselesaikan',
+                    );
+                    return;
+                  }
+
+                  if (controller.buttonRIT.value ==
+                      EnumButtonRIT.buttonConfirmChangePO) {
+                    controller.toggleOrder(transaction);
+                    return;
+                  }
+
+                  Get.toNamed(
+                    Routes.DETAIL_ORDER,
+                    arguments: {
+                      'invoice': transaction.invoice,
+                      'status_driver': transaction.driver?.status ?? '',
+                      'isSisipan': controller.isSisipan.value,
+                    },
                   );
-                  return;
-                }
-
-                if (controller.buttonRIT.value ==
-                    EnumButtonRIT.buttonConfirmChangePO) {
-                  controller.toggleOrder(transaction);
-                  return;
-                }
-
-                Get.toNamed(
-                  Routes.DETAIL_ORDER,
-                  arguments: {
-                    'invoice': transaction.invoice,
-                    'status_driver': transaction.driver?.status ?? '',
-                  },
-                );
-              },
-              showSelection: false,
-              isSelected: '',
-              onCheckboxChanged: () {},
-              transaction: transaction,
-              buttonRIT: controller.buttonRIT.value,
-              color: controller.colorRit.value.replaceAll('#', ''),
+                },
+                showSelection: false,
+                isSelected: '',
+                onCheckboxChanged: () {},
+                transaction: transaction,
+                buttonRIT: controller.buttonRIT.value,
+                color: controller.colorRit.value.replaceAll('#', ''),
+              ),
             ),
           ),
         ],

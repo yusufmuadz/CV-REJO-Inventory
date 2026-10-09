@@ -209,7 +209,7 @@ class ListRitView extends StatelessWidget {
                               if (ritOrder.city !=
                                   controller.isRitDetail.value) {
                                 controller.isRitDetail.value = ritOrder.city;
-                                await controller.getDataListController.getOrder(
+                                controller.getDataListController.getOrder(
                                   isDetail: true,
                                   isRefresh: true,
                                   noRIT: ritOrder.city,

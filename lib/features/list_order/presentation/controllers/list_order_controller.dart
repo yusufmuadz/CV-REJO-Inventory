@@ -11,6 +11,7 @@ import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
+import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/list_order_entity.dart';
@@ -91,12 +92,15 @@ class ListOrderController extends GetxController {
 
   final scrollDetailPOController = ScrollController();
 
+  late final HomeController homeController;
   late final GetDataListController getDataListController;
   late final PostDataListController postDataListController;
 
   @override
   void onInit() {
     super.onInit();
+    routeStackService = Get.find<RouteStackService>();
+    homeController = Get.find<HomeController>();
     getDataListController = Get.find<GetDataListController>();
     postDataListController = Get.find<PostDataListController>();
 
@@ -143,6 +147,7 @@ class ListOrderController extends GetxController {
   }
 
   void afterEnding() {
+    routeStackService = Get.find<RouteStackService>();
     getDataListController = Get.find<GetDataListController>();
     postDataListController = Get.find<PostDataListController>();
 
@@ -241,7 +246,9 @@ class ListOrderController extends GetxController {
   }
 
   void onSelectedRit(int index, {required String pendingPoRIT}) {
-    if (!isSelection.value && !AppRole.isDriver) return;
+    if (!isSisipan.value) {
+      if (!isSelection.value && !AppRole.isDriver) return;
+    }
 
     if (index != -1) {
       final item = listRit[index];
@@ -254,7 +261,7 @@ class ListOrderController extends GetxController {
       totalPendingPoRITCheck2.value = pendingPoRIT;
     }
 
-    if (AppRole.isDriver) {
+    if (AppRole.isDriver || (AppRole.isPIC && isSisipan.value)) {
       takeItOrder();
       return;
     }
@@ -281,7 +288,7 @@ class ListOrderController extends GetxController {
     tanggalRit.value = tglRit;
     getRouteRit.value = routeRit;
 
-    if (AppRole.isDriver) {
+    if (AppRole.isDriver || (AppRole.isPIC && isSisipan.value)) {
       Get.toNamed(
         Routes.RIT_INFORMATION,
         arguments: {
@@ -309,6 +316,8 @@ class ListOrderController extends GetxController {
       tanggalRit.value = tglRit;
       orders.clear();
       getDataListController.getOrder();
+      homeController.getLocalRit();
+      debugPrint('Save RIT : ${isRitToday.value}');
     }
     isSelected.value = '';
     // listRit.clear();
@@ -331,7 +340,7 @@ class ListOrderController extends GetxController {
     debugPrint('totalPendingPoRITCheck2 : ${totalPendingPoRITCheck2.value}');
 
     if (pageIndex.value == 0) {
-      if (AppRole.isPIC ||
+      if ((AppRole.isPIC && !isSisipan.value) ||
           (AppRole.isChecker2 && totalPendingPoRITCheck2.value == '0')) {
         if (listUser.isEmpty) {
           getDataListController.getAssisten();
@@ -342,7 +351,7 @@ class ListOrderController extends GetxController {
         );
 
         if (!resultAddAssistant) return;
-      } else if (!AppRole.isDriver) {
+      } else if (!AppRole.isDriver && !isSisipan.value) {
         final resultTakRIT = await postDataListController.takeRIT();
         if (!resultTakRIT) return;
       }

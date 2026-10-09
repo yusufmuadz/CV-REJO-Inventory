@@ -15,6 +15,7 @@ import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/params/post_save_retur_param.dart';
+import '../../domain/params/post_sorting_sisipan.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../presentation/controllers/enums/enum_rit.dart';
@@ -163,6 +164,62 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   }
 
   @override
+  Future<ResponseModelBasic> postSaveSortingSisipanDriver(
+    ParamsPostSortingSisipan params,
+  ) async {
+    try {
+      String date = params.dateRit;
+
+      if (date.isNotEmpty) {
+        date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+      }
+
+      // Ubah list menjadi format string: "['01SL20200800112', '01SL20200800113', ...]"
+      String formattedArrayString =
+          "[${params.noInvoices.map((e) => "'$e'").join(', ')}]";
+
+      final Map<String, dynamic> requestData = {
+        'district': params.noRit,
+        'date_rit': date,
+        'array_urutan': formattedArrayString,
+      };
+
+      // debugPrint(requestData.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
+
+      final response = await dioClient.post(
+        ApiEndpoints.saveSortingSisipan,
+        contentType: Headers.formUrlEncodedContentType,
+        data: requestData,
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'application/json',
+        //   'Authorization':
+        //       'Bearer qKUaHggXv9qO/tzRcBc0UFpyK3RNRVZIZWlIU256azhYTDJaTFNsUk02WDdZbHY0UDNLb2hncnBQUmQyQjlTaU0rcC9laVFZVVVobkFIOE8xR2xWdmxVdlhSdmg0SldHVk01QnBIcld4ekFxalcyendpSkRzUW5KcHNRelhwckFUSUk1Q0dlZENvbWptaG1rWkZhVEh6bzZRb1g1K3gzcE5oa0dUUWFTRnhqMUxwcGp2THNaeG5GWHJRVFM5WHgzczdGS2NpdWl6NDBiWEh5cw==',
+        // },
+      );
+
+      // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
   Future<ResponseModelBasic> postSaveRetur(ParamsPostSaveRetur params) async {
     try {
       final dataReturJson = jsonEncode(
@@ -246,10 +303,10 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
 
       String endPoint = '${ApiEndpoints.fetchTransactionAll(url)}?$queryString';
 
-      // if (params.buttonRIT == EnumButtonRIT.acceptRIT) {
-      // Untuk mendapatkan semua PO tanpa Pagination
-      endPoint = '${ApiEndpoints.fetchTransactionSisipan}?$queryString';
-      // }
+      if (params.isSisipan == true) {
+        // Untuk mendapatkan semua PO tanpa Pagination
+        endPoint = '${ApiEndpoints.fetchTransactionSisipan}?$queryString';
+      }
 
       final response = await dioClient.get(endPoint);
 

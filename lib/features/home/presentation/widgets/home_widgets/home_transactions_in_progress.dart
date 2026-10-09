@@ -42,7 +42,7 @@ class HomeTransactionsInProgress extends StatelessWidget {
               // Total Section
               HomeBoxWidget(controller: controller),
               Visibility(
-                visible: AppRole.isDriver,
+                visible: AppRole.isPIC || AppRole.isDriver,
                 child: Container(
                   height: 45,
                   width: double.infinity,

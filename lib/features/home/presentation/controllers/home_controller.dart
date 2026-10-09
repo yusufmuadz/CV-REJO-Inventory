@@ -162,22 +162,22 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void routeToSortingPO() {
     // getLocalRit();
 
-    if (rit.value.isNotEmpty) {
-      Get.toNamed(
-        Routes.RIT_INFORMATION,
-        arguments: {
-          // 'invoice': invoice,
-          'city': rit.value,
-          'colorRit': colorRit.value,
-          'tanggalRit': tanggalRit.value,
-          'routeRit': routeRit.value,
-          'routeFrom': 'home',
-          'isRitToday': true,
-          'isSisipan': true,
-        },
-      );
-      return;
-    }
+    // if (rit.value.isNotEmpty) {
+    //   Get.toNamed(
+    //     Routes.RIT_INFORMATION,
+    //     arguments: {
+    //       // 'invoice': invoice,
+    //       'city': rit.value,
+    //       'colorRit': colorRit.value,
+    //       'tanggalRit': tanggalRit.value,
+    //       'routeRit': routeRit.value,
+    //       'routeFrom': 'home',
+    //       'isRitToday': true,
+    //       'isSisipan': true,
+    //     },
+    //   );
+    //   return;
+    // }
 
     Get.toNamed(
       Routes.LIST_ORDER,

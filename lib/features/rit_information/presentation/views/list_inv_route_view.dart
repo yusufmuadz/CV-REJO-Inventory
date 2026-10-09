@@ -12,21 +12,19 @@ class ListInvRouteView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = masterCtrlr.invController;
 
-    return Expanded(
-      child: SharedListInvView(
-        isGetLoading: controller.isGetLoading,
-        getLoadState: controller.getLoadState,
-        isSelectedRoute: controller.isSelectedRoute,
-        listInv: controller.listInv,
-        buttonINV: controller.buttonINV,
-        searchInvController: controller.searchInvController,
-        routeStackService: masterCtrlr.routeStackService,
-        dialogService: masterCtrlr.dialogService,
-        onSubmitted: (String p1) {},
-        onSuffixTap: () {},
-        onCheckboxChanged: (int value) => controller.onSelectedInv(value),
-        retryFetch: () => controller.retryFetch(),
-      ),
+    return SharedListInvView(
+      isGetLoading: controller.isGetLoading,
+      getLoadState: controller.getLoadState,
+      isSelectedRoute: controller.isSelectedRoute,
+      listInv: controller.listInv,
+      buttonINV: controller.buttonINV,
+      searchInvController: controller.searchInvController,
+      routeStackService: masterCtrlr.routeStackService,
+      dialogService: masterCtrlr.dialogService,
+      onSubmitted: (String p1) {},
+      onSuffixTap: () {},
+      onCheckboxChanged: (int value) => controller.onSelectedInv(value),
+      retryFetch: () => controller.retryFetch(),
     );
   }
 }

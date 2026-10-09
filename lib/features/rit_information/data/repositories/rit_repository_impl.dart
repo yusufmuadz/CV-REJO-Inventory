@@ -5,6 +5,7 @@ import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/entities/content_order_retur_entity.dart';
 import '../../domain/entities/rit_entity.dart';
 import '../../domain/params/post_save_retur_param.dart';
+import '../../domain/params/post_sorting_sisipan.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../domain/repositories/rit_repository.dart';
@@ -37,6 +38,22 @@ class RitRepositoryImpl implements RitRepository {
   ) async {
     try {
       final response = await dataSource.postCancelRIT(params);
+
+      if (response.error == null) {
+        return Success(RitEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, RitEntity>> postSaveSortingSisipanDriver(
+    ParamsPostSortingSisipan params,
+  ) async {
+    try {
+      final response = await dataSource.postSaveSortingSisipanDriver(params);
 
       if (response.error == null) {
         return Success(RitEntity(list: []), '');

@@ -68,6 +68,7 @@ class GetDataListController extends GetxController {
           district: noRIT ?? listCtrl.isDistrictSelected.value.toLowerCase(),
           dateRit: dateRIT ?? listCtrl.tanggalRit.value,
           pastRit: !listCtrl.isRitToday.value,
+          isSisipan: listCtrl.isSisipan.value,
         ),
       );
 

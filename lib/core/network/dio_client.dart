@@ -42,6 +42,7 @@ class DioClient {
               ),
             );
           }
+
           return handler.next(options);
         },
         onResponse: (response, handler) {
@@ -236,6 +237,7 @@ class DioClient {
     dynamic data,
     Map<String, dynamic>? headers,
     ResponseType responseType = ResponseType.plain,
+    String? contentType,
   }) async {
     final testDio = Dio(
       BaseOptions(
@@ -243,6 +245,7 @@ class DioClient {
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         responseType: responseType,
+        contentType: contentType ?? Headers.jsonContentType,
       ),
     );
 
@@ -272,7 +275,11 @@ class DioClient {
       final response = await testDio.post(
         path,
         data: data,
-        options: Options(headers: headers, responseType: responseType),
+        options: Options(
+          headers: headers,
+          responseType: responseType,
+          contentType: contentType ?? Headers.jsonContentType,
+        ),
       );
 
       debugPrint('========== TEST DIO RESPONSE ==========');

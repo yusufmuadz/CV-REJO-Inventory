@@ -48,6 +48,7 @@ class ListOrderPage extends GetView<ListOrderController> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
+              debugPrint('isRouteFrom: ${controller.isRouteFrom.value}');
               if (controller.isRouteFrom.value == 'endingOrder' ||
                   controller.isAddAssistant.value) {
                 if (controller.routeStackService.contains(Routes.HOME)) {
@@ -96,7 +97,8 @@ class ListOrderPage extends GetView<ListOrderController> {
             child: ListOrderView(controller: controller),
           );
         }),
-        bottomNavigationBar: AppRole.isDriver
+        bottomNavigationBar:
+            AppRole.isDriver || (AppRole.isPIC && controller.isSisipan.value)
             ? null
             : Obx(() {
                 if (controller.isLoading.value) {

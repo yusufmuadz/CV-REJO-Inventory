@@ -16,6 +16,7 @@ class CustomCardList extends StatelessWidget {
   final String? color;
   final bool isHistory;
   final bool isTrackingDriver;
+  final bool isSisipan;
   final EnumButtonRIT? buttonRIT;
   final Function()? onTapMaps;
 
@@ -29,6 +30,7 @@ class CustomCardList extends StatelessWidget {
     this.color,
     this.isHistory = false,
     this.isTrackingDriver = false,
+    this.isSisipan = false,
     this.buttonRIT,
     this.onTapMaps,
   });
@@ -104,7 +106,9 @@ class CustomCardList extends StatelessWidget {
                         showStatus: !isHistory,
                         title: 'ID Transaksi',
                         value:
-                            AppRole.isDriver && transaction.suratJalan != null
+                            AppRole.isDriver &&
+                                transaction.suratJalan != null &&
+                                transaction.suratJalan!.isNotEmpty
                             ? transaction.suratJalan!.replaceAll('SJ/', '')
                             : transaction.orderNo.replaceAll('SL', 'SO'),
                       ),

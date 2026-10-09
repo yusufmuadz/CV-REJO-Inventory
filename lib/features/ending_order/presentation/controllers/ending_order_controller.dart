@@ -134,13 +134,13 @@ class EndingOrderController extends GetxController {
   }
 
   void saveDummyCollector() {
-    // if (_getEmptyMessageInv() != null) {
-    //   dialogService.showErrorSnackbar(
-    //     title: 'Gagal!',
-    //     _getEmptyMessageInv() ?? '',
-    //   );
-    //   return;
-    // }
+    if (_getEmptyMessageInv() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyMessageInv() ?? '',
+      );
+      return;
+    }
 
     if (statusButton.value == EnumButtonEndingOrder.savePO) {
       statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
@@ -771,7 +771,7 @@ class EndingOrderController extends GetxController {
         }
       } else {
         if (fieldController.text.isEmpty) {
-          return 'Masukkan keterangan utama terlebih dahulu!';
+          return 'Masukkan keterangan khusus terlebih dahulu!';
         }
       }
     }

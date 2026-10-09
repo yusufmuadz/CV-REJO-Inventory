@@ -21,6 +21,7 @@ import '../../../list_order/presentation/controllers/list_order_controller.dart'
 import '../../domain/entities/item_order_retur_entity.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../domain/params/post_save_retur_param.dart';
+import '../../domain/params/post_sorting_sisipan.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/usecases/rit_usecase.dart';
 import 'enums/enum_rit.dart';
@@ -33,6 +34,7 @@ class RitController extends GetxController {
   RitController({required this.ritUseCase});
 
   final isLoading = false.obs;
+  final isLoadingSortingPO = false.obs;
   final isLoadingReason = false.obs;
   final isLoadingRetur = false.obs;
   final isLoadingItemPo = false.obs;
@@ -150,6 +152,10 @@ class RitController extends GetxController {
       buttonRIT.value = EnumButtonRIT.acceptRIT;
     }
 
+    if (AppRole.isPIC && isSisipan.value) {
+      buttonRIT.value = EnumButtonRIT.buttonChangePO;
+    }
+
     _getOrder();
   }
 
@@ -196,6 +202,10 @@ class RitController extends GetxController {
   void retryFetch() => _getOrder(isRefresh: loadState.value == LoadState.error);
 
   Future<void> acceptRit() async {
+    buttonRIT.value = EnumButtonRIT.buttonChangePO;
+
+    if (isSisipan.value) return;
+
     GetStorage().write('city', isDistrictSelected.value);
     GetStorage().write('colorRit', colorRit.value);
     GetStorage().write('tanggalRit', tanggalRit.value);
@@ -205,7 +215,6 @@ class RitController extends GetxController {
 
     // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
 
-    buttonRIT.value = EnumButtonRIT.buttonChangePO;
     // isAccept.value = !isAccept.value;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
@@ -388,6 +397,78 @@ class RitController extends GetxController {
       dialogService.showError('Failed', '$e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> saveSortingPODummy() async {
+    if (routeStackService.contains(Routes.HOME)) {
+      Get.until((route) => route.settings.name == Routes.HOME);
+    } else {
+      Get.offAllNamed(Routes.HOME);
+    }
+    // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
+    // isSisipan.value = false;
+    // resetSortingSisipan();
+    // Get.back();
+
+    // GetStorage().write('buttonRIT', buttonRIT.value.name);
+  }
+
+  Future<void> saveSortingPO({required List<OrderEntity> transaction}) async {
+    if (isLoadingSortingPO.value) return;
+
+    isLoadingSortingPO.value = true;
+
+    try {
+      String date = tanggalRit.value;
+
+      if (date.isNotEmpty) {
+        date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
+      }
+
+      final noInvoices = transaction.map((e) => e.invoice.trim()).toList();
+
+      final result = await ritUseCase.callPostSaveSortingPO(
+        ParamsPostSortingSisipan(
+          noRit: isDistrictSelected.value,
+          dateRit: date,
+          noInvoices: noInvoices,
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Save Order: $data');
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showDialogBox(
+            title: 'Success',
+            description: 'Berhasil Mengubah urutan PO',
+            barrierDismissible: false,
+            onPressed: () {
+              // isSisipan.value = false;
+              buttonRIT.value = EnumButtonRIT.acceptRIT;
+
+              GetStorage().write('buttonRIT', buttonRIT.value.name);
+
+              // resetSortingSisipan();
+              // Get.back();
+              if (routeStackService.contains(Routes.HOME)) {
+                Get.until((route) => route.settings.name == Routes.HOME);
+              } else {
+                Get.offAllNamed(Routes.HOME);
+              }
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+    } finally {
+      isLoadingSortingPO.value = false;
     }
   }
 
@@ -639,6 +720,7 @@ class RitController extends GetxController {
           dateRit: tanggalRit.value,
           pastRit: !isRitToday.value,
           buttonRIT: buttonRIT.value,
+          isSisipan: isSisipan.value,
         ),
       );
 
@@ -746,6 +828,14 @@ class RitController extends GetxController {
     for (final order in orders) {
       order.number.value = 0;
     }
+  }
+
+  void resetSortingSisipan() {
+    for (final order in orders) {
+      order.number.value = 0;
+    }
+
+    orders.refresh();
   }
 
   void toggleOrder(OrderEntity order) {

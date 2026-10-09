@@ -52,10 +52,10 @@ class HomeBbmController extends GetxController {
   void onClose() {
     debugPrint('🔴 BBM CLOSED: ${hashCode}');
 
-    debugPrintStack(
-      label: '🔥 HomeBbmController onClose dipanggil dari:',
-      maxFrames: 15,
-    );
+    // debugPrintStack(
+    //   label: '🔥 HomeBbmController onClose dipanggil dari:',
+    //   maxFrames: 15,
+    // );
 
     isiAwalController.dispose();
     inputNopolController.dispose();

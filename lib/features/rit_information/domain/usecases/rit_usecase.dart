@@ -6,6 +6,7 @@ import '../entities/content_order_retur_entity.dart';
 import '../entities/rit_entity.dart';
 import '../params/post_rit_param.dart';
 import '../params/post_save_retur_param.dart';
+import '../params/post_sorting_sisipan.dart';
 import '../params/trouble_rit_param.dart';
 import '../repositories/rit_repository.dart';
 
@@ -22,6 +23,12 @@ class RitUseCase {
     ParamsTroubleRIT params,
   ) {
     return repository.postCancelRIT(params);
+  }
+
+  Future<ResultCustom<Failure, RitEntity>> callPostSaveSortingPO(
+    ParamsPostSortingSisipan params,
+  ) {
+    return repository.postSaveSortingSisipanDriver(params);
   }
 
   Future<ResultCustom<Failure, RitEntity>> callPostSaveRetur(

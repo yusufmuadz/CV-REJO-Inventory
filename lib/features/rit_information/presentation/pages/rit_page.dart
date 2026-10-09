@@ -259,6 +259,7 @@ class RitPage extends GetView<RitController> {
         if (controller.pageIndex.value == 0 ||
             controller.pageIndex.value == 3) {
           controller.pageIndex.value = 1;
+              // controller.resetSortingSisipan();
           controller.pageController.jumpToPage(1);
         } else {
           if (AppRole.isCollector) {

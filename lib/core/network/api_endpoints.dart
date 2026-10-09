@@ -25,6 +25,7 @@ class ApiEndpoints {
   static const String fetchRITSisipan = "sisipan/listrit";
   static const String fetchTransactionSisipan = "sisipan/listtransaction";
   static const String addAssistantSisipan = "sisipan/loader";
+  static const String saveSortingSisipan = "sisipan/urutan";
   static String fetchTransactionAll(String url) => "transaction/$url";
   static String takeItTransaction(String role) => "$role/claim";
   static String saveQty(String role) => "$role/scan/multiple";
