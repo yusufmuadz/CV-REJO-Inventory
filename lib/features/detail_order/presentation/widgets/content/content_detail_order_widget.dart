@@ -35,7 +35,7 @@ class ContentDetailOrderWidget extends StatelessWidget {
         ),
         _buildBody(
           title: 'ID Transaksi',
-          value: AppRole.isDriver
+          value: AppRole.isDriver && !controller.isSisipan.value
               ? controller.orderDetail.value.suratJalan
               : controller.orderDetail.value.orderNo,
         ),

@@ -34,7 +34,7 @@ class DrawerWidget extends StatelessWidget {
 
                   return _buildTile(
                     title: element['label'] as String,
-                    isHold: index == 1,
+                    isHold: false,
                     isSelected: element['isSelected'] as bool,
                     icon: element['icon'] as IconData,
                     activeIcon: element['activeIcon'] as IconData,

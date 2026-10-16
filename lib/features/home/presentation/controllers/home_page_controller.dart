@@ -81,18 +81,18 @@ class HomePageController extends GetxController {
         'positions=${masterController.pageController.positions.length}',
       );
 
-      if (AppRole.isDriver && index == 1) {
-        masterController.dialogService.showComingSoonSnackbar();
-        return;
-      }
+      // if (AppRole.isDriver && index == 1) {
+      //   masterController.dialogService.showComingSoonSnackbar();
+      //   return;
+      // }
 
       // pageController.jumpToPage(index);
       // _changeStatusBar(index);
       masterController.getCacheSize(index);
-      masterController.pageController.animateToPage(
+      masterController.pageController.jumpToPage(
         index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        // duration: const Duration(milliseconds: 300),
+        // curve: Curves.easeInOut,
       );
 
       if (AppRole.isChecker2 &&

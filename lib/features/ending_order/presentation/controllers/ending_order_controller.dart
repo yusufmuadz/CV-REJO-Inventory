@@ -110,7 +110,7 @@ class EndingOrderController extends GetxController {
         }
         ritController = Get.find<RitController>();
       } else {
-        if (Get.isRegistered<ListOrderController>()) {
+        if (!Get.isRegistered<ListOrderController>()) {
           Get.lazyPut(() => ListOrderController(listOrderUseCase: Get.find()));
         }
         listOrderController = Get.find<ListOrderController>();
@@ -245,6 +245,7 @@ class EndingOrderController extends GetxController {
               if (AppRole.isChecker2 &&
                   statusChecker2.value != 'completed' &&
                   data.totalPO == '0') {
+                debugPrint('==== CHECKER 2 => LOADER ====');
                 GetStorage().write('status_checker2', 'completed');
 
                 ///// ========== KE HALAMAN LIST PESANAN =========== /////

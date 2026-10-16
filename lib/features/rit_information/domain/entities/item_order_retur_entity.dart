@@ -62,6 +62,18 @@ class ItemOrderReturEntity {
     };
   }
 
+  Map<String, dynamic> toJsonTidakTerkait() {
+    return {
+      'nama_item': name,
+      'jumlah_item': int.parse(inputQtyItem ?? '0'),
+      'alasan_perbarang': description,
+      if (mediaFileList != null && mediaFileList!.isNotEmpty)
+        'foto1': mediaFileList?[0].path ?? '',
+      if (mediaFileList != null && mediaFileList!.length > 1)
+        'foto2': mediaFileList?[1].path ?? '',
+    };
+  }
+
   ItemOrderReturEntity copyWith({
     String? idTransactionDetail,
     String? idItem,

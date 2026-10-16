@@ -291,9 +291,10 @@ class CustomCardList extends StatelessWidget {
     final statusLoader = transaction.loader?.status ?? '';
     bool isShowStatus = true;
 
-    if (AppRole.isChecker2 &&
-        statusLoader == 'completed' &&
-        !isTrackingDriver) {
+    if ((AppRole.isChecker2 &&
+            statusLoader == 'completed' &&
+            !isTrackingDriver) ||
+        !isSisipan) {
       isShowStatus = false;
     }
 

@@ -75,6 +75,7 @@ class DetailOrderView extends GetView<DetailOrderController> {
             if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
                 controller.isFromHistory.value ||
                 controller.isTracking.value ||
+                controller.isSisipan.value ||
                 controller.isLoading.value) {
               return const SizedBox.shrink();
             }

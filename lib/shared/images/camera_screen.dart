@@ -18,7 +18,8 @@ class CameraScreen extends GetView<CameraControllerService> {
       appBar: AppBar(
         title: const Text('Ambil Foto', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
+        // MENGUBAH STATUS BAR JADI PUTIH
+        // iconTheme: const IconThemeData(color: Colors.white),
         // MENAMBAHKAN TOMBOL FLASH DI BARIS APPBAR
         actions: [
           Obx(() {

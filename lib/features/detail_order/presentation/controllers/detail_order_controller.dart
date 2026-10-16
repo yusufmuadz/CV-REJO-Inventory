@@ -39,6 +39,7 @@ class DetailOrderController extends GetxController {
   final isFromHistory = false.obs;
   final isTracking = false.obs;
   final isDriverCollector = false.obs;
+  final isSisipan = false.obs;
 
   final statusChecker2 = ''.obs;
   final statusLoader = ''.obs;
@@ -102,6 +103,7 @@ class DetailOrderController extends GetxController {
       doneByPO.value = args['done_by_po'] ?? '-';
       isTracking.value = args['isTracking'] ?? false;
       isDriverCollector.value = args['isDriverCollector'] ?? false;
+      isSisipan.value = args['isSisipan'] ?? false;
       // statusDriver.value = 'completed';
 
       if (AppRole.isDriver && !isDriverCollector.value) {
@@ -338,7 +340,7 @@ class DetailOrderController extends GetxController {
             Get.offAllNamed(
               Routes.RIT_INFORMATION,
               arguments: {
-                'city': rit.value,
+                'city': rit,
                 'colorRit': colorRit.value,
                 'tanggalRit': dateRit.value,
                 'routeFrom': 'endingOrder',

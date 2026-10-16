@@ -33,7 +33,7 @@ class ListOrderController extends GetxController {
   final isRouteFrom = ''.obs;
   final dialogService = Get.find<DialogService>();
 
-  late final RouteStackService routeStackService;
+  late RouteStackService routeStackService;
 
   final isAddAssistant = false.obs;
 
@@ -46,6 +46,7 @@ class ListOrderController extends GetxController {
 
   final isSelection = false.obs;
   final isSelected = ''.obs;
+  final isSortBySelected = 'Urutan'.obs;
   final isStatusSelected = 'All'.obs;
   final isDistrictSelected = ''
       .obs; // DIUBAH JADI RIT DULU NANTI JIKA ADA PERUBAHAN DISINI BUAT JADI KOTA LAGI
@@ -67,7 +68,7 @@ class ListOrderController extends GetxController {
   final reasonPendingRITController = TextEditingController();
   final mediaFileReasonPendingRIT = <XFile>[].obs;
 
-  final sortByNew = true.obs;
+  // final sortByNew = true.obs;
 
   final loadState = LoadState.initial.obs;
   final loadStateDetailPO = LoadState.initial.obs;
@@ -84,6 +85,12 @@ class ListOrderController extends GetxController {
   final transportations = <TransportationEntity>[].obs;
   final statusTransportations = ['Internal', 'External'].obs;
 
+  final filter = [
+    {'id': '0', 'name': 'Terbaru', 'isSelected': true},
+    {'id': '1', 'name': 'Terlama', 'isSelected': false},
+    {'id': '2', 'name': 'Urutan', 'isSelected': false},
+  ].obs;
+
   final status = [
     {'id': '0', 'name': 'All', 'isSelected': true},
     {'id': '1', 'name': 'Available', 'isSelected': false},
@@ -93,8 +100,8 @@ class ListOrderController extends GetxController {
   final scrollDetailPOController = ScrollController();
 
   late final HomeController homeController;
-  late final GetDataListController getDataListController;
-  late final PostDataListController postDataListController;
+  late GetDataListController getDataListController;
+  late PostDataListController postDataListController;
 
   @override
   void onInit() {
@@ -147,6 +154,10 @@ class ListOrderController extends GetxController {
   }
 
   void afterEnding() {
+    if (!Get.isRegistered<RouteStackService>()) {
+      debugPrint('Check');
+      return;
+    }
     routeStackService = Get.find<RouteStackService>();
     getDataListController = Get.find<GetDataListController>();
     postDataListController = Get.find<PostDataListController>();
@@ -166,14 +177,16 @@ class ListOrderController extends GetxController {
 
     if (isDistrictSelected.value.isNotEmpty) {
       pageIndex.value = 1;
+    } else {
+      pageIndex.value = 0;
     }
 
     if (pageIndex.value == 0) {
       debugPrint('List RIT');
-      getDataListController.getRit();
+      getDataListController.getRit(isPashRit: !isRitToday.value);
     } else {
       debugPrint('List Order');
-      getDataListController.getOrder();
+      getDataListController.getOrder(isRefresh: true);
     }
   }
 
@@ -205,7 +218,8 @@ class ListOrderController extends GetxController {
   void onResetSort() {
     currentPage.value = 1;
     orders.clear();
-    sortByNew.value = true;
+    // sortByNew.value = true;
+    isSortBySelected.value = 'Urutan';
     isStatusSelected.value = '';
     isDistrictSelected.value = '';
     getDataListController.getOrder();
@@ -310,7 +324,8 @@ class ListOrderController extends GetxController {
       GetStorage().write('routeRit', routeRit);
       GetStorage().write('isRitToday', isRitToday.value);
       searchController.text = '';
-      sortByNew.value = true;
+      // sortByNew.value = true;
+      isSortBySelected.value = 'Urutan';
       isStatusSelected.value = 'All';
       isDistrictSelected.value = rit;
       tanggalRit.value = tglRit;

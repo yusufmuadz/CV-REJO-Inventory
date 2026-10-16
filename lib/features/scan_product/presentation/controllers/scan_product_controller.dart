@@ -11,6 +11,7 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../detail_order/presentation/controllers/detail_order_controller.dart';
 import '../../domain/entities/item_product_entity.dart';
 import '../../domain/params/post_product_param.dart';
@@ -29,6 +30,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
   final isLoadingProduct = false.obs;
   final dialogService = Get.find<DialogService>();
   final detailOrderController = Get.find<DetailOrderController>();
+  final routeStackService = Get.find<RouteStackService>();
   final noInvoice = ''.obs;
 
   final isMaxFailureChecker = false.obs;
@@ -89,6 +91,9 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
         case Success(:final data):
           debugPrint('Data Product: $data');
           // product.value = data;
+          isMaxFailureChecker.value = false;
+          messageProduct.value = '';
+          statusPostProduct.value = true;
           openInputQtyDialog(
             itemName: data.itemName,
             barcodeValue: barcode,

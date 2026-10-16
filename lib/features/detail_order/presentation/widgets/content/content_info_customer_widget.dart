@@ -21,8 +21,12 @@ class ContentInfoCustomerWidget extends StatelessWidget {
     final isStatusDriver = controller.statusDriver.value == 'completed';
     final doneByPO = controller.doneByPO.value;
     final route = controller.orderDetail.value.route;
+    final isSisipan = controller.isSisipan.value;
 
-    final isDriver = (AppRole.isDriver && isStatusDriver) || AppRole.isPIC;
+    final isDriver =
+        (AppRole.isDriver && isStatusDriver) ||
+        (AppRole.isDriver && isSisipan) ||
+        AppRole.isPIC;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

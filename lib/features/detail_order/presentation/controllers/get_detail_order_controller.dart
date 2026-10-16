@@ -40,6 +40,8 @@ class GetDetailOrderController extends GetxController {
     masterCtrlr.orderDetail.value = data;
 
     final list = data.orderDetails ?? [];
+    final assistant = data.assistant;
+    final driver = data.driver;
 
     if (AppRole.isDriver && list.isNotEmpty) {
       final finishCheckFirstItem = list.firstOrNull?.statusFinishScan ?? false;
@@ -48,33 +50,38 @@ class GetDetailOrderController extends GetxController {
       }
     }
 
-    masterCtrlr.driverSelected.value = data.assistant?.namaDriver ?? '';
-    masterCtrlr.assistantSelected.value = data.assistant?.namaKenek ?? '';
-    masterCtrlr.selectTransportation.value =
-        data.assistant?.namaKendaraan ?? '';
+    masterCtrlr.driverSelected.value = assistant?.namaDriver ?? '';
+    masterCtrlr.assistantSelected.value = assistant?.namaKenek ?? '';
+    masterCtrlr.selectTransportation.value = assistant?.namaKendaraan ?? '';
 
     if (!AppRole.isDriver) {
-      bool check =
-          data.assistant!.namaDriver != '-' &&
-          data.assistant!.namaDriver != '-' &&
-          data.assistant!.namaKendaraan != '-';
+      bool check = false;
+
+      if (assistant != null) {
+        check =
+            assistant.namaDriver != '-' &&
+            assistant.namaDriver != '-' &&
+            assistant.namaKendaraan != '-';
+      }
 
       if (AppRole.isChecker2) {
-        check =
-            data.driver!.namaDriver != '-' &&
-            data.driver!.namaDriver != '-' &&
-            data.driver!.namaKendaraan != '-';
-        masterCtrlr.driverSelected.value = data.driver?.namaDriver ?? '';
-        masterCtrlr.assistantSelected.value = data.driver?.namaKenek ?? '';
-        masterCtrlr.selectTransportation.value =
-            data.driver?.namaKendaraan ?? '';
-        masterCtrlr.nopolTransportation.value = data.driver?.idKendaraan ?? '';
+        if (driver != null) {
+          check =
+              driver.namaDriver != '-' &&
+              driver.namaDriver != '-' &&
+              driver.namaKendaraan != '-';
+        }
+
+        masterCtrlr.driverSelected.value = driver?.namaDriver ?? '';
+        masterCtrlr.assistantSelected.value = driver?.namaKenek ?? '';
+        masterCtrlr.selectTransportation.value = driver?.namaKendaraan ?? '';
+        masterCtrlr.nopolTransportation.value = driver?.idKendaraan ?? '';
       }
 
       // debugPrint('Check Assistant: $check');
-      // debugPrint('Check Driver: ${data.assistant?.namaDriver}');
-      // debugPrint('Check Nama Kenek: ${data.assistant?.namaKenek}');
-      // debugPrint('Check Nama Kendaraan: ${data.assistant?.namaKendaraan}');
+      // debugPrint('Check Driver: ${assistant?.namaDriver}');
+      // debugPrint('Check Nama Kenek: ${assistant?.namaKenek}');
+      // debugPrint('Check Nama Kendaraan: ${assistant?.namaKendaraan}');
 
       masterCtrlr.isSelect.value = check;
     }

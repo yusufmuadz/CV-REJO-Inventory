@@ -31,8 +31,9 @@ class ButtonDetailOrderWidget {
     Color color1 = const Color(0xFFFF51BD);
     Color color2 = const Color(0xFF255BF0);
 
-    if ((AppRole.isDriver && controller.isDriverCollector.value) ||
-        AppRole.isCollector) {
+    if (AppRole.isDriver ||
+        AppRole.isCollector ||
+        controller.isDriverCollector.value) {
       if (controller.statusDriver.value == 'completed' &&
           !controller.isDriverCollector.value) {
         title1 = 'Berangkat';
@@ -93,7 +94,7 @@ class ButtonDetailOrderWidget {
             'jenisArmada': controller.orderDetail.value.jenisArmada,
             'driverExternal': controller.orderDetail.value.driverExternal,
             'mobilExternal': controller.orderDetail.value.mobilExternal,
-            'isDriverCollector': controller.isDriverCollector.value
+            'isDriverCollector': controller.isDriverCollector.value,
           },
         );
       },

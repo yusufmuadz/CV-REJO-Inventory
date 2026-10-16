@@ -25,7 +25,7 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
         data: {"username": email, "password": password},
       );
 
-      debugPrint('Data Login Remote DataSource: ${response.data}');
+      // debugPrint('Data Login Remote DataSource: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return ResponseModelLoginSuccess.fromMap(response.data);

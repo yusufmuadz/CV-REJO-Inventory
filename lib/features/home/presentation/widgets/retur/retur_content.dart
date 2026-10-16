@@ -48,7 +48,9 @@ class ReturContent extends StatelessWidget {
                   return;
                 }
 
-                Get.back();
+                controller.addRetur();
+
+                // Get.back();
               },
             ),
           ),

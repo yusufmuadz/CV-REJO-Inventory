@@ -190,25 +190,43 @@ class _ReturItemFormState extends State<ReturItemForm> {
                   mediaFileList.isEmpty) {
                 return;
               }
+
               if (!isPreviewMode && isEdit && widget.index != null) {
                 final order = controller.itemPoAddRetur[widget.index!];
 
+                String qty = qtyReturProductController.text;
+
+                if (!widget.isRelated) {
+                  qty = qtyProductController.text;
+                }
+
                 final updateOrder = order.copyWith(
                   name: nameProductController.text,
-                  jumlahItem: qtyProductController.text,
+                  // jumlahItem: qtyProductController.text,
+                  inputQtyItem: qty,
                   description: descProductController.text,
                   mediaFileList: mediaFileList,
                 );
 
                 controller.itemPoAddRetur[widget.index!] = updateOrder;
               } else {
+                TextEditingController qtyController = qtyReturProductController;
+
+                debugPrint('IS RELATED: ${widget.isRelated}');
+                debugPrint('QTY RETUR PRODUCT: ${qtyReturProductController.text}');
+                debugPrint('QTY PRODUCT: ${qtyProductController.text}');
+
+                if (!widget.isRelated) {
+                  qtyController = qtyProductController;
+                }
+
                 controller.addItemRetur(
                   index: widget.index,
                   item: widget.item,
                   nameProductController: nameProductController,
-                  qtyReturProductController: qtyReturProductController,
+                  qtyReturProductController: qtyController,
                   descProductController: descProductController,
-                  mediaFileListRetur: mediaFileList,
+                  mediaFileListItemRetur: mediaFileList,
                 );
               }
               Get.back();
@@ -263,7 +281,7 @@ class _ReturItemFormState extends State<ReturItemForm> {
               child: SharedTextField(
                 readOnly: isPreviewMode && !isEdit,
                 controller: nameProductController,
-                hintText: '0',
+                hintText: 'Masukkan nama barang',
                 validator: (String? p1) {
                   if (p1 == null || p1.isEmpty) {
                     return 'Masukkan nama barang terlebih dahulu';
@@ -280,12 +298,14 @@ class _ReturItemFormState extends State<ReturItemForm> {
                 controller: qtyProductController,
                 keyboardType: TextInputType.number,
                 hintText: '0',
-                validator: (String? p1) {
-                  if (p1 == null || p1.isEmpty) {
-                    return 'Masukkan qty barang terlebih dahulu';
-                  }
-                  return null;
-                },
+                validator: isPreviewMode && !isEdit
+                    ? null
+                    : (String? p1) {
+                        if (p1 == null || p1.isEmpty) {
+                          return 'Masukkan qty barang terlebih dahulu';
+                        }
+                        return null;
+                      },
               ),
             ),
           ],

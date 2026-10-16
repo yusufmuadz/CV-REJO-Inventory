@@ -248,6 +248,10 @@ class RitController extends GetxController {
     }
   }
 
+  Future<void> saveArriveAtOfficeDummy() async {
+    _arriveAtOffice();
+  }
+
   Future<void> saveOrderDummy() async {
     if (_getEmptyInputErrorMessage() != null) {
       dialogService.showErrorSnackbar(
@@ -287,10 +291,10 @@ class RitController extends GetxController {
       invController.buttonINV.value = EnumButtonInv.saveTakeOff;
 
       pageIndex.value = 3;
-      pageController.animateToPage(
+      pageController.jumpToPage(
         3,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        // duration: const Duration(milliseconds: 300),
+        // curve: Curves.easeInOut,
       );
 
       return;
@@ -379,10 +383,10 @@ class RitController extends GetxController {
               if (Get.isDialogOpen == true) Get.back();
 
               pageIndex.value = 0;
-              pageController.animateToPage(
+              pageController.jumpToPage(
                 0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
+                // duration: const Duration(milliseconds: 300),
+                // curve: Curves.easeInOut,
               );
               GetStorage().write('buttonRIT', buttonRIT.value.name);
             },
@@ -626,17 +630,29 @@ class RitController extends GetxController {
 
     buttonRIT.value = EnumButtonRIT.acceptRIT;
 
-    ///// ========== KE HALAMAN LIST RIT =========== /////
+    ///// ========== KE HALAMAN HOME =========== /////
 
-    if (routeStackService.contains(Routes.LIST_ORDER)) {
-      listOrderController.afterEnding();
-      Get.until((route) => route.settings.name == Routes.LIST_ORDER);
+    if (routeStackService.contains(Routes.HOME)) {
+      homeController.getLocalRit();
+      Get.until((route) => route.settings.name == Routes.HOME);
     } else {
       Get.offAllNamed(
-        Routes.LIST_ORDER,
+        Routes.HOME,
         arguments: {'routeFrom': 'endingOrder', 'isRitToday': isRitToday.value},
       );
     }
+
+    ///// ========== KE HALAMAN LIST RIT =========== /////
+
+    // if (routeStackService.contains(Routes.LIST_ORDER)) {
+    //   listOrderController.afterEnding();
+    //   Get.until((route) => route.settings.name == Routes.LIST_ORDER);
+    // } else {
+    //   Get.offAllNamed(
+    //     Routes.LIST_ORDER,
+    //     arguments: {'routeFrom': 'endingOrder', 'isRitToday': isRitToday.value},
+    //   );
+    // }
 
     // Get.offAllNamed(
     //   Routes.LIST_ORDER,

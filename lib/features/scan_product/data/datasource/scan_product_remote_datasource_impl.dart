@@ -104,6 +104,12 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
       final response = await dioClient.post(
         ApiEndpoints.saveQty(role),
         data: formData,
+        // headers: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'application/json',
+        //   'Authorization':
+        //       'Bearer cJhGxx+OmXVsd7jmyRC7GS9GWVZVQUZjaStuK0NsekJqOGViRTJnWmJYbGg2K3ZQSUUwTFFPbUtmWURlakVyelZwcUN5YmNFOElZYjJUa2o0RmtlbkN1V2RNYVY0MEx0U09TaXRJSDhqbXJUSDJ3L05wZ3dNMTlYaUNuZEFDTWFCcEFwQXFaL3huYnByZWwraE8rbGRKUGtoLzc4MXBRMHJsNldXeTJmd2x2TUdHQzIxRTY0bTlZUHF5cFM3ZHRhVGJEd2ptSGcrNndaOFFyVnh2c1o1dGNnN04zLzZYZDVPcWNtRUsxWFhZWTQxYlVTclI3ZmIvSU9NWXM9',
+        // },
       );
 
       // debugPrint('Data POST Item Product Remote DataSource: ${response.data}');

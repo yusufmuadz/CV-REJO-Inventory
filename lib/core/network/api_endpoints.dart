@@ -38,6 +38,7 @@ class ApiEndpoints {
   // Retur
   static const String getItemOrder = "retur/checktransaction";
   static const String postRetur = "retur/submitretur";
+  static const String postReturTidakTerkait = "retur/submitreturcatatan";
 
   // PICKING TRANSACTION
   static const String pendingSO = "picking/cancel";

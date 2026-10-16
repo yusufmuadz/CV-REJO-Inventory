@@ -50,24 +50,60 @@ class SortWidget extends StatelessWidget {
                   _buildTitle(title: 'Urutkan berdasarkan'),
                   Wrap(
                     spacing: 10.0,
-                    runSpacing: 10.0,
-                    children: [
-                      _buildSortingOption(
-                        label: 'Terbaru',
-                        isSelected: controller.sortByNew.value,
-                        onSelected: (bool p1) {
-                          controller.sortByNew.value = true;
-                        },
-                      ),
-                      _buildSortingOption(
-                        label: 'Terlama',
-                        isSelected: !controller.sortByNew.value,
-                        onSelected: (bool p1) {
-                          controller.sortByNew.value = false;
-                        },
-                      ),
-                    ],
+                    runSpacing: 0.0,
+                    children: controller.filter
+                        .map(
+                          (status) => _buildSortingOption(
+                            label: status['name'] as String,
+                            isSelected:
+                                controller.isSortBySelected.value ==
+                                status['name'],
+                            onSelected: (bool p1) {
+                              if (controller.isSortBySelected.value ==
+                                      status['name'] &&
+                                  status['isSelected'] == true) {
+                                status['isSelected'] = false;
+                                controller.isSortBySelected.value = '';
+                                return;
+                              }
+
+                              status['isSelected'] = p1;
+
+                              controller.isSortBySelected.value = status['name']
+                                  .toString();
+                              controller.filter.refresh();
+                            },
+                          ),
+                        )
+                        .toList(),
                   ),
+                  // Wrap(
+                  //   spacing: 10.0,
+                  //   runSpacing: 10.0,
+                  //   children: [
+                  //     _buildSortingOption(
+                  //       label: 'Terbaru',
+                  //       isSelected: controller.sortByNew.value,
+                  //       onSelected: (bool p1) {
+                  //         controller.sortByNew.value = true;
+                  //       },
+                  //     ),
+                  //     _buildSortingOption(
+                  //       label: 'Terlama',
+                  //       isSelected: !controller.sortByNew.value,
+                  //       onSelected: (bool p1) {
+                  //         controller.sortByNew.value = false;
+                  //       },
+                  //     ),
+                  //     _buildSortingOption(
+                  //       label: 'Urutkan ',
+                  //       isSelected: !controller.sortByNew.value,
+                  //       onSelected: (bool p1) {
+                  //         controller.sortByNew.value = false;
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 15.0),
                   _buildTitle(title: 'Status Pengerjaan'),
                   Wrap(

@@ -222,14 +222,35 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
   @override
   Future<ResponseModelBasic> postSaveRetur(ParamsPostSaveRetur params) async {
     try {
-      final dataReturJson = jsonEncode(
-        params.itemOrderList.map((element) => element.toJson()).toList(),
+      debugPrint(
+        '========== POST RETUR ${params.isTidakTerkait == true ? 'TIDAK TERKAIT' : 'TERKAIT'} ==========',
       );
+      final itemsRetur = params.itemOrderList;
+
+      String dataReturJson;
+
+      if (params.isTidakTerkait == true) {
+        dataReturJson = jsonEncode(
+          itemsRetur.map((element) => element.toJsonTidakTerkait()).toList(),
+        );
+      } else {
+        dataReturJson = jsonEncode(
+          itemsRetur.map((element) => element.toJson()).toList(),
+        );
+      }
+
+      // String formattedArrayString =
+      //     "[${params.noInvoices.map((e) => "'$e'").join(', ')}]";
+
+      debugPrint('Data Retur: $dataReturJson');
 
       final formData = FormData.fromMap({
         'invoice': params.invoice,
         'keterangan': params.description,
         'data_retur': dataReturJson,
+        if (params.isTidakTerkait == true) 'nama_cust': params.customerName,
+        if (params.isTidakTerkait == true) 'nama_toko': params.marketName,
+        if (params.isTidakTerkait == true) 'alamat_toko': params.marketAddress,
         'foto1': await MultipartHelper.fromNullableXFile(
           params.mediaFileList[0],
         ),
@@ -239,13 +260,19 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           ),
       });
 
+      String apiEndpoint = ApiEndpoints.postRetur;
+
+      if (params.isTidakTerkait == true) {
+        apiEndpoint = ApiEndpoints.postReturTidakTerkait;
+      }
+
       // debugPrint(formData.fields.toString());
       // debugPrint(formData.files.toString());
       // debugPrint('Data Retur: $dataReturJson');
       // throw ServerException(message: 'Test Post', statusCode: 500);
 
       final response = await dioClient.post(
-        ApiEndpoints.postRetur,
+        apiEndpoint,
         data: formData,
         contentType: Headers.multipartFormDataContentType,
       );

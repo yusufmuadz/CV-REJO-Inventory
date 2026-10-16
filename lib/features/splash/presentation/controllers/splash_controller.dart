@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -33,7 +34,7 @@ class SplashController extends GetxController {
     isLoading.value = true;
     try {
       await Future.delayed(const Duration(seconds: 2));
-      _checkResetDate();
+      // _checkResetDate();
 
       final token = await _tokenStorage.getAccessToken();
       if (token != null) {
@@ -54,9 +55,22 @@ class SplashController extends GetxController {
   void _removeStorage({bool removeUser = true}) {
     GetStorage().remove('noInvoice');
     if (removeUser) GetStorage().remove('user');
+    GetStorage().remove('noInvoice');
+    GetStorage().remove('user');
     GetStorage().remove('city');
     GetStorage().remove('colorRit');
     GetStorage().remove('tanggalRit');
+    GetStorage().remove('isRitToday');
+    GetStorage().remove('isAcceptRIT');
+    GetStorage().remove('isTakeToTheRoad');
+    GetStorage().remove('status_driver');
+    GetStorage().remove('status_checker2');
+    GetStorage().remove('buttonRIT');
+    GetStorage().remove('buttonEndingDriver');
+    GetStorage().remove('resetDate');
+    GetStorage().remove('routeRit');
+    AppRole.logout();
+    _tokenStorage.clear();
   }
 
   void _checkResetDate() {

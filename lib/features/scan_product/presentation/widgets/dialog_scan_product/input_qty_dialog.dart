@@ -73,21 +73,27 @@ Future<void> openInputQtyDialog({
             if (controller.isMaxFailureChecker.value) {
               ///// ========== KE HALAMAN LIST PESANAN =========== /////
 
-              final rit = GetStorage().read('city') ?? '';
-              final colorRit = GetStorage().read('colorRit') ?? '';
-              final tanggalRit = GetStorage().read('tanggalRit') ?? '';
-              final isRitToday = GetStorage().read('isRitToday') ?? false;
+              // final rit = GetStorage().read('city') ?? '';
+              // final colorRit = GetStorage().read('colorRit') ?? '';
+              // final tanggalRit = GetStorage().read('tanggalRit') ?? '';
+              // final isRitToday = GetStorage().read('isRitToday') ?? false;
 
-              Get.toNamed(
-                Routes.LIST_ORDER,
-                arguments: {
-                  'routeFrom': 'home',
-                  'city': rit,
-                  'colorRit': colorRit,
-                  'tanggalRit': tanggalRit,
-                  'isRitToday': isRitToday,
-                },
-              );
+              if (controller.routeStackService.contains(Routes.HOME)) {
+                Get.until((route) => route.settings.name == Routes.HOME);
+              } else {
+                Get.offAllNamed(Routes.HOME);
+              }
+
+              // Get.toNamed(
+              //   Routes.LIST_ORDER,
+              //   arguments: {
+              //     'routeFrom': 'home',
+              //     'city': rit,
+              //     'colorRit': colorRit,
+              //     'tanggalRit': tanggalRit,
+              //     'isRitToday': isRitToday,
+              //   },
+              // );
               return;
             }
             if (!controller.statusPostProduct.value &&

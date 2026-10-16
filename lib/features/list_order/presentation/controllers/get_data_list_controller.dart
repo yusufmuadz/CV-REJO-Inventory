@@ -63,7 +63,11 @@ class GetDataListController extends GetxController {
               ? '${listCtrl.currentPageDetail.value}'
               : '${listCtrl.currentPage.value}',
           q: listCtrl.searchController.text,
-          sort: listCtrl.sortByNew.value ? 'newest' : 'oldest',
+          sort: listCtrl.isSortBySelected.value == 'Terbaru'
+              ? 'newest'
+              : listCtrl.isSortBySelected.value == 'Terlama'
+              ? 'oldest'
+              : '',
           filter: listCtrl.isStatusSelected.value.toLowerCase(),
           district: noRIT ?? listCtrl.isDistrictSelected.value.toLowerCase(),
           dateRit: dateRIT ?? listCtrl.tanggalRit.value,
@@ -113,6 +117,16 @@ class GetDataListController extends GetxController {
           } else {
             listCtrl.loadState.value = LoadState.idle;
           }
+
+        // listCtrl.orders.sort((a, b) {
+        //   final urutanA = a.urutan;
+        //   final urutanB = b.urutan;
+
+        //   if (urutanA == null) return 1;
+        //   if (urutanB == null) return -1;
+
+        //   return urutanB.compareTo(urutanA);
+        // });
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -191,6 +205,10 @@ class GetDataListController extends GetxController {
 
       switch (usersResult) {
         case Success(:final data):
+          // if (data.isEmpty) {
+          //   return;
+          // }
+
           listCtrl.listUser.value = data as List<UserEntity>;
           listCtrl.driverSelected.value = data.first.nama;
           listCtrl.assistantSelected.value = data.first.nama;

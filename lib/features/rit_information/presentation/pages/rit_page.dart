@@ -219,11 +219,13 @@ class RitPage extends GetView<RitController> {
       return const LoadingView();
     }
 
-    if (buttonRIT == EnumButtonRIT.buttonChangePO) {
+    if (controller.isSisipan.value &&
+        buttonRIT == EnumButtonRIT.buttonChangePO) {
       return _buildButtonChangePO();
     }
 
-    if (buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
+    if (controller.isSisipan.value &&
+        buttonRIT == EnumButtonRIT.buttonConfirmChangePO) {
       return _buildButtonConfirmChangePO();
     }
 
@@ -255,11 +257,12 @@ class RitPage extends GetView<RitController> {
       onPressed: () {
         debugPrint('Pilih Pesanan');
         // controller.saveOrderDummy();
+        // controller.saveArriveAtOfficeDummy();
 
         if (controller.pageIndex.value == 0 ||
             controller.pageIndex.value == 3) {
           controller.pageIndex.value = 1;
-              // controller.resetSortingSisipan();
+          // controller.resetSortingSisipan();
           controller.pageController.jumpToPage(1);
         } else {
           if (AppRole.isCollector) {
@@ -305,10 +308,10 @@ class RitPage extends GetView<RitController> {
         // controller.isArriveInput.value = true;
         controller.buttonRIT.value = EnumButtonRIT.buttonSaveDoc;
         controller.pageIndex.value = 2;
-        controller.pageController.animateToPage(
+        controller.pageController.jumpToPage(
           2,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+          // duration: const Duration(milliseconds: 300),
+          // curve: Curves.easeInOut,
         );
       },
     );
@@ -437,10 +440,10 @@ class RitPage extends GetView<RitController> {
         dataController.buttonINV.value = EnumButtonInv.buttonSaveDoc;
 
         controller.pageIndex.value = 2;
-        controller.pageController.animateToPage(
+        controller.pageController.jumpToPage(
           2,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+          // duration: const Duration(milliseconds: 300),
+          // curve: Curves.easeInOut,
         );
       },
     );

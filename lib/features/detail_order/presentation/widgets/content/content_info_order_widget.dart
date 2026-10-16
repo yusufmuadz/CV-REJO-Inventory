@@ -161,7 +161,8 @@ class ContentInfoOrderWidget extends StatelessWidget {
                           visible:
                               AppRole.isChecker2 ||
                               (AppRole.isDriver &&
-                                  !controller.isDriverCollector.value),
+                                  !controller.isDriverCollector.value &&
+                                  !controller.isSisipan.value),
                           child: SizedBox(
                             width: 30,
                             child: _buildCheckBox(
@@ -298,7 +299,9 @@ class ContentInfoOrderWidget extends StatelessWidget {
           Visibility(
             visible:
                 AppRole.isChecker2 ||
-                (AppRole.isDriver && !controller.isDriverCollector.value),
+                (AppRole.isDriver &&
+                    !controller.isDriverCollector.value &&
+                    !controller.isSisipan.value),
             child: SizedBox(
               width: 30,
               child: Obx(() {

@@ -42,7 +42,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         if (params.limit != null) 'limit': '${params.limit}',
         if (params.page != null) 'page': '${params.page}',
         if (params.q != null) 'q': '${params.q}',
-        if (params.sort != null) 'sort': '${params.sort}',
+        if (params.sort != null && params.sort != '') 'sort': '${params.sort}',
         if (params.district != null) 'district': '${params.district}',
         if (params.filter != null) 'filter': '${params.filter}',
         if (params.courier != null) 'courier': '${params.courier?.join(',')}',
@@ -267,13 +267,15 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       debugPrint(
         'CHECK: ${params.isDetail == false && params.isSisipan == false}',
       );
+      debugPrint('isSisipan: ${params.isSisipan}');
       debugPrint('isChecker2: ${AppRole.isChecker2}');
       debugPrint('URL: ${ApiEndpoints.changeTransportation}');
       debugPrint('DATA: $data');
 
       Response<dynamic> response;
 
-      if (params.isDetail == false && params.isSisipan == false) {
+      if (params.isDetail == false &&
+          (params.isSisipan == null || params.isSisipan == false)) {
         response = await dioClient.put(
           ApiEndpoints.takeItRIT(urlRole),
           data: data,

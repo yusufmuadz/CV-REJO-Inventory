@@ -45,6 +45,8 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
               totalPo = dataTransaction.first.poPendingCheck2;
             }
           }
+
+          // debugPrint('totalPO EndingOrder: $totalPo');
         }
 
         return Success(

@@ -22,6 +22,6 @@ class ParamsAddAssistant {
     this.statusTransportation,
     this.isChecker2,
     this.isDetail = false,
-    this.isSisipan,
+    this.isSisipan = false,
   });
 }

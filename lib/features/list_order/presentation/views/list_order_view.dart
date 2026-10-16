@@ -227,6 +227,14 @@ class ListOrderView extends StatelessWidget {
           onTap: () {
             String statusPO = transaction.pic?.status ?? '';
 
+            if (AppRole.isPIC && transaction.urutan == null) {
+              controller.dialogService.showError(
+                'Failed',
+                'Transaksi belum diurutkan',
+              );
+              return;
+            }
+
             if (AppRole.isChecker1) {
               statusPO = transaction.checker1?.status ?? '';
             } else if (AppRole.isChecker2) {

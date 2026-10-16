@@ -49,8 +49,9 @@ class ListOrderPage extends GetView<ListOrderController> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               debugPrint('isRouteFrom: ${controller.isRouteFrom.value}');
+
               if (controller.isRouteFrom.value == 'endingOrder' ||
-                  controller.isAddAssistant.value) {
+                  controller.isAddAssistant.value || controller.routeStackService.contains(Routes.SCAN_PRODUCT)) {
                 if (controller.routeStackService.contains(Routes.HOME)) {
                   Get.until((route) => route.settings.name == Routes.HOME);
                 } else {

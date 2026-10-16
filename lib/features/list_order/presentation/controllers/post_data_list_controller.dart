@@ -109,7 +109,9 @@ class PostDataListController extends GetxController {
         // debugPrint('ID Kendaraan: ${loader}');
         // debugPrint('ID Forklift: ${loader.id}');
 
-        idKendaraan = AppRole.isChecker2 ? loader!.idDeliveryMobil : loader!.id;
+        idKendaraan = AppRole.isChecker2
+            ? loader?.idDeliveryMobil ?? ''
+            : loader?.id ?? '';
       }
 
       final dateRIT = DateFormat(
