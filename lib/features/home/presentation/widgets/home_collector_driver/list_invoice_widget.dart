@@ -10,13 +10,15 @@ import '../../../../../shared/custom/custom_card_inv.dart';
 import '../../../../../shared/custom/custom_search_field.dart';
 import '../../../../../utils/loading_custom.dart';
 import '../../../../list_order/domain/entities/invoice_entity.dart';
+import '../../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 
 class SharedListInvView extends StatelessWidget {
+  final bool? isTopSpacing;
   final RxBool isGetLoading;
   final Rx<LoadState> getLoadState;
   final RxString isSelectedRoute;
-  final RxList<InvoiceEntity> listInv;
+  final RxList<OrderEntity> listInv;
   final Rx<EnumButtonInv> buttonINV;
 
   final TextEditingController searchInvController;
@@ -27,12 +29,14 @@ class SharedListInvView extends StatelessWidget {
   final ValueChanged<int> onCheckboxChanged;
 
   final Function() retryFetch;
+  final Future<void> Function() onRefresh;
 
   final RouteStackService routeStackService;
   final DialogService dialogService;
 
   const SharedListInvView({
     super.key,
+    this.isTopSpacing = false,
     required this.isGetLoading,
     required this.getLoadState,
     required this.isSelectedRoute,
@@ -43,6 +47,7 @@ class SharedListInvView extends StatelessWidget {
     required this.onSuffixTap,
     required this.onCheckboxChanged,
     required this.retryFetch,
+    required this.onRefresh,
     required this.routeStackService,
     required this.dialogService,
   });
@@ -51,6 +56,10 @@ class SharedListInvView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Visibility(
+          visible: isTopSpacing ?? false,
+          child: const SizedBox(height: 14),
+        ),
         Container(
           height: 42,
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -84,65 +93,69 @@ class SharedListInvView extends StatelessWidget {
     // 1. Buat ScrollController lokal agar fresh setiap kali widget dibangun
     final localScrollController = ScrollController();
 
-    return PrimaryScrollController(
-      controller: localScrollController,
-      child: Builder(
-        builder: (context) {
-          // 2. Pasang listener langsung ke localScrollController untuk mendeteksi scroll
-          localScrollController.removeListener(
-            () {},
-          ); // Bersihkan listener lama jika terjadi re-render
-          localScrollController.addListener(() {
-            // Kirim instance scroll aktif ke fungsi di GetX Controller Anda
-            // controller.onWidgetScroll(localScrollController);
-          });
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: PrimaryScrollController(
+        controller: localScrollController,
+        child: Builder(
+          builder: (context) {
+            // 2. Pasang listener langsung ke localScrollController untuk mendeteksi scroll
+            localScrollController.removeListener(
+              () {},
+            ); // Bersihkan listener lama jika terjadi re-render
+            localScrollController.addListener(() {
+              // Kirim instance scroll aktif ke fungsi di GetX Controller Anda
+              // controller.onWidgetScroll(localScrollController);
+            });
 
-          return Obx(() {
-            final isPlusOne =
-                getLoadState.value != LoadState.initial &&
-                getLoadState.value != LoadState.idle;
-            return CustomScrollView(
-              // 3. Pasang localScrollController ke CustomScrollView Anda
-              controller: localScrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                if (listInv.isEmpty)
-                  _buildEmptyOrder()
-                else
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        childCount: listInv.length + (isPlusOne ? 1 : 0),
-                        (context, index) {
-                          if (index == listInv.length) {
-                            return _buildBottomIndicator(
-                              getLoadState.value,
-                              retryFetch,
+            return Obx(() {
+              final isPlusOne =
+                  getLoadState.value != LoadState.initial &&
+                  getLoadState.value != LoadState.idle;
+              return CustomScrollView(
+                // 3. Pasang localScrollController ke CustomScrollView Anda
+                controller: localScrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  if (listInv.isEmpty)
+                    _buildEmptyOrder()
+                  else
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          childCount: listInv.length + (isPlusOne ? 1 : 0),
+                          (context, index) {
+                            if (index == listInv.length) {
+                              return _buildBottomIndicator(
+                                getLoadState.value,
+                                retryFetch,
+                              );
+                            }
+
+                            return _buildOrder(
+                              index: index,
+                              invEntity: listInv[index],
                             );
-                          }
-
-                          return _buildOrder(
-                            index: index,
-                            invEntity: listInv[index],
-                          );
-                        },
+                          },
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            );
-          });
-        },
+                ],
+              );
+            });
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildOrder({required int index, required InvoiceEntity invEntity}) {
+  Widget _buildOrder({required int index, required OrderEntity invEntity}) {
     return Obx(
       () => Container(
         margin: const EdgeInsets.only(bottom: 12),
         child: CustomCardInv(
+          isCollector: true,
           isSelected: isSelectedRoute.value,
           buttonINV: buttonINV.value,
           invEntity: invEntity,
@@ -153,19 +166,26 @@ class SharedListInvView extends StatelessWidget {
               return;
             }
 
+            final bool isTesting = true;
+
+            if (isTesting) {
+              dialogService.showComingSoonSnackbar();
+              return;
+            }
+
             if (routeStackService.contains(Routes.DETAIL_ORDER)) {
               Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
             } else {
-              dialogService.showErrorSnackbar(
-                'Invoice Dummy',
-                title: 'Warning!',
-                duration: 1,
-              );
+              // dialogService.showErrorSnackbar(
+              //   'Invoice Dummy',
+              //   title: 'Warning!',
+              //   duration: 1,
+              // );
 
               Get.toNamed(
                 Routes.DETAIL_ORDER,
                 arguments: {
-                  'invoice': '01SL20200800085',
+                  'invoice': invEntity.invoice,
                   'routeFrom': 'listOrder',
                   'isDriverCollector': AppRole.isDriver,
                   // 'take_it_order': true,

@@ -24,6 +24,8 @@ class InvoiceEntity {
   final String? long;
   final String? jenisArmada;
   final String? route;
+  final String? totalPiutang;
+  final String? sisaPiutang;
   bool isChecked;
   bool isSelected;
 
@@ -47,6 +49,8 @@ class InvoiceEntity {
     this.long,
     this.route,
     this.jenisArmada,
+    this.totalPiutang,
+    this.sisaPiutang,
     this.isChecked = false,
     this.isSelected = false,
   });
@@ -80,6 +84,8 @@ class InvoiceEntity {
       route: json['route'] ?? json['router'] ?? '-',
       maps: json['maps'] ?? '-',
       jenisArmada: json['jenis_armada'] ?? '-',
+      totalPiutang: json['total_piutang'] ?? '-',
+      sisaPiutang: json['sisa_piutang'] ?? '-',
       isChecked: json['isChecked'] ?? false,
       isSelected: json['isSelected'] ?? false,
     );

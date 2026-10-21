@@ -24,7 +24,9 @@ class Data {
       Data(orders: orders ?? this.orders);
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-    orders: json["data"]['content'] == null || json["data"]['content'].isEmpty
+    orders: json["data"] == null
+        ? []
+        : json["data"]['content'] == null || json["data"]['content'].isEmpty
         ? []
         : (json["data"]['content'] as List)
               .map((e) => ContentOrderReturEntity.fromJson(e))

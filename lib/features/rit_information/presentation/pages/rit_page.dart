@@ -17,6 +17,7 @@ import '../../../list_order/presentation/controllers/list_order_controller.dart'
 import '../views/list_inv_route_view.dart';
 import '../controllers/rit_controller.dart';
 import '../controllers/enums/enum_rit.dart';
+import '../views/route_collector_view.dart';
 import '../widgets/rit_dialog.dart';
 import '../widgets/rit_dialog_info_po.dart';
 import '../views/arrive_at_office.dart';
@@ -33,8 +34,21 @@ class RitPage extends GetView<RitController> {
       child: Scaffold(
         appBar: AppBar(
           title: Obx(() {
+            if (controller.loadState.value == LoadState.initial) {
+              return Text(
+                'Loading...',
+                style: TextStyles.basicTextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                  color: const Color(0xFF1F2937),
+                ),
+              );
+            }
+
             final dateFormat = DateFormat('dd MMMM yyyy');
             String dateTime = dateFormat.format(DateTime.now());
+            String value = '';
 
             String label =
                 'Detail RIT - ${controller.isDistrictSelected.value}';
@@ -45,8 +59,20 @@ class RitPage extends GetView<RitController> {
               );
             }
 
+            value = dateTime;
+
             if (AppRole.isCollector) {
-              label = 'Invoice Hari Ini';
+              if (controller.pageIndex.value == 3) {
+                label = 'Daftar Penagihan';
+              } else {
+                label = 'Detail Penagihan';
+                value =
+                    '${controller.invController.isSelectedRoute.value} - $dateTime';
+              }
+            }
+
+            if (controller.pageIndex.value == 1) {
+              label = 'Keberangkatan';
             }
 
             if (controller.buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
@@ -74,7 +100,7 @@ class RitPage extends GetView<RitController> {
                   ),
                 ),
                 Text(
-                  dateTime,
+                  value,
                   style: TextStyles.basicTextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -95,7 +121,22 @@ class RitPage extends GetView<RitController> {
               if (controller.pageIndex.value != 0 &&
                   controller.pageIndex.value != 3) {
                 if (AppRole.isCollector) {
-                  controller.pageIndex.value = 3;
+                  if (controller.invController.buttonINV.value ==
+                      EnumButtonInv.acceptINV) {
+                    controller.pageIndex.value = 3;
+                  } else {
+                    if (controller.pageIndex.value == 1) {
+                      controller.pageIndex.value = 4;
+                    } else {
+                      if (controller.routeStackService.contains(Routes.HOME)) {
+                        Get.until(
+                          (route) => route.settings.name == Routes.HOME,
+                        );
+                      } else {
+                        Get.offAllNamed(Routes.HOME);
+                      }
+                    }
+                  }
                 } else {
                   controller.pageIndex.value = 0;
                 }
@@ -110,54 +151,11 @@ class RitPage extends GetView<RitController> {
 
               if ((controller.isAcceptRIT.value && route == 'listOrder') ||
                   route == 'endingOrder') {
-                debugPrint(
-                  '🚨 BEFORE NAV '
-                  'currentRoute=${Get.currentRoute} '
-                  'routing=${Get.routing.current}',
-                );
-                debugPrint('CURRENT ROUTE: ${Get.currentRoute}');
-                debugPrint('IS HOME: ${Get.currentRoute == Routes.HOME}');
-                debugNavigation('BEFORE HOME');
-                // if (Get.isRegistered<ListOrderController>()) {
-                //   Get.delete<ListOrderController>(force: true);
-                // }
-                // Get.offAllNamed(Routes.HOME);
-                // Get.until((route) => route.settings.name == Routes.HOME);
-
-                // final hasHome = Get.routing.routeStack.any(
-                //   (route) => route.name == Routes.HOME,
-                // );
-
                 if (controller.routeStackService.contains(Routes.HOME)) {
                   Get.until((route) => route.settings.name == Routes.HOME);
                 } else {
                   Get.offAllNamed(Routes.HOME);
                 }
-
-                debugPrint(
-                  '🚨 AFTER NAV '
-                  'currentRoute=${Get.currentRoute} '
-                  'routing=${Get.routing.current}',
-                );
-                debugPrint('📚 CURRENT ROUTE: ${Get.currentRoute}');
-                debugPrint('📚 ROUTING: ${Get.routing}');
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  debugNavigation('500ms AFTER HOME');
-                });
-                Future.delayed(const Duration(seconds: 2), () {
-                  debugPrint(
-                    '⏱️ 2 DETIK SETELAH HOME '
-                    'currentRoute=${Get.currentRoute}',
-                  );
-
-                  debugPrint(
-                    'HOME REGISTERED: ${Get.isRegistered<HomeController>()}',
-                  );
-
-                  debugPrint(
-                    'BBM REGISTERED: ${Get.isRegistered<HomeBbmController>()}',
-                  );
-                });
                 return;
               }
               Get.back();
@@ -165,14 +163,16 @@ class RitPage extends GetView<RitController> {
           ),
         ),
         body: Obx(() {
-          if (controller.loadState.value == LoadState.initial) {
-            return const LoadingView();
-          }
-          return _buildPage();
+          final isLoading = controller.loadState.value == LoadState.initial;
+
+          return IndexedStack(
+            index: isLoading ? 0 : 1,
+            children: [const LoadingView(), _buildPage()],
+          );
         }),
         bottomNavigationBar: Obx(() {
           if (controller.loadState.value == LoadState.initial ||
-              controller.orders.isEmpty ||
+              (!AppRole.isCollector && controller.orders.isEmpty) ||
               controller.isArrive.value ||
               // controller.buttonRIT.value == EnumButtonRIT.saveChangePO ||
               controller.buttonRIT.value == EnumButtonRIT.buttonSaveRitDoc ||
@@ -203,10 +203,12 @@ class RitPage extends GetView<RitController> {
     return PageView(
       controller: controller.pageController,
       physics: const NeverScrollableScrollPhysics(),
+      onPageChanged: (value) => controller.pageIndex.value = value,
       children: [
         RitView(controller: controller),
         InputImageView(controller: controller),
         ArriveAtOffice(controller: controller),
+        RouteCollectorView(masterCtrlr: controller),
         ListInvRouteView(masterCtrlr: controller),
       ],
     );
@@ -246,7 +248,7 @@ class RitPage extends GetView<RitController> {
     String title = 'Keberangkatan';
     Color color = const Color(0xFFd5914d);
 
-    if (controller.pageIndex.value != 0 && controller.pageIndex.value != 3) {
+    if (controller.pageIndex.value != 0 && controller.pageIndex.value != 4) {
       title = 'Simpan';
       color = const Color(0xFF2ED471);
     }
@@ -260,7 +262,7 @@ class RitPage extends GetView<RitController> {
         // controller.saveArriveAtOfficeDummy();
 
         if (controller.pageIndex.value == 0 ||
-            controller.pageIndex.value == 3) {
+            controller.pageIndex.value == 4) {
           controller.pageIndex.value = 1;
           // controller.resetSortingSisipan();
           controller.pageController.jumpToPage(1);
@@ -389,7 +391,7 @@ class RitPage extends GetView<RitController> {
       return _buildButtonArriveSafeDoc();
     }
 
-    if (dataController.listInv.isEmpty) {
+    if (dataController.listInv.isEmpty || controller.pageIndex.value == 3) {
       return const SizedBox.shrink();
     }
 
@@ -422,6 +424,11 @@ class RitPage extends GetView<RitController> {
         dataController.listInv.value = newListInv;
 
         dataController.buttonINV.value = EnumButtonInv.takeOff;
+
+        GetStorage().write('routeRit', dataController.isSelectedRoute.value);
+        GetStorage().write('buttonINV', dataController.buttonINV.value.name);
+
+        controller.homeController.getLocalRit();
       },
     );
   }
@@ -436,6 +443,9 @@ class RitPage extends GetView<RitController> {
       color: const Color(0xFF2ED471),
       onPressed: () async {
         final dataController = controller.invController;
+
+        controller.dialogService.showComingSoonSnackbar();
+        return;
 
         dataController.buttonINV.value = EnumButtonInv.buttonSaveDoc;
 

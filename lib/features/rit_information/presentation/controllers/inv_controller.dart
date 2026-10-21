@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/result/result_custom.dart';
+import '../../../../core/services/dialog_service.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../list_order/data/models/courier_model.dart';
-import '../../../list_order/data/models/date_model.dart';
-import '../../../list_order/data/models/status_model.dart';
-import '../../../list_order/domain/entities/invoice_entity.dart';
+import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
+import '../../domain/entities/route_collector_entity.dart';
+import '../../domain/params/get_collector_transaction_param.dart';
+import '../../domain/usecases/rit_usecase.dart';
 import 'rit_controller.dart';
 
 class InvController extends GetxController {
-  // RitController get masterController => Get.find<RitController>();
+  final RitUseCase ritUseCase;
+
+  InvController({required this.ritUseCase});
+
+  RitController get ritController => Get.find<RitController>();
 
   final isGetLoading = false.obs;
-  final getLoadState = LoadState.initial.obs;
+  // final getLoadState = LoadState.initial.obs;
+
+  final dialogService = Get.find<DialogService>();
 
   final buttonINV = EnumButtonInv.acceptINV.obs;
 
@@ -22,90 +30,129 @@ class InvController extends GetxController {
 
   final searchInvController = TextEditingController();
 
-  void retryFetch() =>
-      getOrder(isRefresh: getLoadState.value == LoadState.error);
+  final listRouteCollector = <RouteCollectorEntity>[].obs;
+  final listInv = <OrderEntity>[].obs;
 
-  Future<void> getOrder({
-    bool isRefresh = false,
-    bool isDetail = false,
-    String? dateRIT,
-    String? noRIT,
-  }) async {
+  void retryFetchRouteCollector() => getRouteCollector(
+    isRefresh: ritController.loadState.value == LoadState.error,
+  );
+
+  void retryFetchInvCollector() => getInvCollector(
+    isRefresh: ritController.loadState.value == LoadState.error,
+  );
+
+  void onRefreshRouteCollector() {
+    getRouteCollector(isRefresh: true);
+  }
+
+  void onRefreshInvCollector() {
+    getInvCollector(isRefresh: true);
+  }
+
+  Future<void> getRouteCollector({bool isRefresh = false}) async {
     try {
+      if (isGetLoading.value) return;
+
+      ritController.loadState.value =
+          (isRefresh || ritController.currentPage.value == 1)
+          ? LoadState.initial
+          : LoadState.loadingMore;
+
+      isGetLoading.value = true;
+
       if (isRefresh) {
-        // if (masterController.pageIndex.value == 0 && !isDetail) {
-        //   // listCtrl.orders.clear();
-        // }
+        listRouteCollector.clear();
+        ritController.currentPage.value = 1;
       }
 
-      // final result = await listOrderUseCase.call(
-      //   ParamsGetTransaction(
-      //     limit: '10',
-      //     page: isDetail
-      //         ? '${listCtrl.currentPageDetail.value}'
-      //         : '${listCtrl.currentPage.value}',
-      //     q: listCtrl.searchController.text,
-      //     sort: listCtrl.sortByNew.value ? 'newest' : 'oldest',
-      //     filter: listCtrl.isStatusSelected.value.toLowerCase(),
-      //     district: noRIT ?? listCtrl.isDistrictSelected.value.toLowerCase(),
-      //     dateRit: dateRIT ?? listCtrl.tanggalRit.value,
-      //     pastRit: !listCtrl.isRitToday.value,
-      //   ),
-      // );
+      final result = await ritUseCase.callGetRouteCollector();
 
-      // switch (result) {
-      //   case Success(:final data):
-      //     debugPrint('Data Order: ${data.length}');
-      //     if (data.isEmpty) {
-      //       if (isRefresh && listCtrl.currentPage.value == 1) {
-      //         listCtrl.loadState.value = LoadState.idle;
-      //       } else {
-      //         if (isDetail) {
-      //           listCtrl.loadStateDetailPO.value = LoadState.noMore;
-      //         } else {
-      //           listCtrl.loadState.value = LoadState.noMore;
-      //         }
-      //       }
-      //       return;
-      //     }
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Order: ${data.length}');
 
-      //     final filterData = data.where((element) {
-      //       bool result = true;
+          if (data.isEmpty) {
+            if (isRefresh && ritController.currentPage.value == 1) {
+              ritController.loadState.value = LoadState.idle;
+            } else {
+              ritController.loadState.value = LoadState.noMore;
+            }
+            return;
+          }
 
-      //       // if (AppRole.isChecker2 &&
-      //       //     element.checker2?.status == 'completed' &&
-      //       //     element.loader?.status == 'available') {
-      //       //   result = false;
-      //       // }
+          listRouteCollector.addAll(data);
+          ritController.loadState.value = LoadState.idle;
 
-      //       return result;
-      //     }).toList();
-
-      //     listCtrl.orders.addAll(filterData);
-
-      //     debugPrint('isDetail: $isDetail');
-
-      //     if (isDetail) {
-      //       debugPrint('Data Order: ${listCtrl.orders.length}');
-      //       listCtrl.loadStateDetailPO.value = LoadState.idle;
-      //       // if (listCtrl.orders.isNotEmpty) {
-      //       //   DetailRITDialog().showDetailRIT(controller: listCtrl);
-      //       // }
-      //     } else {
-      //       listCtrl.loadState.value = LoadState.idle;
-      //     }
-
-      //   case ErrorResult(:final message):
-      //     if (Get.isDialogOpen == true) Get.back();
-      //     listCtrl.loadState.value = LoadState.error;
-      //     listCtrl.dialogService.showError('Failed', message);
-      // }
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          ritController.loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
     } catch (e) {
-      // listCtrl.loadState.value = LoadState.error;
-      // if (Get.isDialogOpen == true) Get.back();
-      // listCtrl.dialogService.showError('Failed', 'Error Get Data');
+      ritController.loadState.value = LoadState.error;
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', 'Error Get Data');
     } finally {
-      // listCtrl.isLoading.value = false;
+      isGetLoading.value = false;
+    }
+  }
+
+  Future<void> getInvCollector({
+    bool isRefresh = false,
+    String? noRoute,
+  }) async {
+    try {
+      if (isGetLoading.value) return;
+
+      ritController.loadState.value =
+          (isRefresh || ritController.currentPage.value == 1)
+          ? LoadState.initial
+          : LoadState.loadingMore;
+
+      isGetLoading.value = true;
+
+      if (isRefresh) {
+        listInv.clear();
+        ritController.currentPage.value = 1;
+      }
+
+      final result = await ritUseCase.callInvCollector(
+        ParamsGetCollectorTransaction(
+          noRoute: noRoute ?? isSelectedRoute.value,
+        ),
+      );
+
+      if (noRoute != null && noRoute.isNotEmpty) {
+        isSelectedRoute.value = noRoute;
+      }
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Order: ${data.length}');
+
+          if (data.isEmpty) {
+            if (isRefresh && ritController.currentPage.value == 1) {
+              ritController.loadState.value = LoadState.idle;
+            } else {
+              ritController.loadState.value = LoadState.noMore;
+            }
+            return;
+          }
+
+          listInv.addAll(data);
+          ritController.loadState.value = LoadState.idle;
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          ritController.loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      ritController.loadState.value = LoadState.error;
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', 'Error Get Data');
+    } finally {
+      isGetLoading.value = false;
     }
   }
 
@@ -125,7 +172,7 @@ class InvController extends GetxController {
 
       final updatedInv = invEntity.copyWith(isChecked: result);
 
-      final updateList = List<InvoiceEntity>.from(listInv);
+      final updateList = List<OrderEntity>.from(listInv);
       updateList[index] = updatedInv;
 
       listInv.value = updateList;
@@ -140,167 +187,30 @@ class InvController extends GetxController {
     }
   }
 
-  final listInv = <InvoiceEntity>[
-    InvoiceEntity(
-      invoice: '01SL00000000001',
-      orderNo: 'PO/0000/0001',
-      customer: 'TESTING DUMMY CUSTOMER',
-      district: 'PARANGKUSUMO',
-      suratJalan: 'SJ/0000/0001',
-      address:
-          'Jl. Raya Pantai Parangkusumo, Parangkusumo, Kec. Parangkusumo, Kota Surabaya, Jawa Timur 60254',
-      noTelp: '081234567890',
-      maps: '-',
-      lat: '-',
-      long: '-',
-      jenisArmada: 'INTERNAL',
-      route: 'PANTAI PARANGKUSUMO',
-      isSelected: false,
-      isChecked: false,
-      date: DateModel(transaction: '2026-10-05', delivery: ''),
-      courier: Courier(service: '', waybillNumber: ''),
-      pic: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker1: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker2: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      loader: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      driver: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-    ),
-    InvoiceEntity(
-      invoice: '01SL00000000002',
-      orderNo: 'PO/0000/0002',
-      customer: 'TESTING DUMMY',
-      district: 'PARANGTRITIS',
-      suratJalan: 'SJ/0000/0002',
-      address: 'JALANJALAN',
-      noTelp: '081234567890',
-      maps: '-',
-      lat: '-',
-      long: '-',
-      jenisArmada: 'INTERNAL',
-      route: 'PANTAI PARANGTRITIS',
-      isSelected: false,
-      isChecked: false,
-      date: DateModel(transaction: '2026-10-05', delivery: ''),
-      courier: Courier(service: '', waybillNumber: ''),
-      pic: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker1: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker2: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      loader: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      driver: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-    ),
-    InvoiceEntity(
-      invoice: '01SL00000000003',
-      orderNo: 'PO/0000/0003',
-      customer: 'DUMMY CUSTOMER',
-      district: 'GOA CINA',
-      suratJalan: 'SJ/0000/0003',
-      address:
-          'Jl. Goa Cina, Parangkusumo, Kec. Parangkusumo, Kota Surabaya, Jawa Timur 60254',
-      noTelp: '081234567890',
-      maps: '-',
-      lat: '-',
-      long: '-',
-      jenisArmada: 'INTERNAL',
-      route: 'GOA CINA',
-      isSelected: false,
-      isChecked: false,
-      date: DateModel(transaction: '2026-10-05', delivery: ''),
-      courier: Courier(service: '', waybillNumber: ''),
-      pic: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker1: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      checker2: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      loader: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-      driver: Status(
-        status: 'ongoing',
-        date: '2026-10-05',
-        desc: '',
-        by: '',
-        scanDriver: false,
-      ),
-    ),
-  ].obs;
+  void onWidgetScroll({
+    required bool isInv,
+    required ScrollController activeController,
+  }) {
+    if (!activeController.hasClients) return;
+
+    final currentPixels = activeController.position.pixels;
+    final maxScroll = activeController.position.maxScrollExtent;
+
+    // DEBUG: Pantau angka ini di console saat Anda melakukan scroll
+    // debugPrint('Pixels: $currentPixels / Max: $maxScroll');
+
+    final canLoad = ritController.loadState.value == LoadState.idle;
+
+    // Jika canLoad bernilai false, pagination tidak akan berjalan.
+    // Pastikan setelah _getOrder() selesai, loadState.value dikembalikan ke LoadState.idle
+    if (canLoad && currentPixels >= maxScroll - 200) {
+      debugPrint('=== MEMANGGIL HALAMAN BERIKUTNYA ===');
+      ritController.currentPage.value++;
+      if (isInv) {
+        getInvCollector();
+      } else {
+        getRouteCollector();
+      }
+    }
+  }
 }

@@ -4,6 +4,8 @@ import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../entities/content_order_retur_entity.dart';
 import '../entities/rit_entity.dart';
+import '../entities/route_collector_entity.dart';
+import '../params/get_collector_transaction_param.dart';
 import '../params/post_rit_param.dart';
 import '../params/post_save_retur_param.dart';
 import '../params/post_sorting_sisipan.dart';
@@ -46,6 +48,17 @@ class RitUseCase {
   Future<ResultCustom<Failure, List<ContentOrderReturEntity>>>
   callGetOrdersRetur(ParamsGetTransaction params) {
     return repository.getOrdersRetur(params);
+  }
+
+  Future<ResultCustom<Failure, List<RouteCollectorEntity>>>
+  callGetRouteCollector() {
+    return repository.getRouteCollector();
+  }
+
+  Future<ResultCustom<Failure, List<OrderEntity>>> callInvCollector(
+    ParamsGetCollectorTransaction params,
+  ) {
+    return repository.getInvCollector(params);
   }
 
   // Future<ResultCustom<Failure, RitEntity>> callPostArriveOfficeDriver(ParamsRit params) {

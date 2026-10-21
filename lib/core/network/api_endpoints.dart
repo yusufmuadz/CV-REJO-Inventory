@@ -56,6 +56,10 @@ class ApiEndpoints {
   static const String arriveAtOffice = "deliverynew/handover";
   static const String isiBbm = "deliverynew/gasstation";
 
+  // COLLECTOR TRANSACTION
+  static const String getRouteCollector = "kolektor/listpenugasan";
+  static const String getInvCollector = "kolektor/listtranspenugasan";
+
   static String getDetailTransaction(String invoice) =>
       "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";

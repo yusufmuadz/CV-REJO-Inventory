@@ -84,17 +84,19 @@ class SharedCardRIT extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildRowContent(
-                    title: 'NOMOR RIT',
+                    title: AppRole.isCollector ? 'NOMOR RUTE' : 'NOMOR RIT',
                     value: 'Tanggal',
                     color: const Color(0xFF524439),
                     fontWeightTitle: FontWeight.w600,
                   ),
                   const SizedBox(height: 3),
                   _buildRowContent(
-                    title: 'RIT - $noRIT',
-                    value: DateFormat(
-                      'dd MMMM yyyy',
-                    ).format(DateTime.parse(dateRIT)),
+                    title: AppRole.isCollector ? noRIT : 'RIT - $noRIT',
+                    value: dateRIT.isEmpty
+                        ? '-'
+                        : DateFormat(
+                            'dd MMMM yyyy',
+                          ).format(DateTime.parse(dateRIT)),
                     color: const Color(0xFF151C27),
                     fontWeightTitle: FontWeight.bold,
                     fontWeightValue: FontWeight.w500,
@@ -117,8 +119,7 @@ class SharedCardRIT extends StatelessWidget {
                           text: '$totalPO ',
                           style: TextStyles.basicTextStyle(
                             fontSize: 16,
-                            fontFamily:
-                                GoogleFonts.hankenGrotesk().fontFamily,
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF151C27),
                           ),
@@ -191,8 +192,7 @@ class SharedCardRIT extends StatelessWidget {
                           routeRIT.isEmpty ? '-' : routeRIT.join(', '),
                           style: TextStyles.basicTextStyle(
                             fontSize: 16,
-                            fontFamily:
-                                GoogleFonts.hankenGrotesk().fontFamily,
+                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
                             fontWeight: FontWeight.w400,
                             color: const Color(0xFF524439),
                           ),

@@ -2,18 +2,19 @@ import 'package:cv_rejo/core/middlewares/app_role.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../features/list_order/domain/entities/invoice_entity.dart';
+import '../../features/list_order/domain/entities/list_order_entity.dart';
 import '../../features/list_order/presentation/controllers/enums/button_inv_enum.dart';
-import '../../gen/assets.gen.dart';
 import '../box/box_status.dart';
 
 class CustomCardInv extends StatelessWidget {
   final Function() onTap;
   final bool showSelection;
+  final bool isCollector;
   final String isSelected;
-  final InvoiceEntity invEntity;
+  final OrderEntity invEntity;
   final String? color;
   final bool isHistory;
   final EnumButtonInv? buttonINV;
@@ -29,6 +30,7 @@ class CustomCardInv extends StatelessWidget {
     this.onTapMaps,
     this.showSelection = false,
     this.isHistory = false,
+    this.isCollector = false,
   });
 
   @override
@@ -74,8 +76,11 @@ class CustomCardInv extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             _buildInfoIconText(
+              isDate: true,
               label: 'Tanggal Pengiriman',
-              value: invEntity.date?.transaction ?? '-',
+              value: !isCollector
+                  ? invEntity.date?.transaction ?? ''
+                  : invEntity.tanggalTransaksi ?? '',
               icon: CupertinoIcons.timer,
               bgColor: const Color(0xFFFFF1F2),
               borderColor: const Color(0xFFFFE4E6),
@@ -83,7 +88,9 @@ class CustomCardInv extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             _buildInfoIconText(
-              value: invEntity.district ?? '-',
+              value: isCollector
+                  ? invEntity.route ?? '-'
+                  : invEntity.district ?? '-',
               fontWeightValue: FontWeight.bold,
               address: invEntity.address,
               isDistrict: true,
@@ -243,12 +250,19 @@ class CustomCardInv extends StatelessWidget {
     String? address,
     bool isDistrict = false,
     bool isIcon = false,
+    bool isDate = false,
     FontWeight fontWeightValue = FontWeight.w600,
     Color? bgColor,
     Color? borderColor,
     Color? iconColor,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
   }) {
+    if (isDate && value.isNotEmpty) {
+      value = DateFormat('dd MMMM yyyy').format(DateTime.parse(value));
+    } else if (isDate && value.isEmpty) {
+      value = '-';
+    }
+
     return Row(
       crossAxisAlignment: crossAxisAlignment,
       children: [

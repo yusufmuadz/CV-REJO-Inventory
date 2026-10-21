@@ -1,4 +1,3 @@
-
 import '../../domain/entities/list_order_entity.dart';
 
 class ResponseModelGetTransactionAll {
@@ -25,11 +24,13 @@ class Data {
       Data(transaction: transaction ?? this.transaction);
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-    transaction: json["data"]['content'] == null || json["data"]['content'].isEmpty
+    transaction: json["data"] == null
+        ? []
+        : json["data"]['content'] == null || json["data"]['content'].isEmpty
         ? []
         : (json["data"]['content'] as List)
-            .map((e) => OrderEntity.fromJson(e))
-            .toList(),
+              .map((e) => OrderEntity.fromJson(e))
+              .toList(),
   );
 
   List<OrderEntity> toEntity() {

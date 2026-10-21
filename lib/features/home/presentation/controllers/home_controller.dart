@@ -213,13 +213,15 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       return;
     }
 
-    if ((ritToday != isRitToday.value) || rit.value.isEmpty) {
+    if ((ritToday != isRitToday.value) || (rit.isEmpty && routeRit.isEmpty)) {
       // GetStorage().remove('noInvoice');
       GetStorage().remove('city');
       GetStorage().remove('colorRit');
       GetStorage().remove('tanggalRit');
       GetStorage().remove('routeRit');
       GetStorage().remove('isAcceptRIT');
+      GetStorage().remove('buttonRIT');
+      GetStorage().remove('buttonINV');
 
       GetStorage().write('isRitToday', ritToday);
 
@@ -231,6 +233,12 @@ class HomeController extends GetxController with WidgetsBindingObserver {
 
       debugPrint('CHANGE IS RIT TODAY : ${isRitToday.value}');
     }
+
+    debugPrint('ROUTE RIT: ${routeRit.value}');
+
+    // GetStorage().remove('routeRit');
+    // GetStorage().remove('buttonINV');
+    // return;
 
     GetStorage().remove('noInvoice');
 

@@ -14,12 +14,14 @@ import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../list_order/data/models/response_model_get_transaction_all.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
+import '../../domain/params/get_collector_transaction_param.dart';
 import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/post_sorting_sisipan.dart';
 import '../../domain/params/trouble_rit_param.dart';
 import '../../domain/params/post_rit_param.dart';
 import '../../presentation/controllers/enums/enum_rit.dart';
 import '../models/response_model_get_orders_retur.dart';
+import '../models/response_model_get_route_collector.dart';
 import 'rit_remote_datasource.dart';
 
 class RitRemoteDataSourceImpl implements RitRemoteDataSource {
@@ -373,6 +375,62 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelGetOrdersRetur.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetRouteCollector> getRouteCollector() async {
+    try {
+      final response = await dioClient.get(ApiEndpoints.getRouteCollector);
+
+      // debugPrint('Data Home Get Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetRouteCollector.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetTransactionAll> getInvCollector(
+    ParamsGetCollectorTransaction params,
+  ) async {
+    try {
+      Map<String, String> body = {'no_rute': '${params.noRoute}'};
+
+      String queryString = Uri(queryParameters: body).query;
+
+      String endPoint = '${ApiEndpoints.getInvCollector}?$queryString';
+
+      final response = await dioClient.get(endPoint);
+
+      // debugPrint('Data Home Get Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetTransactionAll.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

@@ -69,6 +69,7 @@ class HomeProfileController extends GetxController {
         GetStorage().remove('buttonEndingDriver');
         GetStorage().remove('resetDate');
         GetStorage().remove('routeRit');
+        GetStorage().remove('buttonINV');
         AppRole.logout();
         _tokenStorage.clear();
         masterController.tabIndex.value = 0;

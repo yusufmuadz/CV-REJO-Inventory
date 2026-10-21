@@ -7,6 +7,6 @@ class RitBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<RitController>(() => RitController(ritUseCase: Get.find()));
-    Get.lazyPut<InvController>(() => InvController());
+    Get.lazyPut<InvController>(() => InvController(ritUseCase: Get.find()));
   }
 }

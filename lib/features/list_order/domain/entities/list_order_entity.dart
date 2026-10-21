@@ -25,8 +25,12 @@ class OrderEntity {
   String? jenisArmada;
   String? urutan;
   final String? route;
+  final String? totalPiutang;
+  final String? sisaPiutang;
+  final String? tanggalTransaksi;
   RxInt number = 0.obs;
   bool isSelected;
+  bool isChecked;
 
   OrderEntity({
     required this.invoice,
@@ -49,8 +53,12 @@ class OrderEntity {
     this.route,
     this.jenisArmada,
     this.urutan,
+    this.totalPiutang,
+    this.sisaPiutang,
+    this.tanggalTransaksi,
     required this.number,
     this.isSelected = false,
+    this.isChecked = false,
   });
 
   factory OrderEntity.fromJson(Map<String, dynamic> json) {
@@ -82,9 +90,68 @@ class OrderEntity {
       route: json['route'] ?? json['router'] ?? '-',
       maps: json['maps'] ?? '-',
       jenisArmada: json['jenis_armada'] ?? '-',
+      totalPiutang: json['total_piutang'] ?? '-',
+      sisaPiutang: json['sisa_piutang'] ?? '-',
+      tanggalTransaksi: json['tanggal_transaksi'],
       isSelected: json['isSelected'] ?? false,
       urutan: json['urutan'],
       number: 0.obs,
+    );
+  }
+
+  OrderEntity copyWith({
+    String? invoice,
+    String? orderNo,
+    String? customer,
+    String? district,
+    DateModel? date,
+    String? suratJalan,
+    Courier? courier,
+    Status? pic,
+    Status? checker1,
+    Status? checker2,
+    Status? loader,
+    Status? driver,
+    String? address,
+    String? noTelp,
+    String? maps,
+    String? lat,
+    String? long,
+    String? jenisArmada,
+    String? route,
+    String? totalPiutang,
+    String? sisaPiutang,
+    String? tanggalTransaksi,
+    bool? isChecked,
+    bool? isSelected,
+    RxInt? number,
+  }) {
+    return OrderEntity(
+      invoice: invoice ?? this.invoice,
+      orderNo: orderNo ?? this.orderNo,
+      customer: customer ?? this.customer,
+      district: district ?? this.district,
+      date: date ?? this.date,
+      suratJalan: suratJalan ?? this.suratJalan,
+      courier: courier ?? this.courier,
+      pic: pic ?? this.pic,
+      checker1: checker1 ?? this.checker1,
+      checker2: checker2 ?? this.checker2,
+      loader: loader ?? this.loader,
+      driver: driver ?? this.driver,
+      address: address ?? this.address,
+      noTelp: noTelp ?? this.noTelp,
+      maps: maps ?? this.maps,
+      lat: lat ?? this.lat,
+      long: long ?? this.long,
+      jenisArmada: jenisArmada ?? this.jenisArmada,
+      route: route ?? this.route,
+      totalPiutang: totalPiutang ?? this.totalPiutang,
+      sisaPiutang: sisaPiutang ?? this.sisaPiutang,
+      tanggalTransaksi: tanggalTransaksi ?? this.tanggalTransaksi,
+      isChecked: isChecked ?? this.isChecked,
+      isSelected: isSelected ?? this.isSelected,
+      number: number ?? this.number,
     );
   }
 }

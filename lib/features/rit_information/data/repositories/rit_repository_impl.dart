@@ -4,6 +4,8 @@ import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/params/get_transaction_param.dart';
 import '../../domain/entities/content_order_retur_entity.dart';
 import '../../domain/entities/rit_entity.dart';
+import '../../domain/entities/route_collector_entity.dart';
+import '../../domain/params/get_collector_transaction_param.dart';
 import '../../domain/params/post_save_retur_param.dart';
 import '../../domain/params/post_sorting_sisipan.dart';
 import '../../domain/params/trouble_rit_param.dart';
@@ -99,6 +101,31 @@ class RitRepositoryImpl implements RitRepository {
   ) async {
     try {
       final response = await dataSource.getOrdersRetur(params);
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<RouteCollectorEntity>>>
+  getRouteCollector() async {
+    try {
+      final response = await dataSource.getRouteCollector();
+
+      return Success(response.data!.toEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<OrderEntity>>> getInvCollector(
+    ParamsGetCollectorTransaction params,
+  ) async {
+    try {
+      final response = await dataSource.getInvCollector(params);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

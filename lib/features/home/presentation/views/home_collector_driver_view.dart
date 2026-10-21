@@ -41,6 +41,7 @@ class HomeCollectorDriverView extends StatelessWidget {
               onSuffixTap: () {},
               onCheckboxChanged: (int value) => controller.onSelectedInv(value),
               retryFetch: () => controller.retryFetch(),
+              onRefresh: () async {},
             ),
           ),
           Obx(

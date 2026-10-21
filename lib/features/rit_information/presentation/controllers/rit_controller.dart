@@ -99,7 +99,7 @@ class RitController extends GetxController {
   final recipientName = TextEditingController();
 
   final pageIndex = 0.obs;
-  late PageController pageController;
+  final pageController = PageController();
 
   late final HomeController homeController;
   late final ListOrderController listOrderController;
@@ -114,19 +114,14 @@ class RitController extends GetxController {
     homeController = Get.find<HomeController>();
 
     if (!Get.isRegistered<InvController>()) {
-      Get.lazyPut(() => InvController());
+      Get.lazyPut(() => InvController(ritUseCase: ritUseCase));
     }
 
     debugPrint('Register ${Get.isRegistered<InvController>()}');
 
     invController = Get.find<InvController>();
 
-    if (AppRole.isCollector) {
-      pageIndex.value = 3;
-      pageController = PageController(initialPage: 3);
-    } else {
-      pageController = PageController(initialPage: pageIndex.value);
-    }
+    // pageController = PageController(initialPage: pageIndex.value);
 
     final args = Get.arguments;
     if (args != null) {
@@ -141,6 +136,7 @@ class RitController extends GetxController {
     }
 
     String? getButtonRIT = GetStorage().read('buttonRIT');
+    String? getButtonInv = GetStorage().read('buttonINV');
 
     if (getButtonRIT != null) {
       buttonRIT.value = EnumButtonRIT.values.byName(getButtonRIT);
@@ -152,11 +148,37 @@ class RitController extends GetxController {
       buttonRIT.value = EnumButtonRIT.acceptRIT;
     }
 
+    if (getButtonInv != null) {
+      invController.buttonINV.value = EnumButtonInv.values.byName(getButtonInv);
+    }
+
     if (AppRole.isPIC && isSisipan.value) {
       buttonRIT.value = EnumButtonRIT.buttonChangePO;
     }
 
-    _getOrder();
+    if (AppRole.isCollector) {
+      if (invController.buttonINV.value == EnumButtonInv.acceptINV) {
+        pageIndex.value = 3;
+      } else {
+        pageIndex.value = 4;
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (pageController.hasClients) {
+        pageController.jumpToPage(pageIndex.value);
+      }
+    });
+
+    if (AppRole.isCollector) {
+      if (invController.buttonINV.value == EnumButtonInv.acceptINV) {
+        invController.getRouteCollector(isRefresh: true);
+      } else {
+        invController.getInvCollector(isRefresh: true, noRoute: routeRit.value);
+      }
+    } else {
+      _getOrder();
+    }
   }
 
   @override
@@ -290,9 +312,11 @@ class RitController extends GetxController {
       }
       invController.buttonINV.value = EnumButtonInv.saveTakeOff;
 
-      pageIndex.value = 3;
+      GetStorage().write('buttonINV', invController.buttonINV.value.name);
+
+      pageIndex.value = 4;
       pageController.jumpToPage(
-        3,
+        4,
         // duration: const Duration(milliseconds: 300),
         // curve: Curves.easeInOut,
       );

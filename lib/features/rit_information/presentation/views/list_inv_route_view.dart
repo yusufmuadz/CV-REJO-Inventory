@@ -13,8 +13,9 @@ class ListInvRouteView extends StatelessWidget {
     final controller = masterCtrlr.invController;
 
     return SharedListInvView(
+      isTopSpacing: true,
       isGetLoading: controller.isGetLoading,
-      getLoadState: controller.getLoadState,
+      getLoadState: controller.ritController.loadState,
       isSelectedRoute: controller.isSelectedRoute,
       listInv: controller.listInv,
       buttonINV: controller.buttonINV,
@@ -24,7 +25,8 @@ class ListInvRouteView extends StatelessWidget {
       onSubmitted: (String p1) {},
       onSuffixTap: () {},
       onCheckboxChanged: (int value) => controller.onSelectedInv(value),
-      retryFetch: () => controller.retryFetch(),
+      retryFetch: () => controller.retryFetchInvCollector(),
+      onRefresh: () async => controller.onRefreshInvCollector(),
     );
   }
 }

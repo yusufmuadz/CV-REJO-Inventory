@@ -6,7 +6,7 @@ import '../../../../utils/loading_custom.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/data/models/status_model.dart';
-import '../../../list_order/domain/entities/invoice_entity.dart';
+import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 
 class HomeCollectorController extends GetxController {
@@ -132,7 +132,7 @@ class HomeCollectorController extends GetxController {
 
       final updatedInv = invEntity.copyWith(isChecked: result);
 
-      final updateList = List<InvoiceEntity>.from(listInv);
+      final updateList = List<OrderEntity>.from(listInv);
       updateList[index] = updatedInv;
 
       listInv.value = updateList;
@@ -143,8 +143,8 @@ class HomeCollectorController extends GetxController {
     }
   }
 
-  final listInv = <InvoiceEntity>[
-    InvoiceEntity(
+  final listInv = <OrderEntity>[
+    OrderEntity(
       invoice: '01SL00000000001',
       orderNo: 'PO/0000/0001',
       customer: 'TESTING DUMMY CUSTOMER',
@@ -162,6 +162,7 @@ class HomeCollectorController extends GetxController {
       isChecked: false,
       date: DateModel(transaction: '2026-10-05', delivery: ''),
       courier: Courier(service: '', waybillNumber: ''),
+      number: 0.obs,
       pic: Status(
         status: 'ongoing',
         date: '2026-10-05',
@@ -198,7 +199,7 @@ class HomeCollectorController extends GetxController {
         scanDriver: false,
       ),
     ),
-    InvoiceEntity(
+    OrderEntity(
       invoice: '01SL00000000002',
       orderNo: 'PO/0000/0002',
       customer: 'TESTING DUMMY',
@@ -215,6 +216,7 @@ class HomeCollectorController extends GetxController {
       isChecked: false,
       date: DateModel(transaction: '2026-10-05', delivery: ''),
       courier: Courier(service: '', waybillNumber: ''),
+      number: 0.obs,
       pic: Status(
         status: 'ongoing',
         date: '2026-10-05',
@@ -251,7 +253,7 @@ class HomeCollectorController extends GetxController {
         scanDriver: false,
       ),
     ),
-    InvoiceEntity(
+    OrderEntity(
       invoice: '01SL00000000003',
       orderNo: 'PO/0000/0003',
       customer: 'DUMMY CUSTOMER',
@@ -269,6 +271,7 @@ class HomeCollectorController extends GetxController {
       isChecked: false,
       date: DateModel(transaction: '2026-10-05', delivery: ''),
       courier: Courier(service: '', waybillNumber: ''),
+      number: 0.obs,
       pic: Status(
         status: 'ongoing',
         date: '2026-10-05',
