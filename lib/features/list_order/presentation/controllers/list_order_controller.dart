@@ -220,9 +220,9 @@ class ListOrderController extends GetxController {
     orders.clear();
     // sortByNew.value = true;
     isSortBySelected.value = 'Urutan';
-    isStatusSelected.value = '';
-    isDistrictSelected.value = '';
-    getDataListController.getOrder();
+    isStatusSelected.value = 'All';
+    // isDistrictSelected.value = '';
+    getDataListController.getOrder(isRefresh: true);
   }
 
   void _onScrollDetailPO() {

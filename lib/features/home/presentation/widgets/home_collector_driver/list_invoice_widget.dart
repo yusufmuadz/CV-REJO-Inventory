@@ -185,7 +185,7 @@ class SharedListInvView extends StatelessWidget {
               Get.toNamed(
                 Routes.DETAIL_ORDER,
                 arguments: {
-                  'invoice': invEntity.invoice,
+                  'invoice': '01SL20200800085', // invEntity.invoice,
                   'routeFrom': 'listOrder',
                   'isDriverCollector': AppRole.isDriver,
                   // 'take_it_order': true,

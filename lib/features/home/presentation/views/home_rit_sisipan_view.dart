@@ -123,6 +123,7 @@ class HomeRitSisipanView extends StatelessWidget {
           if (controller.listUser.isEmpty) {
             controller.getAssisten();
           }
+          controller.statusTransportationSelected.value = 'Internal';
           _openPopUp(ritEntity: ritEntity);
         },
         onTapSeePO: () {
@@ -176,7 +177,7 @@ class HomeRitSisipanView extends StatelessWidget {
         }
 
         return SharedInputDriver(
-          isDetail: true,
+          // isDetail: true,
           noRIT: ritEntity.city,
           statusTransportationSelected: controller.statusTransportationSelected,
           statusTransportations: controller.statusTransportations,
