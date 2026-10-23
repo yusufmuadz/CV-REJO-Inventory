@@ -200,52 +200,67 @@ class ListRitView extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Visibility(
-                        visible: AppRole.isPIC || AppRole.isChecker2,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
-                            onTap: () async {
-                              if (ritOrder.city !=
-                                  controller.isRitDetail.value) {
-                                controller.isRitDetail.value = ritOrder.city;
-                                controller.getDataListController.getOrder(
-                                  isDetail: true,
-                                  isRefresh: true,
-                                  noRIT: ritOrder.city,
-                                  dateRIT: ritOrder.tanggalRit,
-                                );
-                              }
-
-                              // if (controller.orders.isNotEmpty) {
-                              DetailRITDialog().showDetailRIT(
-                                controller: controller,
-                              );
-                              // }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color(0xFFd5914d),
-                              ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Visibility(
+                              visible: !AppRole.isCollector,
                               child: Text(
-                                'Lihat PO',
-                                style: TextStyles.basicTextStyle(
-                                  fontSize: 12,
-                                  letterSpacing: 0.48,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  fontFamily:
-                                      GoogleFonts.hankenGrotesk().fontFamily,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                'PENGURUT: ${ritOrder.pengurut.isEmpty ? '-' : ritOrder.pengurut.join(', ')}',
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: AppRole.isPIC || AppRole.isChecker2,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () async {
+                                  if (ritOrder.city !=
+                                      controller.isRitDetail.value) {
+                                    controller.isRitDetail.value =
+                                        ritOrder.city;
+                                    controller.getDataListController.getOrder(
+                                      isDetail: true,
+                                      isRefresh: true,
+                                      noRIT: ritOrder.city,
+                                      dateRIT: ritOrder.tanggalRit,
+                                    );
+                                  }
+
+                                  // if (controller.orders.isNotEmpty) {
+                                  DetailRITDialog().showDetailRIT(
+                                    controller: controller,
+                                  );
+                                  // }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: const Color(0xFFd5914d),
+                                  ),
+                                  child: Text(
+                                    'Lihat PO',
+                                    style: TextStyles.basicTextStyle(
+                                      fontSize: 12,
+                                      letterSpacing: 0.48,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFamily: GoogleFonts.hankenGrotesk()
+                                          .fontFamily,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
