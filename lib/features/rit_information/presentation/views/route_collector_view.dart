@@ -110,6 +110,7 @@ class RouteCollectorView extends StatelessWidget {
           masterCtrlr.invController.getInvCollector(
             isRefresh: true,
             noRoute: entity.noRoute,
+            noNotaRoute: entity.notaRoute,
           );
 
           debugPrint('Has clients: ${masterCtrlr.pageController.hasClients}');

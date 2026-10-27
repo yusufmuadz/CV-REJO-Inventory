@@ -3,6 +3,10 @@ import 'package:camera/camera.dart';
 class ParamsEndingOrder {
   final String? role;
   final String? invoice;
+  final String? noRoute;
+  final String? notaRoute;
+  final String? idDetail;
+  final String? idPiutang;
   final String? desc;
   final String? lat;
   final String? long;
@@ -21,6 +25,10 @@ class ParamsEndingOrder {
   ParamsEndingOrder({
     this.role,
     this.invoice,
+    this.noRoute,
+    this.notaRoute,
+    this.idDetail,
+    this.idPiutang,
     this.desc,
     this.lat,
     this.long,

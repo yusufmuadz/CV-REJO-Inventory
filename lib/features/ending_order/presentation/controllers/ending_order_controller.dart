@@ -72,6 +72,12 @@ class EndingOrderController extends GetxController {
   late final ListOrderController listOrderController;
   late final RitController ritController;
 
+  // ========== COLLECTOR ==========
+  final idDetail = ''.obs;
+  final idPiutang = ''.obs;
+  final noRoute = ''.obs;
+  final notaRoute = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -94,6 +100,12 @@ class EndingOrderController extends GetxController {
       statusChecker2.value = args['status_checker2'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
       isDriverCollector.value = args['isDriverCollector'] ?? false;
+
+      // ========== COLLECTOR ==========
+      idDetail.value = args['id_detail'] ?? '';
+      idPiutang.value = args['id_piutang'] ?? '';
+      noRoute.value = args['no_route'] ?? '';
+      notaRoute.value = args['nota_route'] ?? '';
 
       debugPrint('isDriverCollector $isDriverCollector');
 
@@ -269,14 +281,6 @@ class EndingOrderController extends GetxController {
                     },
                   );
                 }
-
-                // Get.offAllNamed(
-                //   Routes.LIST_ORDER,
-                //   arguments: {
-                //     'routeFrom': 'endingOrder',
-                //     'isRitToday': isRitToday.value,
-                //   },
-                // );
               } else {
                 GetStorage().remove('noInvoice');
                 // GetStorage().remove('status_checker2');
@@ -302,17 +306,6 @@ class EndingOrderController extends GetxController {
                       },
                     );
                   }
-                  // Get.offAllNamed(
-                  //   Routes.RIT_INFORMATION,
-                  //   arguments: {
-                  //     'city': rit.value,
-                  //     'colorRit': colorRit.value,
-                  //     'tanggalRit': dateRit.value,
-                  //     'routeFrom': 'endingOrder',
-                  //     'isRitToday': isRitToday.value,
-                  //   },
-                  // );
-
                   return;
                 }
 
@@ -335,17 +328,6 @@ class EndingOrderController extends GetxController {
                     },
                   );
                 }
-
-                // Get.offAllNamed(
-                //   Routes.LIST_ORDER,
-                //   arguments: {
-                //     'routeFrom': 'endingOrder',
-                //     'city': rit.value,
-                //     'tanggalRit': dateRit.value,
-                //     'colorRit': colorRit.value,
-                //     'isRitToday': isRitToday.value,
-                //   },
-                // );
               }
             },
           );
@@ -535,11 +517,15 @@ class EndingOrderController extends GetxController {
   Future<void> saveArriveDriver() async {
     if (isLoading.value) return;
 
-    if (_emptyDriverPO()) {
-      // dialogService.showErrorSnackbar(
-      //   title: 'Gagal!',
-      //   'Lengkapi data terlebih dahulu',
-      // );
+    if (AppRole.isCollector && _getEmptyMessageInv() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyMessageInv() ?? '',
+      );
+      return;
+    }
+
+    if (AppRole.isDriver && _emptyDriverPO()) {
       dialogService.showErrorDefaultSnackbar(
         context: Get.context!,
         title: 'Gagal!',
@@ -553,7 +539,6 @@ class EndingOrderController extends GetxController {
       String lat = '';
       String long = '';
 
-      // if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
       final position = await locationService.getLatestLocationLightweight();
 
       lat = position.latitude.toString();
@@ -562,18 +547,22 @@ class EndingOrderController extends GetxController {
       if (lat.isEmpty || long.isEmpty) {
         return;
       }
-      // }
 
       final result = await endingOrderUseCase.callArriveDriver(
         statusButton: statusButton.value,
         params: ParamsEndingOrder(
           invoice: noInvoice.value,
+          noRoute: noRoute.value,
+          notaRoute: notaRoute.value,
+          idDetail: idDetail.value,
+          idPiutang: idPiutang.value,
           // desc: fieldController.text,
           lat: lat,
           long: long,
           paymentMethod: selectedPaymentType.value,
           paymentNominal: fieldController.text.replaceAll(',', ''),
           statusChecker2: statusChecker2.value,
+          images: mediaFileList,
           imagesDriver: ImagesDriverModel(
             imagesTransportation: mediaFileList,
             imagesMerchant: mediaFileFrontMerchant,
@@ -588,7 +577,11 @@ class EndingOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
           if (statusButton.value == EnumButtonEndingOrder.savePO) {
-            statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+            if (AppRole.isCollector) {
+              statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
+            } else {
+              statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+            }
             mediaFileList.clear();
             mediaFileFrontMerchant.clear();
             GetStorage().write('buttonEndingDriver', statusButton.value.name);

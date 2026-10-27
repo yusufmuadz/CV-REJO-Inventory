@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/services/dialog_service.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
@@ -10,10 +11,14 @@ import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 
 class HomeCollectorController extends GetxController {
+  final dialogService = Get.find<DialogService>();
+
   final isGetLoading = false.obs;
   final getLoadState = LoadState.initial.obs;
 
   final buttonINV = EnumButtonInv.acceptINV.obs;
+
+  final isRoute = true.obs;
 
   final isSelectedRoute = ''.obs;
   final dateRoute = ''.obs;
@@ -141,6 +146,26 @@ class HomeCollectorController extends GetxController {
       isSelectedRoute.value = '';
       dateRoute.value = '';
     }
+  }
+
+  Future<void> acceptInv() async {
+    final allChecked = listInv.every((element) => element.isChecked == true);
+
+    if (!allChecked) {
+      dialogService.showErrorSnackbar(
+        title: 'Warning!',
+        'Pilih semua invoice terlebih dahulu',
+      );
+      return;
+    }
+
+    final newListInv = listInv
+        .map((element) => element.copyWith(isChecked: false))
+        .toList();
+
+    listInv.value = newListInv;
+
+    buttonINV.value = EnumButtonInv.buttonSaveDoc;
   }
 
   final listInv = <OrderEntity>[

@@ -27,6 +27,8 @@ class ListInvRouteView extends StatelessWidget {
       onCheckboxChanged: (int value) => controller.onSelectedInv(value),
       retryFetch: () => controller.retryFetchInvCollector(),
       onRefresh: () async => controller.onRefreshInvCollector(),
+      noRoute: masterCtrlr.routeRit.value,
+      notaRoute: masterCtrlr.notaRoute.value,
     );
   }
 }

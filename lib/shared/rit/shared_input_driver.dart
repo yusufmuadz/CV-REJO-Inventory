@@ -63,7 +63,7 @@ class SharedInputDriver extends StatelessWidget {
               visible: AppRole.isChecker2,
               child: _buildSelectStatusTransportation(),
             ),
-            _buildContent(),
+            SizedBox(width: Get.width, child: _buildContent()),
           ],
         ),
       ),
@@ -105,29 +105,94 @@ class SharedInputDriver extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '*Masukkan informasi pengirim per-PO diakhir proses',
-            textAlign: TextAlign.center,
-            style: TextStyles.basicTextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              fontStyle: FontStyle.italic,
-              color: Colors.red,
+          Visibility(
+            visible: extNopolTransporation == null && extDriverName == null,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Text(
+                '*Masukkan informasi pengirim per-PO diakhir proses',
+                textAlign: TextAlign.center,
+                style: TextStyles.basicTextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.red,
+                ),
+              ),
             ),
           ),
 
-          const SizedBox(height: 20),
-
-          Text(
-            '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
-            textAlign: TextAlign.center,
-            style: TextStyles.basicTextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              fontStyle: FontStyle.italic,
-              color: Colors.red,
+          Visibility(
+            visible: extNopolTransporation != null,
+            child: _buildTitle(
+              title: 'Masukkan Nopol*',
+              color: Color(0xFF1F2937),
             ),
           ),
+          if (extNopolTransporation != null)
+            Container(
+              height: 40,
+              margin: const EdgeInsets.only(top: 7),
+              child: SharedTextField(
+                radius: 8,
+                controller: extNopolTransporation!,
+                hintText: 'Nopol Kendaraan',
+                fillColor: const Color(0xFFF9FAFB),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                textStyle: TextStyles.basicTextStyle(
+                  height: 1.5,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1F2937),
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                ),
+              ),
+            ),
+          Visibility(
+            visible: extDriverName != null,
+            child: Container(
+              margin: EdgeInsets.only(top: 20, bottom: 7),
+              child: _buildTitle(
+                title: 'Nama Driver*',
+                color: Color(0xFF1F2937),
+              ),
+            ),
+          ),
+          if (extDriverName != null)
+            SizedBox(
+              height: 40,
+              child: SharedTextField(
+                radius: 8,
+                controller: extDriverName!,
+                hintText: 'Masukkan Nama Driver',
+                fillColor: const Color(0xFFF9FAFB),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                textStyle: TextStyles.basicTextStyle(
+                  height: 1.5,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1F2937),
+                  fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                ),
+              ),
+            ),
+
+          // Text(
+          //   '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
+          //   textAlign: TextAlign.center,
+          //   style: TextStyles.basicTextStyle(
+          //     fontSize: 12,
+          //     fontWeight: FontWeight.w600,
+          //     fontStyle: FontStyle.italic,
+          //     color: Colors.red,
+          //   ),
+          // ),
         ],
       );
     }
@@ -136,53 +201,6 @@ class SharedInputDriver extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTitle(title: 'Masukkan Nopol*', color: Color(0xFF1F2937)),
-          const SizedBox(height: 5),
-          Container(
-            height: 40,
-            margin: const EdgeInsets.only(top: 2),
-            child: SharedTextField(
-              radius: 8,
-              controller: extNopolTransporation!,
-              hintText: 'Nopol Kendaraan',
-              fillColor: const Color(0xFFF9FAFB),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ),
-              textStyle: TextStyles.basicTextStyle(
-                height: 1.5,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1F2937),
-                fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          _buildTitle(title: 'Nama Driver*', color: Color(0xFF1F2937)),
-          const SizedBox(height: 5),
-          Container(
-            height: 40,
-            margin: const EdgeInsets.only(top: 2),
-            child: SharedTextField(
-              radius: 8,
-              controller: extDriverName!,
-              hintText: 'Masukkan Nama Driver',
-              fillColor: const Color(0xFFF9FAFB),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ),
-              textStyle: TextStyles.basicTextStyle(
-                height: 1.5,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1F2937),
-                fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-              ),
-            ),
-          ),
           const SizedBox(height: 20),
           CustomImage().buildContentImage(
             title: 'Muatan/Semua barang',

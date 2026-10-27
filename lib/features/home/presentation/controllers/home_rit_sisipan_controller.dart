@@ -44,7 +44,8 @@ class HomeRitSisipanController extends GetxController {
   final statusTransportationSelected = 'Internal'.obs;
   final nopolTransportation = ''.obs;
 
-  final extNopolTransporation = TextEditingController();
+  final extNopolTransportation = TextEditingController();
+  final extDriverNameTransportation = TextEditingController();
 
   final currentNoRIT = ''.obs;
 
@@ -52,6 +53,13 @@ class HomeRitSisipanController extends GetxController {
   void onInit() {
     super.onInit();
     getRit(isRefresh: false);
+  }
+
+  @override
+  void dispose() {
+    extNopolTransportation.dispose();
+    extDriverNameTransportation.dispose();
+    super.dispose();
   }
 
   void onRefreshRIT() {
@@ -246,11 +254,26 @@ class HomeRitSisipanController extends GetxController {
         // debugPrint('ID Forklift: ${loader.id}');
 
         idKendaraan = loader!.idDeliveryMobil;
+      } else if (statusTransportationSelected.value == 'External') {
+        if (extNopolTransportation.text.isEmpty ||
+            extDriverNameTransportation.text.isEmpty) {
+          dialogService.showError('Failed', 'Lengkap Data Terlebih Dahulu!');
+          return;
+        }
       }
 
       final dateRIT = DateFormat(
         'yyyy-MM-dd',
       ).format(DateTime.parse(tanggalRIT));
+
+      debugPrint('ID Kendaraan: $idKendaraan');
+      debugPrint('ID Driver: ${driver?.userId}');
+      debugPrint('ID Kenek: ${kenek?.userId}');
+      debugPrint('Date RIT: $dateRIT');
+      debugPrint('No RIT: $noRIT');
+      debugPrint('Status: ${statusTransportationSelected.value}');
+      debugPrint('Ext Nopol: ${extNopolTransportation.text}');
+      debugPrint('Ext Driver Name: ${extDriverNameTransportation.text}');
 
       final result = await listOrderUseCase.callPostAssistant(
         ParamsAddAssistant(
@@ -262,6 +285,8 @@ class HomeRitSisipanController extends GetxController {
           dateRIT: dateRIT,
           isSisipan: true,
           isDetail: false,
+          extNopol: extNopolTransportation.text,
+          extDriverName: extDriverNameTransportation.text,
           statusTransportation: statusTransportationSelected.value
               .toUpperCase(),
         ),

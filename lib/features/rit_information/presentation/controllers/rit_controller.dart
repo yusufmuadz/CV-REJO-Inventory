@@ -54,6 +54,7 @@ class RitController extends GetxController {
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
   final routeRit = ''.obs;
+  final notaRoute = ''.obs;
   final isRitToday = false.obs;
   final isAcceptRIT = false.obs;
   final isSisipan = false.obs;
@@ -130,6 +131,7 @@ class RitController extends GetxController {
       colorRit.value = args['colorRit'] ?? '';
       tanggalRit.value = args['tanggalRit'] ?? '';
       routeRit.value = args['routeRit'] ?? '';
+      notaRoute.value = args['notaRoute'] ?? '';
       routeFrom.value = args['routeFrom'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
       isSisipan.value = args['isSisipan'] ?? false;
@@ -174,7 +176,11 @@ class RitController extends GetxController {
       if (invController.buttonINV.value == EnumButtonInv.acceptINV) {
         invController.getRouteCollector(isRefresh: true);
       } else {
-        invController.getInvCollector(isRefresh: true, noRoute: routeRit.value);
+        invController.getInvCollector(
+          isRefresh: true,
+          noRoute: routeRit.value,
+          noNotaRoute: notaRoute.value,
+        );
       }
     } else {
       _getOrder();
@@ -206,6 +212,7 @@ class RitController extends GetxController {
     colorRit.value = GetStorage().read('colorRit') ?? '';
     tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
     routeRit.value = GetStorage().read('routeRit') ?? '';
+    notaRoute.value = GetStorage().read('notaRoute') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
 
     // if (GetStorage().read('city') == null && getButtonRIT != null) {
@@ -233,6 +240,7 @@ class RitController extends GetxController {
     GetStorage().write('tanggalRit', tanggalRit.value);
     GetStorage().write('isRitToday', isRitToday.value);
     GetStorage().write('routeRit', routeRit.value);
+    GetStorage().write('notaRoute', notaRoute.value);
     isAcceptRIT.value = true;
 
     // buttonRIT.value = EnumButtonRIT.buttonTakeOff;
@@ -345,6 +353,24 @@ class RitController extends GetxController {
 
     try {
       String date = tanggalRit.value;
+      String lat = '';
+      String long = '';
+
+      bool isArriveOffice = buttonRIT.value == EnumButtonRIT.buttonSaveDoc;
+
+      if (AppRole.isCollector) {
+        isArriveOffice =
+            invController.buttonINV.value == EnumButtonInv.buttonSaveDoc;
+
+        final position = await locationService.getLatestLocationLightweight();
+
+        lat = position.latitude.toString();
+        long = position.longitude.toString();
+
+        if (lat.isEmpty || long.isEmpty) {
+          return;
+        }
+      }
 
       if (date.isNotEmpty) {
         date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
@@ -353,20 +379,30 @@ class RitController extends GetxController {
 
       final result = await ritUseCase.call(
         ParamsRit(
-          isArriveOffice: buttonRIT.value == EnumButtonRIT.buttonSaveDoc,
+          isArriveOffice: isArriveOffice,
           recipient: recipientName.text,
           rit: isDistrictSelected.value,
           dateRit: date,
+          routeRit: routeRit.value,
+          notaRoute: notaRoute.value,
+          lat: lat,
+          long: long,
           km: kmController.text,
-          kmImage: mediaFileListKM[0],
-          tankTruckImage: mediaFileListTangki[0],
+          kmImage: mediaFileListKM.isEmpty ? XFile('') : mediaFileListKM[0],
+          tankTruckImage: mediaFileListTangki.isEmpty
+              ? XFile('')
+              : mediaFileListTangki[0],
           frontTruckImage: mediaFileFrontTransport.value,
           rightTruckImage: mediaFileRightTransport.value,
           backTruckImage: mediaFileBackTransport.value,
           leftTruckImage: mediaFileLeftTransport.value,
           overAllTruckImage: mediaFileFrontTransport.value, //mediaFileList[0],
-          travelDocImage: mediaFileListSJ[0],
-          pocketImage: mediaFileListTransportMoney[0],
+          travelDocImage: mediaFileListSJ.isEmpty
+              ? XFile('')
+              : mediaFileListSJ[0],
+          pocketImage: mediaFileListTransportMoney.isEmpty
+              ? XFile('')
+              : mediaFileListTransportMoney[0],
           receiptMoneyImage: mediaFileRecipientMoneyRit.isEmpty
               ? XFile('')
               : mediaFileRecipientMoneyRit[0],
@@ -395,6 +431,7 @@ class RitController extends GetxController {
               mediaFileBackTransport.value = XFile('');
               mediaFileLeftTransport.value = XFile('');
               kmController.clear();
+              mediaFileListInvoice.clear();
 
               if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
                 mediaFileRecipientMoneyRit.clear();
@@ -403,8 +440,26 @@ class RitController extends GetxController {
                 return;
               }
 
-              buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
               if (Get.isDialogOpen == true) Get.back();
+
+              if (AppRole.isCollector) {
+                invController.buttonINV.value = EnumButtonInv.saveTakeOff;
+
+                GetStorage().write(
+                  'buttonINV',
+                  invController.buttonINV.value.name,
+                );
+
+                pageIndex.value = 4;
+                pageController.jumpToPage(
+                  4,
+                  // duration: const Duration(milliseconds: 300),
+                  // curve: Curves.easeInOut,
+                );
+                return;
+              }
+
+              buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
 
               pageIndex.value = 0;
               pageController.jumpToPage(
@@ -853,6 +908,7 @@ class RitController extends GetxController {
     colorRit.value = item.color;
     tanggalRit.value = item.tanggalRit;
     routeRit.value = route;
+    // notaRoute.value = item.noteRoute;
 
     GetStorage().write('city', item.city);
     GetStorage().write('colorRit', item.color);

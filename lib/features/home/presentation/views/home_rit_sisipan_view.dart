@@ -124,6 +124,8 @@ class HomeRitSisipanView extends StatelessWidget {
             controller.getAssisten();
           }
           controller.statusTransportationSelected.value = 'Internal';
+          controller.extNopolTransportation.clear();
+          controller.extDriverNameTransportation.clear();
           _openPopUp(ritEntity: ritEntity);
         },
         onTapSeePO: () {
@@ -185,6 +187,8 @@ class HomeRitSisipanView extends StatelessWidget {
           assistantSelected: controller.assistantSelected,
           nopolTransportation: controller.nopolTransportation,
           selectTransportation: controller.selectTransportation,
+          extNopolTransporation: controller.extNopolTransportation,
+          extDriverName: controller.extDriverNameTransportation,
           listUser: controller.listUser,
           transportations: controller.transportations,
           onRefreshAssistant: () => controller.getAssisten(),

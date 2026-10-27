@@ -40,6 +40,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   final colorRit = ''.obs;
   final tanggalRit = ''.obs;
   final routeRit = ''.obs;
+  final notaRoute = ''.obs;
   final isRitToday = false.obs;
 
   final tabIndex = 0.obs;
@@ -130,12 +131,15 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     colorRit.value = GetStorage().read('colorRit') ?? '';
     tanggalRit.value = GetStorage().read('tanggalRit') ?? '';
     routeRit.value = GetStorage().read('routeRit') ?? '';
+    notaRoute.value = GetStorage().read('notaRoute') ?? '';
     isRitToday.value = GetStorage().read('isRitToday') ?? false;
 
     debugPrint('RIT Storage: $rit');
-    debugPrint('RIT Storage: $colorRit');
-    debugPrint('RIT Storage: $tanggalRit');
-    debugPrint('RIT Storage: $routeRit');
+    debugPrint('RIT Storage Color: $colorRit');
+    debugPrint('RIT Storage Tanggal: $tanggalRit');
+    debugPrint('RIT Storage Route: $routeRit');
+    debugPrint('RIT Storage Nota: $notaRoute');
+    debugPrint('RIT Storage isRitToday: $isRitToday');
   }
 
   void getCacheSize(int index) async {
@@ -219,6 +223,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       GetStorage().remove('colorRit');
       GetStorage().remove('tanggalRit');
       GetStorage().remove('routeRit');
+      GetStorage().remove('notaRoute');
       GetStorage().remove('isAcceptRIT');
       GetStorage().remove('buttonRIT');
       GetStorage().remove('buttonINV');
@@ -229,6 +234,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       colorRit.value = '';
       tanggalRit.value = '';
       routeRit.value = '';
+      notaRoute.value = '';
       isRitToday.value = ritToday;
 
       debugPrint('CHANGE IS RIT TODAY : ${isRitToday.value}');
@@ -254,6 +260,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           'tanggalRit': tanggalRit.value,
           'routeRit': routeRit.value,
           'routeFrom': 'home',
+          'notaRoute': notaRoute.value,
           'isRitToday': ritToday,
         },
       );

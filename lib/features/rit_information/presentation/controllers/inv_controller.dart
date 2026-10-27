@@ -26,6 +26,7 @@ class InvController extends GetxController {
   final buttonINV = EnumButtonInv.acceptINV.obs;
 
   final isSelectedRoute = ''.obs;
+  final isSelectedNotaRoute = ''.obs;
   final dateRoute = ''.obs;
 
   final searchInvController = TextEditingController();
@@ -100,6 +101,7 @@ class InvController extends GetxController {
   Future<void> getInvCollector({
     bool isRefresh = false,
     String? noRoute,
+    String? noNotaRoute,
   }) async {
     try {
       if (isGetLoading.value) return;
@@ -122,8 +124,12 @@ class InvController extends GetxController {
         ),
       );
 
-      if (noRoute != null && noRoute.isNotEmpty) {
+      if (noRoute != null &&
+          noRoute.isNotEmpty &&
+          noNotaRoute != null &&
+          noNotaRoute.isNotEmpty) {
         isSelectedRoute.value = noRoute;
+        isSelectedNotaRoute.value = noNotaRoute;
       }
 
       switch (result) {
@@ -183,6 +189,7 @@ class InvController extends GetxController {
       //   dateRoute.value = listInv[index].date?.transaction ?? '';
     } else {
       isSelectedRoute.value = '';
+      isSelectedNotaRoute.value = '';
       dateRoute.value = '';
     }
   }

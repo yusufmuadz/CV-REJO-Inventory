@@ -59,6 +59,9 @@ class ApiEndpoints {
   // COLLECTOR TRANSACTION
   static const String getRouteCollector = "kolektor/listpenugasan";
   static const String getInvCollector = "kolektor/listtranspenugasan";
+  static const String saveDataCollector = "kolektor/submitkeberangkatan";
+  static const String arriveAtOfficeCollector = "kolektor/submitkepulangan";
+  static const String arriveCollector = "kolektor/submittiba";
 
   static String getDetailTransaction(String invoice) =>
       "transaction/get?invoice=$invoice";

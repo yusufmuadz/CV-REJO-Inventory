@@ -261,6 +261,8 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
           "status_armada": params.statusTransportation,
         if (AppRole.isChecker2 && params.isDetail == true)
           "invoice": params.invoice,
+        if (params.extNopol != null) "driver_license": params.extNopol,
+        if (params.extDriverName != null) "driver_name": params.extDriverName,
       };
 
       debugPrint('isDetail: ${params.isDetail}');

@@ -21,59 +21,63 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   @override
   Future<ResponseModelBasic> postEndingOrder(ParamsEndingOrder params) async {
     try {
+      debugPrint('========== POST SAVE ENDING ORDER ==========');
+
       String nameFile = 'file';
 
       debugPrint(params.invoice);
-      // debugPrint('Images: ${params.images != null} ${params.images?.length}');
-      // debugPrint(
-      //   'Transportation ${params.imagesTransportation != null} ${params.imagesTransportation?.length}',
-      // );
-      // debugPrint('Invoice: ${params.imagesInvoice != null}');
-      // debugPrint('Images Length: ${params.images!.length > 1}');
 
-      // if (params.role == 'deliver') {
-      //   nameFile = 'foto';
-      // }
+      FormData formData;
 
-      final formData = FormData.fromMap({
-        'invoice': params.invoice,
-        'desc': params.desc,
-        'status_armada': params.statusTransportation,
-        'driver_external': params.driverExternal,
-        'mobil_external': params.mobilExternal,
-        'lat': params.lat,
-        'long': params.long,
-        if (params.role == 'deliver') 'gudang': 'BARANG JADI',
-        '${nameFile}1': await MultipartHelper.fromNullableXFile(
-          params.images?[0],
-          // filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
-        ),
-        // Collection if: hanya masuk ke map kalau kondisi true
-        if (params.images!.length > 1)
-          '${nameFile}2': await MultipartHelper.fromNullableXFile(
-            params.images?[1],
+      if (AppRole.isCollector) {
+        formData = FormData.fromMap({
+          'invoice': params.invoice,
+          'desc': params.desc,
+          'lat': params.lat,
+          'long': params.long,
+          'file_toko': await MultipartHelper.fromNullableXFile(
+            params.imagesDriver?.imagesMerchant?[0],
           ),
-
-        if (AppRole.isChecker2 &&
-            params.statusTransportation == 'EXTERNAL' &&
-            params.statusChecker2 == 'completed' &&
-            params.imagesTransportation != null)
-          '${nameFile}3': await MultipartHelper.fromNullableXFile(
-            params.imagesTransportation?[0],
+          'file_tagihan': await MultipartHelper.fromNullableXFile(
+            params.images?[0],
           ),
-        if (AppRole.isChecker2 &&
-            params.statusTransportation == 'EXTERNAL' &&
-            params.statusChecker2 == 'completed' &&
-            params.imagesInvoice != null)
-          '${nameFile}4': await MultipartHelper.fromNullableXFile(
-            params.imagesInvoice?[0],
+        });
+      } else {
+        formData = FormData.fromMap({
+          'invoice': params.invoice,
+          'desc': params.desc,
+          'status_armada': params.statusTransportation,
+          'driver_external': params.driverExternal,
+          'mobil_external': params.mobilExternal,
+          'lat': params.lat,
+          'long': params.long,
+          if (params.role == 'deliver') 'gudang': 'BARANG JADI',
+          '${nameFile}1': await MultipartHelper.fromNullableXFile(
+            params.images?[0],
+            // filename: '${nameFile}1.jpg', // ⬅️ selalu tambahkan filename
           ),
-      });
+          // Collection if: hanya masuk ke map kalau kondisi true
+          if (params.images!.length > 1)
+            '${nameFile}2': await MultipartHelper.fromNullableXFile(
+              params.images?[1],
+            ),
 
-      debugPrint(formData.fields.toString());
-      debugPrint(formData.files.toString());
-
-      // throw ServerException(message: 'Test Post', statusCode: 500);
+          if (AppRole.isChecker2 &&
+              params.statusTransportation == 'EXTERNAL' &&
+              params.statusChecker2 == 'completed' &&
+              params.imagesTransportation != null)
+            '${nameFile}3': await MultipartHelper.fromNullableXFile(
+              params.imagesTransportation?[0],
+            ),
+          if (AppRole.isChecker2 &&
+              params.statusTransportation == 'EXTERNAL' &&
+              params.statusChecker2 == 'completed' &&
+              params.imagesInvoice != null)
+            '${nameFile}4': await MultipartHelper.fromNullableXFile(
+              params.imagesInvoice?[0],
+            ),
+        });
+      }
 
       String role = params.role!;
 
@@ -87,6 +91,12 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
         role = 'delivery';
         apiUrl = ApiEndpoints.finishScanOrder;
       }
+
+      debugPrint(apiUrl);
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
 
       final response = await dioClient.post(apiUrl, data: formData);
 
@@ -319,6 +329,16 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       });
 
       String apiUrl = ApiEndpoints.arriveFirstCustomer;
+
+      if (AppRole.isCollector) {
+        apiUrl = ApiEndpoints.arriveCollector;
+      }
+
+      debugPrint(apiUrl);
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      throw ServerException(message: 'Test Post', statusCode: 500);
 
       final response = await dioClient.post(apiUrl, data: formData);
 

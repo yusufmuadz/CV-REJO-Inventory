@@ -24,7 +24,9 @@ class OrderEntity {
   String? long;
   String? jenisArmada;
   String? urutan;
+  final String? idDetail;
   final String? route;
+  final String? idPiutang;
   final String? totalPiutang;
   final String? sisaPiutang;
   final String? tanggalTransaksi;
@@ -53,6 +55,8 @@ class OrderEntity {
     this.route,
     this.jenisArmada,
     this.urutan,
+    this.idDetail,
+    this.idPiutang,
     this.totalPiutang,
     this.sisaPiutang,
     this.tanggalTransaksi,
@@ -90,6 +94,8 @@ class OrderEntity {
       route: json['route'] ?? json['router'] ?? '-',
       maps: json['maps'] ?? '-',
       jenisArmada: json['jenis_armada'] ?? '-',
+      idDetail: json['id_detail'] ?? '-',
+      idPiutang: json['id_piutang'] ?? '-',
       totalPiutang: json['total_piutang'] ?? '-',
       sisaPiutang: json['sisa_piutang'] ?? '-',
       tanggalTransaksi: json['tanggal_transaksi'],
@@ -118,7 +124,9 @@ class OrderEntity {
     String? lat,
     String? long,
     String? jenisArmada,
+    String? idDetail,
     String? route,
+    String? idPiutang,
     String? totalPiutang,
     String? sisaPiutang,
     String? tanggalTransaksi,
@@ -145,7 +153,9 @@ class OrderEntity {
       lat: lat ?? this.lat,
       long: long ?? this.long,
       jenisArmada: jenisArmada ?? this.jenisArmada,
+      idDetail: idDetail ?? this.idDetail,
       route: route ?? this.route,
+      idPiutang: idPiutang ?? this.idPiutang,
       totalPiutang: totalPiutang ?? this.totalPiutang,
       sisaPiutang: sisaPiutang ?? this.sisaPiutang,
       tanggalTransaksi: tanggalTransaksi ?? this.tanggalTransaksi,

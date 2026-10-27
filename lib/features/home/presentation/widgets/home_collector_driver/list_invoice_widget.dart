@@ -21,6 +21,9 @@ class SharedListInvView extends StatelessWidget {
   final RxList<OrderEntity> listInv;
   final Rx<EnumButtonInv> buttonINV;
 
+  final String? noRoute;
+  final String? notaRoute;
+
   final TextEditingController searchInvController;
 
   final Function(String) onSubmitted;
@@ -37,6 +40,8 @@ class SharedListInvView extends StatelessWidget {
   const SharedListInvView({
     super.key,
     this.isTopSpacing = false,
+    this.noRoute = '',
+    this.notaRoute = '',
     required this.isGetLoading,
     required this.getLoadState,
     required this.isSelectedRoute,
@@ -166,35 +171,48 @@ class SharedListInvView extends StatelessWidget {
               return;
             }
 
-            final bool isTesting = true;
+            // final bool isTesting = true;
 
-            if (isTesting) {
+            if (noRoute == null || notaRoute == null) {
               dialogService.showComingSoonSnackbar();
               return;
             }
 
-            if (routeStackService.contains(Routes.DETAIL_ORDER)) {
-              Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
-            } else {
-              // dialogService.showErrorSnackbar(
-              //   'Invoice Dummy',
-              //   title: 'Warning!',
-              //   duration: 1,
-              // );
+            Get.toNamed(
+              Routes.ENDING_ORDER,
+              arguments: {
+                'invoice': invEntity.invoice,
+                'id_detail': invEntity.idDetail,
+                'id_piutang': invEntity.idPiutang,
+                'status_checker2': invEntity.checker2?.status ?? '',
+                'status_driver': invEntity.driver?.status ?? '',
+                'no_route': noRoute,
+                'nota_route': notaRoute,
+              },
+            );
 
-              Get.toNamed(
-                Routes.DETAIL_ORDER,
-                arguments: {
-                  'invoice': '01SL20200800085', // invEntity.invoice,
-                  'routeFrom': 'listOrder',
-                  'isDriverCollector': AppRole.isDriver,
-                  // 'take_it_order': true,
-                  // 'status_checker2': invEntity.checker2?.status ?? '',
-                  // 'status_driver': transaction.driver?.status ?? '',
-                  'status_po': 'ongoing',
-                },
-              );
-            }
+            // if (routeStackService.contains(Routes.DETAIL_ORDER)) {
+            //   Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
+            // } else {
+            //   // dialogService.showErrorSnackbar(
+            //   //   'Invoice Dummy',
+            //   //   title: 'Warning!',
+            //   //   duration: 1,
+            //   // );
+
+            //   Get.toNamed(
+            //     Routes.DETAIL_ORDER,
+            //     arguments: {
+            //       'invoice': '01SL20200800085', // invEntity.invoice,
+            //       'routeFrom': 'listOrder',
+            //       'isDriverCollector': AppRole.isDriver,
+            //       // 'take_it_order': true,
+            //       // 'status_checker2': invEntity.checker2?.status ?? '',
+            //       // 'status_driver': transaction.driver?.status ?? '',
+            //       'status_po': 'ongoing',
+            //     },
+            //   );
+            // }
           },
         ),
       ),

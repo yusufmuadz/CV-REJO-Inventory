@@ -9,6 +9,7 @@ import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/helpers/multipart_extension.dart';
 import '../../../../core/helpers/multipart_helper.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../detail_order/data/models/response_model_basic.dart';
@@ -39,54 +40,96 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
         debugPrint('Date HandOver: $date');
       }
 
-      final formData = FormData.fromMap({
-        'nama_penerima': params.recipient,
-        'rit': params.rit,
-        'tanggal_rit': date,
-        'km': params.km,
-        'foto_km': await params.kmImage.multipart,
-        'foto_truck_depan': await MultipartHelper.fromNullableXFile(
-          params.frontTruckImage,
-        ),
-        'foto_truck_kiri': await MultipartHelper.fromNullableXFile(
-          params.leftTruckImage,
-        ),
-        'foto_truck_kanan': await MultipartHelper.fromNullableXFile(
-          params.rightTruckImage,
-        ),
-        'foto_truck_belakang': await MultipartHelper.fromNullableXFile(
-          params.backTruckImage,
-        ),
-        'foto_truck_overall': await MultipartHelper.fromNullableXFile(
-          params.overAllTruckImage,
-        ),
-        'foto_truck_tangki': await MultipartHelper.fromNullableXFile(
-          params.tankTruckImage,
-        ),
-        'foto_truck_sj': await MultipartHelper.fromNullableXFile(
-          params.travelDocImage,
-        ),
-        'foto_truck_uang': await MultipartHelper.fromNullableXFile(
-          params.pocketImage,
-        ),
-        if (params.isArriveOffice == true) 'tanggal_rit': params.dateRit,
-        if (params.isArriveOffice == true)
-          'foto_bukti_tf': await MultipartHelper.fromNullableXFile(
-            params.receiptMoneyImage,
+      FormData formData;
+
+      debugPrint('========== POST SAVE DATA DRIVER ==========');
+
+      if (AppRole.isCollector) {
+        formData = FormData.fromMap({
+          'no_rute': params.routeRit,
+          'nota_rute': params.notaRoute,
+          'lat': params.lat,
+          'long': params.long,
+          'km': params.km,
+          'file_kilometer': await params.kmImage.multipart,
+          'file_depan': await MultipartHelper.fromNullableXFile(
+            params.frontTruckImage,
           ),
-        if (params.isArriveOffice == true)
-          'foto_kotak_berkas': await MultipartHelper.fromNullableXFile(
-            params.fileBoxImage,
+          'file_kiri': await MultipartHelper.fromNullableXFile(
+            params.leftTruckImage,
           ),
-      });
+          'file_kanan': await MultipartHelper.fromNullableXFile(
+            params.rightTruckImage,
+          ),
+          'file_belakang': await MultipartHelper.fromNullableXFile(
+            params.backTruckImage,
+          ),
+          if (params.invoiceImages != null)
+            'file_dokumen': await MultipartHelper.fromNullableXFile(
+              params.invoiceImages?[0],
+            ),
+        });
+      } else {
+        formData = FormData.fromMap({
+          'nama_penerima': params.recipient,
+          'rit': params.rit,
+          'tanggal_rit': date,
+          'km': params.km,
+          'foto_km': await params.kmImage.multipart,
+          'foto_truck_depan': await MultipartHelper.fromNullableXFile(
+            params.frontTruckImage,
+          ),
+          'foto_truck_kiri': await MultipartHelper.fromNullableXFile(
+            params.leftTruckImage,
+          ),
+          'foto_truck_kanan': await MultipartHelper.fromNullableXFile(
+            params.rightTruckImage,
+          ),
+          'foto_truck_belakang': await MultipartHelper.fromNullableXFile(
+            params.backTruckImage,
+          ),
+          'foto_truck_overall': await MultipartHelper.fromNullableXFile(
+            params.overAllTruckImage,
+          ),
+          'foto_truck_tangki': await MultipartHelper.fromNullableXFile(
+            params.tankTruckImage,
+          ),
+          'foto_truck_sj': await MultipartHelper.fromNullableXFile(
+            params.travelDocImage,
+          ),
+          'foto_truck_uang': await MultipartHelper.fromNullableXFile(
+            params.pocketImage,
+          ),
+          if (params.isArriveOffice == true) 'tanggal_rit': params.dateRit,
+          if (params.isArriveOffice == true)
+            'foto_bukti_tf': await MultipartHelper.fromNullableXFile(
+              params.receiptMoneyImage,
+            ),
+          if (params.isArriveOffice == true)
+            'foto_kotak_berkas': await MultipartHelper.fromNullableXFile(
+              params.fileBoxImage,
+            ),
+        });
+      }
 
       debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
 
       String apiUrl = ApiEndpoints.saveDataDriver;
 
+      if (AppRole.isCollector) {
+        apiUrl = ApiEndpoints.saveDataCollector;
+      }
+
       if (params.isArriveOffice == true) {
         apiUrl = ApiEndpoints.arriveAtOffice;
+
+        if (AppRole.isCollector) {
+          apiUrl = ApiEndpoints.arriveAtOfficeCollector;
+        }
       }
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
 
       final response = await dioClient.post(
         apiUrl,

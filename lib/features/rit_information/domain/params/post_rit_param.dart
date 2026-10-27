@@ -4,8 +4,12 @@ class ParamsRit {
   final bool isArriveOffice;
   final String? recipient;
   final String rit;
+  final String? routeRit;
   final String dateRit;
+  final String? notaRoute;
   final String km;
+  final String? lat;
+  final String? long;
   final XFile kmImage;
   final XFile? frontTruckImage;
   final XFile? backTruckImage;
@@ -24,6 +28,10 @@ class ParamsRit {
     this.recipient,
     required this.rit,
     required this.dateRit,
+    this.routeRit,
+    this.notaRoute,
+    this.lat,
+    this.long,
     required this.km,
     required this.kmImage,
     this.frontTruckImage,

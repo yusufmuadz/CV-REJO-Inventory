@@ -163,7 +163,9 @@ class RitPage extends GetView<RitController> {
           ),
         ),
         body: Obx(() {
-          final isLoading = controller.loadState.value == LoadState.initial;
+          final isLoading =
+              controller.loadState.value == LoadState.initial ||
+              controller.isLoading.value;
 
           return IndexedStack(
             index: isLoading ? 0 : 1,
@@ -172,6 +174,7 @@ class RitPage extends GetView<RitController> {
         }),
         bottomNavigationBar: Obx(() {
           if (controller.loadState.value == LoadState.initial ||
+              controller.isLoading.value ||
               (!AppRole.isCollector && controller.orders.isEmpty) ||
               controller.isArrive.value ||
               // controller.buttonRIT.value == EnumButtonRIT.saveChangePO ||
@@ -267,11 +270,11 @@ class RitPage extends GetView<RitController> {
           // controller.resetSortingSisipan();
           controller.pageController.jumpToPage(1);
         } else {
-          if (AppRole.isCollector) {
-            controller.saveOrderDummy();
-          } else {
-            controller.saveOrder();
-          }
+          // if (AppRole.isCollector) {
+          //   controller.saveOrderDummy();
+          // } else {
+          controller.saveOrder();
+          // }
         }
       },
     );
@@ -426,6 +429,10 @@ class RitPage extends GetView<RitController> {
         dataController.buttonINV.value = EnumButtonInv.takeOff;
 
         GetStorage().write('routeRit', dataController.isSelectedRoute.value);
+        GetStorage().write(
+          'notaRoute',
+          dataController.isSelectedNotaRoute.value,
+        );
         GetStorage().write('buttonINV', dataController.buttonINV.value.name);
 
         controller.homeController.getLocalRit();
