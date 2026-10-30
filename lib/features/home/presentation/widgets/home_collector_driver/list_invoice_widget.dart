@@ -9,6 +9,7 @@ import '../../../../../routes/app_pages.dart';
 import '../../../../../shared/custom/custom_card_inv.dart';
 import '../../../../../shared/custom/custom_search_field.dart';
 import '../../../../../utils/loading_custom.dart';
+import '../../../../../utils/maps_utils.dart';
 import '../../../../list_order/domain/entities/invoice_entity.dart';
 import '../../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
@@ -165,6 +166,16 @@ class SharedListInvView extends StatelessWidget {
           buttonINV: buttonINV.value,
           invEntity: invEntity,
           color: 'E0E0E0',
+          onTapMaps: () {
+            final address = invEntity.address;
+            // final dropAddress = order.dropAddress;
+
+            MapsUtils.openMaps(
+              address: address,
+              dropAddress: address,
+              dialogService: dialogService,
+            );
+          },
           onTap: () {
             if (buttonINV.value == EnumButtonInv.acceptINV) {
               onCheckboxChanged(index);
@@ -178,41 +189,38 @@ class SharedListInvView extends StatelessWidget {
               return;
             }
 
-            Get.toNamed(
-              Routes.ENDING_ORDER,
-              arguments: {
-                'invoice': invEntity.invoice,
-                'id_detail': invEntity.idDetail,
-                'id_piutang': invEntity.idPiutang,
-                'status_checker2': invEntity.checker2?.status ?? '',
-                'status_driver': invEntity.driver?.status ?? '',
-                'no_route': noRoute,
-                'nota_route': notaRoute,
-              },
-            );
+            // Get.toNamed(
+            //   Routes.ENDING_ORDER,
+            //   arguments: {
+            //     'invoice': invEntity.invoice,
+            //     'id_detail': invEntity.idDetail,
+            //     'id_piutang': invEntity.idPiutang,
+            //     'status_checker2': invEntity.checker2?.status ?? '',
+            //     'status_driver': invEntity.driver?.status ?? '',
+            //     'no_route': noRoute,
+            //     'nota_route': notaRoute,
+            //   },
+            // );
 
-            // if (routeStackService.contains(Routes.DETAIL_ORDER)) {
-            //   Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
-            // } else {
-            //   // dialogService.showErrorSnackbar(
-            //   //   'Invoice Dummy',
-            //   //   title: 'Warning!',
-            //   //   duration: 1,
-            //   // );
-
-            //   Get.toNamed(
-            //     Routes.DETAIL_ORDER,
-            //     arguments: {
-            //       'invoice': '01SL20200800085', // invEntity.invoice,
-            //       'routeFrom': 'listOrder',
-            //       'isDriverCollector': AppRole.isDriver,
-            //       // 'take_it_order': true,
-            //       // 'status_checker2': invEntity.checker2?.status ?? '',
-            //       // 'status_driver': transaction.driver?.status ?? '',
-            //       'status_po': 'ongoing',
-            //     },
-            //   );
-            // }
+            if (routeStackService.contains(Routes.DETAIL_ORDER)) {
+              Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
+            } else {
+              Get.toNamed(
+                Routes.DETAIL_ORDER,
+                arguments: {
+                  'invoice': invEntity.invoice, // '01SL20200800085',
+                  'routeFrom': 'listOrder',
+                  'isDriverCollector': false,
+                  'id_detail': invEntity.idDetail,
+                  'id_piutang': invEntity.idPiutang,
+                  'no_route': noRoute,
+                  'nota_route': notaRoute,
+                  'status_checker2': invEntity.checker2?.status ?? '',
+                  'status_driver': invEntity.driver?.status ?? '',
+                  'status_po': 'ongoing',
+                },
+              );
+            }
           },
         ),
       ),

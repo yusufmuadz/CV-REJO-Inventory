@@ -14,4 +14,8 @@ abstract class EndingOrderRemoteDataSource {
   Future<ResponseModelBasic> arriveAllItem(ParamsEndingOrder params);
   Future<ResponseModelBasic> arriveImageHandover(ParamsEndingOrder params);
   Future<ResponseModelBasic> arrivePaymentCustomer(ParamsEndingOrder params);
+
+  // Ending Order Collector
+  Future<ResponseModelBasic> firstArriveCollector(ParamsEndingOrder params);
+  Future<ResponseModelBasic> paymentCollector(ParamsEndingOrder params);
 }

@@ -21,4 +21,12 @@ abstract class EndingOrderRepository {
     ParamsEndingOrder params,
     EnumButtonEndingOrder statusButton,
   );
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> firstArriveCollector(
+    ParamsEndingOrder params,
+  );
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> paymentCollector(
+    ParamsEndingOrder params,
+  );
 }

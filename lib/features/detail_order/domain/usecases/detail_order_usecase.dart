@@ -11,6 +11,7 @@ import '../../../login/domain/entities/user_entity.dart';
 import '../../../scan_product/domain/entities/post_item_product_entity.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../entities/detail_order_entity.dart';
+import '../params/get_detail_param.dart';
 import '../repositories/detail_order_repository.dart';
 
 class DetailOrderUseCase {
@@ -18,8 +19,10 @@ class DetailOrderUseCase {
 
   DetailOrderUseCase(this.repository);
 
-  Future<ResultCustom<Failure, DetailOrderEntity>> call(String noInvoice) {
-    return repository.getListOrders(noInvoice);
+  Future<ResultCustom<Failure, DetailOrderEntity>> call(
+    ParamsGetDetail params,
+  ) {
+    return repository.getListOrders(params);
   }
 
   Future<ResultCustom<Failure, BasicEntity>> callPendingSO(

@@ -11,10 +11,11 @@ import '../../../scan_product/domain/entities/post_item_product_entity.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../entities/detail_order_entity.dart';
 import '../params/add_assistant_param.dart';
+import '../params/get_detail_param.dart';
 
 abstract class DetailOrderRepository {
   Future<ResultCustom<Failure, DetailOrderEntity>> getListOrders(
-    String noInvoice,
+    ParamsGetDetail params,
   );
 
   Future<ResultCustom<Failure, BasicEntity>> pendingSO(ParamsPendingSO params);

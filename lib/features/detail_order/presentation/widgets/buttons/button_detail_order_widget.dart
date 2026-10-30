@@ -95,6 +95,10 @@ class ButtonDetailOrderWidget {
             'driverExternal': controller.orderDetail.value.driverExternal,
             'mobilExternal': controller.orderDetail.value.mobilExternal,
             'isDriverCollector': controller.isDriverCollector.value,
+            'id_detail': controller.idDetail.value,
+            'id_piutang': controller.idPiutang.value,
+            'no_route': controller.noRoute.value,
+            'nota_route': controller.notaRoute.value,
           },
         );
       },

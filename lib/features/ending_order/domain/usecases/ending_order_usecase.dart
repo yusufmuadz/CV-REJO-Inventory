@@ -35,4 +35,16 @@ class EndingOrderUseCase {
   }) {
     return repository.arriveDriver(params, statusButton);
   }
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> callFirstArriveCollector({
+    required ParamsEndingOrder params,
+  }) {
+    return repository.firstArriveCollector(params);
+  }
+
+  Future<ResultCustom<Failure, EndingOrderEntity>> callPaymentCollector({
+    required ParamsEndingOrder params,
+  }) {
+    return repository.paymentCollector(params);
+  }
 }

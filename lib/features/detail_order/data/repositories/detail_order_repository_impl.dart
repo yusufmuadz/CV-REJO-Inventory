@@ -1,7 +1,5 @@
 import 'package:cv_rejo/core/result/result_custom.dart';
-import 'package:cv_rejo/features/detail_order/domain/entities/transportation_entity.dart';
 import 'package:cv_rejo/features/detail_order/domain/params/pending_so_param.dart';
-import 'package:cv_rejo/features/login/domain/entities/user_entity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../list_order/domain/entities/take_it_order_entity.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
@@ -10,6 +8,7 @@ import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/entities/basic_entity.dart';
 import '../../domain/entities/detail_order_entity.dart';
 import '../../domain/params/add_assistant_param.dart';
+import '../../domain/params/get_detail_param.dart';
 import '../../domain/repositories/detail_order_repository.dart';
 import '../datasource/detail_order_remote_datasource.dart';
 
@@ -20,10 +19,10 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
 
   @override
   Future<ResultCustom<Failure, DetailOrderEntity>> getListOrders(
-    String noInvoice,
+    ParamsGetDetail params,
   ) async {
     try {
-      final response = await dataSource.fetchTransaction(noInvoice);
+      final response = await dataSource.fetchTransaction(params);
 
       return Success(response.data!.toEntity(), '');
     } catch (e) {

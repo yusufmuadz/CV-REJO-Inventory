@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -318,6 +319,77 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
 
       final response = await dioClient.post(
         apiEndpoint,
+        data: formData,
+        contentType: Headers.multipartFormDataContentType,
+      );
+
+      // debugPrint('Data RIT Transaction Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelBasic> saveHandoverCollector(ParamsRit params) async {
+    try {
+      debugPrint('========== POST SAVE HANDOVER COLLECOT ==========');
+
+      final frontTruckImage = params.frontTruckImage;
+      final leftTruckImage = params.leftTruckImage;
+      final rightTruckImage = params.rightTruckImage;
+      final backTruckImage = params.backTruckImage;
+
+      final formData = FormData.fromMap({
+        'no_rute': params.routeRit,
+        'nota_rute': params.notaRoute,
+        'lat': params.lat,
+        'long': params.long,
+        'penerima_berkas': params.recipient,
+        'km': params.km,
+        'file_kilometer': await params.kmImage.multipart,
+        'file_dokumen': await MultipartHelper.fromNullableXFile(
+          params.travelDocImage,
+        ),
+        if (frontTruckImage?.path.isNotEmpty ?? false)
+          'file_depan': await MultipartHelper.fromNullableXFile(
+            frontTruckImage,
+          ),
+        if (leftTruckImage?.path.isNotEmpty ?? false)
+          'file_kiri': await MultipartHelper.fromNullableXFile(leftTruckImage),
+        if (rightTruckImage?.path.isNotEmpty ?? false)
+          'file_kanan': await MultipartHelper.fromNullableXFile(
+            rightTruckImage,
+          ),
+        if (backTruckImage?.path.isNotEmpty ?? false)
+          'file_belakang': await MultipartHelper.fromNullableXFile(
+            backTruckImage,
+          ),
+        if (params.fileBuktiBayar?.path.isNotEmpty ?? false)
+          'file_bukti': await MultipartHelper.fromNullableXFile(
+            params.fileBuktiBayar,
+          ),
+      });
+
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
+
+      final response = await dioClient.post(
+        ApiEndpoints.handoverCollector,
         data: formData,
         contentType: Headers.multipartFormDataContentType,
       );

@@ -39,6 +39,12 @@ class RitUseCase {
     return repository.postSaveRetur(params);
   }
 
+  Future<ResultCustom<Failure, RitEntity>> callSaveHandoverCollector(
+    ParamsRit params,
+  ) {
+    return repository.saveHandoverCollector(params);
+  }
+
   Future<ResultCustom<Failure, List<OrderEntity>>> callGetOrders(
     ParamsGetTransaction params,
   ) {

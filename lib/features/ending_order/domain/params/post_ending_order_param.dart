@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 
 class ParamsEndingOrder {
+  final bool? paymentStatus;
   final String? role;
   final String? invoice;
   final String? noRoute;
@@ -12,6 +13,7 @@ class ParamsEndingOrder {
   final String? long;
   final String? paymentMethod;
   final String? paymentNominal;
+  final String? paymentNoteCustomer;
   final String? statusTransportation;
   final String? driverExternal;
   final String? mobilExternal;
@@ -20,6 +22,7 @@ class ParamsEndingOrder {
   final List<XFile>? imagesAllItem;
   final List<XFile>? imagesTransportation;
   final List<XFile>? imagesInvoice;
+  final List<XFile>? imagesPayment;
   final ImagesDriverModel? imagesDriver;
 
   ParamsEndingOrder({
@@ -32,8 +35,10 @@ class ParamsEndingOrder {
     this.desc,
     this.lat,
     this.long,
+    this.paymentStatus,
     this.paymentMethod,
     this.paymentNominal,
+    this.paymentNoteCustomer,
     this.statusTransportation,
     this.driverExternal,
     this.mobilExternal,
@@ -42,6 +47,7 @@ class ParamsEndingOrder {
     this.imagesTransportation,
     this.imagesInvoice,
     this.imagesDriver,
+    this.imagesPayment,
     required this.statusChecker2,
   });
 }

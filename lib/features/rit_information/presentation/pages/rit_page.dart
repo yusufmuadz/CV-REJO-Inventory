@@ -75,7 +75,8 @@ class RitPage extends GetView<RitController> {
               label = 'Keberangkatan';
             }
 
-            if (controller.buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
+            if (controller.buttonRIT.value == EnumButtonRIT.buttonSaveDoc ||
+                controller.pageIndex.value == 2) {
               return Text(
                 'Sampai Kantor',
                 style: TextStyles.basicTextStyle(
@@ -124,6 +125,11 @@ class RitPage extends GetView<RitController> {
                   if (controller.invController.buttonINV.value ==
                       EnumButtonInv.acceptINV) {
                     controller.pageIndex.value = 3;
+                  } else if (controller.invController.buttonINV.value ==
+                      EnumButtonInv.buttonSaveDoc) {
+                    controller.pageIndex.value = 4;
+                    controller.invController.buttonINV.value =
+                        EnumButtonInv.saveTakeOff;
                   } else {
                     if (controller.pageIndex.value == 1) {
                       controller.pageIndex.value = 4;
@@ -365,7 +371,7 @@ class RitPage extends GetView<RitController> {
       color: const Color(0xFF2ED471),
       onPressed: () {
         if (AppRole.isCollector) {
-          controller.saveOrderDummy();
+          controller.saveHandoverCollector();
           return;
         }
         controller.saveOrder();
@@ -451,8 +457,8 @@ class RitPage extends GetView<RitController> {
       onPressed: () async {
         final dataController = controller.invController;
 
-        controller.dialogService.showComingSoonSnackbar();
-        return;
+        // controller.dialogService.showComingSoonSnackbar();
+        // return;
 
         dataController.buttonINV.value = EnumButtonInv.buttonSaveDoc;
 

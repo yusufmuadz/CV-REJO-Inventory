@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';
+import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../controllers/ending_order_controller.dart';
@@ -21,6 +22,7 @@ class EndingOrderView extends GetView<EndingOrderController> {
     return SafeArea(
       top: false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Foto & Keterangan'),
           elevation: 1,
@@ -76,7 +78,11 @@ class EndingOrderView extends GetView<EndingOrderController> {
 
           if (AppRole.isCollector ||
               (AppRole.isDriver && controller.isDriverCollector.value)) {
-            return CustomButton.bottomBarStyle(child: _buildButtonSave());
+            if (controller.statusButton.value == EnumButtonEndingOrder.savePO) {
+              return CustomButton.bottomBarStyle(child: _buildButtonSave());
+            }
+
+            return _buildButtonSavePaymentCollector(context: context);
           }
 
           return CustomButton.bottomBarStyle(child: _buildButtonSelect());
@@ -144,10 +150,106 @@ class EndingOrderView extends GetView<EndingOrderController> {
       title: 'Simpan',
       color: const Color(0xFF2ED471),
       onPressed: () {
-        controller.saveDummyCollector();
-        controller.resetInv();
-        // controller.saveOrder();
+        if (controller.statusButton.value ==
+            EnumButtonEndingOrder.saveCollectorInv) {
+          controller.savePaymentCollector();
+          return;
+        }
+        // controller.saveDummyCollector();
+        // controller.resetInv();
+        controller.saveArriveCollector();
       },
+    );
+  }
+
+  Widget _buildButtonSavePaymentCollector({required BuildContext context}) {
+    final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
+
+    return SafeArea(
+      top: false,
+      child: CustomButton.bottomBarStyle(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Visibility(
+              visible: !controller.statusPaymentInv.value,
+              child: AnimatedPadding(
+                duration: const Duration(milliseconds: 300),
+                padding: EdgeInsets.only(bottom: keyboardHeight),
+
+                child: _buildFieldNote(
+                  title: 'Note Khusus',
+                  textEditingController: controller.fieldController,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: keyboardHeight == 0,
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                width: Get.width,
+                child: _buildButtonSave(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFieldNote({
+    required String title,
+    required TextEditingController textEditingController,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(
+            text: title,
+            style: TextStyle(
+              color: Color(0xFF171717),
+              fontSize: 15,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: 0.48,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        SharedTextField(
+          // maxLines: 4,
+          controller: textEditingController,
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF171717),
+          ),
+          contentPadding: const EdgeInsets.all(12),
+          hintStyle: const TextStyle(
+            fontSize: 14,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF9FA2B4),
+          ),
+          hintText: 'Note khusus untuk pengingat penagihan jika diperlukan',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+        ),
+      ],
     );
   }
 }

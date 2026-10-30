@@ -62,8 +62,12 @@ class ApiEndpoints {
   static const String saveDataCollector = "kolektor/submitkeberangkatan";
   static const String arriveAtOfficeCollector = "kolektor/submitkepulangan";
   static const String arriveCollector = "kolektor/submittiba";
+  static const String paymentCollector = "kolektor/submitpelunasan";
+  static const String handoverCollector = "kolektor/submitkepulangan";
+  static String getDetailTransactionCollector(String? idDetail) =>
+      "kolektor/detailtransaksi?id_detail=$idDetail";
 
-  static String getDetailTransaction(String invoice) =>
+  static String getDetailTransaction(String? invoice) =>
       "transaction/get?invoice=$invoice";
   static String getScanProduct(String role) => "$role/scan";
   static String getTransportations(String search) =>

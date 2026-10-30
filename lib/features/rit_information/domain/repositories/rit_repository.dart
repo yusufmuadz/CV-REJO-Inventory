@@ -36,6 +36,10 @@ abstract class RitRepository {
   Future<ResultCustom<Failure, List<OrderEntity>>> getInvCollector(
     ParamsGetCollectorTransaction params,
   );
+
+  Future<ResultCustom<Failure, RitEntity>> saveHandoverCollector(
+    ParamsRit params,
+  );
   // Future<ResultCustom<Failure, RitEntity>> postArriveOfficeDriver(
   //   ParamsRit params,
   // );

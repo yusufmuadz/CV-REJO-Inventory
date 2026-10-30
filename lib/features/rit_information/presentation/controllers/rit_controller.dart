@@ -221,7 +221,19 @@ class RitController extends GetxController {
 
     // _getOrder();
 
-    onRefreshTransaction();
+    if (AppRole.isCollector) {
+      if (invController.buttonINV.value == EnumButtonInv.acceptINV) {
+        invController.getRouteCollector(isRefresh: true);
+      } else {
+        invController.getInvCollector(
+          isRefresh: true,
+          noRoute: routeRit.value,
+          noNotaRoute: notaRoute.value,
+        );
+      }
+    } else {
+      onRefreshTransaction();
+    }
   }
 
   void onRefreshTransaction() {
@@ -421,6 +433,129 @@ class RitController extends GetxController {
             description: 'Berhasil Menyimpan Data',
             barrierDismissible: false,
             onPressed: () {
+              mediaFileList.clear();
+              mediaFileListKM.clear();
+              mediaFileListTangki.clear();
+              mediaFileListSJ.clear();
+              mediaFileListTransportMoney.clear();
+              mediaFileFrontTransport.value = XFile('');
+              mediaFileRightTransport.value = XFile('');
+              mediaFileBackTransport.value = XFile('');
+              mediaFileLeftTransport.value = XFile('');
+              kmController.clear();
+              mediaFileListInvoice.clear();
+
+              if (invController.buttonINV.value ==
+                  EnumButtonInv.buttonSaveDoc) {
+                mediaFileRecipientMoneyRit.clear();
+                mediaFileRecipientBox.clear();
+                _arriveAtOffice();
+                return;
+              }
+
+              if (Get.isDialogOpen == true) Get.back();
+
+              if (AppRole.isCollector) {
+                invController.buttonINV.value = EnumButtonInv.saveTakeOff;
+
+                GetStorage().write(
+                  'buttonINV',
+                  invController.buttonINV.value.name,
+                );
+
+                pageIndex.value = 4;
+                pageController.jumpToPage(
+                  4,
+                  // duration: const Duration(milliseconds: 300),
+                  // curve: Curves.easeInOut,
+                );
+                return;
+              }
+
+              buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
+
+              pageIndex.value = 0;
+              pageController.jumpToPage(
+                0,
+                // duration: const Duration(milliseconds: 300),
+                // curve: Curves.easeInOut,
+              );
+              GetStorage().write('buttonRIT', buttonRIT.value.name);
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      dialogService.showError('Failed', '$e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> saveHandoverCollector() async {
+    if (isLoading.value) return;
+
+    if (_getEmptyInputErrorMessage() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyInputErrorMessage() ??
+            'Silakan lengkapi data terlebih dahulu!',
+      );
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      String lat = '';
+      String long = '';
+
+      final position = await locationService.getLatestLocationLightweight();
+
+      lat = position.latitude.toString();
+      long = position.longitude.toString();
+
+      if (lat.isEmpty || long.isEmpty) {
+        return;
+      }
+
+      final result = await ritUseCase.callSaveHandoverCollector(
+        ParamsRit(
+          isArriveOffice: true,
+          rit: isDistrictSelected.value,
+          dateRit: '',
+          routeRit: routeRit.value,
+          notaRoute: notaRoute.value,
+          lat: lat,
+          long: long,
+          recipient: recipientName.text,
+          km: kmController.text,
+          kmImage: mediaFileListKM.isEmpty ? XFile('') : mediaFileListKM[0],
+          frontTruckImage: mediaFileFrontTransport.value,
+          rightTruckImage: mediaFileRightTransport.value,
+          backTruckImage: mediaFileBackTransport.value,
+          leftTruckImage: mediaFileLeftTransport.value,
+          travelDocImage: mediaFileListSJ.isEmpty
+              ? XFile('')
+              : mediaFileListSJ[0],
+          fileBuktiBayar: mediaFileListTransportMoney.isEmpty
+              ? XFile('')
+              : mediaFileRecipientBox[0],
+        ),
+      );
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Save Order: $data');
+          dialogService.showSuccessDefaultDialog(
+            title: 'Success',
+            message: 'Berhasil Menyimpan Data',
+            titleButton1: 'OK',
+            onPressed1: () {
               mediaFileList.clear();
               mediaFileListKM.clear();
               mediaFileListTangki.clear();
@@ -633,16 +768,16 @@ class RitController extends GetxController {
     }
 
     // 2. Cek Foto Transportasi (4 sisi)
-    if (mediaFileFrontTransport.value.path.isEmpty) {
+    if (!AppRole.isCollector && mediaFileFrontTransport.value.path.isEmpty) {
       return 'Foto Armada bagian DEPAN belum diisi!';
     }
-    if (mediaFileRightTransport.value.path.isEmpty) {
+    if (!AppRole.isCollector && mediaFileRightTransport.value.path.isEmpty) {
       return 'Foto Armada bagian KANAN belum diisi!';
     }
-    if (mediaFileBackTransport.value.path.isEmpty) {
+    if (!AppRole.isCollector && mediaFileBackTransport.value.path.isEmpty) {
       return 'Foto Armada bagian BELAKANG belum diisi!';
     }
-    if (mediaFileLeftTransport.value.path.isEmpty) {
+    if (!AppRole.isCollector && mediaFileLeftTransport.value.path.isEmpty) {
       return 'Foto Armada bagian KIRI belum diisi!';
     }
 
@@ -706,6 +841,8 @@ class RitController extends GetxController {
     GetStorage().remove('isRitToday');
     GetStorage().remove('buttonRIT');
     GetStorage().remove('buttonEndingDriver');
+    GetStorage().remove('routeRit');
+    GetStorage().remove('notaRoute');
 
     buttonRIT.value = EnumButtonRIT.acceptRIT;
 

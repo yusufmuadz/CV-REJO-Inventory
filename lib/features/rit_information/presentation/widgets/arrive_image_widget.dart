@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
@@ -198,7 +199,12 @@ class ArriveImageWidget {
                       isTransportation: isTransportation,
                     ),
                     const SizedBox(width: 10),
-                    Expanded(child: CustomImage().buildTitle(title: title)),
+                    Expanded(
+                      child: CustomImage().buildTitle(
+                        title: title,
+                        isNotOptional: AppRole.isCollector && !isTransportation,
+                      ),
+                    ),
                     Visibility(
                       visible: isTransportation,
                       child: Icon(

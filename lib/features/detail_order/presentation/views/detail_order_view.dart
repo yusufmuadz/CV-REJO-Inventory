@@ -72,7 +72,9 @@ class DetailOrderView extends GetView<DetailOrderController> {
             );
           }),
           bottomNavigationBar: Obx(() {
-            if ((controller.orderDetail.value.orderDetails?.isEmpty ?? true) ||
+            if ((!AppRole.isCollector &&
+                    (controller.orderDetail.value.orderDetails?.isEmpty ??
+                        true)) ||
                 controller.isFromHistory.value ||
                 controller.isTracking.value ||
                 controller.isSisipan.value ||

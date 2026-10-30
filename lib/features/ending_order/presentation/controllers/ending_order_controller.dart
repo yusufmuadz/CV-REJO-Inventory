@@ -62,7 +62,7 @@ class EndingOrderController extends GetxController {
   final infoInvoiceList = ['Lunas', 'Belum Lunas'];
 
   final selectedPaymentType = 'Tunai'.obs;
-  final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek', 'Debit'];
+  final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek'];
 
   final itemPO = <ItemOrderModel>[].obs;
 
@@ -81,6 +81,10 @@ class EndingOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (!Get.isRegistered<RouteStackService>()) {
+      Get.lazyPut(() => RouteStackService());
+    }
+
     routeStackService = Get.find<RouteStackService>();
 
     final args = Get.arguments;
@@ -517,15 +521,7 @@ class EndingOrderController extends GetxController {
   Future<void> saveArriveDriver() async {
     if (isLoading.value) return;
 
-    if (AppRole.isCollector && _getEmptyMessageInv() != null) {
-      dialogService.showErrorSnackbar(
-        title: 'Gagal!',
-        _getEmptyMessageInv() ?? '',
-      );
-      return;
-    }
-
-    if (AppRole.isDriver && _emptyDriverPO()) {
+    if (_emptyDriverPO()) {
       dialogService.showErrorDefaultSnackbar(
         context: Get.context!,
         title: 'Gagal!',
@@ -552,11 +548,6 @@ class EndingOrderController extends GetxController {
         statusButton: statusButton.value,
         params: ParamsEndingOrder(
           invoice: noInvoice.value,
-          noRoute: noRoute.value,
-          notaRoute: notaRoute.value,
-          idDetail: idDetail.value,
-          idPiutang: idPiutang.value,
-          // desc: fieldController.text,
           lat: lat,
           long: long,
           paymentMethod: selectedPaymentType.value,
@@ -577,11 +568,7 @@ class EndingOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
           if (statusButton.value == EnumButtonEndingOrder.savePO) {
-            if (AppRole.isCollector) {
-              statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
-            } else {
-              statusButton.value = EnumButtonEndingOrder.saveDriverPO;
-            }
+            statusButton.value = EnumButtonEndingOrder.saveDriverPO;
             mediaFileList.clear();
             mediaFileFrontMerchant.clear();
             GetStorage().write('buttonEndingDriver', statusButton.value.name);
@@ -623,17 +610,6 @@ class EndingOrderController extends GetxController {
                   },
                 );
               }
-
-              // Get.offAllNamed(
-              //   Routes.RIT_INFORMATION,
-              //   arguments: {
-              //     'city': rit.value,
-              //     'colorRit': colorRit.value,
-              //     'tanggalRit': dateRit.value,
-              //     'routeFrom': 'endingOrder',
-              //     'isRitToday': isRitToday.value,
-              //   },
-              // );
             },
           );
 
@@ -648,6 +624,171 @@ class EndingOrderController extends GetxController {
           }
           // loadState.value = LoadState.error;
           dialogService.showError('Failed', pesan);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> saveArriveCollector() async {
+    if (isLoading.value) return;
+
+    if (_getEmptyMessageInv() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyMessageInv() ?? '',
+      );
+      return;
+    }
+    isLoading.value = true;
+
+    try {
+      String lat = '';
+      String long = '';
+
+      final position = await locationService.getLatestLocationLightweight();
+
+      lat = position.latitude.toString();
+      long = position.longitude.toString();
+
+      if (lat.isEmpty || long.isEmpty) {
+        return;
+      }
+
+      final result = await endingOrderUseCase.callFirstArriveCollector(
+        params: ParamsEndingOrder(
+          invoice: noInvoice.value,
+          noRoute: noRoute.value,
+          notaRoute: notaRoute.value,
+          idDetail: idDetail.value,
+          idPiutang: idPiutang.value,
+          lat: lat,
+          long: long,
+          statusChecker2: statusChecker2.value,
+          images: mediaFileList,
+          imagesDriver: ImagesDriverModel(
+            imagesMerchant: mediaFileFrontMerchant,
+          ),
+        ),
+      );
+
+      switch (result) {
+        case Success():
+          statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
+          mediaFileList.clear();
+          mediaFileFrontMerchant.clear();
+          resetInv();
+          GetStorage().write('buttonEndingDriver', statusButton.value.name);
+          dialogService.showSuccessSnackbar('Berhasil Menyimpan Data!');
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> savePaymentCollector() async {
+    if (isLoading.value) return;
+
+    if (_getEmptyMessageInv() != null) {
+      dialogService.showErrorSnackbar(
+        title: 'Gagal!',
+        _getEmptyMessageInv() ?? '',
+      );
+      return;
+    }
+    isLoading.value = true;
+
+    try {
+      String lat = '';
+      String long = '';
+
+      final position = await locationService.getLatestLocationLightweight();
+
+      lat = position.latitude.toString();
+      long = position.longitude.toString();
+
+      if (lat.isEmpty || long.isEmpty) {
+        return;
+      }
+
+      final result = await endingOrderUseCase.callPaymentCollector(
+        params: ParamsEndingOrder(
+          paymentStatus: statusPaymentInv.value,
+          invoice: noInvoice.value,
+          noRoute: noRoute.value,
+          notaRoute: notaRoute.value,
+          idDetail: idDetail.value,
+          idPiutang: idPiutang.value,
+          lat: lat,
+          long: long,
+          statusChecker2: statusChecker2.value,
+          // JIKA ADA PEMBAYARAN
+          paymentMethod: selectedPaymentType.value,
+          paymentNominal: fieldController.text.replaceAll(',', ''),
+          imagesPayment: mediaFileListPaymentType,
+          // JIKA TIDAK ADA PEMBAYARAN
+          paymentNoteCustomer: fieldController.text,
+          desc: fieldReasonInvController.text,
+        ),
+      );
+
+      switch (result) {
+        case Success():
+          dialogService.showSuccessDefaultDialog(
+            title: 'Success',
+            message: 'Berhasil Menyimpan Pesanan',
+            titleButton1: 'Oke',
+            onPressed1: () {
+              GetStorage().remove('noInvoice');
+              GetStorage().remove('status_driver');
+              GetStorage().remove('isTakeToTheRoad');
+              GetStorage().remove('buttonEndingDriver');
+
+              mediaFileList.clear();
+              mediaFileListAllItem.clear();
+              mediaFileListInfoInvoice.clear();
+              mediaFileListPaymentType.clear();
+
+              if (Get.isRegistered<RitController>()) {
+                ritController.afterEnding();
+              }
+
+              if (routeStackService.contains(Routes.RIT_INFORMATION)) {
+                Get.until(
+                  (route) => route.settings.name == Routes.RIT_INFORMATION,
+                );
+              } else {
+                Get.offAllNamed(
+                  Routes.RIT_INFORMATION,
+                  arguments: {
+                    'city': rit.value,
+                    'colorRit': colorRit.value,
+                    'tanggalRit': dateRit.value,
+                    'routeFrom': 'endingOrder',
+                    'isRitToday': isRitToday.value,
+                  },
+                );
+              }
+            },
+          );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
@@ -760,12 +901,12 @@ class EndingOrderController extends GetxController {
           return 'Masukkan nominal pembayaran!';
         }
 
-        if (mediaFileList.isEmpty) {
+        if (mediaFileListPaymentType.isEmpty) {
           return 'Foto Bukti pembayaran belum diupload!';
         }
       } else {
-        if (fieldController.text.isEmpty) {
-          return 'Masukkan keterangan khusus terlebih dahulu!';
+        if (fieldReasonInvController.text.isEmpty) {
+          return 'Masukkan keterangan tambahan terlebih dahulu!';
         }
       }
     }

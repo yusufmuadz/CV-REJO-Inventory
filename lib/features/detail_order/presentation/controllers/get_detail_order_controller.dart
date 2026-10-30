@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../domain/entities/detail_order_entity.dart';
+import '../../domain/params/get_detail_param.dart';
 import '../../domain/usecases/detail_order_usecase.dart';
 import 'detail_order_controller.dart';
 
@@ -13,13 +14,15 @@ class GetDetailOrderController extends GetxController {
 
   DetailOrderController get masterCtrlr => Get.find<DetailOrderController>();
 
-  Future<void> getDetailOrder() async {
+  Future<void> getDetailOrder({String? noInvoice, String? idDetail}) async {
     if (masterCtrlr.isLoading.value) return;
     masterCtrlr.isLoading.value = true;
 
     try {
       // final result = await detailOrderUseCase.call('01SL20260800566');
-      final result = await detailOrderUseCase.call(masterCtrlr.noInvoice.value);
+      final result = await detailOrderUseCase.call(
+        ParamsGetDetail(invoice: noInvoice, idDetail: idDetail),
+      );
 
       switch (result) {
         case Success(:final data):

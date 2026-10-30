@@ -143,4 +143,38 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       return ErrorResult(message: e.toString());
     }
   }
+
+  @override
+  Future<ResultCustom<Failure, EndingOrderEntity>> firstArriveCollector(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      final res = await dataSource.firstArriveCollector(params);
+
+      if (res.status == false || res.error != null) {
+        return ErrorResult(message: res.error!);
+      }
+
+      return Success(EndingOrderEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, EndingOrderEntity>> paymentCollector(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      final res = await dataSource.paymentCollector(params);
+
+      if (res.status == false || res.error != null) {
+        return ErrorResult(message: res.error!);
+      }
+
+      return Success(EndingOrderEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
 }

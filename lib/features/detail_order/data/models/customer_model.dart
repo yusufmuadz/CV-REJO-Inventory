@@ -20,15 +20,25 @@ class CustomerModel {
   });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
+    String getData({required String value}) {
+      String? data = json[value];
+
+      if (json['content'] != null) {
+        data ??= json['content'][value];
+      }
+
+      return data ?? '-';
+    }
+
     return CustomerModel(
-      username: json['username'] ?? '-',
-      name: json['name'] ?? '-',
-      phone: json['phone'] ?? '-',
-      district: json['district'] ?? '-',
-      address: json['address'] ?? '-',
-      dropAddress: json['drop_address'] ?? '-',
-      latitude: json['lat'] ?? '-',
-      longitude: json['lng'] ?? '-',
+      username: getData(value: 'username'),
+      name: getData(value: 'name'),
+      phone: getData(value: 'phone'),
+      district: getData(value: 'district'),
+      address: getData(value: 'address'),
+      dropAddress: getData(value: 'drop_address'),
+      latitude: getData(value: 'lat'),
+      longitude: getData(value: 'long'),
     );
   }
 }

@@ -67,6 +67,12 @@ class DetailOrderController extends GetxController {
   late final AddProductOrderController addProductOrderController;
   late final ListOrderController listOrderController;
 
+  // ========== COLLECTOR ==========
+  final idDetail = ''.obs;
+  final idPiutang = ''.obs;
+  final noRoute = ''.obs;
+  final notaRoute = ''.obs;
+
   final orderDetail = DetailOrderEntity(
     invoice: '',
     orderNo: '',
@@ -105,6 +111,12 @@ class DetailOrderController extends GetxController {
       isDriverCollector.value = args['isDriverCollector'] ?? false;
       isSisipan.value = args['isSisipan'] ?? false;
       // statusDriver.value = 'completed';
+
+      // ========== COLLECTOR ==========
+      idDetail.value = args['id_detail'] ?? '';
+      idPiutang.value = args['id_piutang'] ?? '';
+      noRoute.value = args['no_route'] ?? '';
+      notaRoute.value = args['nota_route'] ?? '';
 
       if (AppRole.isDriver && !isDriverCollector.value) {
         if (statusDriver.value == 'ongoing') {
@@ -149,7 +161,10 @@ class DetailOrderController extends GetxController {
   }
 
   Future<void> _getDetailOrder() async {
-    getDetailOrderController.getDetailOrder();
+    getDetailOrderController.getDetailOrder(
+      noInvoice: noInvoice.value,
+      idDetail: idDetail.value,
+    );
   }
 
   void selectedProduct(int index) async {
@@ -300,10 +315,10 @@ class DetailOrderController extends GetxController {
   void onTapMaps() async {
     final customer = orderDetail.value.customer;
 
-    final latitude = customer.latitude;
-    final longitude = customer.longitude;
-    final address = customer.address;
-    final dropAddress = customer.dropAddress;
+    final latitude = customer?.latitude;
+    final longitude = customer?.longitude;
+    final address = customer?.address ?? orderDetail.value.dropAddress;
+    final dropAddress = customer?.dropAddress ?? orderDetail.value.dropAddress;
 
     MapsUtils.openMaps(
       latitude: latitude,

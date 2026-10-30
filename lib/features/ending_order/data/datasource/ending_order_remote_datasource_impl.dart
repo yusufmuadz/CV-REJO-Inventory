@@ -330,17 +330,139 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
 
       String apiUrl = ApiEndpoints.arriveFirstCustomer;
 
-      if (AppRole.isCollector) {
-        apiUrl = ApiEndpoints.arriveCollector;
-      }
-
       debugPrint(apiUrl);
       debugPrint(formData.fields.toString());
       debugPrint(formData.files.toString());
 
-      throw ServerException(message: 'Test Post', statusCode: 500);
+      // throw ServerException(message: 'Test Post', statusCode: 500);
 
       final response = await dioClient.post(apiUrl, data: formData);
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelBasic> firstArriveCollector(
+    ParamsEndingOrder params,
+  ) async {
+    try {
+      final imagesTransportation = params.images ?? [];
+      final imagesMerchant = params.imagesDriver?.imagesMerchant ?? [];
+
+      final formData = FormData.fromMap({
+        'no_rute': params.noRoute,
+        'nota_rute': params.notaRoute,
+        'pdrp_id': params.idDetail,
+        'id_transaksi': params.invoice,
+        'id_piutang': params.idPiutang,
+        'lat': params.lat,
+        'long': params.long,
+        if (imagesTransportation.isNotEmpty)
+          'file_toko': await MultipartFile.fromFile(
+            imagesTransportation[0].path,
+            filename: 'file_toko.jpg',
+          ),
+        if (imagesMerchant.isNotEmpty)
+          'file_tagihan': await MultipartFile.fromFile(
+            imagesMerchant[0].path,
+            filename: 'file_tagihan.jpg',
+          ),
+      });
+
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
+
+      final response = await dioClient.post(
+        ApiEndpoints.arriveCollector,
+        data: formData,
+      );
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelBasic> paymentCollector(ParamsEndingOrder params) async {
+    try {
+      final paymentStatus = params.paymentStatus ?? false;
+      final imagesPayment = params.imagesPayment ?? [];
+
+      final formData = FormData.fromMap({
+        'status_pembayaran': paymentStatus,
+        'no_rute': params.noRoute,
+        'nota_rute': params.notaRoute,
+        'pdrp_id': params.idDetail,
+        'id_transaksi': params.invoice,
+        'id_piutang': params.idPiutang,
+        'lat': params.lat,
+        'long': params.long,
+      });
+
+      if (paymentStatus) {
+        formData.fields.addAll([
+          MapEntry('jenis_pembayaran', params.paymentMethod ?? ''),
+          MapEntry('nominal', params.paymentNominal ?? ''),
+        ]);
+        if (imagesPayment.isNotEmpty) {
+          formData.files.addAll([
+            MapEntry(
+              'file_bukti',
+              await MultipartFile.fromFile(
+                imagesPayment[0].path,
+                filename: 'file_bukti.jpg',
+              ),
+            ),
+          ]);
+        }
+      } else {
+        formData.fields.addAll([
+          MapEntry('catatan_khusus', params.desc ?? ''),
+          MapEntry('catatan_kustomer', params.paymentNoteCustomer ?? ''),
+        ]);
+      }
+
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
+
+      // throw ServerException(message: 'Test Post', statusCode: 500);
+
+      final response = await dioClient.post(
+        ApiEndpoints.paymentCollector,
+        data: formData,
+      );
 
       // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
 

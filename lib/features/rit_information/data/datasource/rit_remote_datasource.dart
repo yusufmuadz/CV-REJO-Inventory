@@ -23,4 +23,7 @@ abstract class RitRemoteDataSource {
   Future<ResponseModelGetRouteCollector> getRouteCollector();
   Future<ResponseModelGetTransactionAll> getInvCollector(ParamsGetCollectorTransaction params);
   // Future<ResponseModelBasic> postArriveOfficeDriver(ParamsRit params);
+
+  // COLLECTOR
+  Future<ResponseModelBasic> saveHandoverCollector(ParamsRit params);
 }

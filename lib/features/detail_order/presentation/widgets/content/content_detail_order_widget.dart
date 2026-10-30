@@ -34,8 +34,10 @@ class ContentDetailOrderWidget extends StatelessWidget {
           ),
         ),
         _buildBody(
-          title: 'ID Transaksi',
-          value: AppRole.isDriver && !controller.isSisipan.value
+          title: AppRole.isCollector ? 'NO. INVOICE' : 'ID Transaksi',
+          value:
+              (AppRole.isDriver && !controller.isSisipan.value) ||
+                  AppRole.isCollector
               ? controller.orderDetail.value.suratJalan
               : controller.orderDetail.value.orderNo,
         ),
@@ -50,29 +52,16 @@ class ContentDetailOrderWidget extends StatelessWidget {
             value: controller.orderDetail.value.jenisArmada ?? '-',
           ),
         ),
-        // Visibility(
-        //   visible:
-        //       AppRole.isChecker2 &&
-        //       controller.orderDetail.value.jenisArmada!.toLowerCase() ==
-        //           'external',
-        //   child: Container(
-        //     margin: const EdgeInsets.only(top: 10, right: 16, left: 16),
-        //     child: Text(
-        //       '*Jika ada perubahan dari External ke Internal, silakan hubungi Admin untuk informasi lebih lanjut',
-        //       style: TextStyles.basicTextStyle(
-        //         fontSize: 10,
-        //         fontWeight: FontWeight.w500,
-        //         fontStyle: FontStyle.italic,
-        //         color: Colors.red,
-        //       ),
-        //     ),
-        //   ),
-        // ),
         _buildBoxStyle(
           vertical: 15,
           child: ContentInfoCustomerWidget(controller: controller),
         ),
-        _buildBoxStyle(child: ContentInfoOrderWidget(controller: controller)),
+        Visibility(
+          visible: !AppRole.isCollector,
+          child: _buildBoxStyle(
+            child: ContentInfoOrderWidget(controller: controller),
+          ),
+        ),
         Visibility(
           visible: controller.isFromHistory.value,
           child: _buildPreviewImage(detailOrder: controller.orderDetail.value),

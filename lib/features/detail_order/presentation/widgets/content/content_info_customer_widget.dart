@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
+import '../../../../../utils/thousand_formatter.dart';
 import '../../controllers/detail_order_controller.dart';
 
 class ContentInfoCustomerWidget extends StatelessWidget {
@@ -12,16 +14,25 @@ class ContentInfoCustomerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final namePenerima = controller.orderDetail.value.customer.name;
-    final phone = controller.orderDetail.value.customer.phone;
-    final tanggalBatas = controller.orderDetail.value.date.delivery;
-    final district = controller.orderDetail.value.customer.district;
-    final address = controller.orderDetail.value.customer.address;
-    final dropAddress = controller.orderDetail.value.customer.dropAddress;
+    final orderDetail = controller.orderDetail.value;
+    String tanggalDetail = '-';
+
+    final namePenerima =
+        orderDetail.customer?.name ?? orderDetail.customerName ?? '-';
+    final phone = orderDetail.customer?.phone ?? orderDetail.noTelp ?? '-';
+    final district = orderDetail.customer?.district ?? '-';
+    final address = orderDetail.customer?.address ?? '-';
+    final dropAddress =
+        orderDetail.customer?.dropAddress ?? orderDetail.dropAddress ?? '-';
+    final totalPiutang = orderDetail.totalPiutang ?? '-';
+    final sisaPiutang = orderDetail.sisaPiutang ?? '-';
     final isStatusDriver = controller.statusDriver.value == 'completed';
     final doneByPO = controller.doneByPO.value;
-    final route = controller.orderDetail.value.route;
+    final route = orderDetail.route;
     final isSisipan = controller.isSisipan.value;
+
+    tanggalDetail =
+        orderDetail.date?.delivery ?? orderDetail.tanggalTransaksi ?? '-';
 
     final isDriver =
         (AppRole.isDriver && isStatusDriver) ||
@@ -56,8 +67,12 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           ),
         ),
         _buildInfoContent(
-          title: 'Tanggal Pesanan Masuk',
-          value: tanggalBatas,
+          title: AppRole.isCollector
+              ? 'Tanggal Invoice'
+              : 'Tanggal Pesanan Masuk',
+          value: tanggalDetail != '-' && tanggalDetail.isNotEmpty && AppRole.isCollector
+              ? DateFormat('dd MMMM yyyy').format(DateTime.parse(tanggalDetail))
+              : tanggalDetail,
           icon: Icons.calendar_month_outlined,
         ),
         _buildInfoContent(
@@ -80,7 +95,29 @@ class ContentInfoCustomerWidget extends StatelessWidget {
           title: 'Catatan',
           value: '-',
           icon: Icons.description_outlined,
-          mgBottom: 0,
+          mgBottom: AppRole.isCollector ? 16 : 0,
+        ),
+        Visibility(
+          visible: AppRole.isCollector,
+          child: _buildInfoContent(
+            title: 'Piutang',
+            value: totalPiutang != '-'
+                ? 'Rp. ${formatNumber(int.parse(totalPiutang))}'
+                : totalPiutang,
+            icon: Icons.paid_outlined,
+            mgBottom: 16,
+          ),
+        ),
+        Visibility(
+          visible: AppRole.isCollector,
+          child: _buildInfoContent(
+            title: 'Sisa Piutang',
+            value: sisaPiutang != '-'
+                ? 'Rp. ${formatNumber(int.parse(sisaPiutang))}'
+                : sisaPiutang,
+            icon: Icons.paid_outlined,
+            mgBottom: 0,
+          ),
         ),
       ],
     );

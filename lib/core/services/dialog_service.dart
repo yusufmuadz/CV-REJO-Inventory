@@ -228,9 +228,9 @@ class DialogService {
     return showDialogBox(title: 'Success', description: message);
   }
 
-  Future<void> showSuccessDefaultDialog(
-    String title,
-    String message, {
+  Future<void> showSuccessDefaultDialog({
+    required String title,
+    required String message,
     bool singleButton = true,
     String titleButton1 = 'Kembali',
     Color color1 = Colors.red,

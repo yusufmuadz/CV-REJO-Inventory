@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
+import '../../../list_order/presentation/controllers/enums/button_inv_enum.dart';
 import '../controllers/rit_controller.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../widgets/arrive_image_widget.dart';
@@ -37,6 +38,7 @@ class ArriveAtOffice extends StatelessWidget {
           },
         ),
         const SizedBox(height: 10),
+        _buildInputImageBox(isShow: AppRole.isCollector),
         ArriveImageWidget().buildContentImageArrive(
           title: 'KM kendaraan',
           mediaFileList: controller.mediaFileListKM,
@@ -65,7 +67,12 @@ class ArriveAtOffice extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         CustomImage().buildContentImage(
-          title: 'Invoice/Surat Jalan',
+          title:
+              AppRole.isCollector &&
+                  controller.invController.buttonINV.value ==
+                      EnumButtonInv.acceptINV
+              ? 'Semua Invoice/Surat Jalan'
+              : 'Invoice/Surat Jalan',
           mediaFileList: controller.mediaFileListSJ,
         ),
         const SizedBox(height: 10),
@@ -84,12 +91,21 @@ class ArriveAtOffice extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        CustomImage().buildContentImage(
+        _buildInputImageBox(isShow: AppRole.isDriver),
+      ],
+    );
+  }
+
+  Widget _buildInputImageBox({required bool isShow}) {
+    return Visibility(
+      visible: isShow,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        child: CustomImage().buildContentImage(
           title: 'Kotak Berkas',
           mediaFileList: controller.mediaFileRecipientBox,
         ),
-        const SizedBox(height: 10),
-      ],
+      ),
     );
   }
 }

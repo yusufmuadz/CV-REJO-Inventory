@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../list_order/data/models/response_model_take_it_transaction.dart';
@@ -12,6 +13,7 @@ import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../scan_product/data/models/response_model_post_item_product.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/params/add_assistant_param.dart';
+import '../../domain/params/get_detail_param.dart';
 import '../../domain/params/pending_so_param.dart';
 import 'detail_order_remote_datasource.dart';
 
@@ -21,11 +23,15 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   DetailOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelDetailOrder> fetchTransaction(String noInvoice) async {
+  Future<ResponseModelDetailOrder> fetchTransaction(ParamsGetDetail params) async {
     try {
-      final response = await dioClient.get(
-        ApiEndpoints.getDetailTransaction(noInvoice),
-      );
+      String apiUrl = ApiEndpoints.getDetailTransaction(params.invoice);
+
+      if (AppRole.isCollector) {
+        apiUrl = ApiEndpoints.getDetailTransactionCollector(params.idDetail);
+      }
+
+      final response = await dioClient.get(apiUrl);
 
       // debugPrint('Data Detail Order Remote DataSource: ${response.data}');
 

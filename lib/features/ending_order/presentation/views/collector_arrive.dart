@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 
+import '../../../../core/theme/text_styles.dart';
 import '../../../../shared/text_field/textfield_shared.dart';
 import '../../../../shared/images/custom_image.dart';
 import '../../../../utils/thousand_formatter.dart';
@@ -131,14 +132,14 @@ class CollectorArrive extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // _buildFieldNote(
+          //   isOptional: true,
+          //   title: 'Note Khusus',
+          //   textEditingController: controller.fieldController,
+          // ),
+          // const SizedBox(height: 15),
           _buildFieldNote(
-            title: 'Note Khusus*',
-            textEditingController: controller.fieldController,
-          ),
-          const SizedBox(height: 15),
-          _buildFieldNote(
-            isOptional: true,
-            title: 'Keterangan Tambahan',
+            title: 'Keterangan Tambahan*',
             textEditingController: controller.fieldReasonInvController,
           ),
         ],
@@ -202,9 +203,23 @@ class CollectorArrive extends StatelessWidget {
             keyboardType: TextInputType.number,
             hintText: 'Masukkan nominal',
             inputFormatters: [ThousandsSeparatorInputFormatter()],
-            prefixIcon: Icon(
-              CupertinoIcons.money_dollar,
-              color: const Color(0xFFfa913c),
+            textAlignVertical: TextAlignVertical.center,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 0,
+            ),
+            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              // alignment: AlignmentGeometry.center,
+              child: Text(
+                'Rp',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFfa913c),
+                ),
+              ),
             ),
             validator: (String? p1) {
               if (p1 == null || p1.isEmpty) {
@@ -304,32 +319,36 @@ class CollectorArrive extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        TextField(
+        SharedTextField(
           maxLines: 4,
           controller: textEditingController,
-          style: const TextStyle(
-            color: Color(0xFF171717),
+          textStyle: const TextStyle(
             fontSize: 15,
             fontFamily: 'Inter',
             fontWeight: FontWeight.w400,
+            color: Color(0xFF171717),
           ),
-          decoration: InputDecoration(
-            hintText: isOptional
-                ? 'Masukkan keterangan jika diperlukan'
-                : 'Wajib masukkan keterangan khusus untuk pengingat penagihan*',
-            contentPadding: const EdgeInsets.all(12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
+          contentPadding: const EdgeInsets.all(12),
+          hintStyle: const TextStyle(
+            fontSize: 14,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF9FA2B4),
+          ),
+          hintText: !isOptional
+              ? 'Wajib masukkan keterangan'
+              : 'Masukkan keterangan khusus untuk pengingat penagihan jika diperlukan',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey[300]!),
           ),
         ),
       ],

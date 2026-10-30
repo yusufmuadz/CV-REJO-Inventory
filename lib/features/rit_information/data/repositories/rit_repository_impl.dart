@@ -83,6 +83,22 @@ class RitRepositoryImpl implements RitRepository {
   }
 
   @override
+  Future<ResultCustom<Failure, RitEntity>> saveHandoverCollector(
+    ParamsRit params,
+  ) async {
+    try {
+      final response = await dataSource.saveHandoverCollector(params);
+
+      if (response.error == null) {
+        return Success(RitEntity(list: []), '');
+      }
+      return ErrorResult(message: response.error!);
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
   Future<ResultCustom<Failure, List<OrderEntity>>> getOrders(
     ParamsGetTransaction params,
   ) async {

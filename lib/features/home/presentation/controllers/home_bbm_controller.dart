@@ -126,8 +126,8 @@ class HomeBbmController extends GetxController {
           }
 
           dialogService.showSuccessDefaultDialog(
-            'Success',
-            'Berhasil Menyimpan BBM',
+            title: 'Success',
+            message: 'Berhasil Menyimpan BBM',
             onPressed1: () {
               Get.back();
             },
