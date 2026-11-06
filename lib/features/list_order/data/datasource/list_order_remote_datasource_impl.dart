@@ -313,4 +313,48 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       throw ServerException(message: '$e');
     }
   }
+
+  @override
+  Future<ResponseModelBasic> switchDriver(ParamsAddAssistant params) async {
+    try {
+      String? date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      if (params.dateRIT != null) {
+        date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(params.dateRIT ?? date));
+      }
+
+      final data = {
+        "no_rit": params.district,
+        "tanggal_rit": date,
+        "iddriver": params.idDriver,
+        "idmobil": params.idKendaraan,
+        "keterangan": params.desc,
+      };
+
+      final response = await dioClient.post(
+        ApiEndpoints.changeDriver,
+        data: data,
+        contentType: Headers.formUrlEncodedContentType,
+      );
+
+      // debugPrint('Data Add Assistant Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
 }

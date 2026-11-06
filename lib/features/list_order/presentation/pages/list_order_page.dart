@@ -51,7 +51,8 @@ class ListOrderPage extends GetView<ListOrderController> {
               debugPrint('isRouteFrom: ${controller.isRouteFrom.value}');
 
               if (controller.isRouteFrom.value == 'endingOrder' ||
-                  controller.isAddAssistant.value || controller.routeStackService.contains(Routes.SCAN_PRODUCT)) {
+                  controller.isAddAssistant.value ||
+                  controller.routeStackService.contains(Routes.SCAN_PRODUCT)) {
                 if (controller.routeStackService.contains(Routes.HOME)) {
                   Get.until((route) => route.settings.name == Routes.HOME);
                 } else {
@@ -99,7 +100,9 @@ class ListOrderPage extends GetView<ListOrderController> {
           );
         }),
         bottomNavigationBar:
-            AppRole.isDriver || (AppRole.isPIC && controller.isSisipan.value)
+            AppRole.isDriver ||
+                (AppRole.isPIC && controller.isSisipan.value) ||
+                (AppRole.isChecker2 && controller.isChangeDriver.value)
             ? null
             : Obx(() {
                 if (controller.isLoading.value) {

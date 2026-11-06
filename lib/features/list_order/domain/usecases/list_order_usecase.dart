@@ -54,4 +54,10 @@ class ListOrderUseCase {
   ) {
     return repository.addAssistant(params);
   }
+
+  Future<ResultCustom<Failure, BasicEntity>> callSwitchDriver(
+    ParamsAddAssistant params,
+  ) {
+    return repository.switchDriver(params);
+  }
 }

@@ -178,9 +178,9 @@ class CollectorArrive extends StatelessWidget {
                 items: controller.paymentTypeList
                     .map(
                       (payment) => DropdownMenuItem<String>(
-                        value: payment,
+                        value: payment.bankName,
                         child: Text(
-                          payment,
+                          payment.bankName ?? '-',
                           style: GoogleFonts.hankenGrotesk(
                             color: Colors.black,
                             fontSize: 15,

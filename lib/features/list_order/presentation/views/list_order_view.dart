@@ -227,6 +227,11 @@ class ListOrderView extends StatelessWidget {
           onTap: () {
             String statusPO = transaction.pic?.status ?? '';
 
+            if (controller.isSelection.value) {
+              controller.onSelectedPO(transaction.invoice);
+              return;
+            }
+
             if (AppRole.isPIC && transaction.urutan == null) {
               controller.dialogService.showError(
                 'Failed',
@@ -275,7 +280,7 @@ class ListOrderView extends StatelessWidget {
           showSelection: controller.isSelection.value,
           isSelected: controller.isSelected.value,
           onCheckboxChanged: () => controller.onSelectedPO(transaction.invoice),
-          transaction: transaction,
+          orderEntity: transaction,
           color: controller.colorRit.value.replaceAll('#', ''),
         ),
       ),

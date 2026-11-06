@@ -9,6 +9,7 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../../shared/rit/shared_input_driver.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
@@ -55,6 +56,7 @@ class ListOrderController extends GetxController {
 
   final isRitToday = false.obs;
   final isSisipan = false.obs;
+  final isChangeDriver = false.obs;
   final pastRitDateSelected = DateTime.now().toString().obs;
 
   final listDistrict = <DistrictEntity>[].obs;
@@ -80,6 +82,7 @@ class ListOrderController extends GetxController {
   final nopolTransportation = ''.obs;
 
   final extNopolTransporation = TextEditingController();
+  final descAssistantController = TextEditingController();
 
   final listUser = <UserEntity>[].obs;
   final transportations = <TransportationEntity>[].obs;
@@ -124,6 +127,7 @@ class ListOrderController extends GetxController {
       getRouteRit.value = args['routeRit'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
       isSisipan.value = args['isSisipan'] ?? false;
+      isChangeDriver.value = args['isChangeDriver'] ?? false;
 
       debugPrint('DATE RIT : ${tanggalRit.value}');
 
@@ -151,6 +155,11 @@ class ListOrderController extends GetxController {
     isLoading.value = false;
     loadState.value = LoadState.idle;
     scrollDetailPOController.dispose();
+    searchController.dispose();
+    pageController.dispose();
+    reasonPendingRITController.dispose();
+    extNopolTransporation.dispose();
+    descAssistantController.dispose();
   }
 
   void afterEnding() {
@@ -260,19 +269,28 @@ class ListOrderController extends GetxController {
   }
 
   void onSelectedRit(int index, {required String pendingPoRIT}) {
-    if (!isSisipan.value) {
+    if (!isSisipan.value && !isChangeDriver.value) {
       if (!isSelection.value && !AppRole.isDriver) return;
     }
 
     if (index != -1) {
       final item = listRit[index];
-      final route = item.route.isEmpty ? '-' : listRit[index].route.join(', ');
+      final route = item.route.isEmpty ? '-' : item.route.join(', ');
 
       isSelected.value = item.city;
       colorRit.value = item.color;
       tanggalRit.value = item.tanggalRit;
       getRouteRit.value = route;
       totalPendingPoRITCheck2.value = pendingPoRIT;
+    }
+
+    if (isChangeDriver.value) {
+      if (listUser.isEmpty) {
+        getDataListController.getAssisten();
+      }
+
+      _openPopUp(ritEntity: listRit[index]);
+      return;
     }
 
     if (AppRole.isDriver || (AppRole.isPIC && isSisipan.value)) {
@@ -381,6 +399,47 @@ class ListOrderController extends GetxController {
       takeItRIT(rit: rit, clrRit: clrRit, tglRit: tglRit, routeRit: routeRit);
       return;
     }
+  }
+
+  void _openPopUp({required RitListEntity ritEntity}) {
+    dialogService.inputDialog(
+      height: 0.7,
+      title: 'Masukkan Informasi Armada',
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      actionsPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      onPressed1: () {
+        if (isLoadingAssistant.value) return;
+
+        Get.back(result: false);
+      },
+      onPressed2: () async {
+        if (isLoadingAssistant.value) return;
+
+        postDataListController.changeDriver();
+      },
+      content: Obx(() {
+        if (isLoadingAssistant.value) {
+          return SizedBox(width: Get.width, child: const LoadingView());
+        }
+
+        return SharedInputDriver(
+          isDesc: true,
+          isDetail: true,
+          noRIT: ritEntity.city,
+          statusTransportationSelected: statusTransportationSelected,
+          statusTransportations: statusTransportations,
+          driverSelected: driverSelected,
+          assistantSelected: assistantSelected,
+          nopolTransportation: nopolTransportation,
+          selectTransportation: selectTransportation,
+          listUser: listUser,
+          transportations: transportations,
+          descController: descAssistantController,
+          onRefreshAssistant: () => getDataListController.getAssisten(),
+        );
+      }),
+    );
   }
 
   void onTapHubungiAdmin() async {

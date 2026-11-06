@@ -46,7 +46,7 @@ class HomeTrackingDriverController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _getRit(isRefresh: true);
+    // _getRit(isRefresh: true);
 
     scrollerController.addListener(onWidgetScroll);
   }
@@ -55,11 +55,12 @@ class HomeTrackingDriverController extends GetxController {
   void onClose() {
     super.onClose();
     scrollerController.dispose();
+    searchTrackingController.dispose();
   }
 
   void onRefreshTransaction() {
-    // _getRit(isRefresh: true);
-    _getOrder(isRefresh: true);
+    _getRit(isRefresh: true);
+    // _getOrder(isRefresh: true);
   }
 
   void onResetSort() {
@@ -97,24 +98,16 @@ class HomeTrackingDriverController extends GetxController {
     }
   }
 
-  Future<void> _getRit({
-    bool isRefresh = false,
-    bool? isPashRit,
-    String? dateRIT,
-  }) async {
+  Future<void> _getRit({bool isRefresh = false}) async {
     if (isLoading.value) return;
     isLoading.value = true;
 
     String sendDate = DateTime.now().toString();
 
-    // if (sendDate.isEmpty) {
-    //   sendDate = tanggalRit.value;
-    // }
-
     debugPrint('DATE RIT : $sendDate');
 
     final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(isPastRit: false, date: sendDate),
+      ParamGetRIT(isPastRit: true, date: sendDate),
     );
 
     try {
@@ -158,7 +151,7 @@ class HomeTrackingDriverController extends GetxController {
         currentPage.value = 1;
       }
 
-      final result = await homeUseCase.call(
+      final result = await listOrderUseCase.call(
         ParamsGetTransaction(
           limit: '10',
           page: '${currentPage.value}',
@@ -167,6 +160,7 @@ class HomeTrackingDriverController extends GetxController {
           district: ritTracking.value, // '10'
           dateRit: dateTracking.value, // '2026-09-02'
           isTracking: true,
+          pastRit: true,
         ),
       );
 
@@ -214,8 +208,8 @@ class HomeTrackingDriverController extends GetxController {
     if (canLoad && currentPixels >= maxScroll - 200) {
       debugPrint('=== MEMANGGIL HALAMAN BERIKUTNYA ===');
       currentPage.value++;
-      // _getRit();
-      _getOrder();
+      _getRit();
+      // _getOrder();
     }
   }
 }

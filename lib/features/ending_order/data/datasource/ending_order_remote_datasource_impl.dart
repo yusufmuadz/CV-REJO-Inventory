@@ -11,6 +11,7 @@ import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
 import '../../domain/params/post_ending_order_param.dart';
+import '../models/response_model_get_payment_method.dart';
 import 'ending_order_remote_datasource.dart';
 
 class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
@@ -612,6 +613,11 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
           ),
       });
 
+      // debugPrint('Data Ending Order Remote DataSource: ${formData.fields}');
+      // debugPrint('Data Ending Order Remote DataSource: ${formData.files}');
+
+      // throw ServerException(message: '500 TEST ERROR');
+
       String apiUrl = ApiEndpoints.arrivePaymentCustomer;
 
       final response = await dioClient.post(apiUrl, data: formData);
@@ -622,6 +628,32 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
           response.statusCode == 201 ||
           response.data != null) {
         return ResponseModelBasic.fromMap(response.data);
+      } else {
+        throw ServerException(
+          message: response.data['message'],
+          statusCode: response.statusCode ?? 500,
+        );
+      }
+    } on DioException catch (e) {
+      throw HandleDioExceptions().handleDioError(e);
+    } catch (e) {
+      throw ServerException(message: '$e');
+    }
+  }
+
+  @override
+  Future<ResponseModelGetPaymentMethod> getPaymentMethod() async {
+    try {
+      String apiUrl = ApiEndpoints.getPaymentMethod;
+
+      final response = await dioClient.get('$apiUrl?q=');
+
+      // debugPrint('Data Ending Order Remote DataSource: ${response.data}');
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.data != null) {
+        return ResponseModelGetPaymentMethod.fromMap(response.data);
       } else {
         throw ServerException(
           message: response.data['message'],

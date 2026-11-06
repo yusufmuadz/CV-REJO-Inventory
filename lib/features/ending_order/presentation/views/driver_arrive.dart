@@ -232,17 +232,9 @@ class DriverArrive extends StatelessWidget {
                 underline: Container(),
                 items: controller.paymentTypeList
                     .map(
-                      (payment) => DropdownMenuItem<String>(
-                        value: payment,
-                        child: Text(
-                          payment,
-                          style: GoogleFonts.hankenGrotesk(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.50,
-                          ),
-                        ),
+                      (payment) => _buildMenuItem(
+                        label: payment.bankName ?? '-',
+                        value: payment.atasNama ?? '-',
                       ),
                     )
                     .toList(),
@@ -274,6 +266,37 @@ class DriverArrive extends StatelessWidget {
             title: 'Bukti Pembayaran',
             isShadow: false,
             mediaFileList: mediaFileList,
+          ),
+        ],
+      ),
+    );
+  }
+
+  DropdownMenuItem<String> _buildMenuItem({
+    required String label,
+    required String value,
+  }) {
+    return DropdownMenuItem(
+      value: label,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.capitalizeFirst ?? '-',
+            style: const TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),

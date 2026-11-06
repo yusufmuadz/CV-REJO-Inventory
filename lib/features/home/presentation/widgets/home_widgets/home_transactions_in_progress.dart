@@ -43,53 +43,16 @@ class HomeTransactionsInProgress extends StatelessWidget {
               HomeBoxWidget(controller: controller),
               Visibility(
                 visible: AppRole.isPIC || AppRole.isDriver,
-                child: Container(
-                  height: 45,
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: const Color(0xFFD7C3B4),
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: InkWell(
-                    onTap: () => controller.routeToSortingPO(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 28,
-                          width: 28,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFECFDF5),
-                            border: Border.all(
-                              width: 1,
-                              color: const Color(0xFFD1FAE5),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.sync,
-                            size: 20,
-                            color: const Color(0xFF485461),
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Urutkan',
-                          style: TextStyles.basicTextStyle(
-                            fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-                            fontSize: 13,
-                            color: const Color(0xFF524439),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
+                child: _buildButton(
+                  label: 'Urutkan',
+                  onTap: () => controller.routeToSortingPO(),
+                ),
+              ),
+              Visibility(
+                visible: AppRole.isChecker2,
+                child: _buildButton(
+                  label: 'Ganti Driver-Armada',
+                  onTap: () => controller.routeToChangeDriver(),
                 ),
               ),
               const SizedBox(height: 24),
@@ -102,6 +65,47 @@ class HomeTransactionsInProgress extends StatelessWidget {
               // _buildInfoBanner(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton({required String label, required VoidCallback onTap}) {
+    return Container(
+      height: 45,
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: const Color(0xFFD7C3B4)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 28,
+              width: 28,
+              decoration: BoxDecoration(
+                color: const Color(0xFFECFDF5),
+                border: Border.all(width: 1, color: const Color(0xFFD1FAE5)),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.sync, size: 20, color: const Color(0xFF485461)),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyles.basicTextStyle(
+                fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+                fontSize: 13,
+                color: const Color(0xFF524439),
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );

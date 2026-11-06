@@ -23,4 +23,5 @@ abstract class ListOrderRemoteDataSource {
   Future<ResponseModelGetTransportation> getTransportations();
   Future<ResponseModelGetTransportation> getLoaderTransportations();
   Future<ResponseModelBasic> addAssistant(ParamsAddAssistant params);
+  Future<ResponseModelBasic> switchDriver(ParamsAddAssistant params);
 }

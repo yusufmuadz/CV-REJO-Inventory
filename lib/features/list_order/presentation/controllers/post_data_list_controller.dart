@@ -162,4 +162,81 @@ class PostDataListController extends GetxController {
       listCtrl.isLoadingAssistant.value = false;
     }
   }
+
+  void changeDriver() async {
+    if (listCtrl.isLoadingAssistant.value) return;
+    listCtrl.isLoadingAssistant.value = true;
+
+    try {
+      TransportationEntity? loader;
+      UserEntity? driver;
+      String? idKendaraan;
+
+      loader = listCtrl.transportations.firstWhereOrNull((element) {
+        bool result = false;
+        String kendaraan = element.namaKendaraan ?? '';
+
+        if (AppRole.isChecker2) {
+          kendaraan = element.jenisKendaraan ?? '';
+        }
+
+        if (kendaraan == listCtrl.selectTransportation.value) {
+          result = true;
+        }
+        return result;
+      });
+
+      driver = listCtrl.listUser.firstWhereOrNull(
+        (element) => element.nama == listCtrl.driverSelected.value,
+      );
+
+      idKendaraan = AppRole.isChecker2
+          ? loader?.idDeliveryMobil ?? ''
+          : loader?.id ?? '';
+
+      final dateRIT = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.parse(listCtrl.tanggalRit.value));
+
+      debugPrint('RIT: ${listCtrl.isSelected.value}');
+      debugPrint('ID Kendaraan: $idKendaraan');
+      debugPrint('ID Driver: ${driver?.userId}');
+      debugPrint('Date RIT: $dateRIT');
+      debugPrint('Desc: ${listCtrl.descAssistantController.value.text}');
+
+      final result = await listOrderUseCase.callSwitchDriver(
+        ParamsAddAssistant(
+          district: listCtrl.isSelected.value,
+          idKendaraan: idKendaraan,
+          idDriver: driver != null ? driver.userId : '',
+          dateRIT: dateRIT,
+          desc: listCtrl.descAssistantController.value.text,
+        ),
+      );
+
+      switch (result) {
+        case Success():
+          if (Get.isDialogOpen == true) Get.back();
+          listCtrl.dialogService.showSuccessDefaultDialog(
+            title: 'Success',
+            message: 'Berhasil Mengubah Driver & Armada',
+            onPressed1: () {
+              listCtrl.driverSelected.value = listCtrl.listUser.first.nama;
+              listCtrl.descAssistantController.clear();
+              Get.back();
+            },
+          );
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          listCtrl.dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      debugPrint('Error Add Assistant: $e');
+      if (Get.isDialogOpen == true) Get.back();
+      listCtrl.dialogService.showError('Failed', '$e');
+    } finally {
+      listCtrl.isLoadingAssistant.value = false;
+    }
+  }
 }

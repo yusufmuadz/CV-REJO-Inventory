@@ -7,12 +7,14 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/contact_service.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../utils/maps_utils.dart';
 import '../../../list_order/data/models/courier_model.dart';
 import '../../../list_order/data/models/date_model.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
+import '../../../rit_information/presentation/controllers/rit_controller.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/item_order_model.dart';
 import '../../domain/entities/detail_order_entity.dart';
@@ -35,6 +37,8 @@ class DetailOrderController extends GetxController {
   final routeFrom = ''.obs;
   final takeItOrder = false.obs;
   final statusPO = ''.obs;
+
+  late final RouteStackService routeStackService;
 
   final isFromHistory = false.obs;
   final isTracking = false.obs;
@@ -96,6 +100,7 @@ class DetailOrderController extends GetxController {
     super.onInit();
     getDetailOrderController = Get.find<GetDetailOrderController>();
     addProductOrderController = Get.find<AddProductOrderController>();
+    routeStackService = Get.find<RouteStackService>();
 
     final args = Get.arguments;
     if (args != null) {
@@ -154,6 +159,7 @@ class DetailOrderController extends GetxController {
   void onClose() {
     super.onClose();
     isLoading.value = false;
+    reasonController.dispose();
   }
 
   void onRefreshDetailOrder() {
@@ -352,16 +358,34 @@ class DetailOrderController extends GetxController {
             final dateRit = GetStorage().read('tanggalRit') ?? '';
             final isRitToday = GetStorage().read('isRitToday') ?? false;
 
-            Get.offAllNamed(
-              Routes.RIT_INFORMATION,
-              arguments: {
-                'city': rit,
-                'colorRit': colorRit.value,
-                'tanggalRit': dateRit.value,
-                'routeFrom': 'endingOrder',
-                'isRitToday': isRitToday.value,
-              },
-            );
+            // late final RitController ritController;
+
+            // if (!Get.isRegistered<RitController>()) {
+            //   Get.lazyPut(() => RitController(ritUseCase: Get.find()));
+            // }
+
+            // ritController = Get.find<RitController>();
+
+            // if (Get.isRegistered<RitController>()) {
+            //   ritController.afterEnding();
+            // }
+
+            if (routeStackService.contains(Routes.RIT_INFORMATION)) {
+              Get.until(
+                (route) => route.settings.name == Routes.RIT_INFORMATION,
+              );
+            } else {
+              Get.offAllNamed(
+                Routes.RIT_INFORMATION,
+                arguments: {
+                  'city': rit,
+                  'colorRit': colorRit,
+                  'tanggalRit': dateRit,
+                  'routeFrom': 'endingOrder',
+                  'isRitToday': isRitToday,
+                },
+              );
+            }
             return;
           }
 

@@ -12,6 +12,7 @@ import '../text_field/textfield_shared.dart';
 
 class SharedInputDriver extends StatelessWidget {
   final bool? isDetail;
+  final bool? isDesc;
   final String noRIT;
   final RxString statusTransportationSelected;
   final RxList<String> statusTransportations;
@@ -25,6 +26,7 @@ class SharedInputDriver extends StatelessWidget {
   final TextEditingController? extNopolTransporation;
   final TextEditingController? extDriverName;
   final TextEditingController? extDriverPhone;
+  final TextEditingController? descController;
   final RxList<XFile>? mediaFileList;
 
   final RxList<UserEntity> listUser;
@@ -35,9 +37,11 @@ class SharedInputDriver extends StatelessWidget {
   const SharedInputDriver({
     super.key,
     this.isDetail,
+    this.isDesc,
     this.extNopolTransporation,
     this.extDriverName,
     this.extDriverPhone,
+    this.descController,
     this.mediaFileList,
     required this.noRIT,
     required this.statusTransportationSelected,
@@ -247,6 +251,11 @@ class SharedInputDriver extends StatelessWidget {
           visible: AppRole.isChecker2,
           child: _buildNopolTransportation(),
         ),
+        Visibility(
+          visible:
+              AppRole.isChecker2 && isDesc == true && descController != null,
+          child: _buildDescField(),
+        ),
         Container(
           margin: EdgeInsets.only(top: 30),
           child: Center(
@@ -266,6 +275,52 @@ class SharedInputDriver extends StatelessWidget {
         ),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildDescField() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text.rich(
+            TextSpan(
+              text: 'Keterangan',
+              style: TextStyle(
+                color: Color(0xFF171717),
+                fontSize: 15,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                height: 0,
+                letterSpacing: 0.48,
+              ),
+              children: [
+                TextSpan(
+                  text: '(opsional)',
+                  style: TextStyle(
+                    color: Color(0xFF171717),
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: 0.48,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          SharedTextField(
+            isDense: true,
+            maxLines: 4,
+            controller: descController!,
+            hintText: 'Masukkan keterangan kendala...',
+            contentPadding: const EdgeInsets.all(12),
+          ),
+        ],
+      ),
     );
   }
 
@@ -366,6 +421,8 @@ class SharedInputDriver extends StatelessWidget {
       value: item,
       child: Text(
         item.capitalizeFirst ?? '-',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontSize: 14.5,
           fontWeight: FontWeight.w500,

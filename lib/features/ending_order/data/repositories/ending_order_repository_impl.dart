@@ -7,6 +7,7 @@ import '../../../list_order/data/datasource/list_order_remote_datasource.dart';
 import '../../../list_order/domain/params/get_rit_param.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../domain/entities/ending_order_entity.dart';
+import '../../domain/entities/payment_method_entity.dart';
 import '../../domain/repositories/ending_order_repository.dart';
 import '../../presentation/controllers/enums/enum_button.dart';
 import '../datasource/ending_order_remote_datasource.dart';
@@ -173,6 +174,22 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
       }
 
       return Success(EndingOrderEntity(), '');
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
+
+  @override
+  Future<ResultCustom<Failure, List<PaymentMethodEntity>>>
+  getPaymentMethod() async {
+    try {
+      final res = await dataSource.getPaymentMethod();
+
+      if (res.status == false) {
+        return ErrorResult(message: res.message ?? 'Error Get Payment Method');
+      }
+
+      return Success(res.data!.toEntity(), '');
     } catch (e) {
       return ErrorResult(message: e.toString());
     }

@@ -57,6 +57,7 @@ class ListHistoryOrderController extends GetxController
     scrollController.dispose();
     isLoadingSort.value = false;
     tabController.dispose();
+    searchController.dispose();
     loadState.value = LoadState.idle;
   }
 

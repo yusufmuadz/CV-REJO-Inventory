@@ -292,6 +292,7 @@ class ScanProductController extends GetxController with WidgetsBindingObserver {
 
   @override
   void onClose() {
+    searchController.dispose();
     stopScanner();
     // Stop listening to lifecycle changes.
     WidgetsBinding.instance.removeObserver(this);

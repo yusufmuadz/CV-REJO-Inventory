@@ -9,6 +9,7 @@ class ParamsAddAssistant {
   final String? statusTransportation;
   final String? extNopol;
   final String? extDriverName;
+  final String? desc;
   final bool? isChecker2;
   final bool isDetail;
   final bool? isSisipan;
@@ -25,6 +26,7 @@ class ParamsAddAssistant {
     this.isChecker2,
     this.extNopol,
     this.extDriverName,
+    this.desc,
     this.isDetail = false,
     this.isSisipan = false,
   });

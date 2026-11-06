@@ -96,11 +96,13 @@ class HomePageController extends GetxController {
       );
 
       if (AppRole.isChecker2 &&
-          masterController.homeTrackingDriverController.listOrder.isEmpty) {
+          index == 1 &&
+          masterController.homeTrackingDriverController.listRit.isEmpty) {
         masterController.homeTrackingDriverController.onRefreshTransaction();
       }
 
       if (AppRole.isChecker2 &&
+          index == 2 &&
           masterController.homeRitSisipanController.listRit.isEmpty) {
         masterController.homeRitSisipanController.onRefreshRIT();
       }

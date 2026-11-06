@@ -187,6 +187,11 @@ class RitView extends StatelessWidget {
                 onTap: () {
                   final arriveDriver = transaction.driver?.arriveDriver;
 
+                  if (controller.isView.value) {
+                    controller.dialogService.showComingSoonSnackbar();
+                    return;
+                  }
+
                   if (controller.buttonRIT.value == EnumButtonRIT.acceptRIT) {
                     return;
                   }
@@ -217,7 +222,7 @@ class RitView extends StatelessWidget {
                 showSelection: false,
                 isSelected: '',
                 onCheckboxChanged: () {},
-                transaction: transaction,
+                orderEntity: transaction,
                 buttonRIT: controller.buttonRIT.value,
                 color: controller.colorRit.value.replaceAll('#', ''),
               ),

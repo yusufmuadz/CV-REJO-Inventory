@@ -32,4 +32,7 @@ abstract class ListOrderRepository {
   Future<ResultCustom<Failure, BasicEntity>> addAssistant(
     ParamsAddAssistant params,
   );
+  Future<ResultCustom<Failure, BasicEntity>> switchDriver(
+    ParamsAddAssistant params,
+  );
 }

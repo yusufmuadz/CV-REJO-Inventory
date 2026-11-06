@@ -82,6 +82,10 @@ class GetDataListController extends GetxController {
           if (data.isEmpty) {
             if (isRefresh && listCtrl.currentPage.value == 1) {
               listCtrl.loadState.value = LoadState.idle;
+
+              if (isDetail) {
+                listCtrl.loadStateDetailPO.value = LoadState.noMore;
+              }
             } else {
               if (isDetail) {
                 listCtrl.loadStateDetailPO.value = LoadState.noMore;
@@ -166,7 +170,7 @@ class GetDataListController extends GetxController {
       ParamGetRIT(
         isPastRit: !listCtrl.isRitToday.value,
         date: sendDate,
-        isSisipan: listCtrl.isSisipan.value,
+        isSisipan: listCtrl.isSisipan.value || listCtrl.isChangeDriver.value,
       ),
     );
 
@@ -205,17 +209,14 @@ class GetDataListController extends GetxController {
 
       switch (usersResult) {
         case Success(:final data):
-          // if (data.isEmpty) {
-          //   return;
-          // }
-
           listCtrl.listUser.value = data as List<UserEntity>;
-          listCtrl.driverSelected.value = data.first.nama;
-          listCtrl.assistantSelected.value = data.first.nama;
 
           listCtrl.listUser.sort(
             (UserEntity a, UserEntity b) => a.nama.compareTo(b.nama),
           );
+
+          listCtrl.driverSelected.value = listCtrl.listUser.first.nama;
+          listCtrl.assistantSelected.value = listCtrl.listUser.first.nama;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -229,22 +230,24 @@ class GetDataListController extends GetxController {
 
           if (data.first.namaKendaraan != null &&
               data.first.namaKendaraan != '-') {
-            listCtrl.selectTransportation.value = data.first.namaKendaraan!;
             listCtrl.transportations.sort(
               (TransportationEntity a, TransportationEntity b) =>
                   a.namaKendaraan!.compareTo(b.namaKendaraan!),
             );
+            listCtrl.selectTransportation.value =
+                listCtrl.transportations.first.namaKendaraan!;
           } else if (data.first.jenisKendaraan != null &&
               data.first.jenisKendaraan != '-') {
-            listCtrl.selectTransportation.value = data.first.jenisKendaraan!;
             listCtrl.transportations.sort(
               (TransportationEntity a, TransportationEntity b) =>
                   a.jenisKendaraan!.compareTo(b.jenisKendaraan!),
             );
+            listCtrl.selectTransportation.value =
+                listCtrl.transportations.first.jenisKendaraan!;
           }
 
           listCtrl.nopolTransportation.value =
-              data.first.idDeliveryMobil ?? '-';
+              listCtrl.transportations.first.idDeliveryMobil ?? '-';
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();

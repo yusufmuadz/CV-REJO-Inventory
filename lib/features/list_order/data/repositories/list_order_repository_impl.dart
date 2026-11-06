@@ -111,4 +111,27 @@ class ListOrderRepositoryImpl implements ListOrderRepository {
       return ErrorResult(message: e.toString());
     }
   }
+
+  @override
+  Future<ResultCustom<Failure, BasicEntity>> switchDriver(
+    ParamsAddAssistant params,
+  ) async {
+    try {
+      final response = await dataSource.switchDriver(params);
+      String message = response.message;
+
+      if (response.status == false && response.error != null) {
+        message = response.error ?? 'Terjadi Kesalahan';
+
+        return ErrorResult(message: message);
+      }
+
+      return Success(
+        BasicEntity(status: response.status, message: message),
+        '',
+      );
+    } catch (e) {
+      return ErrorResult(message: e.toString());
+    }
+  }
 }

@@ -10,12 +10,12 @@ import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
-import '../../../list_order/presentation/bindings/list_order_binding.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../../rit_information/presentation/controllers/enums/enum_trouble.dart';
 import '../../../rit_information/presentation/controllers/rit_controller.dart';
 import '../../domain/entities/ending_order_entity.dart';
+import '../../domain/entities/payment_method_entity.dart';
 import '../../domain/params/post_ending_order_param.dart';
 import '../../domain/usecases/ending_order_usecase.dart';
 import 'enums/enum_button.dart';
@@ -62,7 +62,9 @@ class EndingOrderController extends GetxController {
   final infoInvoiceList = ['Lunas', 'Belum Lunas'];
 
   final selectedPaymentType = 'Tunai'.obs;
-  final paymentTypeList = ['Tunai', 'Transfer', 'Giro', 'Cek'];
+  final paymentTypeList = <PaymentMethodEntity>[
+    PaymentMethodEntity(bankName: 'Tunai'),
+  ].obs;
 
   final itemPO = <ItemOrderModel>[].obs;
 
@@ -71,6 +73,13 @@ class EndingOrderController extends GetxController {
   final formKey = GlobalKey<FormState>();
   late final ListOrderController listOrderController;
   late final RitController ritController;
+
+  final pendingReasonSelected = ''.obs;
+  final pendingReason = [
+    {'id': '0', 'name': 'Batal Kirim', 'isSelected': false},
+    {'id': '1', 'name': 'Toko Tutup/Libur', 'isSelected': false},
+    {'id': '2', 'name': 'Lainnya', 'isSelected': false},
+  ].obs;
 
   // ========== COLLECTOR ==========
   final idDetail = ''.obs;
@@ -125,6 +134,8 @@ class EndingOrderController extends GetxController {
           Get.lazyPut(() => RitController(ritUseCase: Get.find()));
         }
         ritController = Get.find<RitController>();
+
+        getPaymentMethod();
       } else {
         if (!Get.isRegistered<ListOrderController>()) {
           Get.lazyPut(() => ListOrderController(listOrderUseCase: Get.find()));
@@ -146,6 +157,8 @@ class EndingOrderController extends GetxController {
     mediaFileListInfoInvoice.clear();
     mediaFileListPaymentType.clear();
     mediaFileListTransportation.clear();
+    extNopolTransportion.dispose();
+    extDriverName.dispose();
     noInvoice.value = '';
   }
 
@@ -201,6 +214,9 @@ class EndingOrderController extends GetxController {
 
   void savePoDriver() {
     if (statusDriver.value == 'completed') {
+      // statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+      // mediaFileList.clear();
+      // mediaFileFrontMerchant.clear();
       saveArriveDriver();
     } else {
       saveOrder();
@@ -455,7 +471,9 @@ class EndingOrderController extends GetxController {
           noRIT: rit.value,
           tanggalRIT: dateRit.value,
           troubleRIT: EnumTroubleRIT.satuan,
-          desc: fieldController.text,
+          desc: pendingReasonSelected.value != 'Lainnya'
+              ? pendingReasonSelected.value
+              : fieldController.text,
           lat: lat,
           long: long,
           images: mediaFileList,
@@ -784,6 +802,33 @@ class EndingOrderController extends GetxController {
               }
             },
           );
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          // loadState.value = LoadState.error;
+          dialogService.showError('Failed', message);
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      // loadState.value = LoadState.error;
+      dialogService.showError('Failed', e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getPaymentMethod() async {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
+    try {
+      final result = await endingOrderUseCase.callGetPaymentMethod();
+
+      switch (result) {
+        case Success(:final data):
+          debugPrint('Data Item Product: $data');
+          paymentTypeList.addAll(data);
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();

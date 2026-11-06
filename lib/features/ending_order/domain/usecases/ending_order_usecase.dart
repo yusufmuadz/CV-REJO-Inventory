@@ -3,6 +3,7 @@ import '../../../../core/result/result_custom.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../../presentation/controllers/enums/enum_button.dart';
 import '../entities/ending_order_entity.dart';
+import '../entities/payment_method_entity.dart';
 import '../params/post_ending_order_param.dart';
 import '../repositories/ending_order_repository.dart';
 
@@ -46,5 +47,9 @@ class EndingOrderUseCase {
     required ParamsEndingOrder params,
   }) {
     return repository.paymentCollector(params);
+  }
+
+  Future<ResultCustom<Failure, List<PaymentMethodEntity>>> callGetPaymentMethod() {
+    return repository.getPaymentMethod();
   }
 }

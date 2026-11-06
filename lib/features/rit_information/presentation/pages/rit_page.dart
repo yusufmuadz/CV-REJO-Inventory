@@ -185,7 +185,8 @@ class RitPage extends GetView<RitController> {
               controller.isArrive.value ||
               // controller.buttonRIT.value == EnumButtonRIT.saveChangePO ||
               controller.buttonRIT.value == EnumButtonRIT.buttonSaveRitDoc ||
-              controller.buttonRIT.value == EnumButtonRIT.cancelRIT) {
+              controller.buttonRIT.value == EnumButtonRIT.cancelRIT ||
+              controller.isView.value) {
             return const SizedBox.shrink();
           }
 

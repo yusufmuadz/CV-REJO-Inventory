@@ -41,6 +41,14 @@ class HomeCollectorController extends GetxController {
   final mediaFileRightTransport = Rx<XFile>(XFile(''));
   final mediaFileLeftTransport = Rx<XFile>(XFile(''));
 
+  @override
+  void onClose() {
+    searchInvController.dispose();
+    recipientName.dispose();
+    kmController.dispose();
+    super.onClose();
+  }
+
   void retryFetch() =>
       getOrder(isRefresh: getLoadState.value == LoadState.error);
 

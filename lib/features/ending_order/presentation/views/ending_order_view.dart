@@ -103,15 +103,21 @@ class EndingOrderView extends GetView<EndingOrderController> {
 
   Widget _buildButtonSelect() {
     String titlePending = 'Pending PO';
+    final isCompletedDriver =
+        !AppRole.isDriver ||
+        (AppRole.isDriver && controller.statusDriver.value == 'completed');
 
-    if (AppRole.isDriver && controller.statusDriver.value == 'completed') {
+    if (isCompletedDriver) {
       titlePending = 'Kendala PO';
     }
+
     return CustomButton.doubleButton(
       title1: titlePending,
       title2: 'Simpan PO',
       color1: Colors.redAccent,
       color2: const Color(0xFF2ED471),
+      visible1: isCompletedDriver,
+      visibleSpace: isCompletedDriver,
       onPressed1: () {
         if (AppRole.isDriver) {
           InputPendingWidget.inputReason(controller: controller);

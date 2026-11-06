@@ -55,6 +55,8 @@ class ApiEndpoints {
   static const String arrivePaymentCustomer = "deliverynew/payment";
   static const String arriveAtOffice = "deliverynew/handover";
   static const String isiBbm = "deliverynew/gasstation";
+  static const String getPaymentMethod = "bayar/listjenisbayar";
+  static const String changeDriver = "switchdelivery/switchover";
 
   // COLLECTOR TRANSACTION
   static const String getRouteCollector = "kolektor/listpenugasan";

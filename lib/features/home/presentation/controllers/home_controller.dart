@@ -107,6 +107,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   void onClose() {
     super.onClose();
     pageController.dispose();
+    searchController.dispose();
     isLoading.value = false;
 
     debugPrint('HOME CONTROLLER CLOSE: ${hashCode}');
@@ -186,6 +187,17 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     Get.toNamed(
       Routes.LIST_ORDER,
       arguments: {'routeFrom': 'home', 'isRitToday': true, 'isSisipan': true},
+    );
+  }
+
+  void routeToChangeDriver() {
+    Get.toNamed(
+      Routes.LIST_ORDER,
+      arguments: {
+        'routeFrom': 'home',
+        'isRitToday': true,
+        'isChangeDriver': true,
+      },
     );
   }
 

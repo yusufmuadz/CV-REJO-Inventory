@@ -43,7 +43,6 @@ class RitController extends GetxController {
   final locationService = LocationService();
   final noInvoice = ''.obs;
   final routeFrom = ''.obs;
-  final isFirstOpen = true.obs;
 
   late final RouteStackService routeStackService;
 
@@ -58,6 +57,7 @@ class RitController extends GetxController {
   final isRitToday = false.obs;
   final isAcceptRIT = false.obs;
   final isSisipan = false.obs;
+  final isView = false.obs;
 
   final buttonRIT = EnumButtonRIT.acceptRIT.obs;
   // final changeSequencePO = ButtonSequenceState.selectChange.obs;
@@ -135,6 +135,7 @@ class RitController extends GetxController {
       routeFrom.value = args['routeFrom'] ?? '';
       isRitToday.value = args['isRitToday'] ?? false;
       isSisipan.value = args['isSisipan'] ?? false;
+      isView.value = args['isView'] ?? false;
     }
 
     String? getButtonRIT = GetStorage().read('buttonRIT');
@@ -183,6 +184,7 @@ class RitController extends GetxController {
         );
       }
     } else {
+      debugPrint('Get Order');
       _getOrder();
     }
   }
@@ -195,10 +197,10 @@ class RitController extends GetxController {
     isLoadingRetur.value = false;
     isLoadingItemPo.value = false;
     loadState.value = LoadState.idle;
-    // kmController.dispose();
-    // reasonController.dispose();
-    // reasonReturController.dispose();
-    // recipientName.dispose();
+    kmController.dispose();
+    reasonController.dispose();
+    reasonReturController.dispose();
+    recipientName.dispose();
 
     // registerScroll();
     debugPrint('On Close');

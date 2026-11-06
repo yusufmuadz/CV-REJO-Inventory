@@ -61,6 +61,7 @@ class ListRitView extends StatelessWidget {
 
     return Obx(() {
       bool isSelected =
+          !controller.isChangeDriver.value &&
           controller.isSelected.value == ritOrder.city &&
           controller.tanggalRit.value == ritOrder.tanggalRit;
 
@@ -167,7 +168,9 @@ class ListRitView extends StatelessWidget {
                           ),
                           const Spacer(),
                           Visibility(
-                            visible: !controller.isSisipan.value,
+                            visible:
+                                !controller.isSisipan.value &&
+                                !controller.isChangeDriver.value,
                             child: _buildPoBerjalan(
                               totalOnProgressPO: totalOnProgressPO,
                             ),

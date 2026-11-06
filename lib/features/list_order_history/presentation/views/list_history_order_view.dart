@@ -220,7 +220,8 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
         isSelected: '',
         showSelection: false,
         isHistory: true,
-        transaction: transaction,
+        orderEntity: transaction,
+        color: 'E2E8F0',
       ),
     );
   }

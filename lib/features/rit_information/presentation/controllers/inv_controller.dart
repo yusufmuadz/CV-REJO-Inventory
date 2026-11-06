@@ -34,6 +34,12 @@ class InvController extends GetxController {
   final listRouteCollector = <RouteCollectorEntity>[].obs;
   final listInv = <OrderEntity>[].obs;
 
+  @override
+  void onClose() {
+    searchInvController.dispose();
+    super.onClose();
+  }
+
   void retryFetchRouteCollector() => getRouteCollector(
     isRefresh: ritController.loadState.value == LoadState.error,
   );

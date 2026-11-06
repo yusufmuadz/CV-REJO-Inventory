@@ -3,6 +3,7 @@ import 'package:cv_rejo/features/ending_order/domain/params/post_ending_order_pa
 import '../../../detail_order/data/models/response_model_basic.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
 import '../models/response_model_ending_order.dart';
+import '../models/response_model_get_payment_method.dart';
 
 abstract class EndingOrderRemoteDataSource {
   Future<ResponseModelBasic> postEndingOrder(ParamsEndingOrder params);
@@ -18,4 +19,7 @@ abstract class EndingOrderRemoteDataSource {
   // Ending Order Collector
   Future<ResponseModelBasic> firstArriveCollector(ParamsEndingOrder params);
   Future<ResponseModelBasic> paymentCollector(ParamsEndingOrder params);
+
+  // Get Payment Method
+  Future<ResponseModelGetPaymentMethod> getPaymentMethod();
 }

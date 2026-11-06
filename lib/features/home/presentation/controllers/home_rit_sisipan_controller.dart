@@ -52,11 +52,11 @@ class HomeRitSisipanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getRit(isRefresh: false);
+    // getRit(isRefresh: false);
   }
 
   @override
-  void dispose() {
+  void onClose() {
     extNopolTransportation.dispose();
     extDriverNameTransportation.dispose();
     super.dispose();

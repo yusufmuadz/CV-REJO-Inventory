@@ -22,6 +22,10 @@ class ResponseModelBasic {
         else if (errorData['message'] != null) {
           resolvedError = errorData['message'].toString();
         }
+        // Prioritas 3: Ambil dari error.message (Sesuai contoh 3 Anda)
+        else if (errorData['reason'] != null) {
+          resolvedError = errorData['reason'].toString();
+        }
       }
       // Prioritas 3: Jika error langsung berupa String (Misal: "Token expired")
       else if (errorData is String && errorData.isNotEmpty) {
