@@ -381,6 +381,10 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           'file_bukti': await MultipartHelper.fromNullableXFile(
             params.fileBuktiBayar,
           ),
+        if (params.fileBoxImage?.path.isNotEmpty ?? false)
+          'file_kotak_berkas': await MultipartHelper.fromNullableXFile(
+            params.fileBoxImage,
+          ),
       });
 
       debugPrint(formData.fields.toString());

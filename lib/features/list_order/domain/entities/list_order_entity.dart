@@ -24,6 +24,7 @@ class OrderEntity {
   String? long;
   String? jenisArmada;
   String? urutan;
+  String? statusTagihan;
   final String? idDetail;
   final String? route;
   final String? idPiutang;
@@ -60,6 +61,7 @@ class OrderEntity {
     this.totalPiutang,
     this.sisaPiutang,
     this.tanggalTransaksi,
+    this.statusTagihan,
     required this.number,
     this.isSelected = false,
     this.isChecked = false,
@@ -101,6 +103,7 @@ class OrderEntity {
       tanggalTransaksi: json['tanggal_transaksi'],
       isSelected: json['isSelected'] ?? false,
       urutan: json['urutan'],
+      statusTagihan: json['status_tagihan'] ?? '-',
       number: 0.obs,
     );
   }
@@ -130,6 +133,7 @@ class OrderEntity {
     String? totalPiutang,
     String? sisaPiutang,
     String? tanggalTransaksi,
+    String? statusTagihan,
     bool? isChecked,
     bool? isSelected,
     RxInt? number,
@@ -159,6 +163,7 @@ class OrderEntity {
       totalPiutang: totalPiutang ?? this.totalPiutang,
       sisaPiutang: sisaPiutang ?? this.sisaPiutang,
       tanggalTransaksi: tanggalTransaksi ?? this.tanggalTransaksi,
+      statusTagihan: statusTagihan ?? this.statusTagihan,
       isChecked: isChecked ?? this.isChecked,
       isSelected: isSelected ?? this.isSelected,
       number: number ?? this.number,

@@ -144,6 +144,11 @@ class RitPage extends GetView<RitController> {
                     }
                   }
                 } else {
+                  if (AppRole.isDriver &&
+                      controller.buttonRIT.value ==
+                          EnumButtonRIT.buttonSaveDoc) {
+                    controller.buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
+                  }
                   controller.pageIndex.value = 0;
                 }
 
@@ -278,9 +283,9 @@ class RitPage extends GetView<RitController> {
           controller.pageController.jumpToPage(1);
         } else {
           // if (AppRole.isCollector) {
-          //   controller.saveOrderDummy();
+          controller.saveOrderDummy();
           // } else {
-          controller.saveOrder();
+          // controller.saveOrder();
           // }
         }
       },

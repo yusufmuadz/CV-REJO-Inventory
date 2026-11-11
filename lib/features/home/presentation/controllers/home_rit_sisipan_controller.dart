@@ -59,7 +59,7 @@ class HomeRitSisipanController extends GetxController {
   void onClose() {
     extNopolTransportation.dispose();
     extDriverNameTransportation.dispose();
-    super.dispose();
+    super.onClose();
   }
 
   void onRefreshRIT() {

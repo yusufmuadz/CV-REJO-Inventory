@@ -194,9 +194,9 @@ class PostDataListController extends GetxController {
           ? loader?.idDeliveryMobil ?? ''
           : loader?.id ?? '';
 
-      final dateRIT = DateFormat(
-        'yyyy-MM-dd',
-      ).format(DateTime.parse(listCtrl.tanggalRit.value));
+      final rawDate = listCtrl.tanggalRit.value;
+      final parsedDate = DateTime.tryParse(rawDate) ?? DateTime.now();
+      final dateRIT = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       debugPrint('RIT: ${listCtrl.isSelected.value}');
       debugPrint('ID Kendaraan: $idKendaraan');

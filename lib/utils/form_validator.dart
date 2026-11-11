@@ -1,11 +1,15 @@
 class FormValidator {
   // Regex pattern
-  static const _emailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  static const _emailRegex =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   static const _phoneRegex = r'^\+?[0-9]{10,15}$';
   static const _usernameRegex = r'^[a-zA-Z0-9_]{3,20}$';
 
   /// Validasi wajib isi
-  static String? validateRequired(String? value, [String fieldName = 'Field ini']) {
+  static String? validateRequired(
+    String? value, [
+    String fieldName = 'Field ini',
+  ]) {
     if (value == null || value.trim().isEmpty) {
       return '$fieldName wajib diisi';
     }
@@ -36,16 +40,24 @@ class FormValidator {
   static String? validatePassword(String? value, {int minLength = 8}) {
     final error = validateRequired(value, 'Password');
     if (error != null) return error;
-    if (value!.length < minLength) return 'Password minimal $minLength karakter';
-    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Password harus mengandung minimal 1 huruf besar';
-    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Password harus mengandung minimal 1 huruf kecil';
-    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Password harus mengandung minimal 1 angka';
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) return 'Password harus mengandung minimal 1 karakter spesial';
+    if (value!.length < minLength)
+      return 'Password minimal $minLength karakter';
+    if (!RegExp(r'[A-Z]').hasMatch(value))
+      return 'Password harus mengandung minimal 1 huruf besar';
+    if (!RegExp(r'[a-z]').hasMatch(value))
+      return 'Password harus mengandung minimal 1 huruf kecil';
+    if (!RegExp(r'[0-9]').hasMatch(value))
+      return 'Password harus mengandung minimal 1 angka';
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value))
+      return 'Password harus mengandung minimal 1 karakter spesial';
     return null;
   }
 
   /// Validasi konfirmasi password
-  static String? validateConfirmPassword(String? value, String originalPassword) {
+  static String? validateConfirmPassword(
+    String? value,
+    String originalPassword,
+  ) {
     final error = validateRequired(value, 'Konfirmasi password');
     if (error != null) return error;
     if (value != originalPassword) return 'Password tidak cocok';
@@ -64,17 +76,27 @@ class FormValidator {
   }
 
   /// Validasi panjang minimum
-  static String? validateMinLength(String? value, int minLength, [String fieldName = 'Field ini']) {
+  static String? validateMinLength(
+    String? value,
+    int minLength, [
+    String fieldName = 'Field ini',
+  ]) {
     final error = validateRequired(value, fieldName);
     if (error != null) return error;
-    if (value!.length < minLength) return '$fieldName minimal $minLength karakter';
+    if (value!.length < minLength)
+      return '$fieldName minimal $minLength karakter';
     return null;
   }
 
   /// Validasi panjang maksimum
-  static String? validateMaxLength(String? value, int maxLength, [String fieldName = 'Field ini']) {
+  static String? validateMaxLength(
+    String? value,
+    int maxLength, [
+    String fieldName = 'Field ini',
+  ]) {
     if (value == null || value.isEmpty) return null;
-    if (value.length > maxLength) return '$fieldName maksimal $maxLength karakter';
+    if (value.length > maxLength)
+      return '$fieldName maksimal $maxLength karakter';
     return null;
   }
 }

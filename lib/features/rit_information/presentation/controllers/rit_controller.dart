@@ -141,13 +141,14 @@ class RitController extends GetxController {
     String? getButtonRIT = GetStorage().read('buttonRIT');
     String? getButtonInv = GetStorage().read('buttonINV');
 
-    if (getButtonRIT != null) {
-      buttonRIT.value = EnumButtonRIT.values.byName(getButtonRIT);
-    }
-
     final getRIT = GetStorage().read('city');
 
-    if (getRIT == null && getButtonRIT != null) {
+    // if (getRIT == null && getButtonRIT == null) {
+    // }
+
+    if (getRIT != null && getButtonRIT != null) {
+      buttonRIT.value = EnumButtonRIT.values.byName(getButtonRIT);
+    } else {
       buttonRIT.value = EnumButtonRIT.acceptRIT;
     }
 
@@ -545,6 +546,9 @@ class RitController extends GetxController {
               ? XFile('')
               : mediaFileListSJ[0],
           fileBuktiBayar: mediaFileListTransportMoney.isEmpty
+              ? XFile('')
+              : mediaFileListTransportMoney[0],
+          fileBoxImage: mediaFileRecipientBox.isEmpty
               ? XFile('')
               : mediaFileRecipientBox[0],
         ),

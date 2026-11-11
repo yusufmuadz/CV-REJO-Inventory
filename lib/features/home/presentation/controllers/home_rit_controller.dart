@@ -55,6 +55,7 @@ class HomeRITController extends GetxController {
     debugPrint('mediaFileList: $mediaFileList');
 
     if (mediaFileList == null ||
+        mediaFileList.isEmpty ||
         title.isEmpty ||
         nominal.isEmpty ||
         solution.isEmpty) {

@@ -47,6 +47,7 @@ class EndingOrderView extends GetView<EndingOrderController> {
               controller.statusDriver.value == 'completed')) {
             return DriverArrive(controller: controller);
           }
+
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [

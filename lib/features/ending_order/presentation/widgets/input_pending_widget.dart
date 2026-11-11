@@ -103,13 +103,23 @@ class InputPendingWidget {
                     title: 'Kirim',
                     color: const Color(0xFF2ED471),
                     onPressed: () {
-                      final isEmpty = controller.fieldController.text.isEmpty;
-                      final isReasonDriver =
-                          controller.pendingReasonSelected.value == 'Lainnya';
+                      final reasonSelected = controller
+                          .pendingReasonSelected
+                          .value
+                          .trim();
+                      final customReason = controller.fieldController.text
+                          .trim();
 
-                      if (isEmpty && isReasonDriver) {
+                      if (reasonSelected.isEmpty) {
                         controller.dialogService.showErrorSnackbar(
-                          'Masukkan Alasan Terlebih Dahulu!',
+                          'Pilih salah satu alasan kendala!',
+                        );
+                        return;
+                      }
+
+                      if (reasonSelected == 'Lainnya' && customReason.isEmpty) {
+                        controller.dialogService.showErrorSnackbar(
+                          'Masukkan alasan kendala terlebih dahulu!',
                         );
                         return;
                       }

@@ -53,9 +53,9 @@ class HomeTrackingDriverController extends GetxController {
 
   @override
   void onClose() {
-    super.onClose();
     scrollerController.dispose();
     searchTrackingController.dispose();
+    super.onClose();
   }
 
   void onRefreshTransaction() {

@@ -120,8 +120,12 @@ class ListOrderRepositoryImpl implements ListOrderRepository {
       final response = await dataSource.switchDriver(params);
       String message = response.message;
 
-      if (response.status == false && response.error != null) {
-        message = response.error ?? 'Terjadi Kesalahan';
+      if (response.status == false) {
+        message =
+            response.error ??
+            (response.message.isNotEmpty
+                ? response.message
+                : 'Terjadi Kesalahan');
 
         return ErrorResult(message: message);
       }

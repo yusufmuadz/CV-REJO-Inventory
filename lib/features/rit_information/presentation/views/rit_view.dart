@@ -154,81 +154,57 @@ class RitView extends StatelessWidget {
   }
 
   Widget _buildOrder({required int index, EdgeInsetsGeometry? margin}) {
-    final isAccepted = controller.buttonRIT.value == EnumButtonRIT.acceptRIT;
     OrderEntity transaction = controller.orders[index];
 
     return Container(
       key: ValueKey(transaction.invoice),
       margin: margin,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Visibility(
-          //   visible:
-          //       transaction.number.value != 0 &&
-          //       controller.buttonRIT.value ==
-          //           EnumButtonRIT.buttonConfirmChangePO,
-          //   child: Container(
-          //     margin: const EdgeInsets.only(right: 10),
-          //     child: Text(
-          //       '${transaction.number}.',
-          //       style: TextStyles.basicTextStyle(
-          //         fontSize: 14,
-          //         fontWeight: FontWeight.bold,
-          //         color: Colors.black,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Obx(
-            () => Expanded(
-              child: CustomCardList(
-                onTapMaps: () => controller.onTapMaps(order: transaction),
-                onTap: () {
-                  final arriveDriver = transaction.driver?.arriveDriver;
+      child: Obx(
+        () => CustomCardList(
+          isTrackingDriver: controller.isView.value,
+          onTapMaps: () => controller.onTapMaps(order: transaction),
+          onTap: () {
+            final arriveDriver = transaction.driver?.arriveDriver;
 
-                  if (controller.isView.value) {
-                    controller.dialogService.showComingSoonSnackbar();
-                    return;
-                  }
+            if (controller.isView.value) {
+              // controller.dialogService.showComingSoonSnackbar();
+              return;
+            }
 
-                  if (controller.buttonRIT.value == EnumButtonRIT.acceptRIT) {
-                    return;
-                  }
+            if (controller.buttonRIT.value == EnumButtonRIT.acceptRIT) {
+              return;
+            }
 
-                  if (arriveDriver == true) {
-                    controller.dialogService.showError(
-                      'Informasi',
-                      'PO Sudah diselesaikan',
-                    );
-                    return;
-                  }
+            if (arriveDriver == true) {
+              controller.dialogService.showError(
+                'Informasi',
+                'PO Sudah diselesaikan',
+              );
+              return;
+            }
 
-                  if (controller.buttonRIT.value ==
-                      EnumButtonRIT.buttonConfirmChangePO) {
-                    controller.toggleOrder(transaction);
-                    return;
-                  }
+            if (controller.buttonRIT.value ==
+                EnumButtonRIT.buttonConfirmChangePO) {
+              controller.toggleOrder(transaction);
+              return;
+            }
 
-                  Get.toNamed(
-                    Routes.DETAIL_ORDER,
-                    arguments: {
-                      'invoice': transaction.invoice,
-                      'status_driver': transaction.driver?.status ?? '',
-                      'isSisipan': controller.isSisipan.value,
-                    },
-                  );
-                },
-                showSelection: false,
-                isSelected: '',
-                onCheckboxChanged: () {},
-                orderEntity: transaction,
-                buttonRIT: controller.buttonRIT.value,
-                color: controller.colorRit.value.replaceAll('#', ''),
-              ),
-            ),
-          ),
-        ],
+            Get.toNamed(
+              Routes.DETAIL_ORDER,
+              arguments: {
+                'invoice': transaction.invoice,
+                'status_driver': transaction.driver?.status ?? '',
+                'isSisipan': controller.isSisipan.value,
+              },
+            );
+          },
+          showSelection: false,
+          isSelected: '',
+          onCheckboxChanged: () {},
+          orderEntity: transaction,
+          buttonRIT: controller.buttonRIT.value,
+          color: controller.colorRit.value.replaceAll('#', ''),
+        ),
       ),
     );
   }

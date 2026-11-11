@@ -150,7 +150,7 @@ class CustomCardList extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: AppRole.isDriver,
+                  visible: AppRole.isDriver || isTrackingDriver,
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: InkWell(

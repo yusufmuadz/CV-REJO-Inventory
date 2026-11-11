@@ -61,7 +61,7 @@ class CustomCardInv extends StatelessWidget {
           children: [
             _buildInfoText(
               showStatus: !isHistory,
-              title: 'INVOICE',
+              title: 'INV',
               value: invEntity.suratJalan!.replaceAll('SJ/', ''),
             ),
             Divider(thickness: 1, height: 28, color: const Color(0xFFE2E8F0)),
@@ -77,7 +77,7 @@ class CustomCardInv extends StatelessWidget {
             const SizedBox(height: 14),
             _buildInfoIconText(
               isDate: true,
-              label: 'Tanggal Pengiriman',
+              label: 'Tanggal Invoice',
               value: !isCollector
                   ? invEntity.date?.transaction ?? ''
                   : invEntity.tanggalTransaksi ?? '',
@@ -184,7 +184,7 @@ class CustomCardInv extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: 75,
+          width: 40,
           child: Text(
             '$title : ',
             style: _textStyle(
@@ -218,12 +218,14 @@ class CustomCardInv extends StatelessWidget {
                   statusArriveDriver: invEntity.driver?.arriveDriver ?? false,
                   statusDelivCancel:
                       invEntity.driver?.statusDelivCancel ?? false,
+                  statusTagihan: invEntity.statusTagihan ?? '',
                 ),
               ),
               color: BoxStatus.buildBgColor(
                 statusScanDriver: invEntity.driver?.scanDriver ?? false,
                 statusArriveDriver: invEntity.driver?.arriveDriver ?? false,
                 statusDelivCancel: invEntity.driver?.statusDelivCancel ?? false,
+                statusTagihan: invEntity.statusTagihan ?? '',
               ),
             ),
             child: Text(
@@ -231,6 +233,7 @@ class CustomCardInv extends StatelessWidget {
                 statusScanDriver: invEntity.driver?.scanDriver ?? false,
                 statusArriveDriver: invEntity.driver?.arriveDriver ?? false,
                 statusDelivCancel: invEntity.driver?.statusDelivCancel ?? false,
+                statusTagihan: invEntity.statusTagihan ?? '',
               ),
               style: _textStyle(
                 fontWeight: FontWeight.bold,

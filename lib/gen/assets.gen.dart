@@ -14,79 +14,11 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
-  /// File path: assets/icons/address.png
-  AssetGenImage get address => const AssetGenImage('assets/icons/address.png');
-
-  /// File path: assets/icons/barcode.png
-  AssetGenImage get barcode => const AssetGenImage('assets/icons/barcode.png');
-
-  /// File path: assets/icons/card_member.png
-  AssetGenImage get cardMember =>
-      const AssetGenImage('assets/icons/card_member.png');
-
-  /// File path: assets/icons/date_in.png
-  AssetGenImage get dateIn => const AssetGenImage('assets/icons/date_in.png');
-
-  /// File path: assets/icons/date_order.png
-  AssetGenImage get dateOrder =>
-      const AssetGenImage('assets/icons/date_order.png');
-
-  /// File path: assets/icons/district.png
-  AssetGenImage get district =>
-      const AssetGenImage('assets/icons/district.png');
-
-  /// File path: assets/icons/ediprofile.png
-  AssetGenImage get ediprofile =>
-      const AssetGenImage('assets/icons/ediprofile.png');
-
-  /// File path: assets/icons/gridicons_product.png
-  AssetGenImage get gridiconsProduct =>
-      const AssetGenImage('assets/icons/gridicons_product.png');
-
-  /// File path: assets/icons/home.png
-  AssetGenImage get home => const AssetGenImage('assets/icons/home.png');
-
-  /// File path: assets/icons/hubungiadmin.png
-  AssetGenImage get hubungiadmin =>
-      const AssetGenImage('assets/icons/hubungiadmin.png');
-
-  /// File path: assets/icons/logout.png
-  AssetGenImage get logout => const AssetGenImage('assets/icons/logout.png');
-
-  /// File path: assets/icons/maps.png
-  AssetGenImage get maps => const AssetGenImage('assets/icons/maps.png');
-
   /// File path: assets/icons/orderan.png
   AssetGenImage get orderan => const AssetGenImage('assets/icons/orderan.png');
 
-  /// File path: assets/icons/person.png
-  AssetGenImage get person => const AssetGenImage('assets/icons/person.png');
-
-  /// File path: assets/icons/person2.png
-  AssetGenImage get person2 => const AssetGenImage('assets/icons/person2.png');
-
-  /// File path: assets/icons/phone.png
-  AssetGenImage get phone => const AssetGenImage('assets/icons/phone.png');
-
   /// List of all assets
-  List<AssetGenImage> get values => [
-    address,
-    barcode,
-    cardMember,
-    dateIn,
-    dateOrder,
-    district,
-    ediprofile,
-    gridiconsProduct,
-    home,
-    hubungiadmin,
-    logout,
-    maps,
-    orderan,
-    person,
-    person2,
-    phone,
-  ];
+  List<AssetGenImage> get values => [orderan];
 }
 
 class $AssetsImagesGen {
@@ -112,10 +44,6 @@ class $AssetsImagesGen {
   AssetGenImage get bgProfile =>
       const AssetGenImage('assets/images/bg_profile.png');
 
-  /// File path: assets/images/picking_man.png
-  AssetGenImage get pickingMan =>
-      const AssetGenImage('assets/images/picking_man.png');
-
   /// List of all assets
   List<AssetGenImage> get values => [
     bgCollector,
@@ -123,7 +51,6 @@ class $AssetsImagesGen {
     bgPackingMan,
     bgPickingMan,
     bgProfile,
-    pickingMan,
   ];
 }
 

@@ -161,6 +161,8 @@ class ContentInfoOrderWidget extends StatelessWidget {
                           visible:
                               AppRole.isChecker2 ||
                               (AppRole.isDriver &&
+                                  controller.statusDriver.value !=
+                                      'completed' &&
                                   !controller.isDriverCollector.value &&
                                   !controller.isSisipan.value),
                           child: SizedBox(
@@ -228,6 +230,7 @@ class ContentInfoOrderWidget extends StatelessWidget {
         visualDensity: VisualDensity(horizontal: -4, vertical: -4),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onChanged: (value) {
+          // debugPrint('Status Driver ${controller.statusDriver.value}');
           if (check) return;
 
           if (index < 0) {
@@ -300,6 +303,7 @@ class ContentInfoOrderWidget extends StatelessWidget {
             visible:
                 AppRole.isChecker2 ||
                 (AppRole.isDriver &&
+                    controller.statusDriver.value != 'completed' &&
                     !controller.isDriverCollector.value &&
                     !controller.isSisipan.value),
             child: SizedBox(

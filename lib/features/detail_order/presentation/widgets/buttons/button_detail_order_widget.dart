@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../../../../shared/custom/custom_button.dart';
+import '../../../data/models/driver_status_process_model.dart';
 import '../../controllers/detail_order_controller.dart';
 
 class ButtonDetailOrderWidget {
@@ -99,6 +100,9 @@ class ButtonDetailOrderWidget {
             'id_piutang': controller.idPiutang.value,
             'no_route': controller.noRoute.value,
             'nota_route': controller.notaRoute.value,
+            'driverStatusProcessModel':
+                controller.orderDetail.value.driverStatusProcess
+                    as DriverStatusProcessModel,
           },
         );
       },

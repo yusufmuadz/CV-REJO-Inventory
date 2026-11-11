@@ -1,21 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../../core/middlewares/app_role.dart';
-import '../../../../core/theme/text_styles.dart';
 import '../../../../routes/app_pages.dart';
-import '../../../../shared/box/box_status.dart';
-import '../../../../shared/custom/custom_button.dart';
-import '../../../../shared/custom/custom_card_list.dart';
-import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/order/sort_widget.dart';
 import '../../../../shared/rit/shared_card_rit.dart';
 import '../../../../utils/loading_custom.dart';
-import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../../../list_order/domain/entities/rit_list_entity.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/home_tracking_driver_controller.dart';
@@ -36,8 +26,6 @@ class HomeTrackingDriverView extends StatelessWidget {
           title: 'Tracking Driver',
           icon: Ionicons.options_outline,
           onTap: () {
-            // controller.dialogService.showComingSoonSnackbar();
-            // _popupFilter();
             if (controller.listRIT.isEmpty) {
               controller.getDistrict();
             }
@@ -64,30 +52,6 @@ class HomeTrackingDriverView extends StatelessWidget {
             );
           },
         ),
-        // Container(
-        //   height: 42,
-        //   margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-        //   decoration: BoxDecoration(
-        //     color: Colors.white,
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   child: CustomSearchField(
-        //     placeholder: 'Cari pesanan...',
-        //     searchController: controller.searchTrackingController,
-        //     prefixInsets: EdgeInsetsGeometry.fromLTRB(10, 0, 5, 0),
-        //     decoration: BoxDecoration(
-        //       border: Border.all(width: 1, color: const Color(0xFFf4f4f5)),
-        //       borderRadius: BorderRadius.circular(7),
-        //     ),
-        //     onSubmitted: (value) {
-        //       controller.onRefreshTransaction();
-        //     },
-        //     onSuffixTap: () {
-        //       controller.searchTrackingController.clear();
-        //       controller.onRefreshTransaction();
-        //     },
-        //   ),
-        // ),
         Expanded(
           child: Container(
             alignment: Alignment.center,
@@ -99,7 +63,7 @@ class HomeTrackingDriverView extends StatelessWidget {
                   controller.onRefreshTransaction();
                 },
                 child: CustomScrollView(
-                  controller: controller.scrollerController,
+                  // controller: controller.scrollerController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [_buildContent(controller)],
                 ),
@@ -129,10 +93,6 @@ class HomeTrackingDriverView extends StatelessWidget {
 
   Widget _buildEmpty() {
     String message = 'Tidak ada pesanan';
-
-    // if (controller.pageIndex.value == 0) {
-    //   message = 'Tidak ada RIT';
-    // }
 
     return SliverFillRemaining(
       hasScrollBody: false, // Mencegah stretching konten
@@ -164,92 +124,25 @@ class HomeTrackingDriverView extends StatelessWidget {
     );
   }
 
-  Widget _buildOrder({
-    required OrderEntity transaction,
-    required HomeTrackingDriverController controller,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-      child: CustomCardList(
-        onTap: () {
-          controller.dialogService.showComingSoonSnackbar();
-          // String statusPO = transaction.pic?.status ?? '';
-
-          // if (AppRole.isChecker1) {
-          //   statusPO = transaction.checker1?.status ?? '';
-          // } else if (AppRole.isChecker2) {
-          //   if (transaction.checker2?.status != 'completed') {
-          //     statusPO = transaction.checker2?.status ?? '';
-          //   } else {
-          //     statusPO = transaction.loader?.status ?? '';
-          //   }
-          // } else if (AppRole.isDriver) {
-          //   statusPO = transaction.driver?.status ?? '';
-          // }
-
-          // if (AppRole.isDriver) {
-          //   Get.toNamed(
-          //     Routes.DETAIL_ORDER,
-          //     arguments: {'invoice': transaction.invoice},
-          //   );
-          //   return;
-          // }
-
-          // Get.toNamed(
-          //   Routes.DETAIL_ORDER,
-          //   arguments: {
-          //     'invoice': transaction.invoice,
-          //     'routeFrom': 'listOrder',
-          //     'take_it_order': true,
-          //     'status_checker2': transaction.checker2?.status ?? '',
-          //     'status_po': statusPO,
-          //     'isTracking': true,
-          //   },
-          // );
-        },
-        isSelected: '',
-        showSelection: false,
-        isHistory: true,
-        isTrackingDriver: true,
-        orderEntity: transaction,
-      ),
-    );
-  }
-
   Widget _buildRit({
     required HomeTrackingDriverController controller,
     required RitListEntity ritOrder,
   }) {
-    String totalOnProgressPO = '0';
-    String pendingPoRITCheck2 = ritOrder.poPendingCheck2;
     final colorRIT = int.parse('0xFF${ritOrder.color.replaceAll('#', '')}');
-
-    if (AppRole.isPIC) {
-      totalOnProgressPO = ritOrder.poPendingPic;
-    } else if (AppRole.isChecker1) {
-      totalOnProgressPO = ritOrder.poPendingCheck1;
-    } else if (AppRole.isChecker2) {
-      if (pendingPoRITCheck2 != '0') {
-        totalOnProgressPO = ritOrder.poPendingCheck2;
-      } else {
-        totalOnProgressPO = ritOrder.poPendingLoader;
-      }
-    } else if (AppRole.isDriver) {
-      totalOnProgressPO = ritOrder.poPendingDelivery;
-    }
+    final isSelection = false.obs;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
       child: SharedCardRIT(
+        isTracking: true,
         isSelected: false,
         totalPO: ritOrder.totalPO,
-        totalOnProgressPO: totalOnProgressPO,
+        totalOnProgressPO: '0',
         noRIT: ritOrder.city,
         dateRIT: ritOrder.tanggalRit,
         colorRIT: colorRIT,
         routeRIT: ritOrder.route,
-        isSelection: false.obs,
+        isSelection: isSelection,
         onTap: () {
           Get.toNamed(
             Routes.RIT_INFORMATION,
@@ -270,299 +163,6 @@ class HomeTrackingDriverView extends StatelessWidget {
           // controller.getOrder(noRoute: '${index + 1}');
         },
         onTapSeePO: () {},
-      ),
-      // InkWell(
-      //   onTap: () {
-      //     controller.dialogService.showComingSoonSnackbar();
-      //   },
-      //   child: Container(
-      //     padding: const EdgeInsets.all(12),
-      //     decoration: BoxDecoration(
-      //       border: Border(
-      //         top: BorderSide(width: 1, color: Color(colorRIT)),
-      //         bottom: BorderSide(width: 1, color: Color(colorRIT)),
-      //         right: BorderSide(width: 1, color: Color(colorRIT)),
-      //         left: BorderSide(width: 7, color: Color(colorRIT)),
-      //       ),
-      //       borderRadius: BorderRadius.circular(12),
-      //     ),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         _buildRowContent(
-      //           title: 'NOMOR RIT',
-      //           value: 'Tanggal',
-      //           color: const Color(0xFF524439),
-      //           fontWeightTitle: FontWeight.w600,
-      //         ),
-      //         const SizedBox(height: 3),
-      //         _buildRowContent(
-      //           title: 'RIT - ${ritOrder.city}',
-      //           value: DateFormat(
-      //             'dd MMMM yyyy',
-      //           ).format(DateTime.parse(ritOrder.tanggalRit)),
-      //           color: const Color(0xFF151C27),
-      //           fontWeightTitle: FontWeight.bold,
-      //           fontWeightValue: FontWeight.w500,
-      //         ),
-      //         const Divider(thickness: 1, height: 24, color: Color(0xFFE7EEFE)),
-      //         Row(
-      //           children: [
-      //             Icon(
-      //               Icons.inventory_2_outlined,
-      //               size: 18,
-      //               color: const Color(0xFF8A5012),
-      //             ),
-      //             const SizedBox(width: 5),
-      //             RichText(
-      //               text: TextSpan(
-      //                 text: '${ritOrder.totalPO} ',
-      //                 style: TextStyles.basicTextStyle(
-      //                   fontSize: 16,
-      //                   fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-      //                   fontWeight: FontWeight.bold,
-      //                   color: const Color(0xFF151C27),
-      //                 ),
-      //                 children: <TextSpan>[
-      //                   TextSpan(
-      //                     text: 'Total PO',
-      //                     style: TextStyles.basicTextStyle(
-      //                       fontSize: 16,
-      //                       fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-      //                       fontWeight: FontWeight.w400,
-      //                       color: const Color(0xFF524439),
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //             const Spacer(),
-      //             Icon(
-      //               CupertinoIcons.cube_box,
-      //               size: 18,
-      //               color: const Color(0xFFD68F4D),
-      //             ),
-      //             const SizedBox(width: 5),
-      //             RichText(
-      //               text: TextSpan(
-      //                 text: '$totalOnProgressPO ',
-      //                 style: TextStyles.basicTextStyle(
-      //                   fontSize: 16,
-      //                   fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-      //                   fontWeight: FontWeight.bold,
-      //                   color: const Color(0xFF151C27),
-      //                 ),
-      //                 children: <TextSpan>[
-      //                   TextSpan(
-      //                     text: 'PO Berjalan',
-      //                     style: TextStyles.basicTextStyle(
-      //                       fontSize: 16,
-      //                       fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-      //                       fontWeight: FontWeight.w400,
-      //                       color: const Color(0xFF524439),
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //         const SizedBox(height: 10),
-      //         Row(
-      //           children: [
-      //             const Icon(
-      //               Icons.location_on_outlined,
-      //               size: 18,
-      //               color: Color(0xFF8A5012),
-      //             ),
-      //             const SizedBox(width: 5),
-      //             Expanded(
-      //               child: Text(
-      //                 ritOrder.route.isEmpty ? '-' : ritOrder.route.join(', '),
-      //                 style: TextStyles.basicTextStyle(
-      //                   fontSize: 16,
-      //                   fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-      //                   fontWeight: FontWeight.w400,
-      //                   color: const Color(0xFF524439),
-      //                 ),
-      //               ),
-      //             ),
-      //             Container(
-      //               padding: const EdgeInsets.all(5),
-      //               margin: const EdgeInsets.only(left: 10),
-      //               decoration: BoxDecoration(
-      //                 borderRadius: BorderRadius.circular(7),
-      //                 color: BoxStatus.buildColor(
-      //                   // statusPIC: transaction.pic?.status ?? '',
-      //                   // statusChecker1: transaction.checker1?.status ?? '',
-      //                   // statusChecker2: transaction.checker2?.status ?? '',
-      //                   // statusDriver: transaction.driver?.status ?? '',
-      //                   // statusScanDriver:
-      //                   //     transaction.driver?.scanDriver ?? false,
-      //                   // statusArriveDriver:
-      //                   //     transaction.driver?.arriveDriver ?? false,
-      //                 ),
-      //               ),
-      //               child: Text(
-      //                 BoxStatus.buildText(
-      //                   // statusPIC: transaction.pic?.status ?? '',
-      //                   // statusChecker1: transaction.checker1?.status ?? '',
-      //                   // statusChecker2: transaction.checker2?.status ?? '',
-      //                   // statusDriver: transaction.driver?.status ?? '',
-      //                   // statusScanDriver:
-      //                   //     transaction.driver?.scanDriver ?? false,
-      //                   // statusArriveDriver:
-      //                   //     transaction.driver?.arriveDriver ?? false,
-      //                 ),
-      //                 style: TextStyles.basicTextStyle(color: Colors.white),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-    );
-  }
-
-  Widget _buildRowContent({
-    required String title,
-    required String value,
-    required Color color,
-    required FontWeight fontWeightTitle,
-    FontWeight fontWeightValue = FontWeight.w400,
-  }) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyles.basicTextStyle(
-              fontSize: 16,
-              fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-              fontWeight: fontWeightTitle,
-              color: color,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: fontWeightValue,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-
-  _popupFilter() {
-    Get.bottomSheet(
-      isDismissible: false,
-      enableDrag: false,
-      SizedBox(
-        height: Get.height * 0.5,
-        child: Padding(
-          padding: EdgeInsets.only(top: 22, bottom: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10.0),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 35),
-                    Expanded(
-                      child: Text(
-                        'Filter',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFF3F4F6),
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: const Color(0xFF4B5563),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 5, thickness: 1, color: Color(0xFFE2E8F8)),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(16, 13, 16, 16),
-                  child: Column(children: [
-                      ],
-                    ),
-                ),
-              ),
-              const Divider(height: 2, thickness: 1, color: Color(0xFFE2E8F8)),
-              // const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12.0, 16, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton.basicOutlinedButton(
-                        title: 'Batal',
-                        textColor: const Color(0xFF8A5012),
-                        minimumSize: Size.fromHeight(48),
-                        side: BorderSide(
-                          color: const Color(0xFF8A5012),
-                          width: 1,
-                        ),
-                        onPressed: () {
-                          // if (ritController.isLoading.value) return;
-                          Get.back();
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 12),
-                        child: CustomButton.basicButton(
-                          title: 'Simpan',
-                          minimumSize: Size.fromHeight(48),
-                          color: const Color(0xFF0056D2),
-                          onPressed: () {
-                            // if (ritController.isLoading.value) return;
-                            Get.back();
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
     );
   }

@@ -92,9 +92,10 @@ class RouteCollectorView extends StatelessWidget {
         isSelected: false,
         totalPO: entity.jumlahTransaksi,
         noRIT: entity.noRoute,
-        dateRIT: '',
+        dateRIT: entity.tanggalTransaksi,
         colorRIT: int.parse('0xC7C1CEE2'),
         routeRIT: [],
+        nameRoute: entity.namaRoute,
         isSelection: false.obs,
         onTap: () {
           WidgetsBinding.instance.addPostFrameCallback((_) {

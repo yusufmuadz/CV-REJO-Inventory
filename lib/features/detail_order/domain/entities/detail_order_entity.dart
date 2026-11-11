@@ -4,6 +4,7 @@ import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 
 import '../../data/models/assistant_model.dart';
 import '../../data/models/driver_model.dart';
+import '../../data/models/driver_status_process_model.dart';
 import '../../data/models/item_order_model.dart';
 
 class DetailOrderEntity {
@@ -23,6 +24,7 @@ class DetailOrderEntity {
   final DateModel? date;
   final AssistantModel? assistant;
   final DriverModel? driver;
+  final DriverStatusProcessModel? driverStatusProcess;
   final String? idDetail;
   final String? idPiutang;
   final String? tanggalTransaksi;
@@ -47,6 +49,7 @@ class DetailOrderEntity {
     this.mobilExternal,
     this.assistant,
     this.driver,
+    this.driverStatusProcess,
     this.orderDetails,
     this.idDetail,
     this.idPiutang,
@@ -99,6 +102,9 @@ class DetailOrderEntity {
       driver: json['driver'] != null
           ? DriverModel.fromJson(json['driver'])
           : null,
+      driverStatusProcess: json['proses_driver'] != null
+          ? DriverStatusProcessModel.fromJson(json['proses_driver'])
+          : null,
       orderDetails: json['order_details'] != null
           ? List<ItemOrderModel>.from(
               json['order_details'].map((x) => ItemOrderModel.fromJson(x)),
@@ -116,6 +122,7 @@ class DetailOrderEntity {
     DateModel? date,
     AssistantModel? assistant,
     DriverModel? driver,
+    DriverStatusProcessModel? driverStatusProcess,
     List<ItemOrderModel>? orderDetails,
   }) {
     return DetailOrderEntity(
@@ -127,6 +134,7 @@ class DetailOrderEntity {
       date: date ?? this.date,
       assistant: assistant ?? this.assistant,
       driver: driver ?? this.driver,
+      driverStatusProcess: driverStatusProcess ?? this.driverStatusProcess,
       orderDetails: orderDetails ?? this.orderDetails,
     );
   }

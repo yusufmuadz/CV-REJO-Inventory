@@ -24,13 +24,17 @@ class DriverArrive extends StatelessWidget {
         children: [
           Visibility(
             visible:
+                controller.driverStatusProcessModel.value.statusArrive ==
+                    false ||
                 controller.statusButton.value == EnumButtonEndingOrder.savePO,
             child: _buildFirstContent(),
           ),
           Visibility(
             visible:
+                controller.driverStatusProcessModel.value.statusArrive ==
+                    true ||
                 controller.statusButton.value ==
-                EnumButtonEndingOrder.saveDriverPO,
+                    EnumButtonEndingOrder.saveDriverPO,
             child: _buildSecondContent(),
           ),
         ],

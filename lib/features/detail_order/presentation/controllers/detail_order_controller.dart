@@ -220,15 +220,15 @@ class DetailOrderController extends GetxController {
 
     isLoading.value = true;
 
-    final result = await detailOrderUseCase.callTakeItTransaction(
-      ParamsTakeIt(
-        role: AppRole.current!.name.toLowerCase(),
-        statusChecker2: statusChecker2.value,
-        invoice: noInvoice.value,
-      ),
-    );
-
     try {
+      final result = await detailOrderUseCase.callTakeItTransaction(
+        ParamsTakeIt(
+          role: AppRole.current!.name.toLowerCase(),
+          statusChecker2: statusChecker2.value,
+          invoice: noInvoice.value,
+        ),
+      );
+
       switch (result) {
         case Success(:final data):
           if (data.status && data.message.isEmpty) {

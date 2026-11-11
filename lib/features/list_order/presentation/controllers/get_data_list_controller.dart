@@ -134,11 +134,19 @@ class GetDataListController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          listCtrl.loadState.value = LoadState.error;
+          if (isDetail) {
+            listCtrl.loadStateDetailPO.value = LoadState.error;
+          } else {
+            listCtrl.loadState.value = LoadState.error;
+          }
           listCtrl.dialogService.showError('Failed', message);
       }
     } catch (e) {
-      listCtrl.loadState.value = LoadState.error;
+      if (isDetail) {
+        listCtrl.loadStateDetailPO.value = LoadState.error;
+      } else {
+        listCtrl.loadState.value = LoadState.error;
+      }
       if (Get.isDialogOpen == true) Get.back();
       listCtrl.dialogService.showError('Failed', 'Error Get Data');
     } finally {
@@ -209,6 +217,7 @@ class GetDataListController extends GetxController {
 
       switch (usersResult) {
         case Success(:final data):
+          if (data.isEmpty) return;
           listCtrl.listUser.value = data as List<UserEntity>;
 
           listCtrl.listUser.sort(
@@ -226,6 +235,7 @@ class GetDataListController extends GetxController {
 
       switch (transportationsResult) {
         case Success(:final data):
+          if (data.isEmpty) return;
           listCtrl.transportations.value = data as List<TransportationEntity>;
 
           if (data.first.namaKendaraan != null &&

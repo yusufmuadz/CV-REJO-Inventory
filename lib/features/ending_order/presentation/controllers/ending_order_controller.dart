@@ -9,6 +9,7 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../detail_order/data/models/driver_status_process_model.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
 import '../../../rit_information/domain/params/trouble_rit_param.dart';
@@ -81,6 +82,9 @@ class EndingOrderController extends GetxController {
     {'id': '2', 'name': 'Lainnya', 'isSelected': false},
   ].obs;
 
+  // ========== DRIVER ==========
+  final driverStatusProcessModel = DriverStatusProcessModel().obs;
+
   // ========== COLLECTOR ==========
   final idDetail = ''.obs;
   final idPiutang = ''.obs;
@@ -113,6 +117,15 @@ class EndingOrderController extends GetxController {
       statusChecker2.value = args['status_checker2'] ?? '';
       statusDriver.value = args['status_driver'] ?? '';
       isDriverCollector.value = args['isDriverCollector'] ?? false;
+
+      // ========== DRIVER ==========
+      driverStatusProcessModel.value =
+          args['driverStatusProcessModel'] ?? DriverStatusProcessModel();
+
+      if (AppRole.isDriver ||
+          driverStatusProcessModel.value.statusArrive == true) {
+        statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+      }
 
       // ========== COLLECTOR ==========
       idDetail.value = args['id_detail'] ?? '';
@@ -269,11 +282,10 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
-          dialogService.showDialogBox(
+          dialogService.showSuccessDefaultDialog(
             title: 'Success',
-            description: 'Berhasil Menyimpan Pesanan',
-            barrierDismissible: false,
-            onPressed: () {
+            message: 'Berhasil Menyimpan Pesanan',
+            onPressed1: () {
               if (AppRole.isChecker2 &&
                   statusChecker2.value != 'completed' &&
                   data.totalPO == '0') {
@@ -400,11 +412,10 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
-          dialogService.showDialogBox(
+          dialogService.showSuccessDefaultDialog(
             title: 'Success',
-            description: 'Berhasil Menunda Pesanan',
-            barrierDismissible: false,
-            onPressed: () {
+            message: 'Berhasil Menunda Pesanan',
+            onPressed1: () {
               GetStorage().remove('noInvoice');
 
               if (routeStackService.contains(Routes.LIST_ORDER)) {
@@ -483,11 +494,10 @@ class EndingOrderController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
-          dialogService.showDialogBox(
+          dialogService.showSuccessDefaultDialog(
             title: 'Success',
-            description: 'Berhasil Menunda Pesanan',
-            barrierDismissible: false,
-            onPressed: () {
+            message: 'Berhasil Menunda Pesanan',
+            onPressed1: () {
               GetStorage().remove('noInvoice');
               if (Get.isRegistered<RitController>()) {
                 ritController.afterEnding();
@@ -593,11 +603,10 @@ class EndingOrderController extends GetxController {
             return;
           }
 
-          dialogService.showDialogBox(
+          dialogService.showSuccessDefaultDialog(
             title: 'Success',
-            description: 'Berhasil Menyimpan Pesanan',
-            barrierDismissible: false,
-            onPressed: () {
+            message: 'Berhasil Menyimpan Pesanan',
+            onPressed1: () {
               GetStorage().remove('noInvoice');
               GetStorage().remove('status_driver');
               GetStorage().remove('isTakeToTheRoad');
@@ -824,6 +833,8 @@ class EndingOrderController extends GetxController {
 
     try {
       final result = await endingOrderUseCase.callGetPaymentMethod();
+      paymentTypeList.clear();
+      paymentTypeList.add(PaymentMethodEntity(bankName: 'Tunai'));
 
       switch (result) {
         case Success(:final data):
@@ -845,11 +856,10 @@ class EndingOrderController extends GetxController {
   }
 
   void succesSavePO({EndingOrderEntity? data}) {
-    dialogService.showDialogBox(
+    dialogService.showSuccessDefaultDialog(
       title: 'Success',
-      description: 'Berhasil Menyimpan Pesanan',
-      barrierDismissible: false,
-      onPressed: () {
+      message: 'Berhasil Menyimpan Pesanan',
+      onPressed1: () {
         GetStorage().remove('noInvoice');
         GetStorage().remove('status_driver');
 
@@ -871,17 +881,6 @@ class EndingOrderController extends GetxController {
             },
           );
         }
-
-        // Get.offAllNamed(
-        //   Routes.RIT_INFORMATION,
-        //   arguments: {
-        //     'city': rit.value,
-        //     'colorRit': colorRit.value,
-        //     'tanggalRit': dateRit.value,
-        //     'routeFrom': 'endingOrder',
-        //     'isRitToday': isRitToday.value,
-        //   },
-        // );
       },
     );
   }
@@ -914,7 +913,7 @@ class EndingOrderController extends GetxController {
       }
 
       // Gunakan konstanta/enum jika ada, misal: PaymentType.lunas.name
-      if (selectedPaymentType.value == 'Lunas') {
+      if (selectedInfoInvoice.value == 'Lunas') {
         if (mediaFileListPaymentType.isEmpty || fieldController.text.isEmpty) {
           return true; // Ada yang kosong
         }

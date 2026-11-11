@@ -53,12 +53,12 @@ class ListHistoryOrderController extends GetxController
 
   @override
   void onClose() {
-    super.onClose();
     scrollController.dispose();
     isLoadingSort.value = false;
     tabController.dispose();
     searchController.dispose();
     loadState.value = LoadState.idle;
+    super.onClose();
   }
 
   Future<void> onRefreshTransaction() async {
@@ -142,9 +142,9 @@ class ListHistoryOrderController extends GetxController
     if (isLoadingSort.value) return;
     isLoadingSort.value = true;
 
-    final result = await listHistoryOrderUseCase.callGetDistrict();
-
     try {
+      final result = await listHistoryOrderUseCase.callGetDistrict();
+
       switch (result) {
         case Success(:final data):
           listDistrict.value = data;
@@ -174,7 +174,7 @@ class ListHistoryOrderController extends GetxController
 
     // 3. (Opsional) Jika Anda menggunakan GetBuilder, Anda bisa memanggil update()
     // TAPI baca "Catatan Penting" di bawah agar animasi tidak rusak!
-    // update(['orders']); 
+    // update(['orders']);
 
     // 4. (Opsional) Panggil API untuk menyimpan urutan baru ke server
     // _saveNewOrderToServer();
