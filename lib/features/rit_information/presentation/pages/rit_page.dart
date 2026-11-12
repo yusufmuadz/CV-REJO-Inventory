@@ -266,28 +266,48 @@ class RitPage extends GetView<RitController> {
     if (controller.pageIndex.value != 0 && controller.pageIndex.value != 4) {
       title = 'Simpan';
       color = const Color(0xFF2ED471);
+      return _buildButtonTakeOffSaveDriver();
     }
 
     return CustomButton.basicButton(
       title: title,
       color: color,
       onPressed: () {
-        debugPrint('Pilih Pesanan');
+        debugPrint('Pilih Pesanan Baru');
+        debugPrint('Page Index: ${controller.pageIndex.value}');
         // controller.saveOrderDummy();
         // controller.saveArriveAtOfficeDummy();
 
-        if (controller.pageIndex.value == 0 ||
-            controller.pageIndex.value == 4) {
-          controller.pageIndex.value = 1;
-          // controller.resetSortingSisipan();
-          controller.pageController.jumpToPage(1);
-        } else {
-          // if (AppRole.isCollector) {
-          controller.saveOrderDummy();
-          // } else {
-          // controller.saveOrder();
-          // }
-        }
+        // if (controller.pageIndex.value == 0 ||
+        //     controller.pageIndex.value == 4) {
+        controller.pageIndex.value = 1;
+        //   // controller.resetSortingSisipan();
+        controller.pageController.jumpToPage(1);
+        // } else {
+        //   // if (AppRole.isCollector) {
+        //   // controller.saveOrderDummy();
+        //   // } else {
+        //   controller.saveOrder();
+        //   // }
+        // }
+      },
+    );
+  }
+
+  Widget _buildButtonTakeOffSaveDriver() {
+    return CustomButton.doubleButton(
+      title1: 'Lewati',
+      title2: 'Simpan',
+      color1: Colors.redAccent[100]!,
+      color2: const Color(0xFF2ED471),
+      onPressed1: () => controller.saveOrderDummy(),
+      onPressed2: () {
+        debugPrint('Pilih Pesanan Baru');
+        debugPrint('Page Index: ${controller.pageIndex.value}');
+        // controller.saveOrderDummy();
+        // controller.saveArriveAtOfficeDummy();
+
+        controller.saveOrder();
       },
     );
   }

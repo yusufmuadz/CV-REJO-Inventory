@@ -202,7 +202,9 @@ class ArriveImageWidget {
                     Expanded(
                       child: CustomImage().buildTitle(
                         title: title,
-                        isNotOptional: AppRole.isCollector && !isTransportation,
+                        isNotOptional:
+                            AppRole.isDriver ||
+                            (AppRole.isCollector && !isTransportation),
                       ),
                     ),
                     Visibility(

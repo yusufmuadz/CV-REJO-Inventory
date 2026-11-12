@@ -122,9 +122,13 @@ class EndingOrderController extends GetxController {
       driverStatusProcessModel.value =
           args['driverStatusProcessModel'] ?? DriverStatusProcessModel();
 
-      if (AppRole.isDriver ||
-          driverStatusProcessModel.value.statusArrive == true) {
-        statusButton.value = EnumButtonEndingOrder.saveDriverPO;
+      debugPrint(
+        'driverStatusProcessModel ${driverStatusProcessModel.value.statusArrive}',
+      );
+
+      if (AppRole.isDriver &&
+          driverStatusProcessModel.value.statusArrive == false) {
+        statusButton.value = EnumButtonEndingOrder.savePO;
       }
 
       // ========== COLLECTOR ==========
@@ -650,7 +654,29 @@ class EndingOrderController extends GetxController {
                 'Kemungkinan pesanan sudah disimpan sebelumnya. Silakan cek di history pesanan.';
           }
           // loadState.value = LoadState.error;
-          dialogService.showError('Failed', pesan);
+          dialogService.showError(
+            'Failed',
+            pesan,
+            onPressed1: () {
+              if (message.contains(
+                'Anda belum melakukan laporan tiba di lokasi.',
+              )) {
+                fieldController.clear();
+                fieldReasonInvController.clear();
+                mediaFileList.clear();
+                mediaFileListAllItem.clear();
+                mediaFileFrontMerchant.clear();
+                mediaFileListInfoInvoice.clear();
+                mediaFileListPaymentType.clear();
+                mediaFileListTransportation.clear();
+                extNopolTransportion.clear();
+                extDriverName.clear();
+
+                statusButton.value = EnumButtonEndingOrder.savePO;
+              }
+              Get.back();
+            },
+          );
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();

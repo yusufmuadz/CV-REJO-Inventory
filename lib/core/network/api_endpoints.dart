@@ -16,6 +16,9 @@ class ApiEndpoints {
   // Home
   static const String home = "main/getinfo";
 
+  // Checking Version
+  static const String checkVersion = "main/latestversion";
+
   // Transaction
   static const String fetchHistoryTransaction = "transaction/history/get";
   static const String getItemProduct = "items/get";

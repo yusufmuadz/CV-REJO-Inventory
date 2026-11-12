@@ -32,7 +32,7 @@ class LocationService {
 
           // Karena akurasi rendah, 5 detik sudah lebih dari cukup.
           // Ini mencegah aplikasi hang jika network buruk.
-          timeLimit: Duration(seconds: 5),
+          timeLimit: Duration(seconds: 10),
         ),
       );
       return position;

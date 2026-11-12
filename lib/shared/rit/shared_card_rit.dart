@@ -15,6 +15,12 @@ class SharedCardRIT extends StatelessWidget {
   final String noRIT;
   final String dateRIT;
   final String? nameRoute;
+  final String? statusArmada;
+  final String? driverName;
+  final String? nopolArmada;
+  final String? namaArmada;
+  final bool? ritBerangkat;
+  final bool? ritPulang;
 
   final int colorRIT;
 
@@ -39,6 +45,12 @@ class SharedCardRIT extends StatelessWidget {
     required this.onTapSeePO,
     this.totalOnProgressPO,
     this.nameRoute,
+    this.statusArmada,
+    this.driverName,
+    this.namaArmada,
+    this.nopolArmada,
+    this.ritBerangkat,
+    this.ritPulang,
   });
 
   @override
@@ -268,7 +280,7 @@ class SharedCardRIT extends StatelessWidget {
           color: Color(0xFF9CA3AF),
         ),
         const SizedBox(height: 2),
-        _buildRowContentTracking(text1: 'TESTING', text2: 'T 357 ING'),
+        _buildRowContentTracking(text1: driverName, text2: nopolArmada),
         const SizedBox(height: 12),
         _buildRowContentTracking(
           text1: 'Nama Armada',
@@ -280,8 +292,8 @@ class SharedCardRIT extends StatelessWidget {
         const SizedBox(height: 2),
         _buildRowContentTracking(
           isStatus: true,
-          text1: 'MOBIL',
-          text2: 'INTERNAL',
+          text1: namaArmada,
+          text2: statusArmada?.toUpperCase(),
         ),
         const SizedBox(height: 12),
         Text(
@@ -318,32 +330,33 @@ class SharedCardRIT extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                _buildStatusRIT(value: 'Completed'),
+                _buildStatusRIT(),
               ],
             ),
-            InkWell(
-              onTap: onTapSeePO,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color(0xFFd5914d),
-                ),
-                child: Text(
-                  'Lihat PO',
-                  style: TextStyles.basicTextStyle(
-                    fontSize: 12,
-                    letterSpacing: 0.48,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
-                  ),
-                ),
-              ),
-            ),
+            const SizedBox(),
+            // InkWell(
+            //   onTap: onTapSeePO,
+            //   child: Container(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 10,
+            //       vertical: 6,
+            //     ),
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(5),
+            //       color: const Color(0xFFd5914d),
+            //     ),
+            //     child: Text(
+            //       'Lihat PO',
+            //       style: TextStyles.basicTextStyle(
+            //         fontSize: 12,
+            //         letterSpacing: 0.48,
+            //         fontWeight: FontWeight.w600,
+            //         color: Colors.white,
+            //         fontFamily: GoogleFonts.hankenGrotesk().fontFamily,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ],
@@ -386,8 +399,8 @@ class SharedCardRIT extends StatelessWidget {
   }
 
   Widget _buildRowContentTracking({
-    required String text1,
-    required String text2,
+    String? text1,
+    String? text2,
     bool? isStatus,
     Color? color,
     double fontSize = 15,
@@ -397,7 +410,7 @@ class SharedCardRIT extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            text1,
+            text1 ?? '-',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.roboto(
@@ -412,10 +425,10 @@ class SharedCardRIT extends StatelessWidget {
           child: isStatus == true
               ? Align(
                   alignment: Alignment.centerLeft,
-                  child: _buildBoxStatus(value: text2),
+                  child: _buildBoxStatus(value: text2 ?? '-'),
                 )
               : Text(
-                  text2,
+                  text2 ?? '-',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.roboto(
@@ -429,11 +442,21 @@ class SharedCardRIT extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusRIT({required String value}) {
+  Widget _buildStatusRIT() {
+    String value = 'Available';
+
     Color bgColor = const Color(0xFFECFDF5);
     Color bdColor = const Color(0xFFA7F3D0);
     Color dotColor = const Color(0xFF10B981);
     Color txtColor = const Color(0xFF047857);
+
+    if (ritBerangkat == true) {
+      value = 'Ongoing';
+    }
+
+    if (ritBerangkat == true && ritPulang == true) {
+      value = 'Completed';
+    }
 
     if (value == 'Ongoing') {
       bgColor = const Color(0xFFEFF6FF);

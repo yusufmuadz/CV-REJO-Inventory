@@ -298,14 +298,14 @@ class RitController extends GetxController {
   }
 
   Future<void> saveOrderDummy() async {
-    if (_getEmptyInputErrorMessage() != null) {
-      dialogService.showErrorSnackbar(
-        title: 'Gagal!',
-        _getEmptyInputErrorMessage() ??
-            'Silakan lengkapi data terlebih dahulu!',
-      );
-      return;
-    }
+    // if (_getEmptyInputErrorMessage() != null) {
+    //   dialogService.showErrorSnackbar(
+    //     title: 'Gagal!',
+    //     _getEmptyInputErrorMessage() ??
+    //         'Silakan lengkapi data terlebih dahulu!',
+    //   );
+    //   return;
+    // }
 
     mediaFileList.clear();
     mediaFileListKM.clear();
@@ -350,6 +350,13 @@ class RitController extends GetxController {
     buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
 
     GetStorage().write('buttonRIT', buttonRIT.value.name);
+
+    pageIndex.value = 0;
+    pageController.jumpToPage(
+      0,
+      // duration: const Duration(milliseconds: 300),
+      // curve: Curves.easeInOut,
+    );
   }
 
   Future<void> saveOrder() async {
@@ -477,13 +484,14 @@ class RitController extends GetxController {
 
               buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
 
+              GetStorage().write('buttonRIT', buttonRIT.value.name);
+
               pageIndex.value = 0;
               pageController.jumpToPage(
                 0,
                 // duration: const Duration(milliseconds: 300),
                 // curve: Curves.easeInOut,
               );
-              GetStorage().write('buttonRIT', buttonRIT.value.name);
             },
           );
 

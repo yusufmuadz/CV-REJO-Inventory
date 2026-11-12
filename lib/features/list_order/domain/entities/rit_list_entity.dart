@@ -13,6 +13,12 @@ class RitListEntity {
   final String poDoneLoader;
   final String poPendingDelivery;
   final String poDoneDelivery;
+  final String? driverName;
+  final String? statusArmada;
+  final String? nopolArmada;
+  final String? namaArmada;
+  final bool? ritBerangkat;
+  final bool? ritPulang;
   final List<String> route;
   final List<String> pengurut;
 
@@ -33,9 +39,18 @@ class RitListEntity {
     required this.poDoneDelivery,
     required this.route,
     required this.pengurut,
+    this.driverName,
+    this.statusArmada,
+    this.namaArmada,
+    this.nopolArmada,
+    this.ritBerangkat,
+    this.ritPulang,
   });
 
   factory RitListEntity.fromJson(Map<String, dynamic> json) {
+    final isExternal =
+        json['status_armada']?.toString().toLowerCase() == 'external';
+
     return RitListEntity(
       city: json['city'] ?? '-',
       totalPO: json['total_po'] ?? '-',
@@ -51,6 +66,16 @@ class RitListEntity {
       poDoneLoader: json['po_done_loader'] ?? '-',
       poPendingDelivery: json['po_pending_delivery'] ?? '-',
       poDoneDelivery: json['po_done_delivery'] ?? '-',
+      driverName: isExternal
+          ? json['driver_external'] ?? '-'
+          : json['driver_assigned'] ?? '-',
+      statusArmada: json['status_armada'] ?? '-',
+      namaArmada: json['truck_nama'] ?? '-',
+      nopolArmada: isExternal
+          ? json['mobil_external'] ?? '-'
+          : json['truck_assigned'] ?? '-',
+      ritBerangkat: json['rit_berangkat'] ?? false,
+      ritPulang: json['rit_pulang'] ?? false,
       route: json['rute'] != null
           ? List<String>.from(json['rute'])
           : List<String>.from(['-']), // json['rute'],

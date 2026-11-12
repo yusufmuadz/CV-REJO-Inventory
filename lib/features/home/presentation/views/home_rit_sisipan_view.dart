@@ -181,6 +181,7 @@ class HomeRitSisipanView extends StatelessWidget {
         return SharedInputDriver(
           // isDetail: true,
           noRIT: ritEntity.city,
+          
           statusTransportationSelected: controller.statusTransportationSelected,
           statusTransportations: controller.statusTransportations,
           driverSelected: controller.driverSelected,

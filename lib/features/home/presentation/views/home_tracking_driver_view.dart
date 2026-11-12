@@ -76,9 +76,7 @@ class HomeTrackingDriverView extends StatelessWidget {
   }
 
   Widget _buildContent(HomeTrackingDriverController ctrlr) {
-    if (ctrlr.loadState.value == LoadState.initial &&
-        ctrlr.isLoading.value &&
-        ctrlr.listRit.isEmpty) {
+    if (ctrlr.loadState.value == LoadState.initial && ctrlr.isLoading.value) {
       return const SliverFillRemaining(
         hasScrollBody: false,
         child: LoadingView(),
@@ -142,6 +140,12 @@ class HomeTrackingDriverView extends StatelessWidget {
         dateRIT: ritOrder.tanggalRit,
         colorRIT: colorRIT,
         routeRIT: ritOrder.route,
+        driverName: ritOrder.driverName,
+        statusArmada: ritOrder.statusArmada,
+        namaArmada: ritOrder.namaArmada,
+        nopolArmada: ritOrder.nopolArmada,
+        ritBerangkat: ritOrder.ritBerangkat,
+        ritPulang: ritOrder.ritPulang,
         isSelection: isSelection,
         onTap: () {
           Get.toNamed(
