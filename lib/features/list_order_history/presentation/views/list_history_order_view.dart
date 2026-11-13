@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_card_list.dart';

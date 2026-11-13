@@ -67,9 +67,10 @@ class InputPendingDialog {
                         return;
                       }
 
-                      controller.changeRIT();
+                      controller.postDataListController.pendingRIT();
+                      // controller.changeRIT();
 
-                      Get.back();
+                      // Get.back();
                     },
                   ),
                 ),

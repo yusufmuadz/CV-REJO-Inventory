@@ -68,22 +68,19 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<ResponseModelGetRit> getRit(ParamGetRIT params) async {
     try {
-      // String url = 'getrit';
       String? date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-      // if (params.isPastRit == true) {
-      //   url = 'pastrit';
+      if (params.date != null) {
+        date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(params.date ?? date));
+      }
 
-      //   if (params.date != null) {
-      //     date = DateFormat(
-      //       'yyyy-MM-dd',
-      //     ).format(DateTime.parse(params.date ?? date));
-      //   }
-      // }
-
-      Map<String, String> body = {
+      Map<String, dynamic> body = {
         if (params.search != null) 'search': '${params.search}',
-        if (params.isPastRit) 'date': date,
+        'date': date,
+        'limit': params.limit,
+        'page': params.page,
       };
 
       String queryString = Uri(queryParameters: body).query;

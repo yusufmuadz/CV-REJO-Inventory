@@ -6,14 +6,9 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
 import '../../../login/domain/entities/user_entity.dart';
-import '../../data/models/courier_model.dart';
-import '../../data/models/date_model.dart';
-import '../../data/models/status_model.dart';
-import '../../domain/entities/invoice_entity.dart';
 import '../../domain/params/get_rit_param.dart';
 import '../../domain/params/get_transaction_param.dart';
 import '../../domain/usecases/list_order_usecase.dart';
-import 'enums/button_inv_enum.dart';
 import 'list_order_controller.dart';
 
 class GetDataListController extends GetxController {
@@ -162,30 +157,60 @@ class GetDataListController extends GetxController {
     return result;
   }
 
-  Future<void> getRit({bool? isPashRit, String? dateRIT}) async {
+  Future<void> getRit({
+    bool isRefresh = false,
+    bool? isPashRit,
+    String? dateRIT,
+  }) async {
     if (listCtrl.isLoading.value) return;
-    listCtrl.isLoading.value = true;
-
-    String sendDate = listCtrl.pastRitDateSelected.value;
-
-    if (sendDate.isEmpty) {
-      sendDate = listCtrl.tanggalRit.value;
-    }
-
-    debugPrint('DATE RIT : $sendDate');
-
-    final result = await listOrderUseCase.callGetRit(
-      ParamGetRIT(
-        isPastRit: !listCtrl.isRitToday.value,
-        date: sendDate,
-        isSisipan: listCtrl.isSisipan.value || listCtrl.isChangeDriver.value,
-      ),
-    );
+    if (!listCtrl.isSisipan.value) listCtrl.isLoading.value = true;
 
     try {
+      listCtrl.loadState.value = _getLoad(
+        isRefresh: isRefresh,
+        currentPage: listCtrl.currentPage.value,
+      );
+
+      if (isRefresh) {
+        listCtrl.listRit.clear();
+        listCtrl.currentPage.value = 1;
+      }
+
+      String sendDate = listCtrl.pastRitDateSelected.value;
+
+      if (sendDate.isEmpty) {
+        sendDate = listCtrl.tanggalRit.value;
+      }
+
+      debugPrint('DATE RIT : $sendDate');
+
+      final result = await listOrderUseCase.callGetRit(
+        ParamGetRIT(
+          isPastRit: !listCtrl.isRitToday.value,
+          date: sendDate,
+          limit: '10',
+          page: listCtrl.currentPage.value.toString(),
+          isSisipan: listCtrl.isSisipan.value || listCtrl.isChangeDriver.value,
+        ),
+      );
+
       switch (result) {
         case Success(:final data):
-          listCtrl.listRit.value = data;
+          if (listCtrl.isSisipan.value) {
+            listCtrl.listRit.addAll(data);
+            if (data.isEmpty) {
+              if (isRefresh && listCtrl.currentPage.value == 1) {
+                listCtrl.loadState.value = LoadState.idle;
+              } else {
+                listCtrl.loadState.value = LoadState.noMore;
+              }
+              return;
+            }
+
+            listCtrl.loadState.value = LoadState.idle;
+          } else {
+            listCtrl.listRit.value = data;
+          }
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -193,11 +218,11 @@ class GetDataListController extends GetxController {
           listCtrl.dialogService.showError('Failed', message);
       }
     } catch (e) {
+      listCtrl.loadState.value = LoadState.error;
       if (Get.isDialogOpen == true) Get.back();
       listCtrl.dialogService.showError('Failed', 'Error Get Data');
     } finally {
       listCtrl.isLoading.value = false;
-      listCtrl.loadState.value = LoadState.idle;
     }
   }
 

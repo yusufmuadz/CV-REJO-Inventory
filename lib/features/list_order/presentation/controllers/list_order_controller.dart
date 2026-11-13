@@ -12,6 +12,8 @@ import '../../../../routes/app_pages.dart';
 import '../../../../shared/rit/shared_input_driver.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../detail_order/domain/entities/transportation_entity.dart';
+import '../../../ending_order/domain/params/post_ending_order_param.dart';
+import '../../../ending_order/domain/usecases/ending_order_usecase.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
 import '../../../login/domain/entities/user_entity.dart';
 import '../../domain/entities/district_entity.dart';
@@ -204,7 +206,7 @@ class ListOrderController extends GetxController {
 
     if (pageIndex.value == 0) {
       listRit.clear();
-      getDataListController.getRit();
+      getDataListController.getRit(isRefresh: true);
     } else {
       orders.clear();
       getDataListController.getOrder(isRefresh: true);
@@ -221,6 +223,10 @@ class ListOrderController extends GetxController {
   }
 
   void retryFetch() => getDataListController.getOrder(
+    isRefresh: loadState.value == LoadState.error,
+  );
+
+  void retryFetchRIT() => getDataListController.getRit(
     isRefresh: loadState.value == LoadState.error,
   );
 
@@ -246,7 +252,7 @@ class ListOrderController extends GetxController {
   }
 
   void onWidgetScroll(ScrollController activeController) {
-    if (pageIndex.value == 0) return;
+    if (!isSisipan.value && pageIndex.value == 0) return;
     if (!activeController.hasClients) return;
 
     final currentPixels = activeController.position.pixels;
@@ -257,7 +263,11 @@ class ListOrderController extends GetxController {
 
     if (canLoad && currentPixels >= maxScroll - 200) {
       currentPage.value++;
-      getDataListController.getOrder(); // Fungsi ambil data pagination Anda
+      if (isSisipan.value && pageIndex.value == 0) {
+        getDataListController.getRit();
+      } else {
+        getDataListController.getOrder(); // Fungsi ambil data pagination Anda
+      }
     }
   }
 
@@ -451,7 +461,7 @@ class ListOrderController extends GetxController {
         : debugPrint("Can't open WhatsApp");
   }
 
-  void changeRIT() {
+  Future<void> changeRIT() async {
     if (listRit.isEmpty) {
       getDataListController.getRit();
     }

@@ -32,8 +32,12 @@ class DioClient {
     dio.interceptors.add(
       QueuedInterceptorsWrapper(
         onRequest: (options, handler) {
+          // Skip pengecekan koneksi jika diminta
+          final skipNetworkCheck = options.extra['skipNetworkCheck'] == true;
+
           // Cek koneksi sebelum request
-          if (_network.statusStream.value == ConnectionStatus.offline) {
+          if (!skipNetworkCheck &&
+              _network.statusStream.value == ConnectionStatus.offline) {
             return handler.reject(
               DioException(
                 requestOptions: options,
@@ -150,10 +154,15 @@ class DioClient {
   // Generic GET
   Future<Response> get(
     String path, {
+    bool skipNetworkCheck = false,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      return await dio.get(path, queryParameters: queryParameters);
+      return await dio.get(
+        path,
+        queryParameters: queryParameters,
+        options: Options(extra: {'skipNetworkCheck': skipNetworkCheck}),
+      );
     } on DioException catch (e) {
       throw e.error ?? e;
     }

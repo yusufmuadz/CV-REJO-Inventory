@@ -3,35 +3,41 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/constants/app_info.dart';
 import '../../../../core/middlewares/app_role.dart';
+import '../../../../core/result/result_custom.dart';
+import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../modules/domain/usecases/app/app_usecase.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../../shared/enum/load_state_enum.dart';
 
 class SplashController extends GetxController {
-  final isLoading = false.obs;
-  TokenStorage get _tokenStorage => Get.find<TokenStorage>();
+  final AppUseCase appUseCase;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  SplashController({required this.appUseCase});
+
+  final isLoading = false.obs;
+  final loadStateEnum = LoadStateEnum.initial.obs;
+  TokenStorage get _tokenStorage => Get.find<TokenStorage>();
+  final dialogService = Get.find<DialogService>();
 
   @override
   void onReady() {
     super.onReady();
     if (!isLoading.value) {
-      _checkAuth();
+      checkVersion();
     }
   }
 
   @override
   void onClose() {
-    super.onClose();
     isLoading.value = false;
+    super.onClose();
   }
 
   Future<void> _checkAuth() async {
-    isLoading.value = true;
+    loadStateEnum.value = LoadStateEnum.initial;
     try {
       await Future.delayed(const Duration(seconds: 2));
       // _checkResetDate();
@@ -47,8 +53,55 @@ class SplashController extends GetxController {
     } catch (e) {
       _removeStorage();
       Get.offAndToNamed(Routes.LOGIN);
+      loadStateEnum.value = LoadStateEnum.error;
     } finally {
-      isLoading.value = false;
+      loadStateEnum.value = LoadStateEnum.success;
+    }
+  }
+
+  Future<void> checkVersion({bool? isRefreshing}) async {
+    try {
+      if (loadStateEnum.value == LoadStateEnum.refreshing) {
+        return;
+      }
+
+      if (isRefreshing == true) {
+        loadStateEnum.value = LoadStateEnum.refreshing;
+      }
+
+      final result = await appUseCase.callVersionApp();
+
+      switch (result) {
+        case Success(:final data):
+          loadStateEnum.value = LoadStateEnum.success;
+          debugPrint('Data API ${data.version}');
+          debugPrint('Data Aplikasi ${AppInfo.versionLabel}');
+          if (data.version != AppInfo.versionLabel.replaceAll('v', '')) {
+            dialogService.showSuccessDefaultDialog(
+              title: 'GAGAL!',
+              message: 'Versi Aplikasi Tidak Sesuai',
+              actions: [],
+            );
+          } else {
+            _checkAuth();
+          }
+
+        case ErrorResult(:final message):
+          if (Get.isDialogOpen == true) Get.back();
+          dialogService.showError(
+            'Failed',
+            message,
+            titleButton1: 'Ulangi',
+            onPressed1: () {
+              checkVersion(isRefreshing: true);
+              Get.back();
+            },
+          );
+      }
+    } catch (e) {
+      if (Get.isDialogOpen == true) Get.back();
+      loadStateEnum.value = LoadStateEnum.error;
+      dialogService.showError('Failed', 'Error Get Version\n$e');
     }
   }
 

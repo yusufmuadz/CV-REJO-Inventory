@@ -28,6 +28,11 @@ class AppPages {
 
   static final routes = [
     GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
       name: _Paths.HOME,
       page: () => const HomePage(),
       binding: HomeBinding(),
@@ -36,11 +41,6 @@ class AppPages {
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
-    ),
-    GetPage(
-      name: _Paths.SPLASH,
-      page: () => const SplashView(),
-      binding: SplashBinding(),
     ),
     GetPage(
       name: _Paths.LIST_ORDER,

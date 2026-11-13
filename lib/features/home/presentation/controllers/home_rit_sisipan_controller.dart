@@ -49,14 +49,23 @@ class HomeRitSisipanController extends GetxController {
 
   final currentNoRIT = ''.obs;
 
+  final currentPage = 1.obs;
+  // late final scrollerController = ScrollController();
+
   @override
   void onInit() {
     super.onInit();
     // getRit(isRefresh: false);
+    // scrollerController.addListener(onWidgetScroll);
   }
 
   @override
   void onClose() {
+    isLoading.value = false;
+    isLoadingPO.value = false;
+    isLoadingAssistant.value = false;
+    // getLoadState.value = LoadState.initial;
+    // scrollerController.dispose();
     extNopolTransportation.dispose();
     extDriverNameTransportation.dispose();
     super.onClose();
@@ -85,7 +94,7 @@ class HomeRitSisipanController extends GetxController {
 
     // debugPrint('DATE RIT : $sendDate');
 
-    final result = await homeUseCase.callGetRIT(ParamGetRIT(isPastRit: false));
+    final result = await homeUseCase.callGetRIT(ParamGetRIT(isPastRit: true));
 
     try {
       getLoadState.value = isRefresh
@@ -314,6 +323,27 @@ class HomeRitSisipanController extends GetxController {
       dialogService.showError('Failed', '$e');
     } finally {
       isLoadingAssistant.value = false;
+    }
+  }
+
+  void onWidgetScroll(ScrollController activeController) {
+    if (currentPage.value == 1) return;
+    if (!activeController.hasClients) return;
+
+    final currentPixels = activeController.position.pixels;
+    final maxScroll = activeController.position.maxScrollExtent;
+
+    // DEBUG: Pantau angka ini di console saat Anda melakukan scroll
+    // debugPrint('Pixels: $currentPixels / Max: $maxScroll');
+
+    final canLoad = getLoadState.value == LoadState.idle;
+
+    // Jika canLoad bernilai false, pagination tidak akan berjalan.
+    // Pastikan setelah _getOrder() selesai, getLoadState.value dikembalikan ke LoadState.idle
+    if (canLoad && currentPixels >= maxScroll - 200) {
+      debugPrint('=== MEMANGGIL HALAMAN BERIKUTNYA ===');
+      currentPage.value++;
+      getRit(isRefresh: false);
     }
   }
 }

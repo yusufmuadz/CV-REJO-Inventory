@@ -127,8 +127,8 @@ class EndingOrderController extends GetxController {
       );
 
       if (AppRole.isDriver &&
-          driverStatusProcessModel.value.statusArrive == false) {
-        statusButton.value = EnumButtonEndingOrder.savePO;
+          driverStatusProcessModel.value.statusArrive == true) {
+        statusButton.value = EnumButtonEndingOrder.saveDriverPO;
       }
 
       // ========== COLLECTOR ==========
@@ -405,6 +405,7 @@ class EndingOrderController extends GetxController {
     try {
       final result = await endingOrderUseCase.callPendingOrder(
         ParamsEndingOrder(
+          jenisCancel: 'satuan',
           role: AppRole.current!.name.toLowerCase(),
           statusChecker2: statusChecker2.value,
           invoice: noInvoice.value,
@@ -553,15 +554,17 @@ class EndingOrderController extends GetxController {
   Future<void> saveArriveDriver() async {
     if (isLoading.value) return;
 
-    if (_emptyDriverPO()) {
+    if (_getMessageEmptyDriverPO() != null) {
       dialogService.showErrorDefaultSnackbar(
         context: Get.context!,
         title: 'Gagal!',
-        message: 'Lengkapi data terlebih dahulu',
+        message: _getMessageEmptyDriverPO() ?? 'Lengkapi data terlebih dahulu',
       );
       return;
     }
     isLoading.value = true;
+
+    // debugPrint('LOLOS!!!');
 
     try {
       String lat = '';
@@ -922,7 +925,7 @@ class EndingOrderController extends GetxController {
     return false;
   }
 
-  bool _emptyDriverPO() {
+  String? _getMessageEmptyDriverPO() {
     // debugPrint('Status Button: ${statusButton.value}');
     // debugPrint('Media File List All Item: ${mediaFileListAllItem.length}');
     // debugPrint(
@@ -934,24 +937,33 @@ class EndingOrderController extends GetxController {
     // debugPrint('Field Controller: ${fieldController.text}');
 
     if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
-      if (mediaFileListAllItem.isEmpty || mediaFileListInfoInvoice.isEmpty) {
-        return true; // Ada yang kosong
+      if (mediaFileListAllItem.isEmpty) {
+        return 'Foto Barang belum diupload!';
+      }
+      if (mediaFileListInfoInvoice.isEmpty) {
+        return 'Foto Bukti Tagihan belum diupload!'; // Ada yang kosong
       }
 
       // Gunakan konstanta/enum jika ada, misal: PaymentType.lunas.name
       if (selectedInfoInvoice.value == 'Lunas') {
-        if (mediaFileListPaymentType.isEmpty || fieldController.text.isEmpty) {
-          return true; // Ada yang kosong
+        if (fieldController.text.isEmpty) {
+          return 'Masukkan nominal pembayaran!';
+        }
+        if (mediaFileListPaymentType.isEmpty) {
+          return 'Foto Bukti pembayaran belum diupload!'; // Ada yang kosong
         }
       }
     } else {
-      if (mediaFileList.isEmpty || mediaFileFrontMerchant.isEmpty) {
-        return true; // Ada yang kosong
+      if (mediaFileList.isEmpty) {
+        return 'Foto Bukti Armada Sampai belum diupload!';
+      }
+      if (mediaFileFrontMerchant.isEmpty) {
+        return 'Foto Toko belum diupload!'; // Ada yang kosong
       }
     }
 
     // Jika semua kondisi di atas lolos, berarti tidak ada yang kosong
-    return false;
+    return null;
   }
 
   String? _getEmptyMessageInv() {

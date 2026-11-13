@@ -119,7 +119,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
       String url = 'getrit';
       String? date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-      if (params.isPastRit == true) {
+      if (params.isPastRit == true || params.isSisipan == true) {
         url = 'pastrit';
 
         if (params.date != null) {
@@ -129,9 +129,12 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
         }
       }
 
-      Map<String, String> body = {
+      Map<String, dynamic> body = {
         if (params.search != null) 'search': '${params.search}',
         if (params.isPastRit) 'date': date,
+        if (params.isSisipan == true) 'daterit': date,
+        if (params.isSisipan == true) 'page': params.page,
+        if (params.isSisipan == true) 'limit': params.limit,
       };
 
       String queryString = Uri(queryParameters: body).query;

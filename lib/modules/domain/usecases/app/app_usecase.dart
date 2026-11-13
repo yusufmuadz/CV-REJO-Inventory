@@ -4,10 +4,10 @@ import '../../../../features/home/domain/entities/home_entity.dart';
 import '../../../data/repositories/app/app_repository_impl.dart';
 import '../../entities/app/version_entity.dart';
 
-class AppUsecase {
+class AppUseCase {
   final AppRepository repository;
 
-  AppUsecase(this.repository);
+  AppUseCase(this.repository);
 
   Future<ResultCustom<Failure, HomeEntity>> callHomeData() {
     return repository.getHomeData();

@@ -217,6 +217,8 @@ class CustomImage {
     bool readOnly = false,
     bool isPreview = false,
     bool isHistory = false,
+    bool isMessage = false,
+    String message = '',
     required String title,
     required RxList<XFile> mediaFileList,
   }) {
@@ -228,6 +230,8 @@ class CustomImage {
           readOnly: readOnly,
           isPreview: isPreview,
           isHistory: isHistory,
+          isMessage: isMessage,
+          message: message,
           title: title,
           mediaFileList: mediaFileList,
         ),
@@ -240,6 +244,8 @@ class CustomImage {
     bool readOnly = false,
     bool isPreview = false,
     bool isHistory = false,
+    bool isMessage = false,
+    String message = '',
     required String title,
     required RxList<XFile> mediaFileList,
   }) {
@@ -253,7 +259,7 @@ class CustomImage {
         Visibility(
           visible: mediaFileList.isNotEmpty && !readOnly,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 20),
+            margin: EdgeInsets.only(bottom: isMessage ? 10 : 20),
             child: Row(
               children: [
                 Expanded(child: CustomImage().buildTitle(title: title)),
@@ -274,6 +280,21 @@ class CustomImage {
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+        Visibility(
+          visible: isMessage && message.isNotEmpty,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              message,
+              style: GoogleFonts.hankenGrotesk(
+                color: Colors.red,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
         ),

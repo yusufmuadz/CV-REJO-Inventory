@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../list_order/data/models/response_model_get_district.dart';
@@ -32,9 +33,14 @@ class ListHistoryOrderRemoteDataSourceImpl
       };
 
       String queryString = Uri(queryParameters: body).query;
-      final response = await dioClient.get(
-        '${ApiEndpoints.fetchHistoryTransaction}?$queryString',
-      );
+
+      String apiURL = '${ApiEndpoints.fetchHistoryTransaction}?$queryString';
+
+      if (AppRole.isCollector) {
+        apiURL = '${ApiEndpoints.historyCollector}?$queryString';
+      }
+
+      final response = await dioClient.get(apiURL);
 
       // debugPrint('Data List History Order Remote DataSource: ${response.data}');
 

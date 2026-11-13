@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 
+import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../core/theme/text_styles.dart';
 import '../../../../../shared/text_field/textfield_shared.dart';
 import '../../../../../utils/loading_custom.dart';
@@ -76,6 +77,9 @@ class ContentInputProductDialog extends StatelessWidget {
   Widget _buildImageView() {
     return CustomImage().buildContentImage(
       title: 'Barang',
+      maxImage: AppRole.isDriver ? 5 : 2,
+      isMessage: AppRole.isDriver,
+      message: 'Silakan masukkan 5 foto sesuai dengan angle yang berbeda',
       mediaFileList: mediaFileList,
     );
   }

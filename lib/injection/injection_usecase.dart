@@ -8,6 +8,7 @@ import '../features/list_order_history/domain/usecases/list_history_order_usecas
 import '../features/login/domain/usecases/login_usecase.dart';
 import '../features/rit_information/domain/usecases/rit_usecase.dart';
 import '../features/scan_product/domain/usecases/scan_product_usecase.dart';
+import '../modules/domain/usecases/app/app_usecase.dart';
 
 void injectionUsecase() {
   // ---------------------------------------------------------
@@ -64,4 +65,9 @@ void injectionUsecase() {
   // SCAN PRODUCT USECASE
   // ---------------------------------------------------------
   Get.lazyPut<ScanProductUseCase>(() => ScanProductUseCase(Get.find()), fenix: true);
+
+  // ---------------------------------------------------------
+  // APP USECASE
+  // ---------------------------------------------------------
+  Get.lazyPut<AppUseCase>(() => AppUseCase(Get.find()), fenix: true);
 }

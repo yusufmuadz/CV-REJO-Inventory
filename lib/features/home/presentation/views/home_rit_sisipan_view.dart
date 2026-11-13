@@ -57,7 +57,7 @@ class HomeRitSisipanView extends StatelessWidget {
             ); // Bersihkan listener lama jika terjadi re-render
             localScrollController.addListener(() {
               // Kirim instance scroll aktif ke fungsi di GetX Controller Anda
-              // controller.onWidgetScroll(localScrollController);
+              controller.onWidgetScroll(localScrollController);
             });
 
             return Obx(() {
@@ -181,7 +181,7 @@ class HomeRitSisipanView extends StatelessWidget {
         return SharedInputDriver(
           // isDetail: true,
           noRIT: ritEntity.city,
-          
+
           statusTransportationSelected: controller.statusTransportationSelected,
           statusTransportations: controller.statusTransportations,
           driverSelected: controller.driverSelected,

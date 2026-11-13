@@ -16,6 +16,7 @@ import '../features/rit_information/data/datasource/rit_remote_datasource.dart';
 import '../features/rit_information/data/datasource/rit_remote_datasource_impl.dart';
 import '../features/scan_product/data/datasource/scan_product_remote_datasource.dart';
 import '../features/scan_product/data/datasource/scan_product_remote_datasource_impl.dart';
+import '../modules/data/datasource/app/app_datasource_impl.dart';
 
 void injectionDataSource() {
   // ---------------------------------------------------------
@@ -79,6 +80,14 @@ void injectionDataSource() {
   // ---------------------------------------------------------
   Get.lazyPut<ScanProductRemoteDataSource>(
     () => ScanProductRemoteDataSourceImpl(Get.find()),
+    fenix: true,
+  );
+
+  // ---------------------------------------------------------
+  // APP DATASOURCE
+  // ---------------------------------------------------------
+  Get.lazyPut<AppRemoteDataSource>(
+    () => AppRemoteDataSourceImpl(Get.find(), Get.find()),
     fenix: true,
   );
 }

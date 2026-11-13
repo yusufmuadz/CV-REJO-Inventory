@@ -7,10 +7,7 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../shared/custom/custom_button.dart';
 import '../../../../utils/loading_custom.dart';
-import '../controllers/enums/button_inv_enum.dart';
 import '../controllers/list_order_controller.dart';
-import '../../../rit_information/presentation/views/list_inv_route_view.dart';
-import '../widgets/dialog_list_order/input_assistant_dialog.dart';
 import '../widgets/dialog_list_order/input_pending_dialog.dart';
 import '../widgets/sort_widget.dart';
 import '../views/list_order_view.dart';
@@ -34,6 +31,11 @@ class ListOrderPage extends GetView<ListOrderController> {
 
             if (!controller.isRitToday.value) {
               dateName = 'Lampau';
+            }
+
+            if (controller.pageIndex.value == 0 && controller.isSisipan.value) {
+              title = 'Daftar';
+              dateName = 'RIT';
             }
 
             return Text('$title $dateName');

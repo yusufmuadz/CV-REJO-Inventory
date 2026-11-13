@@ -24,7 +24,8 @@ class ListOrderView extends StatelessWidget {
       children: [
         Visibility(
           visible:
-              !controller.isRitToday.value && controller.pageIndex.value == 0,
+              (controller.isSisipan.value || !controller.isRitToday.value) &&
+              controller.pageIndex.value == 0,
           child: InkWell(
             onTap: () async {
               DateTime initialDate = DateTime.now();

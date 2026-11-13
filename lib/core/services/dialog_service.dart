@@ -235,6 +235,7 @@ class DialogService {
     String titleButton1 = 'Kembali',
     Color color1 = Colors.red,
     VoidCallback? onPressed1,
+    List<Widget>? actions,
   }) {
     return defaultDialog(
       height: 0.15,
@@ -245,6 +246,7 @@ class DialogService {
       barrierDismissible: false,
       color1: color1,
       actionsPadding: const EdgeInsets.all(16),
+      actions: actions,
       content: PopScope(
         canPop: false,
         child: Center(

@@ -21,14 +21,19 @@ class ListRitView extends StatelessWidget {
         controller.loadState.value != LoadState.initial &&
         controller.loadState.value != LoadState.idle;
 
+    final isPlusOneNew =
+        controller.loadState.value == LoadState.loadingMore ||
+        controller.loadState.value == LoadState.error ||
+        controller.loadState.value == LoadState.noMore;
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount: controller.listRit.length + (isPlusOne ? 1 : 0),
+        childCount: controller.listRit.length + (isPlusOneNew ? 1 : 0),
         (context, index) {
           if (index == controller.listRit.length) {
             return _buildBottomIndicator(
               controller.loadState.value,
-              controller.retryFetch,
+              controller.retryFetchRIT,
             );
           }
 

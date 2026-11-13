@@ -30,7 +30,8 @@ class AppRemoteDataSourceImpl implements AppRemoteDataSource {
   @override
   Future<ResponseModelAppVersion> checkVersionApp() async {
     return apiRequest.execute<ResponseModelAppVersion>(
-      request: () => dioClient.get(ApiEndpoints.checkVersion),
+      request: () =>
+          dioClient.get(ApiEndpoints.checkVersion, skipNetworkCheck: true),
       parser: (parser) => ResponseModelAppVersion.fromMap(parser),
     );
   }

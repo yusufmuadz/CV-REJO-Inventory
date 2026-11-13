@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
@@ -123,8 +124,20 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
   @override
   Future<ResponseModelBasic> pendingOrder(ParamsEndingOrder params) async {
     try {
+      final bool isSatuan = params.jenisCancel == 'satuan';
+      String date = '';
+
+      if (!isSatuan && params.dateRit != null) {
+        date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(DateTime.parse(params.dateRit ?? DateTime.now().toString()));
+      }
+
       final formData = FormData.fromMap({
-        'invoice': params.invoice,
+        'jenis_cancel': params.jenisCancel,
+        if (isSatuan) 'invoice': params.invoice,
+        if (!isSatuan) 'district': params.rit,
+        if (!isSatuan) 'date_rit': date,
         'desc': params.desc,
         'foto1': await MultipartFile.fromFile(
           params.images![0].path,
@@ -145,6 +158,9 @@ class EndingOrderRemoteDataSourceImpl implements EndingOrderRemoteDataSource {
       } else if (params.role == 'deliver') {
         role = 'delivery';
       }
+
+      debugPrint(formData.fields.toString());
+      debugPrint(formData.files.toString());
 
       final response = await dioClient.post(
         ApiEndpoints.pendingOrder(role),

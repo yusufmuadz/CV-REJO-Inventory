@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/error/dio_exceptions.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/params/post_product_param.dart';
@@ -88,6 +89,21 @@ class ScanProductRemoteDataSourceImpl implements ScanProductRemoteDataSource {
           'foto2': await MultipartFile.fromFile(
             params.images![1].path,
             filename: 'foto2.jpg',
+          ),
+        if (AppRole.isDriver && params.images!.length > 2)
+          'foto3': await MultipartFile.fromFile(
+            params.images![2].path,
+            filename: 'foto3.jpg',
+          ),
+        if (AppRole.isDriver && params.images!.length > 3)
+          'foto4': await MultipartFile.fromFile(
+            params.images![3].path,
+            filename: 'foto4.jpg',
+          ),
+        if (AppRole.isDriver && params.images!.length > 4)
+          'foto5': await MultipartFile.fromFile(
+            params.images![4].path,
+            filename: 'foto5.jpg',
           ),
       });
 

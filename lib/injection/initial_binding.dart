@@ -11,6 +11,8 @@ import '../core/services/contact_service.dart';
 import '../core/services/dialog_service.dart';
 import '../core/services/route_stack_service.dart';
 import '../core/services/storage_service.dart';
+import '../modules/helpers/api_request_handler.dart';
+import '../modules/helpers/repository_request_handler.dart';
 import 'injection_datasource.dart';
 import 'injection_repository.dart';
 import 'injection_usecase.dart';
@@ -39,6 +41,18 @@ class InitialBinding extends Bindings {
     // Jika pakai DIO
     Get.lazyPut<DioClient>(
       () => DioClient(Get.find<TokenStorage>()),
+      fenix: true,
+    );
+
+    // Jika pakai ApiRequestHandler
+    Get.lazyPut<ApiRequestHandler>(
+      () => ApiRequestHandler(Get.find<DioClient>()),
+      fenix: true,
+    );
+
+    // Jika pakai RepositoryRequestHandler
+    Get.lazyPut<RepositoryRequestHandler>(
+      () => RepositoryRequestHandler(),
       fenix: true,
     );
 
