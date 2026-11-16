@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cv_rejo/core/error/dio_exceptions.dart';
 import 'package:cv_rejo/features/login/data/models/response_model.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_endpoints.dart';

@@ -5,19 +5,19 @@ class ApiEndpoints {
       "https://server3.andiglobalsoft.com/cvrejo/api/";
 
   // Auth
-  static const String login = "auth/login";
-  static const String refreshToken = "auth/refresh";
+  static const String login = "auth/login"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
+  static const String refreshToken = "auth/refresh"; // API TIDAK ADA
 
   // User
-  static const String users = "users";
-  static const String logout = "auth/logout";
-  static const String getUsers = "user/getpicking";
+  static const String users = "users"; // API TIDAK ADA
+  static const String logout = "auth/logout"; // API TIDAK ADA
+  static const String getUsers = "user/getpicking";  // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   // Home
   static const String home = "main/getinfo";
 
   // Checking Version
-  static const String checkVersion = "main/latestversion";
+  static const String checkVersion = "main/latestversion"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   // Transaction
   static const String fetchHistoryTransaction = "transaction/history/get";

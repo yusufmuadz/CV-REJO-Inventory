@@ -9,7 +9,6 @@ import 'core/constants/app_info.dart';
 import 'core/initializer/app_initializer.dart';
 import 'core/observers/app_route_observer.dart';
 import 'core/services/navigation_service.dart';
-import 'core/widgets/watermark.dart';
 import 'core/widgets/watermark_overlay.dart';
 import 'routes/app_pages.dart';
 

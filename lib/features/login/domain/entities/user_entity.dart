@@ -41,4 +41,14 @@ class UserEntity {
     'notelp': notelp,
     'alamat': alamat,
   };
+
+  factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
+    userId: json['user_id'] ?? json['iduser'] ?? '-',
+    nama: json['name'] ?? json['nama'] ?? '-',
+    username: json['username'] ?? '-',
+    jabatan: json['access'] ?? '-', // Jangan lupa nanti diganti ke access
+    notelp: json['notelp'] ?? '-',
+    alamat: json['alamat'] ?? '-',
+    token: json['token'],
+  );
 }

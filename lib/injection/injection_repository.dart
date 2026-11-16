@@ -17,6 +17,9 @@ import '../features/rit_information/domain/repositories/rit_repository.dart';
 import '../features/scan_product/data/repositories/scan_product_repository_impl.dart';
 import '../features/scan_product/domain/repositories/scan_product_repository.dart';
 import '../modules/data/repositories/app/app_repository_impl.dart';
+import '../modules/data/repositories/auth/auth_repository_impl.dart';
+import '../modules/data/repositories/filter/filter_repository_impl.dart';
+import '../modules/data/repositories/rit/rit_repository_impl.dart';
 
 void injectionRepository() {
   // ---------------------------------------------------------
@@ -81,10 +84,38 @@ void injectionRepository() {
   );
 
   // ---------------------------------------------------------
+  // NEW IMPLEMENTASI API
+  // ---------------------------------------------------------
+
+  // ---------------------------------------------------------
+  // AUTH REPOSITORY
+  // ---------------------------------------------------------
+  Get.lazyPut<AuthRepository>(
+    () => AuthRepositoryImpl(Get.find(), Get.find()),
+    fenix: true,
+  );
+
+  // ---------------------------------------------------------
   // APP REPOSITORY
   // ---------------------------------------------------------
   Get.lazyPut<AppRepository>(
     () => AppRepositoryImpl(Get.find(), Get.find()),
+    fenix: true,
+  );
+
+  // ---------------------------------------------------------
+  // RIT REPOSITORY
+  // ---------------------------------------------------------
+  Get.lazyPut<RitNewRepository>(
+    () => RitNewRepositoryImpl(Get.find(), Get.find()),
+    fenix: true,
+  );
+
+  // ---------------------------------------------------------
+  // FILTER REPOSITORY
+  // ---------------------------------------------------------
+  Get.lazyPut<FilterRepository>(
+    () => FilterRepositoryImpl(Get.find(), Get.find()),
     fenix: true,
   );
 }

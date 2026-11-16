@@ -8,14 +8,15 @@ import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../modules/domain/params/auth/login_param.dart';
+import '../../../../modules/domain/usecases/auth/auth_usecase.dart';
 import '../../../../routes/app_pages.dart';
 import '../../domain/entities/user_entity.dart';
-import '../../domain/usecases/login_usecase.dart';
 
 class LoginController extends GetxController {
-  final PostLoginUseCase loginUseCase;
+  final AuthUseCase authUseCase;
 
-  LoginController({required this.loginUseCase});
+  LoginController({required this.authUseCase});
 
   late TokenStorage _tokenStorage;
   final dialogService = Get.find<DialogService>();
@@ -44,9 +45,11 @@ class LoginController extends GetxController {
     isLoading.value = true;
     dialogService.showLoading();
 
-    final result = await loginUseCase(
-      email: userNameController.text,
-      password: passwordController.text,
+    final result = await authUseCase.callLogin(
+      param: LoginParam(
+        username: userNameController.text,
+        password: passwordController.text,
+      ),
     );
 
     switch (result) {
