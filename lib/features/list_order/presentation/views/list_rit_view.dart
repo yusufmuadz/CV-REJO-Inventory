@@ -17,10 +17,6 @@ class ListRitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPlusOne =
-        controller.loadState.value != LoadState.initial &&
-        controller.loadState.value != LoadState.idle;
-
     final isPlusOneNew =
         controller.loadState.value == LoadState.loadingMore ||
         controller.loadState.value == LoadState.error ||

@@ -196,21 +196,22 @@ class GetDataListController extends GetxController {
 
       switch (result) {
         case Success(:final data):
+          if (data.isEmpty) {
+            if (isRefresh && listCtrl.currentPage.value == 1) {
+              listCtrl.loadState.value = LoadState.idle;
+            } else {
+              listCtrl.loadState.value = LoadState.noMore;
+            }
+            return;
+          }
+
           if (listCtrl.isSisipan.value) {
             listCtrl.listRit.addAll(data);
-            if (data.isEmpty) {
-              if (isRefresh && listCtrl.currentPage.value == 1) {
-                listCtrl.loadState.value = LoadState.idle;
-              } else {
-                listCtrl.loadState.value = LoadState.noMore;
-              }
-              return;
-            }
-
-            listCtrl.loadState.value = LoadState.idle;
           } else {
             listCtrl.listRit.value = data;
           }
+
+          listCtrl.loadState.value = LoadState.idle;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();

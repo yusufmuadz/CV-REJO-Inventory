@@ -78,7 +78,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
       Map<String, dynamic> body = {
         if (params.search != null) 'search': '${params.search}',
-        'date': date,
+        'daterit': date,
         'limit': params.limit,
         'page': params.page,
       };

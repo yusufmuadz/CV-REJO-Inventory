@@ -30,7 +30,7 @@ class ListOrderRemoteDataSourceImpl implements ListOrderRemoteDataSource {
     try {
       String? date = params.dateRit;
 
-      if (params.pastRit == true) {
+      if (params.pastRit == true || date != null) {
         if (date != null) {
           date = DateFormat('yyyy-MM-dd').format(DateTime.parse(date));
         } else {

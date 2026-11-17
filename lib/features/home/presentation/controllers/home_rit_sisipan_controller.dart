@@ -86,24 +86,35 @@ class HomeRitSisipanController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    // String sendDate = pastRitDateSelected.value;
-
-    // if (sendDate.isEmpty) {
-    //   sendDate = tanggalRit.value;
-    // }
-
-    // debugPrint('DATE RIT : $sendDate');
-
-    final result = await homeUseCase.callGetRIT(ParamGetRIT(isPastRit: true));
-
     try {
-      getLoadState.value = isRefresh
-          ? LoadState.initial
-          : LoadState.loadingMore;
+      getLoadState.value = _getLoad(
+        isRefresh: isRefresh,
+        currentPage: currentPage.value,
+      );
+
+      if (isRefresh) {
+        listRit.clear();
+        currentPage.value = 1;
+      }
+
+      final result = await homeUseCase.callGetRIT(
+        ParamGetRIT(isPastRit: true, page: currentPage.value.toString()),
+      );
 
       switch (result) {
         case Success(:final data):
-          listRit.value = data;
+          if (data.isEmpty) {
+            if (isRefresh && currentPage.value == 1) {
+              getLoadState.value = LoadState.idle;
+            } else {
+              getLoadState.value = LoadState.noMore;
+            }
+            return;
+          }
+          // listRit.value = data;
+          listRit.addAll(data);
+
+          getLoadState.value = LoadState.idle;
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
@@ -111,11 +122,12 @@ class HomeRitSisipanController extends GetxController {
           dialogService.showError('Failed', message);
       }
     } catch (e) {
+      getLoadState.value = LoadState.error;
       if (Get.isDialogOpen == true) Get.back();
       dialogService.showError('Failed', 'Error Get Data');
     } finally {
       isLoading.value = false;
-      getLoadState.value = LoadState.idle;
+      // getLoadState.value = LoadState.idle;
     }
   }
 
@@ -326,8 +338,16 @@ class HomeRitSisipanController extends GetxController {
     }
   }
 
+  LoadState _getLoad({bool isRefresh = false, int currentPage = 1}) {
+    final result = (isRefresh || currentPage == 1)
+        ? LoadState.initial
+        : LoadState.loadingMore;
+
+    return result;
+  }
+
   void onWidgetScroll(ScrollController activeController) {
-    if (currentPage.value == 1) return;
+    // if (currentPage.value == 1) return;
     if (!activeController.hasClients) return;
 
     final currentPixels = activeController.position.pixels;

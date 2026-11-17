@@ -10,6 +10,7 @@ class ApiEndpoints {
 
   // User
   static const String users = "users"; // API TIDAK ADA
+  static const String userDetail = "user/details";
   static const String logout = "auth/logout"; // API TIDAK ADA
   static const String getUsers = "user/getpicking";  // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 

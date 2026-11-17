@@ -1,5 +1,5 @@
 class DriverStatusProcessModel {
-  final bool? statusArrive;
+  bool? statusArrive;
   final bool? statusUnload;
   final bool? statusConfirm;
   final bool? statusPayment;

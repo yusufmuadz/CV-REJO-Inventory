@@ -6,6 +6,7 @@ class UserEntity {
   final String notelp;
   final String alamat;
   final String? token;
+  final String? email;
 
   const UserEntity({
     required this.userId,
@@ -15,6 +16,7 @@ class UserEntity {
     required this.notelp,
     required this.alamat,
     this.token,
+    this.email,
   });
 
   @override
@@ -47,8 +49,9 @@ class UserEntity {
     nama: json['name'] ?? json['nama'] ?? '-',
     username: json['username'] ?? '-',
     jabatan: json['access'] ?? '-', // Jangan lupa nanti diganti ke access
-    notelp: json['notelp'] ?? '-',
+    notelp: json['notelp'] ?? json['telpon'] ?? '-',
     alamat: json['alamat'] ?? '-',
     token: json['token'],
+    email: json['email'] ?? '-',
   );
 }

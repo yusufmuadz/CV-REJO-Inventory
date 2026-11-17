@@ -438,11 +438,10 @@ class RitController extends GetxController {
       switch (result) {
         case Success(:final data):
           debugPrint('Data Save Order: $data');
-          dialogService.showDialogBox(
+          dialogService.showSuccessDefaultDialog(
             title: 'Success',
-            description: 'Berhasil Menyimpan Data',
-            barrierDismissible: false,
-            onPressed: () {
+            message: 'Berhasil Menyimpan Data',
+            onPressed1: () {
               mediaFileList.clear();
               mediaFileListKM.clear();
               mediaFileListTangki.clear();
@@ -456,7 +455,8 @@ class RitController extends GetxController {
               mediaFileListInvoice.clear();
 
               if (invController.buttonINV.value ==
-                  EnumButtonInv.buttonSaveDoc) {
+                      EnumButtonInv.buttonSaveDoc ||
+                  buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
                 mediaFileRecipientMoneyRit.clear();
                 mediaFileRecipientBox.clear();
                 _arriveAtOffice();

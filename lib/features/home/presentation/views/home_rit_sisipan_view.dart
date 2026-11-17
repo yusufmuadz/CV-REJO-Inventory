@@ -17,6 +17,7 @@ class HomeRitSisipanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = homeController.homeRitSisipanController;
     return Container(
       color: Colors.white,
       child: Column(
@@ -28,7 +29,8 @@ class HomeRitSisipanView extends StatelessWidget {
           ),
           Expanded(
             child: Obx(() {
-              if (homeController.homeRitSisipanController.isLoading.value) {
+              if (controller.getLoadState.value == LoadState.initial &&
+                  controller.isLoading.value) {
                 return const LoadingView();
               }
               return _buildContent();
@@ -61,9 +63,15 @@ class HomeRitSisipanView extends StatelessWidget {
             });
 
             return Obx(() {
-              final isPlusOne =
-                  controller.getLoadState.value != LoadState.initial &&
-                  controller.getLoadState.value != LoadState.idle;
+              // final isPlusOne =
+              //     controller.getLoadState.value != LoadState.initial &&
+              //     controller.getLoadState.value != LoadState.idle;
+
+              final isPlusOneNew =
+                  controller.getLoadState.value == LoadState.loadingMore ||
+                  controller.getLoadState.value == LoadState.error ||
+                  controller.getLoadState.value == LoadState.noMore;
+
               return CustomScrollView(
                 // 3. Pasang localScrollController ke CustomScrollView Anda
                 controller: localScrollController,
@@ -77,7 +85,8 @@ class HomeRitSisipanView extends StatelessWidget {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           childCount:
-                              controller.listRit.length + (isPlusOne ? 1 : 0),
+                              controller.listRit.length +
+                              (isPlusOneNew ? 1 : 0),
                           (context, index) {
                             if (index == controller.listRit.length) {
                               return _buildBottomIndicator(

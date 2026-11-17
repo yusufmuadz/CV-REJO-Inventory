@@ -131,6 +131,10 @@ class EndingOrderController extends GetxController {
         statusButton.value = EnumButtonEndingOrder.saveDriverPO;
       }
 
+      if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
+        driverStatusProcessModel.value.statusArrive = true;
+      }
+
       // ========== COLLECTOR ==========
       idDetail.value = args['id_detail'] ?? '';
       idPiutang.value = args['id_piutang'] ?? '';
@@ -603,6 +607,7 @@ class EndingOrderController extends GetxController {
         case Success(:final data):
           debugPrint('Data Item Product: $data');
           if (statusButton.value == EnumButtonEndingOrder.savePO) {
+            driverStatusProcessModel.value.statusArrive = true;
             statusButton.value = EnumButtonEndingOrder.saveDriverPO;
             mediaFileList.clear();
             mediaFileFrontMerchant.clear();
@@ -938,10 +943,10 @@ class EndingOrderController extends GetxController {
 
     if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
       if (mediaFileListAllItem.isEmpty) {
-        return 'Foto Barang belum diupload!';
+        return 'Foto All Item belum diupload!';
       }
       if (mediaFileListInfoInvoice.isEmpty) {
-        return 'Foto Bukti Tagihan belum diupload!'; // Ada yang kosong
+        return 'Foto Invoice belum diupload!'; // Ada yang kosong
       }
 
       // Gunakan konstanta/enum jika ada, misal: PaymentType.lunas.name
