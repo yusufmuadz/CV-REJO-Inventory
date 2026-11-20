@@ -256,6 +256,12 @@ class ContentDetailOrderWidget extends StatelessWidget {
       images = orders.expand((order) => order.driver.images ?? []).toList();
     }
 
+    if (AppRole.isCollector) {
+      if (detailOrder.collectorImage != '-') {
+        images = [detailOrder.collectorImage];
+      }
+    }
+
     return _buildBoxStyle(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

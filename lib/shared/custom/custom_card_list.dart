@@ -82,10 +82,10 @@ class CustomCardList extends StatelessWidget {
                   value: orderEntity.orderNo.replaceAll('SL', 'SO'),
                   valueSJ: orderEntity.suratJalan?.replaceAll('SJ/', ''),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1,
                   height: 28,
-                  color: const Color(0xFFE2E8F0),
+                  color: Color(0xFFE2E8F0),
                 ),
                 _buildInfoIconText(
                   label: 'Customer',

@@ -77,33 +77,6 @@ class SortWidget extends StatelessWidget {
                         )
                         .toList(),
                   ),
-                  // Wrap(
-                  //   spacing: 10.0,
-                  //   runSpacing: 10.0,
-                  //   children: [
-                  //     _buildSortingOption(
-                  //       label: 'Terbaru',
-                  //       isSelected: controller.sortByNew.value,
-                  //       onSelected: (bool p1) {
-                  //         controller.sortByNew.value = true;
-                  //       },
-                  //     ),
-                  //     _buildSortingOption(
-                  //       label: 'Terlama',
-                  //       isSelected: !controller.sortByNew.value,
-                  //       onSelected: (bool p1) {
-                  //         controller.sortByNew.value = false;
-                  //       },
-                  //     ),
-                  //     _buildSortingOption(
-                  //       label: 'Urutkan ',
-                  //       isSelected: !controller.sortByNew.value,
-                  //       onSelected: (bool p1) {
-                  //         controller.sortByNew.value = false;
-                  //       },
-                  //     ),
-                  //   ],
-                  // ),
                   const SizedBox(height: 15.0),
                   _buildTitle(title: 'Status Pengerjaan'),
                   Wrap(

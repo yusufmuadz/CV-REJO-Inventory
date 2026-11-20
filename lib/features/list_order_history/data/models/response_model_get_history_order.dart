@@ -11,7 +11,9 @@ class ResponseModelHistoryOrderAll {
       ResponseModelHistoryOrderAll(
         status: json["status"],
         message: json["message"],
-        data: Data.fromMap(json),
+        data: json["data"] != null && json["data"].runtimeType == List
+            ? json["data"].map((e) => OrderEntity.fromJson(e)).toList()
+            : Data.fromMap(json),
       );
 }
 
@@ -24,8 +26,9 @@ class Data {
       Data(transactions: transactions ?? this.transactions);
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-    transactions:
-        json["data"]['content'] == null || json["data"]['content'].isEmpty
+    transactions: json["data"] == null || json["data"].isEmpty
+        ? []
+        : json["data"]['content'] == null || json["data"]['content'].isEmpty
         ? []
         : (json["data"]['content'] as List)
               .map((e) => OrderEntity.fromJson(e))

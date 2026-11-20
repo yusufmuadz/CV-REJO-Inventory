@@ -44,6 +44,7 @@ class EndingOrderRepositoryImpl implements EndingOrderRepository {
 
             if (dataTransaction != null) {
               totalPo = dataTransaction.first.poPendingCheck2;
+              // totalPo = dataTransaction.first.poPendingDelivery;
             }
           }
 

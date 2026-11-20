@@ -209,11 +209,13 @@ class CollectorArrive extends StatelessWidget {
               vertical: 0,
             ),
             textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-            prefixIcon: Padding(
+            prefixIcon: Container(
+              width: 50,
               padding: const EdgeInsets.only(left: 12, right: 12),
-              // alignment: AlignmentGeometry.center,
+              alignment: AlignmentGeometry.centerLeft,
               child: Text(
                 'Rp',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,

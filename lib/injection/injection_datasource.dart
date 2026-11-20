@@ -20,6 +20,7 @@ import '../modules/data/datasource/app/app_datasource_impl.dart';
 import '../modules/data/datasource/auth/auth_datasource_impl.dart';
 import '../modules/data/datasource/filter/filter_datasource_impl.dart';
 import '../modules/data/datasource/rit/rit_datasource_impl.dart';
+import '../modules/data/datasource/user/user_datasource_impl.dart';
 
 void injectionDataSource() {
   // ---------------------------------------------------------
@@ -96,6 +97,15 @@ void injectionDataSource() {
 
   Get.lazyPut<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(Get.find(), Get.find()),
+    fenix: true,
+  );
+
+  // ---------------------------------------------------------
+  // USER DATASOURCE
+  // ---------------------------------------------------------
+
+  Get.lazyPut<UserRemoteDataSource>(
+    () => UserRemoteDataSourceImpl(Get.find(), Get.find()),
     fenix: true,
   );
 

@@ -131,7 +131,8 @@ class EndingOrderController extends GetxController {
         statusButton.value = EnumButtonEndingOrder.saveDriverPO;
       }
 
-      if (statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
+      if (AppRole.isDriver &&
+          statusButton.value == EnumButtonEndingOrder.saveDriverPO) {
         driverStatusProcessModel.value.statusArrive = true;
       }
 
@@ -696,6 +697,7 @@ class EndingOrderController extends GetxController {
   }
 
   Future<void> saveArriveCollector() async {
+    debugPrint('saveArriveCollector');
     if (isLoading.value) return;
 
     if (_getEmptyMessageInv() != null) {

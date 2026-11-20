@@ -30,6 +30,7 @@ class DetailOrderEntity {
   final String? tanggalTransaksi;
   final String? totalPiutang;
   final String? sisaPiutang;
+  final String? collectorImage;
   final List<ItemOrderModel>? orderDetails;
 
   const DetailOrderEntity({
@@ -50,6 +51,7 @@ class DetailOrderEntity {
     this.assistant,
     this.driver,
     this.driverStatusProcess,
+    this.collectorImage,
     this.orderDetails,
     this.idDetail,
     this.idPiutang,
@@ -96,6 +98,7 @@ class DetailOrderEntity {
       tanggalTransaksi: getData(value: 'tanggal_transaksi'),
       totalPiutang: getData(value: 'total_piutang'),
       sisaPiutang: getData(value: 'sisa_piutang'),
+      collectorImage: getData(value: 'file_bukti'),
       assistant: json['assistant'] != null
           ? AssistantModel.fromJson(json['assistant'])
           : null,

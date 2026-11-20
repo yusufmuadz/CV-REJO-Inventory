@@ -5,11 +5,14 @@ import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../../shared/custom/custom_card_inv.dart';
 import '../../../../shared/custom/custom_card_list.dart';
 import '../../../../shared/custom/custom_search_field.dart';
 import '../../../../shared/order/sort_widget.dart';
 import '../../../../utils/loading_custom.dart';
+import '../../../../utils/maps_utils.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
 import '../controllers/list_history_order_controller.dart';
 
@@ -114,60 +117,6 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
     );
   }
 
-  //////======== AFTER DRAG & DROP ========//////
-
-  // Widget _buildContent() {
-  //   if (controller.orders.isEmpty) {
-  //     return _buildEmptyOrder();
-  //   }
-
-  //   return ReorderableListView.builder(
-  //     itemCount: controller.orders.length,
-  //     scrollController: controller.scrollController,
-  //     physics: const AlwaysScrollableScrollPhysics(),
-  //     padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
-  //     itemBuilder: (context, index) {
-  //       // PENTING: Pastikan fungsi _buildOrder Anda mengembalikan widget
-  //       // yang memiliki 'key: ValueKey(unique_id)' di dalamnya!
-  //       return _buildOrder(index: index, margin: const EdgeInsets.only(bottom: 15));
-  //     },
-  //     footer:
-  //         (controller.loadState.value == LoadState.loadingMore ||
-  //             controller.loadState.value == LoadState.error ||
-  //             controller.loadState.value == LoadState.noMore)
-  //         ? _buildBottomIndicator(
-  //             controller.loadState.value,
-  //             controller.retryFetch,
-  //           )
-  //         : const SizedBox.shrink(),
-  //     proxyDecorator: (Widget child, int index, Animation<double> animation) {
-  //     return AnimatedBuilder(
-  //       animation: animation,
-  //       builder: (BuildContext context, Widget? child) {
-  //         // Animasi elevasi (shadow) saat diangkat
-  //         final double elevation = Tween<double>(begin: 0.0, end: 8.0).evaluate(animation);
-
-  //         return Material(
-  //           color: Colors.transparent,
-  //           elevation: elevation,
-  //           borderRadius: BorderRadius.circular(12), // Sesuaikan dengan sudut box Anda
-  //           clipBehavior: Clip.antiAlias,
-
-  //           // PANGGIL FUNGSI YANG SAMA, TAPI TANPA PADDING PEMBUNGKUS!
-  //           // Sehingga yang di-drag HANYA kotak visualnya saja.
-  //           child: _buildOrder(index: index),
-  //         );
-  //       },
-  //     );
-  //   },
-  //     onReorder: (int oldIndex, int newIndex) {
-  //       controller.reorderOrders(oldIndex, newIndex);
-  //     },
-  //   );
-  // }
-
-  //////======== SEBELUM DRAG & DROP ========//////
-
   Widget _buildContent() {
     final isShowPlus =
         controller.loadState.value != LoadState.initial &&
@@ -203,25 +152,64 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
-      child: CustomCardList(
-        onTap: () {
+      child: AppRole.isCollector
+          ? _buildOrderInv(index: index, invEntity: transaction)
+          : CustomCardList(
+              onTap: () {
+                Get.toNamed(
+                  Routes.DETAIL_ORDER,
+                  arguments: {
+                    'invoice': transaction.invoice,
+                    'routeFrom': 'listHistoryOrder',
+                    'status_checker2': transaction.checker2?.status ?? '',
+                    'status_loader': transaction.loader?.status ?? '',
+                    'done_by_po': transaction.pic?.by ?? '',
+                  },
+                );
+              },
+              isSelected: '',
+              showSelection: false,
+              isHistory: true,
+              orderEntity: transaction,
+              color: 'E2E8F0',
+            ),
+    );
+  }
+
+  Widget _buildOrderInv({required int index, required OrderEntity invEntity}) {
+    return CustomCardInv(
+      isCollector: true,
+      invEntity: invEntity,
+      color: 'E0E0E0',
+      // onTapMaps: () {
+      //   final address = invEntity.address;
+      //   // final dropAddress = order.dropAddress;
+
+      //   MapsUtils.openMaps(
+      //     address: address,
+      //     dropAddress: address,
+      //     dialogService: dialogService,
+      //   );
+      // },
+      onTap: () {
+        if (controller.routeStackService.contains(Routes.DETAIL_ORDER)) {
+          Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);
+        } else {
           Get.toNamed(
             Routes.DETAIL_ORDER,
             arguments: {
-              'invoice': transaction.invoice,
+              'invoice': invEntity.invoice, // '01SL20200800085',
               'routeFrom': 'listHistoryOrder',
-              'status_checker2': transaction.checker2?.status ?? '',
-              'status_loader': transaction.loader?.status ?? '',
-              'done_by_po': transaction.pic?.by ?? '',
+              'isDriverCollector': false,
+              'id_detail': invEntity.idDetail,
+              'id_piutang': invEntity.idPiutang,
+              'status_checker2': invEntity.checker2?.status ?? '',
+              'status_driver': invEntity.driver?.status ?? '',
+              'status_po': 'completed',
             },
           );
-        },
-        isSelected: '',
-        showSelection: false,
-        isHistory: true,
-        orderEntity: transaction,
-        color: 'E2E8F0',
-      ),
+        }
+      },
     );
   }
 

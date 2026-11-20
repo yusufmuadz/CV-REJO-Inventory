@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
+import '../../../../core/services/route_stack_service.dart';
 import '../../../../utils/loading_custom.dart';
 import '../../../list_order/domain/entities/district_entity.dart';
 import '../../../list_order/domain/entities/list_order_entity.dart';
@@ -35,9 +36,12 @@ class ListHistoryOrderController extends GetxController
 
   final sortByNew = true.obs;
 
+  late final RouteStackService routeStackService;
+
   @override
   void onInit() {
     super.onInit();
+    routeStackService = Get.find<RouteStackService>();
     tabController = TabController(
       length: AppRole.isChecker2 ? 2 : 1,
       vsync: this,
@@ -100,12 +104,22 @@ class ListHistoryOrderController extends GetxController
         currentPage.value = 1;
       }
 
+      String sort = sortByNew.value ? 'newest' : 'oldest';
+
+      if (AppRole.isCollector) {
+        if (sortByNew.value) {
+          sort = 'selesai';
+        } else {
+          sort = 'batal';
+        }
+      }
+
       final result = await listHistoryOrderUseCase.call(
         ParamsGetTransaction(
           limit: '10',
           page: '$currentPage',
           q: searchController.text,
-          sort: sortByNew.value ? 'newest' : 'oldest',
+          sort: sort,
           district: isDistrictSelected.value.toLowerCase(),
         ),
       );

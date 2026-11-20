@@ -468,6 +468,19 @@ class RitPage extends GetView<RitController> {
         GetStorage().write('buttonINV', dataController.buttonINV.value.name);
 
         controller.homeController.getLocalRit();
+
+        // debugPrint('====================');
+
+        // controller.notaRoute.value = dataController.isSelectedNotaRoute.value;
+        // controller.routeRit.value = dataController.isSelectedRoute.value;
+
+        // debugPrint('NOTA ROUTE: ${dataController.isSelectedNotaRoute.value}');
+        // debugPrint('ROUTE: ${dataController.isSelectedRoute.value}');
+
+        // debugPrint('====================');
+
+        // debugPrint('NOTA ROUTE: ${controller.notaRoute.value}');
+        // debugPrint('ROUTE: ${controller.routeRit.value}');
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/middlewares/app_role.dart';
 import '../../core/theme/text_styles.dart';
 import '../../features/list_order/domain/entities/district_entity.dart';
 import '../../utils/loading_custom.dart';
@@ -73,14 +74,14 @@ class SortWidget extends StatelessWidget {
                     runSpacing: 10.0,
                     children: [
                       _buildSortingOption(
-                        label: 'Terbaru',
+                        label: AppRole.isCollector ? 'Selesai' : 'Terbaru',
                         isSelected: isSortBy.value,
                         onSelected: (bool p1) {
                           isSortBy.value = true;
                         },
                       ),
                       _buildSortingOption(
-                        label: 'Terlama',
+                        label: AppRole.isCollector ? 'Batal' : 'Terlama',
                         isSelected: !isSortBy.value,
                         onSelected: (bool p1) {
                           isSortBy.value = false;

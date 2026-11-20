@@ -70,7 +70,8 @@ class ApiEndpoints {
   static const String arriveCollector = "kolektor/submittiba";
   static const String paymentCollector = "kolektor/submitpelunasan";
   static const String handoverCollector = "kolektor/submitkepulangan";
-  static const String historyCollector = "kolektor/historypenugasan";
+  static const String historyRouteCollector = "kolektor/historypenugasan";
+  static const String historyCollector = "kolektor/history";
 
   static String getDetailTransactionCollector(String? idDetail) =>
       "kolektor/detailtransaksi?id_detail=$idDetail";

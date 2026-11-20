@@ -21,15 +21,20 @@ class ListHistoryOrderRemoteDataSourceImpl
     ParamsGetTransaction params,
   ) async {
     try {
-      Map<String, String> body = {
+      Map<String, dynamic> body = {
         if (params.limit != null) 'limit': '${params.limit}',
         if (params.page != null) 'page': '${params.page}',
-        if (params.q != null) 'q': '${params.q}',
-        if (params.sort != null) 'sort': '${params.sort}',
-        if (params.district != null) 'district': '${params.district}',
-        if (params.filter != null) 'filter': '${params.filter}',
-        if (params.courier != null) 'courier': '${params.courier?.join(',')}',
-        if (params.dateRit != null) 'date_rit': '${params.dateRit}',
+        if (!AppRole.isCollector) ...{
+          if (params.q != null) 'q': '${params.q}',
+          if (params.sort != null) 'sort': '${params.sort}',
+          if (params.district != null) 'district': '${params.district}',
+          if (params.filter != null) 'filter': '${params.filter}',
+          // if (params.courier != null) 'courier': '${params.courier?.join(',')}',
+          if (params.dateRit != null) 'date_rit': '${params.dateRit}',
+        } else ...{
+          if (params.q != null) 'nota_rute': '${params.q}',
+          if (params.sort != null) 'status': '${params.sort}',
+        },
       };
 
       String queryString = Uri(queryParameters: body).query;

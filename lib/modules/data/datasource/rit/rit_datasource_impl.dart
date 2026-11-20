@@ -1,14 +1,22 @@
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../features/detail_order/data/models/response_model_basic.dart';
+import '../../../../features/detail_order/domain/params/add_assistant_param.dart';
 import '../../../../features/list_order/data/models/response_model_get_rit.dart';
 import '../../../../features/list_order/domain/params/get_rit_param.dart';
 import '../../../helpers/api_request_handler.dart';
 
+part 'methods/rit_get_methods.dart';
+part 'methods/rit_ambil_methods.dart';
+
 // ======== INDUK DATASOURCE ========
 abstract class RitNewRemoteDataSource {
   Future<ResponseModelGetRit> rit(ParamGetRIT param);
+  Future<ResponseModelBasic> ambilRit(ParamsAddAssistant param);
 }
 
 // ======== CHILD DATASOURCE ========
@@ -32,63 +40,32 @@ class RitNewRemoteDataSourceImpl implements RitNewRemoteDataSource {
     return _ritToday(param);
   }
 
-  // ============ GET LIST RIT TODAY ============
-  Future<ResponseModelGetRit> _ritToday(ParamGetRIT param) {
-    return apiRequest.execute<ResponseModelGetRit>(
-      request: () {
-        final queryParameters = <String, dynamic>{
-          if (param.search != null) 'search': param.search,
-        };
+  // ============ POST AMBIL RIT TODAY/PAST/SISIPAN ============
+  @override
+  Future<ResponseModelBasic> ambilRit(ParamsAddAssistant param) {
+    final isChecker2 = AppRole.isChecker2;
+    final isDetail = param.isDetail == true;
+    final isSisipan = param.isSisipan == true;
 
-        final queryString = Uri(queryParameters: queryParameters).query;
+    final urlRole = param.isChecker2 == true
+        ? 'check2'
+        : AppRole.current?.name.toLowerCase() ?? 'picking';
 
-        return dioClient.get('${ApiEndpoints.getRit('getrit')}?$queryString');
-      },
-      parser: (data) => ResponseModelGetRit.fromMap(data),
+    final data = _buildAssistantData(
+      param,
+      isChecker2: isChecker2,
+      isDetail: isDetail,
     );
-  }
 
-  // ============ GET LIST RIT PAST ============
-  Future<ResponseModelGetRit> _ritPast(ParamGetRIT param) {
-    return apiRequest.execute<ResponseModelGetRit>(
-      request: () {
-        final date = DateFormat('yyyy-MM-dd').format(
-          param.date != null ? DateTime.parse(param.date!) : DateTime.now(),
-        );
+    if (!isDetail && !isSisipan) {
+      return _takeItRIT(urlRole, data);
+    }
 
-        final queryParameters = <String, dynamic>{
-          if (param.search != null) 'search': param.search,
-          'date': date,
-        };
-
-        final queryString = Uri(queryParameters: queryParameters).query;
-
-        return dioClient.get('${ApiEndpoints.getRit('pastrit')}?$queryString');
-      },
-      parser: (data) => ResponseModelGetRit.fromMap(data),
-    );
-  }
-
-  // ============ GET LIST RIT SISIPAN ============
-  Future<ResponseModelGetRit> _ritSisipan(ParamGetRIT param) {
-    return apiRequest.execute<ResponseModelGetRit>(
-      request: () {
-        final date = DateFormat('yyyy-MM-dd').format(
-          param.date != null ? DateTime.parse(param.date!) : DateTime.now(),
-        );
-
-        final queryParameters = <String, dynamic>{
-          if (param.search != null) 'search': param.search,
-          'daterit': date,
-          'page': param.page,
-          'limit': param.limit,
-        };
-
-        final queryString = Uri(queryParameters: queryParameters).query;
-
-        return dioClient.get('${ApiEndpoints.fetchRITSisipan}?$queryString');
-      },
-      parser: (data) => ResponseModelGetRit.fromMap(data),
+    return _submitAssistant(
+      isSisipan
+          ? ApiEndpoints.addAssistantSisipan
+          : ApiEndpoints.changeTransportation,
+      data,
     );
   }
 }

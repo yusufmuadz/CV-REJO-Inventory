@@ -45,6 +45,8 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
 
       debugPrint('========== POST SAVE DATA DRIVER ==========');
 
+      // debugPrint('IMAGE FRONT TRUCK: ${params.frontTruckImage?.path}');
+
       if (AppRole.isCollector) {
         formData = FormData.fromMap({
           'no_rute': params.routeRit,
@@ -53,18 +55,22 @@ class RitRemoteDataSourceImpl implements RitRemoteDataSource {
           'long': params.long,
           'km': params.km,
           'file_kilometer': await params.kmImage.multipart,
-          'file_depan': await MultipartHelper.fromNullableXFile(
-            params.frontTruckImage,
-          ),
-          'file_kiri': await MultipartHelper.fromNullableXFile(
-            params.leftTruckImage,
-          ),
-          'file_kanan': await MultipartHelper.fromNullableXFile(
-            params.rightTruckImage,
-          ),
-          'file_belakang': await MultipartHelper.fromNullableXFile(
-            params.backTruckImage,
-          ),
+          if (params.frontTruckImage?.path.isNotEmpty ?? false)
+            'file_depan': await MultipartHelper.fromNullableXFile(
+              params.frontTruckImage,
+            ),
+          if (params.leftTruckImage?.path.isNotEmpty ?? false)
+            'file_kiri': await MultipartHelper.fromNullableXFile(
+              params.leftTruckImage,
+            ),
+          if (params.rightTruckImage?.path.isNotEmpty ?? false)
+            'file_kanan': await MultipartHelper.fromNullableXFile(
+              params.rightTruckImage,
+            ),
+          if (params.backTruckImage?.path.isNotEmpty ?? false)
+            'file_belakang': await MultipartHelper.fromNullableXFile(
+              params.backTruckImage,
+            ),
           if (params.invoiceImages != null)
             'file_dokumen': await MultipartHelper.fromNullableXFile(
               params.invoiceImages?[0],

@@ -12,6 +12,7 @@ import '../modules/domain/usecases/app/app_usecase.dart';
 import '../modules/domain/usecases/auth/auth_usecase.dart';
 import '../modules/domain/usecases/filter/filter_usecase.dart';
 import '../modules/domain/usecases/rit/rit_usecase.dart';
+import '../modules/domain/usecases/users/user_usercase.dart';
 
 void injectionUsecase() {
   // ---------------------------------------------------------
@@ -80,6 +81,11 @@ void injectionUsecase() {
   // AUTH USECASE
   // ---------------------------------------------------------
   Get.lazyPut<AuthUseCase>(() => AuthUseCase(Get.find()), fenix: true);
+
+  // ---------------------------------------------------------
+  // USER USECASE
+  // ---------------------------------------------------------
+  Get.lazyPut<UserUseCase>(() => UserUseCase(Get.find()), fenix: true);
 
   // ---------------------------------------------------------
   // APP USECASE

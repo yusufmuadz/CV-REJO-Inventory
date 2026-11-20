@@ -80,7 +80,9 @@ class RitListEntity {
           ? List<String>.from(json['rute'])
           : List<String>.from(['-']), // json['rute'],
       pengurut: json['pengurut'] != null
-          ? List<String>.from(json['pengurut'])
+          ? json['pengurut'].runtimeType == String
+                ? List<String>.from([json['pengurut']])
+                : List<String>.from(json['pengurut'])
           : List<String>.from(['-']),
     );
   }

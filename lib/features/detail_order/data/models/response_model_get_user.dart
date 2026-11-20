@@ -1,5 +1,4 @@
-
-import '../../../login/data/models/user_model.dart';
+import '../../../login/domain/entities/user_entity.dart';
 
 class ResponseModelGetUser {
   final bool? status;
@@ -17,17 +16,19 @@ class ResponseModelGetUser {
 }
 
 class Data {
-  final List<UserModel>? users;
+  final List<UserEntity>? users;
 
   Data({this.users});
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
     users: json["data"] == null
         ? []
-        : List<UserModel>.from(json["data"].map((x) => UserModel.fromJson(x))),
+        : List<UserEntity>.from(
+            json["data"].map((x) => UserEntity.fromJson(x)),
+          ),
   );
 
-  List<UserModel> toEntity() {
+  List<UserEntity> toEntity() {
     return users ?? [];
   }
 }

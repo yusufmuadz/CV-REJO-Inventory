@@ -133,8 +133,12 @@ class HomeRitSisipanView extends StatelessWidget {
             controller.getAssisten();
           }
           controller.statusTransportationSelected.value = 'Internal';
-          controller.extNopolTransportation.clear();
-          controller.extDriverNameTransportation.clear();
+          if (controller.extNopolTransportation.text.isNotEmpty) {
+            controller.extNopolTransportation.clear();
+          }
+          if (controller.extDriverNameTransportation.text.isNotEmpty) {
+            controller.extDriverNameTransportation.clear();
+          }
           _openPopUp(ritEntity: ritEntity);
         },
         onTapSeePO: () {

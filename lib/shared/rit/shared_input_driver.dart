@@ -312,13 +312,14 @@ class SharedInputDriver extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          SharedTextField(
-            isDense: true,
-            maxLines: 4,
-            controller: descController!,
-            hintText: 'Masukkan keterangan kendala...',
-            contentPadding: const EdgeInsets.all(12),
-          ),
+          if (descController != null)
+            SharedTextField(
+              isDense: true,
+              maxLines: 4,
+              controller: descController!,
+              hintText: 'Masukkan keterangan kendala...',
+              contentPadding: const EdgeInsets.all(12),
+            ),
         ],
       ),
     );

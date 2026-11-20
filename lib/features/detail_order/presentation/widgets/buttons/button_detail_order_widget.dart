@@ -100,9 +100,10 @@ class ButtonDetailOrderWidget {
             'id_piutang': controller.idPiutang.value,
             'no_route': controller.noRoute.value,
             'nota_route': controller.notaRoute.value,
-            'driverStatusProcessModel':
-                controller.orderDetail.value.driverStatusProcess
-                    as DriverStatusProcessModel,
+            if (controller.orderDetail.value.driverStatusProcess != null)
+              'driverStatusProcessModel':
+                  controller.orderDetail.value.driverStatusProcess
+                      as DriverStatusProcessModel,
           },
         );
       },
