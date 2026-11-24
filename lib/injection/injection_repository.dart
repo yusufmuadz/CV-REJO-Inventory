@@ -18,7 +18,7 @@ import '../features/scan_product/data/repositories/scan_product_repository_impl.
 import '../features/scan_product/domain/repositories/scan_product_repository.dart';
 import '../modules/data/repositories/app/app_repository_impl.dart';
 import '../modules/data/repositories/auth/auth_repository_impl.dart';
-import '../modules/data/repositories/filter/filter_repository_impl.dart';
+import '../modules/data/repositories/master/master_repository_impl.dart';
 import '../modules/data/repositories/rit/rit_repository_impl.dart';
 import '../modules/data/repositories/users/user_repository_impl.dart';
 
@@ -123,8 +123,8 @@ void injectionRepository() {
   // ---------------------------------------------------------
   // FILTER REPOSITORY
   // ---------------------------------------------------------
-  Get.lazyPut<FilterRepository>(
-    () => FilterRepositoryImpl(Get.find(), Get.find()),
+  Get.lazyPut<MasterRepository>(
+    () => MasterRepositoryImpl(Get.find(), Get.find()),
     fenix: true,
   );
 }

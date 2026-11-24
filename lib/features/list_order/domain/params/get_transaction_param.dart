@@ -13,6 +13,7 @@ class ParamsGetTransaction {
   final String? district;
   final String? dateRit;
   final bool? pastRit;
+  final bool? isHistory;
   final bool? isTracking;
   final bool? isSisipan;
   final EnumButtonRIT? buttonRIT;
@@ -32,6 +33,7 @@ class ParamsGetTransaction {
     this.courier,
     this.dateRit,
     this.pastRit,
+    this.isHistory,
     this.isTracking,
     this.isSisipan,
     this.buttonRIT,

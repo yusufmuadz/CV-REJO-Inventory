@@ -18,7 +18,7 @@ import '../features/scan_product/data/datasource/scan_product_remote_datasource.
 import '../features/scan_product/data/datasource/scan_product_remote_datasource_impl.dart';
 import '../modules/data/datasource/app/app_datasource_impl.dart';
 import '../modules/data/datasource/auth/auth_datasource_impl.dart';
-import '../modules/data/datasource/filter/filter_datasource_impl.dart';
+import '../modules/data/datasource/master/master_datasource_impl.dart';
 import '../modules/data/datasource/rit/rit_datasource_impl.dart';
 import '../modules/data/datasource/user/user_datasource_impl.dart';
 
@@ -128,8 +128,8 @@ void injectionDataSource() {
   // ---------------------------------------------------------
   // FILTER DATASOURCE
   // ---------------------------------------------------------
-  Get.lazyPut<FilterRemoteDataSource>(
-    () => FilterRemoteDataSourceImpl(Get.find(), Get.find()),
+  Get.lazyPut<MasterRemoteDataSource>(
+    () => MasterRemoteDataSourceImpl(Get.find(), Get.find()),
     fenix: true,
   );
 }

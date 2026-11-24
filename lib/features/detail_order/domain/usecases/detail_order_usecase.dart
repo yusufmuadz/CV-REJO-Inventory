@@ -25,11 +25,11 @@ class DetailOrderUseCase {
     return repository.getListOrders(params);
   }
 
-  Future<ResultCustom<Failure, BasicEntity>> callPendingSO(
-    ParamsPendingSO params,
-  ) {
-    return repository.pendingSO(params);
-  }
+  // Future<ResultCustom<Failure, BasicEntity>> callPendingSO(
+  //   ParamsPendingSO params,
+  // ) {
+  //   return repository.pendingSO(params);
+  // }
 
   Future<ResultCustom<Failure, PostItemProductEntity>> callPostItem(
     ParamsPostProduct params,

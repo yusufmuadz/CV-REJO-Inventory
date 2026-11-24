@@ -9,7 +9,7 @@ import '../../../../features/scan_product/data/models/response_model_get_item_pr
 import '../../../helpers/api_request_handler.dart';
 
 // ======== INDUK DATASOURCE ========
-abstract class FilterRemoteDataSource {
+abstract class MasterRemoteDataSource {
   Future<ResponseModelGetDistrict> ritFilter(ParamGetRIT param);
   Future<ResponseModelGetTransportation> getTransportations();
   Future<ResponseModelGetItemProduct> getProductItem(String search);
@@ -17,11 +17,11 @@ abstract class FilterRemoteDataSource {
 }
 
 // ======== CHILD DATASOURCE ========
-class FilterRemoteDataSourceImpl implements FilterRemoteDataSource {
+class MasterRemoteDataSourceImpl implements MasterRemoteDataSource {
   final DioClient dioClient;
   final ApiRequestHandler apiRequest;
 
-  FilterRemoteDataSourceImpl(this.dioClient, this.apiRequest);
+  MasterRemoteDataSourceImpl(this.dioClient, this.apiRequest);
 
   // ============ GET LIST RIT UNTUK FILTER ============
   @override

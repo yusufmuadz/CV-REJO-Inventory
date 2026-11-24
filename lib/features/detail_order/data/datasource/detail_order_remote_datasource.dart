@@ -10,7 +10,7 @@ import '../models/response_model_detail_order.dart';
 abstract class DetailOrderRemoteDataSource {
   Future<ResponseModelDetailOrder> fetchTransaction(ParamsGetDetail params);
 
-  Future<ResponseModelBasic> pendingSO(ParamsPendingSO params);
+  // Future<ResponseModelBasic> pendingSO(ParamsPendingSO params);
   Future<ResponseModelPostItemProduct> postItemProduct(
     ParamsPostProduct params,
   );

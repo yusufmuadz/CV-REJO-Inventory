@@ -18,7 +18,7 @@ abstract class DetailOrderRepository {
     ParamsGetDetail params,
   );
 
-  Future<ResultCustom<Failure, BasicEntity>> pendingSO(ParamsPendingSO params);
+  // Future<ResultCustom<Failure, BasicEntity>> pendingSO(ParamsPendingSO params);
 
   Future<ResultCustom<Failure, PostItemProductEntity>> postItemProduct(
     ParamsPostProduct params,

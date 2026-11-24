@@ -10,7 +10,7 @@ import '../features/rit_information/domain/usecases/rit_usecase.dart';
 import '../features/scan_product/domain/usecases/scan_product_usecase.dart';
 import '../modules/domain/usecases/app/app_usecase.dart';
 import '../modules/domain/usecases/auth/auth_usecase.dart';
-import '../modules/domain/usecases/filter/filter_usecase.dart';
+import '../modules/domain/usecases/master/master_usecase.dart';
 import '../modules/domain/usecases/rit/rit_usecase.dart';
 import '../modules/domain/usecases/users/user_usercase.dart';
 
@@ -100,5 +100,5 @@ void injectionUsecase() {
   // ---------------------------------------------------------
   // FILTER USECASE
   // ---------------------------------------------------------
-  Get.lazyPut<FilterUseCase>(() => FilterUseCase(Get.find()), fenix: true);
+  Get.lazyPut<MasterUseCase>(() => MasterUseCase(Get.find()), fenix: true);
 }

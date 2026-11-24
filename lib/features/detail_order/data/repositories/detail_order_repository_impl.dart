@@ -30,24 +30,24 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
     }
   }
 
-  @override
-  Future<ResultCustom<Failure, BasicEntity>> pendingSO(
-    ParamsPendingSO params,
-  ) async {
-    try {
-      final response = await dataSource.pendingSO(params);
+  // @override
+  // Future<ResultCustom<Failure, BasicEntity>> pendingSO(
+  //   ParamsPendingSO params,
+  // ) async {
+  //   try {
+  //     final response = await dataSource.pendingSO(params);
 
-      return Success(
-        BasicEntity(
-          status: response.status ?? false,
-          message: response.message ?? '-',
-        ),
-        '',
-      );
-    } catch (e) {
-      return ErrorResult(message: e.toString());
-    }
-  }
+  //     return Success(
+  //       BasicEntity(
+  //         status: response.status ?? false,
+  //         message: response.message ?? '-',
+  //       ),
+  //       '',
+  //     );
+  //   } catch (e) {
+  //     return ErrorResult(message: e.toString());
+  //   }
+  // }
 
   @override
   Future<ResultCustom<Failure, PostItemProductEntity>> postItemProduct(

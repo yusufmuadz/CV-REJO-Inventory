@@ -154,25 +154,29 @@ class ListHistoryOrderView extends GetView<ListHistoryOrderController> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 5),
       child: AppRole.isCollector
           ? _buildOrderInv(index: index, invEntity: transaction)
-          : CustomCardList(
-              onTap: () {
-                Get.toNamed(
-                  Routes.DETAIL_ORDER,
-                  arguments: {
-                    'invoice': transaction.invoice,
-                    'routeFrom': 'listHistoryOrder',
-                    'status_checker2': transaction.checker2?.status ?? '',
-                    'status_loader': transaction.loader?.status ?? '',
-                    'done_by_po': transaction.pic?.by ?? '',
-                  },
-                );
-              },
-              isSelected: '',
-              showSelection: false,
-              isHistory: true,
-              orderEntity: transaction,
-              color: 'E2E8F0',
-            ),
+          : _buildOrderPO(transaction: transaction),
+    );
+  }
+
+  Widget _buildOrderPO({required OrderEntity transaction}) {
+    return CustomCardList(
+      onTap: () {
+        Get.toNamed(
+          Routes.DETAIL_ORDER,
+          arguments: {
+            'invoice': transaction.invoice,
+            'routeFrom': 'listHistoryOrder',
+            'status_checker2': transaction.checker2?.status ?? '',
+            'status_loader': transaction.loader?.status ?? '',
+            'done_by_po': transaction.pic?.by ?? '',
+          },
+        );
+      },
+      isSelected: '',
+      showSelection: false,
+      isHistory: true,
+      orderEntity: transaction,
+      color: 'E2E8F0',
     );
   }
 

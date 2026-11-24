@@ -104,3 +104,30 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+Folder: transactions/ (atau transaction/)
+
+DETAIL PO
+
+- ApiEndpoints.getDetailTransaction ("transaction/get?invoice=$invoice")
+- ApiEndpoints.takeItTransaction ("$role/claim")
+- ApiEndpoints.completeOrder ("$role/complete")
+- ApiEndpoints.pendingOrder ("$role/cancel")
+
+UBAH ARMADA
+
+- ApiEndpoints.changeTransportation ("loader/changearmada")
+
+SCAN PO
+
+- ApiEndpoints.saveQty ("$role/scan/multiple")
+- ApiEndpoints.getScanProduct ("$role/scan")
+
+SISIPAN
+
+- ApiEndpoints.saveSortingSisipan ("sisipan/urutan")
+
+API TIDAK TERPAKAI
+
+- ApiEndpoints.addAssistant ("$role/claimcoba")
+- ApiEndpoints.pendingSO ("picking/cancel")

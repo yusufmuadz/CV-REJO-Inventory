@@ -8,13 +8,11 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/middlewares/app_role.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
-import '../../../list_order/data/models/response_model_take_it_transaction.dart';
 import '../../../list_order/domain/params/take_it_param.dart';
 import '../../../scan_product/data/models/response_model_post_item_product.dart';
 import '../../../scan_product/domain/params/post_product_param.dart';
 import '../../domain/params/add_assistant_param.dart';
 import '../../domain/params/get_detail_param.dart';
-import '../../domain/params/pending_so_param.dart';
 import 'detail_order_remote_datasource.dart';
 
 class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
@@ -23,7 +21,9 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
   DetailOrderRemoteDataSourceImpl(this.dioClient);
 
   @override
-  Future<ResponseModelDetailOrder> fetchTransaction(ParamsGetDetail params) async {
+  Future<ResponseModelDetailOrder> fetchTransaction(
+    ParamsGetDetail params,
+  ) async {
     try {
       String apiUrl = ApiEndpoints.getDetailTransaction(params.invoice);
 
@@ -53,32 +53,32 @@ class DetailOrderRemoteDataSourceImpl implements DetailOrderRemoteDataSource {
     }
   }
 
-  @override
-  Future<ResponseModelBasic> pendingSO(ParamsPendingSO params) async {
-    try {
-      final response = await dioClient.put(
-        ApiEndpoints.pendingSO,
-        data: {"invoice": params.invoice},
-      );
+  // @override
+  // Future<ResponseModelBasic> pendingSO(ParamsPendingSO params) async {
+  //   try {
+  //     final response = await dioClient.put(
+  //       ApiEndpoints.pendingSO,
+  //       data: {"invoice": params.invoice},
+  //     );
 
-      // debugPrint('Data Pending SO Remote DataSource: ${response.data}');
+  //     // debugPrint('Data Pending SO Remote DataSource: ${response.data}');
 
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.data != null) {
-        return ResponseModelBasic.fromMap(response.data);
-      } else {
-        throw ServerException(
-          message: response.data['message'],
-          statusCode: response.statusCode ?? 500,
-        );
-      }
-    } on DioException catch (e) {
-      throw HandleDioExceptions().handleDioError(e);
-    } catch (e) {
-      throw ServerException(message: '$e');
-    }
-  }
+  //     if (response.statusCode == 200 ||
+  //         response.statusCode == 201 ||
+  //         response.data != null) {
+  //       return ResponseModelBasic.fromMap(response.data);
+  //     } else {
+  //       throw ServerException(
+  //         message: response.data['message'],
+  //         statusCode: response.statusCode ?? 500,
+  //       );
+  //     }
+  //   } on DioException catch (e) {
+  //     throw HandleDioExceptions().handleDioError(e);
+  //   } catch (e) {
+  //     throw ServerException(message: '$e');
+  //   }
+  // }
 
   @override
   Future<ResponseModelPostItemProduct> postItemProduct(
