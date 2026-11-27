@@ -40,7 +40,7 @@ class ArriveImageWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Masukkan KM kendaraan',
+            'Masukkan KM kendaraan*',
             style: GoogleFonts.hankenGrotesk(
               color: Colors.black,
               fontSize: 15,

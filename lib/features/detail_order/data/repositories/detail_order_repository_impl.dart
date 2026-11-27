@@ -57,7 +57,7 @@ class DetailOrderRepositoryImpl implements DetailOrderRepository {
       final response = await dataSource.postItemProduct(params);
 
       if (response.error?.details == null) {
-        return Success(response.data!.toEntity()!, '');
+        return Success(response.data!.toEntity(), '');
       }
 
       return ErrorResult(

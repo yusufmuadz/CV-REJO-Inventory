@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
@@ -74,6 +75,21 @@ class HomeBoxWidget extends StatelessWidget {
               onTap: () {
                 // if (AppRole.isCollector) {
                 //   controller.dialogService.showComingSoonSnackbar();
+                //   GetStorage().remove('noInvoice');
+                //   GetStorage().remove('user');
+                //   GetStorage().remove('city');
+                //   GetStorage().remove('colorRit');
+                //   GetStorage().remove('tanggalRit');
+                //   GetStorage().remove('isRitToday');
+                //   GetStorage().remove('isAcceptRIT');
+                //   GetStorage().remove('isTakeToTheRoad');
+                //   GetStorage().remove('status_driver');
+                //   GetStorage().remove('status_checker2');
+                //   GetStorage().remove('buttonRIT');
+                //   GetStorage().remove('buttonEndingDriver');
+                //   GetStorage().remove('resetDate');
+                //   GetStorage().remove('routeRit');
+                //   GetStorage().remove('buttonINV');
                 //   return;
                 // }
                 Get.toNamed(Routes.LIST_HISTORY_ORDER);

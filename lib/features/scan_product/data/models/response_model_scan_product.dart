@@ -36,7 +36,7 @@ class Data {
           ),
   );
 
-  ProductEntity? toEntity() {
+  ProductEntity toEntity() {
     if (product == null) {
       return ProductEntity(invoice: '', barcode: '', itemName: '', qty: '');
     }

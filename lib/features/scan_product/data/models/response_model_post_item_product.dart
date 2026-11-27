@@ -35,7 +35,7 @@ class Data {
         : PostItemProductEntity.fromJson(json["data"]),
   );
 
-  PostItemProductEntity? toEntity() {
+  PostItemProductEntity toEntity() {
     if (product == null) {
       return PostItemProductEntity();
     }

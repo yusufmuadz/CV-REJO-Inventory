@@ -52,7 +52,9 @@ extension TransactionPaymentMethods on TransactionRemoteDataSourceImpl {
     );
   }
 
-  Future<ResponseModelBasic> _postPaymentCustomer(ParamsEndingOrder params) {
+  Future<ResponseModelBasic> _postPaymentCustomerDriver(
+    ParamsEndingOrder params,
+  ) {
     return _submitCustomerArrival(
       params: params,
       endpoint: ApiEndpoints.arrivePaymentCustomer,

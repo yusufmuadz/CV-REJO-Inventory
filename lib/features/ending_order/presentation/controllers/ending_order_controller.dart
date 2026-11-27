@@ -9,6 +9,7 @@ import '../../../../core/result/result_custom.dart';
 import '../../../../core/services/dialog_service.dart';
 import '../../../../core/services/route_stack_service.dart';
 import '../../../../routes/app_pages.dart';
+import '../../../detail_order/data/models/collector_status_process_model.dart';
 import '../../../detail_order/data/models/driver_status_process_model.dart';
 import '../../../detail_order/data/models/item_order_model.dart';
 import '../../../list_order/presentation/controllers/list_order_controller.dart';
@@ -90,6 +91,7 @@ class EndingOrderController extends GetxController {
   final idPiutang = ''.obs;
   final noRoute = ''.obs;
   final notaRoute = ''.obs;
+  final collectorStatusProcess = CollectorStatusProcessModel().obs;
 
   @override
   void onInit() {
@@ -141,6 +143,22 @@ class EndingOrderController extends GetxController {
       idPiutang.value = args['id_piutang'] ?? '';
       noRoute.value = args['no_route'] ?? '';
       notaRoute.value = args['nota_route'] ?? '';
+      collectorStatusProcess.value =
+          args['collectorStatusProcessModel'] ?? CollectorStatusProcessModel();
+
+      debugPrint(
+        'collectorStatusProcess ${collectorStatusProcess.value.statusArrive}',
+      );
+
+      if (AppRole.isCollector &&
+          collectorStatusProcess.value.statusArrive == true) {
+        statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
+      }
+
+      if (AppRole.isCollector &&
+          statusButton.value == EnumButtonEndingOrder.saveCollectorInv) {
+        collectorStatusProcess.value.statusArrive = true;
+      }
 
       debugPrint('isDriverCollector $isDriverCollector');
 
@@ -700,6 +718,12 @@ class EndingOrderController extends GetxController {
     debugPrint('saveArriveCollector');
     if (isLoading.value) return;
 
+    // debugPrint('INVOICE: ${noInvoice.value}');
+    // debugPrint('NO ROUTE: ${noRoute.value}');
+    // debugPrint('NOTA ROUTE: ${notaRoute.value}');
+    // debugPrint('ID DETAIL: ${idDetail.value}');
+    // debugPrint('ID PIUTANG: ${idPiutang.value}');
+
     if (_getEmptyMessageInv() != null) {
       dialogService.showErrorSnackbar(
         title: 'Gagal!',
@@ -741,6 +765,7 @@ class EndingOrderController extends GetxController {
 
       switch (result) {
         case Success():
+          collectorStatusProcess.value.statusArrive = true;
           statusButton.value = EnumButtonEndingOrder.saveCollectorInv;
           mediaFileList.clear();
           mediaFileFrontMerchant.clear();

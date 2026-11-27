@@ -181,6 +181,7 @@ class DialogService {
     String title,
     String message, {
     bool singleButton = true,
+    bool barrierDismissible = false,
     String titleButton1 = 'Kembali',
     String titleButton2 = 'Hubungi Admin',
     Color color1 = Colors.red,
@@ -196,12 +197,12 @@ class DialogService {
       singleButton: singleButton,
       titleButton1: titleButton1,
       titleButton2: titleButton2,
-      barrierDismissible: false,
+      barrierDismissible: barrierDismissible,
       color1: color1,
       color2: color2,
       actionsPadding: const EdgeInsets.all(16),
       content: PopScope(
-        canPop: false,
+        canPop: barrierDismissible,
         child: Center(
           child: SingleChildScrollView(
             child: Text(message, textAlign: TextAlign.center),

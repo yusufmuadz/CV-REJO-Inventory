@@ -1,7 +1,10 @@
 import '../../../../core/error/failures.dart';
 import '../../../../core/result/result_custom.dart';
+import '../../../../features/detail_order/domain/entities/transportation_entity.dart';
+import '../../../../features/ending_order/domain/entities/payment_method_entity.dart';
 import '../../../../features/list_order/domain/entities/district_entity.dart';
 import '../../../../features/list_order/domain/params/get_rit_param.dart';
+import '../../../../features/scan_product/domain/entities/item_product_entity.dart';
 import '../../../helpers/repository_request_handler.dart';
 import '../../datasource/master/master_datasource_impl.dart';
 
@@ -10,6 +13,12 @@ abstract class MasterRepository {
   Future<ResultCustom<Failure, List<DistrictEntity>>> ritFilter(
     ParamGetRIT param,
   );
+  Future<ResultCustom<Failure, List<TransportationEntity>>>
+  getTransportations();
+  Future<ResultCustom<Failure, List<ItemProductEntity>>> getProductItems(
+    String search,
+  );
+  Future<ResultCustom<Failure, List<PaymentMethodEntity>>> getPaymentMethods();
 }
 
 // ============ CHILD REPOSITORY ============
@@ -26,6 +35,37 @@ class MasterRepositoryImpl implements MasterRepository {
   ) async {
     return request.execute(
       request: () => dataSource.ritFilter(param),
+      mapper: (response) => response.data!.toEntity(),
+    );
+  }
+
+  // ============ GET LIST TRANSPORTATION ============
+  @override
+  Future<ResultCustom<Failure, List<TransportationEntity>>>
+  getTransportations() async {
+    return request.execute(
+      request: () => dataSource.getTransportations(),
+      mapper: (response) => response.data!.toEntity(),
+    );
+  }
+
+  // ============ GET LIST PRODUCT ITEM ============
+  @override
+  Future<ResultCustom<Failure, List<ItemProductEntity>>> getProductItems(
+    String search,
+  ) async {
+    return request.execute(
+      request: () => dataSource.getProductItems(search),
+      mapper: (response) => response.data!.toEntity(),
+    );
+  }
+
+  // ============ GET LIST JENIS PEMBAYARAN ============
+  @override
+  Future<ResultCustom<Failure, List<PaymentMethodEntity>>>
+  getPaymentMethods() async {
+    return request.execute(
+      request: () => dataSource.getPaymentMethods(),
       mapper: (response) => response.data!.toEntity(),
     );
   }

@@ -22,7 +22,7 @@ class ScanProductRepositoryImpl implements ScanProductRepository {
       final response = await dataSource.getProduct(params);
 
       if (response.error == null) {
-        return Success(response.data!.toEntity()!, '');
+        return Success(response.data!.toEntity(), '');
       }
 
       return ErrorResult(message: response.error ?? '');
@@ -55,7 +55,7 @@ class ScanProductRepositoryImpl implements ScanProductRepository {
       final response = await dataSource.postItemProduct(params);
 
       if (response.error?.details == null) {
-        return Success(response.data!.toEntity()!, '');
+        return Success(response.data!.toEntity(), '');
       }
       
       return ErrorResult(message: response.error?.details ?? '', isMaxFailure: response.error?.isMaxFailure ?? false);

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 
 class CameraControllerService extends GetxController {
   CameraController? cameraController;
@@ -21,7 +24,7 @@ class CameraControllerService extends GetxController {
 
       cameraController = CameraController(
         cameras.first,
-        ResolutionPreset.medium,
+        ResolutionPreset.low,
         enableAudio: false,
       );
 
@@ -70,36 +73,117 @@ class CameraControllerService extends GetxController {
     }
   }
 
+  // TAKE PICTURE BARU
+
   Future<String?> takePicture() async {
     if (cameraController == null || !cameraController!.value.isInitialized) {
       return null;
     }
+
     if (isTakingPicture.value) return null;
 
     try {
       isTakingPicture.value = true;
-      XFile file = await cameraController!.takePicture();
 
-      // 💡 KUNCI UTAMA: Ubah status inisialisasi ke FALSE terlebih dahulu!
-      // Ini akan memicu UI (Obx) untuk menyembunyikan CameraPreview secara instan.
+      final XFile file = await cameraController!.takePicture();
+
+      // Sembunyikan preview kamera
       isInitialized.value = false;
 
-      // Beri jeda sangat singkat agar UI sempat berganti ke widget Loading
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // 💡 SOLUSI AGRESIF ANTI-LAG:
-      // Langsung dispose & reset status kamera dari dalam Service sebelum file dikembalikan
+      // Dispose kamera
       await cameraController?.dispose();
       cameraController = null;
 
-      return file.path;
+      // Baca foto asli
+      final originalBytes = await file.readAsBytes();
+
+      debugPrint(
+        'Original Size: ${(originalBytes.length / 1024).toStringAsFixed(2)} KB',
+      );
+
+      // Decode gambar
+      final decodedImage = img.decodeImage(originalBytes);
+
+      if (decodedImage == null) {
+        return file.path;
+      }
+
+      // Perbaiki orientasi berdasarkan EXIF
+      final orientedImage = img.bakeOrientation(decodedImage);
+
+      // Resize jika lebar lebih dari 1280 px
+      final resizedImage = orientedImage.width > 1280
+          ? img.copyResize(orientedImage, width: 1280)
+          : orientedImage;
+
+      // Kompres menjadi JPEG quality 80
+      final compressedBytes = img.encodeJpg(resizedImage, quality: 70); // 90, 80, 70, 60
+
+      // Jika hasil kompresi lebih besar, gunakan file asli
+      if (compressedBytes.length >= originalBytes.length) {
+        debugPrint('Menggunakan foto original karena lebih kecil.');
+        return file.path;
+      }
+
+      // Simpan hasil kompresi
+      final compressedFile = File('${file.path}.compressed.jpg');
+
+      await compressedFile.writeAsBytes(compressedBytes, flush: true);
+
+      debugPrint(
+        'Compressed Size: ${(compressedBytes.length / 1024).toStringAsFixed(2)} KB',
+      );
+
+      debugPrint('Resolution: ${resizedImage.width} x ${resizedImage.height}');
+
+      return compressedFile.path;
     } catch (e) {
-      debugPrint("Error ambil foto: $e");
+      debugPrint('Error ambil foto: $e');
       return null;
     } finally {
       isTakingPicture.value = false;
     }
   }
+
+  // TAKE PICTURE LAMA
+
+  // Future<String?> takePicture() async {
+  //   if (cameraController == null || !cameraController!.value.isInitialized) {
+  //     return null;
+  //   }
+  //   if (isTakingPicture.value) return null;
+
+  //   try {
+  //     isTakingPicture.value = true;
+  //     XFile file = await cameraController!.takePicture();
+
+  //     // 💡 KUNCI UTAMA: Ubah status inisialisasi ke FALSE terlebih dahulu!
+  //     // Ini akan memicu UI (Obx) untuk menyembunyikan CameraPreview secara instan.
+  //     isInitialized.value = false;
+
+  //     // Beri jeda sangat singkat agar UI sempat berganti ke widget Loading
+  //     await Future.delayed(const Duration(milliseconds: 100));
+
+  //     // 💡 SOLUSI AGRESIF ANTI-LAG:
+  //     // Langsung dispose & reset status kamera dari dalam Service sebelum file dikembalikan
+  //     await cameraController?.dispose();
+  //     cameraController = null;
+
+  //     final bytes = await file.readAsBytes();
+
+  //     debugPrint("Foto berhasil diambil: ${file.path}");
+  //     debugPrint("Foto Size: ${(bytes.length / 1024).toStringAsFixed(2)} KB");
+
+  //     return file.path;
+  //   } catch (e) {
+  //     debugPrint("Error ambil foto: $e");
+  //     return null;
+  //   } finally {
+  //     isTakingPicture.value = false;
+  //   }
+  // }
 
   @override
   void onClose() {

@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../../core/middlewares/app_role.dart';
 import '../../../../../routes/app_pages.dart';
 import '../../../../../shared/custom/custom_button.dart';
+import '../../../data/models/collector_status_process_model.dart';
 import '../../../data/models/driver_status_process_model.dart';
 import '../../controllers/detail_order_controller.dart';
 
@@ -85,6 +86,9 @@ class ButtonDetailOrderWidget {
         //   debugPrint('Lanjut');
         //   return;
         // }
+        // debugPrint('NOTA ROUTE DETAIL PAGE: ${controller.notaRoute.value}');
+        // debugPrint('ROUTE DETAIL PAGE: ${controller.noRoute.value}');
+
         Get.toNamed(
           Routes.ENDING_ORDER,
           arguments: {
@@ -104,6 +108,10 @@ class ButtonDetailOrderWidget {
               'driverStatusProcessModel':
                   controller.orderDetail.value.driverStatusProcess
                       as DriverStatusProcessModel,
+            if (controller.orderDetail.value.collectorStatusProcess != null)
+              'collectorStatusProcessModel':
+                  controller.orderDetail.value.collectorStatusProcess
+                      as CollectorStatusProcessModel,
           },
         );
       },

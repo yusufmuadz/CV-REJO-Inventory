@@ -26,8 +26,8 @@ class SplashController extends GetxController {
   void onReady() {
     super.onReady();
     if (!isLoading.value) {
-      checkVersion();
-      // _checkAuth();
+      // checkVersion();
+      _checkAuth();
     }
   }
 

@@ -11,13 +11,15 @@ class ApiEndpoints {
 
   // User
   static const String users = "users"; // API TIDAK ADA
-  static const String userDetail = "user/details";
+  static const String userDetail =
+      "user/details"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static const String logout = "auth/logout"; // API TIDAK ADA
   static const String getUsers =
       "user/getpicking"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   // Home
-  static const String home = "main/getinfo";
+  static const String home =
+      "main/getinfo"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   // Checking Version
   static const String checkVersion =
@@ -40,15 +42,18 @@ class ApiEndpoints {
       "sisipan/listtransaction"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static const String addAssistantSisipan =
       "sisipan/loader"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
-  static const String saveSortingSisipan = "sisipan/urutan";
+  static const String saveSortingSisipan =
+      "sisipan/urutan"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static String fetchTransactionAll(String url) =>
       "transaction/$url"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static String takeItTransaction(String role) =>
       "$role/claim"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
-  static String saveQty(String role) => "$role/scan/multiple";
+  static String saveQty(String role) =>
+      "$role/scan/multiple"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static String completeOrder(String role) =>
       "$role/complete"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
-  static String pendingOrder(String role) => "$role/cancel";
+  static String pendingOrder(String role) =>
+      "$role/cancel"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   // static String addAssistant(String role) => "$role/claimcoba";
   static String takeItRIT(String role) =>
       "$role/tugas"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
@@ -68,12 +73,17 @@ class ApiEndpoints {
   static const String takeItTransactionDriver =
       "deliverynew/claiminvoice"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static const String saveDataDriver = "deliverynew/reporttruck1";
-  static const String trouble = "deliverynew/trouble";
-  static const String finishScanOrder = "deliverynew/finishscan";
-  static const String arriveFirstCustomer = "deliverynew/delivery";
-  static const String arriveItemCustomer = "deliverynew/unload";
+  static const String trouble =
+      "deliverynew/trouble"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
+  static const String finishScanOrder =
+      "deliverynew/finishscan"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
+  static const String arriveFirstCustomer =
+      "deliverynew/delivery"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
+  static const String arriveItemCustomer =
+      "deliverynew/unload"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static const String arriveHandoverCustomer = "deliverynew/confirmdelivery";
-  static const String arrivePaymentCustomer = "deliverynew/payment";
+  static const String arrivePaymentCustomer =
+      "deliverynew/payment"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static const String arriveAtOffice = "deliverynew/handover";
   static const String isiBbm = "deliverynew/gasstation";
   static const String getPaymentMethod =
@@ -88,16 +98,17 @@ class ApiEndpoints {
   static const String arriveCollector = "kolektor/submittiba";
   static const String paymentCollector = "kolektor/submitpelunasan";
   static const String handoverCollector = "kolektor/submitkepulangan";
-  static const String historyRouteCollector = "kolektor/historypenugasan";
+  // static const String historyRouteCollector = "kolektor/historypenugasan";
   static const String historyCollector =
       "kolektor/history"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   static String getDetailTransactionCollector(String? idDetail) =>
-      "kolektor/detailtransaksi?id_detail=$idDetail";
+      "kolektor/detailtransaksi?id_detail=$idDetail"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
 
   static String getDetailTransaction(String? invoice) =>
-      "transaction/get?invoice=$invoice";
-  static String getScanProduct(String role) => "$role/scan";
+      "transaction/get?invoice=$invoice"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
+  static String getScanProduct(String role) =>
+      "$role/scan"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static String getTransportations(String search) =>
       "vehicle/getloader?q=$search"; // API SUDAH DITERAPKAN KE CLEAN ARCHITECTURE TERBARU
   static String getLoaderTransportations(String search) =>

@@ -12,8 +12,8 @@ import '../../../helpers/api_request_handler.dart';
 abstract class MasterRemoteDataSource {
   Future<ResponseModelGetDistrict> ritFilter(ParamGetRIT param);
   Future<ResponseModelGetTransportation> getTransportations();
-  Future<ResponseModelGetItemProduct> getProductItem(String search);
-  Future<ResponseModelGetPaymentMethod> getPaymentMethod();
+  Future<ResponseModelGetItemProduct> getProductItems(String search);
+  Future<ResponseModelGetPaymentMethod> getPaymentMethods();
 }
 
 // ======== CHILD DATASOURCE ========
@@ -57,7 +57,7 @@ class MasterRemoteDataSourceImpl implements MasterRemoteDataSource {
 
   // ============ GET LIST PRODUCT ITEM ============
   @override
-  Future<ResponseModelGetItemProduct> getProductItem(String search) {
+  Future<ResponseModelGetItemProduct> getProductItems(String search) {
     return apiRequest.execute<ResponseModelGetItemProduct>(
       request: () {
         return dioClient.get(
@@ -71,7 +71,7 @@ class MasterRemoteDataSourceImpl implements MasterRemoteDataSource {
 
   // ============ GET LIST JENIS PEMBAYARAN ============
   @override
-  Future<ResponseModelGetPaymentMethod> getPaymentMethod() {
+  Future<ResponseModelGetPaymentMethod> getPaymentMethods() {
     return apiRequest.execute<ResponseModelGetPaymentMethod>(
       request: () {
         return dioClient.get(

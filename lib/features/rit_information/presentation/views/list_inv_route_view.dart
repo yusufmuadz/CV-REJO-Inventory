@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../home/presentation/widgets/home_collector_driver/list_invoice_widget.dart';
 import '../controllers/rit_controller.dart';
@@ -12,23 +13,25 @@ class ListInvRouteView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = masterCtrlr.invController;
 
-    return SharedListInvView(
-      isTopSpacing: true,
-      isGetLoading: controller.isGetLoading,
-      getLoadState: controller.ritController.loadState,
-      isSelectedRoute: controller.isSelectedRoute,
-      listInv: controller.listInv,
-      buttonINV: controller.buttonINV,
-      searchInvController: controller.searchInvController,
-      routeStackService: masterCtrlr.routeStackService,
-      dialogService: masterCtrlr.dialogService,
-      onSubmitted: (String p1) {},
-      onSuffixTap: () {},
-      onCheckboxChanged: (int value) => controller.onSelectedInv(value),
-      retryFetch: () => controller.retryFetchInvCollector(),
-      onRefresh: () async => controller.onRefreshInvCollector(),
-      noRoute: masterCtrlr.routeRit.value,
-      notaRoute: masterCtrlr.notaRoute.value,
+    return Obx(
+      () => SharedListInvView(
+        isTopSpacing: true,
+        isGetLoading: controller.isGetLoading,
+        getLoadState: controller.ritController.loadState,
+        isSelectedRoute: controller.isSelectedRoute,
+        listInv: controller.listInv,
+        buttonINV: controller.buttonINV,
+        searchInvController: controller.searchInvController,
+        routeStackService: masterCtrlr.routeStackService,
+        dialogService: masterCtrlr.dialogService,
+        onSubmitted: (String p1) {},
+        onSuffixTap: () {},
+        onCheckboxChanged: (int value) => controller.onSelectedInv(value),
+        retryFetch: () => controller.retryFetchInvCollector(),
+        onRefresh: () async => controller.onRefreshInvCollector(),
+        noRoute: masterCtrlr.routeRit.value,
+        notaRoute: masterCtrlr.notaRoute.value,
+      ),
     );
   }
 }

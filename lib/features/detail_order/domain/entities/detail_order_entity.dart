@@ -3,6 +3,7 @@ import 'package:cv_rejo/features/list_order/data/models/courier_model.dart';
 import 'package:cv_rejo/features/list_order/data/models/date_model.dart';
 
 import '../../data/models/assistant_model.dart';
+import '../../data/models/collector_status_process_model.dart';
 import '../../data/models/driver_model.dart';
 import '../../data/models/driver_status_process_model.dart';
 import '../../data/models/item_order_model.dart';
@@ -25,6 +26,7 @@ class DetailOrderEntity {
   final AssistantModel? assistant;
   final DriverModel? driver;
   final DriverStatusProcessModel? driverStatusProcess;
+  final CollectorStatusProcessModel? collectorStatusProcess;
   final String? idDetail;
   final String? idPiutang;
   final String? tanggalTransaksi;
@@ -51,6 +53,7 @@ class DetailOrderEntity {
     this.assistant,
     this.driver,
     this.driverStatusProcess,
+    this.collectorStatusProcess,
     this.collectorImage,
     this.orderDetails,
     this.idDetail,
@@ -108,6 +111,13 @@ class DetailOrderEntity {
       driverStatusProcess: json['proses_driver'] != null
           ? DriverStatusProcessModel.fromJson(json['proses_driver'])
           : null,
+      collectorStatusProcess: json['content'] != null
+          ? json['content']['proses_kolektor'] != null
+                ? CollectorStatusProcessModel.fromJson(
+                    json['content']['proses_kolektor'],
+                  )
+                : null
+          : null,
       orderDetails: json['order_details'] != null
           ? List<ItemOrderModel>.from(
               json['order_details'].map((x) => ItemOrderModel.fromJson(x)),
@@ -126,6 +136,7 @@ class DetailOrderEntity {
     AssistantModel? assistant,
     DriverModel? driver,
     DriverStatusProcessModel? driverStatusProcess,
+    CollectorStatusProcessModel? collectorStatusProcess,
     List<ItemOrderModel>? orderDetails,
   }) {
     return DetailOrderEntity(
@@ -138,6 +149,8 @@ class DetailOrderEntity {
       assistant: assistant ?? this.assistant,
       driver: driver ?? this.driver,
       driverStatusProcess: driverStatusProcess ?? this.driverStatusProcess,
+      collectorStatusProcess:
+          collectorStatusProcess ?? this.collectorStatusProcess,
       orderDetails: orderDetails ?? this.orderDetails,
     );
   }

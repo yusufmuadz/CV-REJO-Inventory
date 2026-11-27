@@ -13,7 +13,7 @@ class SplashView extends GetView<SplashController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.onReady(); // call onReady
+    // controller.onReady(); // call onReady
     return Scaffold(
       body: SizedBox(
         width: Get.width,

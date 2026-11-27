@@ -23,13 +23,15 @@ class CollectorArrive extends StatelessWidget {
         children: [
           Visibility(
             visible:
+                controller.collectorStatusProcess.value.statusArrive == false ||
                 controller.statusButton.value == EnumButtonEndingOrder.savePO,
             child: _buildFirstContent(),
           ),
           Visibility(
             visible:
+                controller.collectorStatusProcess.value.statusArrive == true ||
                 controller.statusButton.value ==
-                EnumButtonEndingOrder.saveCollectorInv,
+                    EnumButtonEndingOrder.saveCollectorInv,
             child: _buildSecondContent(),
           ),
         ],

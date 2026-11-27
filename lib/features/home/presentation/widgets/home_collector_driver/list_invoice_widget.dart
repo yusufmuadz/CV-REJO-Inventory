@@ -182,6 +182,14 @@ class SharedListInvView extends StatelessWidget {
               return;
             }
 
+            if (invEntity.statusTagihan?.toLowerCase() == 'selesai') {
+              dialogService.showError(
+                'Informasi',
+                'SJ/INVOICE Sudah diselesaikan',
+              );
+              return;
+            }
+
             // final bool isTesting = true;
 
             if (noRoute == null || notaRoute == null) {
@@ -201,6 +209,9 @@ class SharedListInvView extends StatelessWidget {
             //     'nota_route': notaRoute,
             //   },
             // );
+
+            // debugPrint('NOTA ROUTE RIT PAGE: $notaRoute');
+            // debugPrint('ROUTE RIT PAGE: $noRoute');
 
             if (routeStackService.contains(Routes.DETAIL_ORDER)) {
               Get.until((route) => route.settings.name == Routes.DETAIL_ORDER);

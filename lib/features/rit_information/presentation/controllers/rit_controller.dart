@@ -497,11 +497,28 @@ class RitController extends GetxController {
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
+          dialogService.showError(
+            'Failed',
+            message,
+            titleButton1: 'Ulangi',
+            onPressed1: () {
+              if (Get.isDialogOpen == true) Get.back();
+              saveOrder();
+            },
+          );
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', '$e');
+      dialogService.showError(
+        'Failed',
+        '$e',
+        barrierDismissible: true,
+        titleButton1: 'Ulangi',
+        onPressed1: () {
+          if (Get.isDialogOpen == true) Get.back();
+          saveOrder();
+        },
+      );
     } finally {
       isLoading.value = false;
     }
@@ -582,7 +599,8 @@ class RitController extends GetxController {
               kmController.clear();
               mediaFileListInvoice.clear();
 
-              if (buttonRIT.value == EnumButtonRIT.buttonSaveDoc) {
+              if (invController.buttonINV.value ==
+                  EnumButtonInv.buttonSaveDoc) {
                 mediaFileRecipientMoneyRit.clear();
                 mediaFileRecipientBox.clear();
                 _arriveAtOffice();
@@ -591,42 +609,47 @@ class RitController extends GetxController {
 
               if (Get.isDialogOpen == true) Get.back();
 
-              if (AppRole.isCollector) {
-                invController.buttonINV.value = EnumButtonInv.saveTakeOff;
+              invController.buttonINV.value = EnumButtonInv.buttonSaveDoc;
 
-                GetStorage().write(
-                  'buttonINV',
-                  invController.buttonINV.value.name,
-                );
+              GetStorage().write(
+                'buttonINV',
+                invController.buttonINV.value.name,
+              );
 
-                pageIndex.value = 4;
-                pageController.jumpToPage(
-                  4,
-                  // duration: const Duration(milliseconds: 300),
-                  // curve: Curves.easeInOut,
-                );
-                return;
-              }
-
-              buttonRIT.value = EnumButtonRIT.buttonArriveRIT;
-
-              pageIndex.value = 0;
+              pageIndex.value = 4;
               pageController.jumpToPage(
-                0,
+                4,
                 // duration: const Duration(milliseconds: 300),
                 // curve: Curves.easeInOut,
               );
-              GetStorage().write('buttonRIT', buttonRIT.value.name);
             },
           );
 
         case ErrorResult(:final message):
           if (Get.isDialogOpen == true) Get.back();
-          dialogService.showError('Failed', message);
+          dialogService.showError(
+            'Failed',
+            message,
+            barrierDismissible: true,
+            titleButton1: 'Ulangi',
+            onPressed1: () {
+              if (Get.isDialogOpen == true) Get.back();
+              saveHandoverCollector();
+            },
+          );
       }
     } catch (e) {
       if (Get.isDialogOpen == true) Get.back();
-      dialogService.showError('Failed', '$e');
+      dialogService.showError(
+        'Failed',
+        '$e',
+        barrierDismissible: true,
+        titleButton1: 'Ulangi',
+        onPressed1: () {
+          if (Get.isDialogOpen == true) Get.back();
+          saveHandoverCollector();
+        },
+      );
     } finally {
       isLoading.value = false;
     }
